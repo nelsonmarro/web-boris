@@ -20,23 +20,23 @@ export default async function WikiArticleModalPage({ params }: Props) {
 
   return (
     <ArticleModal title={frontmatter.title} description={frontmatter.description}>
-      <article className="bg-transparent">
-        <header className="mb-8 text-center">
-          <div className="flex justify-center gap-3 mb-4">
-            <span className="text-xs font-bold px-3 py-1 bg-primary/20 text-primary rounded-full">
+      <article className="w-full">
+        <header className="mb-10 text-center">
+          <div className="flex justify-center gap-3 mb-6">
+            <span className="text-[10px] uppercase tracking-wider font-black px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full">
               {frontmatter.universe}
             </span>
             {frontmatter.category && (
-              <span className="text-xs font-semibold px-3 py-1 bg-secondary/20 text-secondary rounded-full">
+              <span className="text-[10px] uppercase tracking-wider font-bold px-3 py-1 bg-secondary/20 text-secondary border border-secondary/30 rounded-full">
                 {frontmatter.category}
               </span>
             )}
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4">
+          <h1 className="text-4xl md:text-5xl font-black text-foreground mb-6 leading-tight">
             {frontmatter.title}
           </h1>
           {frontmatter.image && (
-            <div className="relative h-48 md:h-72 w-full rounded-xl overflow-hidden shadow-xl mt-6">
+            <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl mt-8 border border-white/10">
               <Image
                 src={frontmatter.image}
                 alt={frontmatter.title}
@@ -48,7 +48,7 @@ export default async function WikiArticleModalPage({ params }: Props) {
           )}
         </header>
 
-        <div className="prose prose-invert prose-base md:prose-lg max-w-none prose-headings:text-foreground prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-xl">
+        <div className="prose prose-invert prose-blue max-w-none md:prose-lg prose-headings:font-black prose-headings:tracking-tight prose-p:text-muted-foreground prose-p:leading-relaxed prose-img:rounded-2xl prose-img:shadow-lg prose-strong:text-foreground">
           <MDXRemote source={content} />
         </div>
       </article>

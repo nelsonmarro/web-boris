@@ -31,8 +31,8 @@ export function ArticleModal({ children, title, description }: ArticleModalProps
   if (isDesktop) {
     return (
       <Dialog open={true} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0 bg-card border-border shadow-2xl">
-          <div className="p-6 md:p-10">
+        <DialogContent className="max-w-4xl w-[90vw] max-h-[90vh] p-0 bg-card border-border shadow-2xl overflow-hidden flex flex-col">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-12">
             {children}
           </div>
         </DialogContent>
@@ -42,12 +42,12 @@ export function ArticleModal({ children, title, description }: ArticleModalProps
 
   return (
     <Drawer open={true} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[95vh] bg-card border-border">
+      <DrawerContent className="max-h-[95vh] bg-card border-border flex flex-col">
         <DrawerHeader className="sr-only">
           <DrawerTitle>{title || "Artículo"}</DrawerTitle>
           <DrawerDescription>{description || "Vista rápida del artículo"}</DrawerDescription>
         </DrawerHeader>
-        <div className="overflow-y-auto p-6 pb-12">
+        <div className="flex-1 overflow-y-auto p-6 pb-12 overflow-x-hidden">
           {children}
         </div>
       </DrawerContent>
