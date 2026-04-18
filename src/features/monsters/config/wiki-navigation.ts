@@ -116,7 +116,7 @@ export const WIKI_NAVIGATION: WikiUniverseNavigation[] = [
       },
       {
         title: "Versus",
-        url: "/wiki/versus",
+        url: "/wiki/arena",
         icon: Swords,
       }
     ],
