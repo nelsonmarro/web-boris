@@ -58,12 +58,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter className="p-4 border-t border-border group-data-[collapsible=icon]:p-2">
         <SidebarMenu>
            <SidebarMenuItem>
-             <SidebarMenuButton className="group-data-[collapsible=icon]:p-0" asChild>
-                <Link href="/" className="font-semibold text-muted-foreground hover:text-primary transition-colors">
-                   <ChevronRight className="rotate-180 group-data-[collapsible=icon]:rotate-0" />
-                   <span className="group-data-[collapsible=icon]:hidden">Volver a Inicio</span>
-                </Link>
-             </SidebarMenuButton>
+             <SidebarMenuButton 
+                className="group-data-[collapsible=icon]:p-0" 
+                render={
+                  <Link href="/" className="font-semibold text-muted-foreground hover:text-primary transition-colors">
+                     <ChevronRight className="rotate-180 group-data-[collapsible=icon]:rotate-0" />
+                     <span className="group-data-[collapsible=icon]:hidden">Volver a Inicio</span>
+                  </Link>
+                }
+             />
            </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
@@ -76,34 +79,36 @@ function CollapsibleNav({ item }: { item: NavItem }) {
   if (!item.items || item.items.length === 0) {
     return (
       <SidebarMenuItem>
-        <SidebarMenuButton asChild tooltip={item.title} className="hover:bg-primary/10 transition-colors group">
-          <Link href={item.url} className="flex items-center">
-            {item.icon && <item.icon className="h-4 w-4 mr-2 text-primary group-hover:scale-110 transition-transform" />}
-            <span className="font-medium">{item.title}</span>
-          </Link>
+        <SidebarMenuButton 
+          tooltip={item.title} 
+          className="hover:bg-primary/10 transition-colors group"
+          render={<Link href={item.url} className="flex items-center" />}
+        >
+          {item.icon && <item.icon className="h-4 w-4 mr-2 text-primary group-hover:scale-110 transition-transform" />}
+          <span className="font-medium">{item.title}</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
     );
   }
 
   return (
-    <Collapsible asChild className="group/collapsible">
-      <SidebarMenuItem>
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton tooltip={item.title} className="hover:bg-primary/10 transition-colors">
-            {item.icon && <item.icon className="h-4 w-4 mr-2 text-primary" />}
-            <span className="font-semibold">{item.title}</span>
-            <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-          </SidebarMenuButton>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <SidebarMenuSub className="border-l border-primary/20 ml-6 pl-2 space-y-1 mt-1">
-            {item.items.map((subItem) => (
-              <CollapsibleSubNav key={subItem.title} item={subItem} />
-            ))}
-          </SidebarMenuSub>
-        </CollapsibleContent>
-      </SidebarMenuItem>
+    <Collapsible className="group/collapsible" render={<SidebarMenuItem />}>
+      <SidebarMenuButton 
+        tooltip={item.title} 
+        className="hover:bg-primary/10 transition-colors"
+        render={<CollapsibleTrigger />}
+      >
+        {item.icon && <item.icon className="h-4 w-4 mr-2 text-primary" />}
+        <span className="font-semibold">{item.title}</span>
+        <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+      </SidebarMenuButton>
+      <CollapsibleContent>
+        <SidebarMenuSub className="border-l border-primary/20 ml-6 pl-2 space-y-1 mt-1">
+          {item.items.map((subItem) => (
+            <CollapsibleSubNav key={subItem.title} item={subItem} />
+          ))}
+        </SidebarMenuSub>
+      </CollapsibleContent>
     </Collapsible>
   );
 }
@@ -112,38 +117,33 @@ function CollapsibleSubNav({ item }: { item: NavItem }) {
   if (!item.items || item.items.length === 0) {
     return (
       <SidebarMenuSubItem>
-        <SidebarMenuSubButton asChild className="hover:text-primary transition-colors h-8">
-          <Link href={item.url}>
-            <span className="text-sm">{item.title}</span>
-          </Link>
+        <SidebarMenuSubButton className="hover:text-primary transition-colors h-8" render={<Link href={item.url} />}>
+          <span className="text-sm">{item.title}</span>
         </SidebarMenuSubButton>
       </SidebarMenuSubItem>
     );
   }
 
   return (
-    <Collapsible asChild className="group/sub-collapsible">
-      <SidebarMenuSubItem>
-        <CollapsibleTrigger asChild>
-          <SidebarMenuSubButton className="hover:text-primary transition-colors h-8">
-            <span className="text-sm font-medium">{item.title}</span>
-            <ChevronRight className="ml-auto h-3 w-3 transition-transform duration-200 group-data-[state=open]/sub-collapsible:rotate-90" />
-          </SidebarMenuSubButton>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <SidebarMenuSub className="border-l border-secondary/30 ml-2 pl-2 space-y-0.5 mt-1">
-            {item.items.map((deepItem) => (
-              <SidebarMenuSubItem key={deepItem.title}>
-                <SidebarMenuSubButton asChild className="hover:text-secondary transition-colors h-7">
-                  <Link href={deepItem.url}>
-                    <span className="text-[13px] opacity-80">{deepItem.title}</span>
-                  </Link>
-                </SidebarMenuSubButton>
-              </SidebarMenuSubItem>
-            ))}
-          </SidebarMenuSub>
-        </CollapsibleContent>
-      </SidebarMenuSubItem>
+    <Collapsible className="group/sub-collapsible" render={<SidebarMenuSubItem />}>
+      <SidebarMenuSubButton 
+        className="hover:text-primary transition-colors h-8"
+        render={<CollapsibleTrigger />}
+      >
+        <span className="text-sm font-medium">{item.title}</span>
+        <ChevronRight className="ml-auto h-3 w-3 transition-transform duration-200 group-data-[state=open]/sub-collapsible:rotate-90" />
+      </SidebarMenuSubButton>
+      <CollapsibleContent>
+        <SidebarMenuSub className="border-l border-secondary/30 ml-2 pl-2 space-y-0.5 mt-1">
+          {item.items.map((deepItem) => (
+            <SidebarMenuSubItem key={deepItem.title}>
+              <SidebarMenuSubButton className="hover:text-secondary transition-colors h-7" render={<Link href={deepItem.url} />}>
+                <span className="text-[13px] opacity-80">{deepItem.title}</span>
+              </SidebarMenuSubButton>
+            </SidebarMenuSubItem>
+          ))}
+        </SidebarMenuSub>
+      </CollapsibleContent>
     </Collapsible>
   );
 }
