@@ -56,11 +56,12 @@ export function VersusArena({ articles }: VersusArenaProps) {
     
     // Simulate battle duration
     setTimeout(() => {
-      const f1Stats = getStats(fighter1?.slug || "", fighter1?.frontmatter.title || "");
-      const f2Stats = getStats(fighter2?.slug || "", fighter2?.frontmatter.title || "");
+      // Prioritize actual lore stats from frontmatter if they exist
+      const f1Stats = fighter1?.frontmatter.stats || getStats(fighter1?.slug || "", fighter1?.frontmatter.title || "");
+      const f2Stats = fighter2?.frontmatter.stats || getStats(fighter2?.slug || "", fighter2?.frontmatter.title || "");
       
-      const f1Score = f1Stats.power + f1Stats.defense + (f1Stats.intelligence * 5) + (f1Stats.hostility * 2);
-      const f2Score = f2Stats.power + f2Stats.defense + (f2Stats.intelligence * 5) + (f2Stats.hostility * 2);
+      const f1Score = (f1Stats.power || 0) + (f1Stats.defense || 0) + ((f1Stats.intelligence || 0) * 5) + ((f1Stats.hostility || 0) * 2);
+      const f2Score = (f2Stats.power || 0) + (f2Stats.defense || 0) + ((f2Stats.intelligence || 0) * 5) + ((f2Stats.hostility || 0) * 2);
       
       setWinner(f1Score >= f2Score ? fighter1Slug : fighter2Slug);
       setIsBattling(false);

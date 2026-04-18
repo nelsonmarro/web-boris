@@ -31,7 +31,7 @@ export function ArticleModal({ children, title, description }: ArticleModalProps
   if (isDesktop) {
     return (
       <Dialog open={true} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl w-[90vw] max-h-[90vh] p-0 bg-card border-border shadow-2xl overflow-hidden flex flex-col">
+        <DialogContent className="max-w-4xl w-[95vw] md:w-[90vw] max-h-[95vh] md:max-h-[90vh] p-0 bg-card border-border shadow-2xl overflow-hidden flex flex-col">
           <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-12">
             {children}
           </div>

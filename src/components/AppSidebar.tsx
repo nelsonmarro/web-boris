@@ -82,7 +82,7 @@ function CollapsibleNav({ item }: { item: NavItem }) {
         <SidebarMenuButton 
           tooltip={item.title} 
           className="hover:bg-primary/10 transition-colors group"
-          render={<Link href={item.url} className="flex items-center" />}
+          render={<Link href={item.url} className="flex items-center" aria-label={`Ir a ${item.title}`} />}
         >
           {item.icon && <item.icon className="h-4 w-4 mr-2 text-primary group-hover:scale-110 transition-transform" />}
           <span className="font-medium">{item.title}</span>
