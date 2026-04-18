@@ -15,13 +15,13 @@ Crear la plataforma web oficial para los universos narrativos del YouTuber Boris
 
 - **Framework:** Next.js (App Router) con Server-Side Rendering (SSR) y optimización SEO.
 - **Lenguaje:** TypeScript estricto, siguiendo principios SOLID.
-- **Estilos:** Tailwind CSS + shadcn/ui. La paleta de colores estará inspirada en las profundidades abisales y los monstruos (azules muy oscuros, negros, acentos bioluminiscentes como el naranja de los ojos de The Bloop y tonos pálidos celestes).
+- **Estilos:** Tailwind CSS + shadcn/ui. La paleta de colores estará inspirada en las profundidades abisales y los monstruos.
 - **Estado:** Zustand (estado global) y TanStack Query (gestión de estado de servidor/peticiones).
 - **Formularios y Tablas:** TanStack Forms y TanStack Table, combinados con Zod para validación.
 - **Base de Datos:** PostgreSQL gestionado vía Prisma ORM.
 - **Autenticación:** NextAuth.js (conectado a Prisma).
 - **Pagos:** PlaceToPay (Ecuador).
-- **Wiki / Contenido:** `next-mdx-remote` combinado con validación manual mediante Zod (o Contentlayer si es compatible con la versión específica de Next.js utilizada, aunque `next-mdx-remote` es más seguro a largo plazo para Next.js App Router).
+- **Wiki / Contenido:** `next-mdx-remote` combinado con validación manual mediante Zod.
 - **DevOps:** Docker y Docker Compose para entornos de desarrollo y producción.
 
 ### Estructura de Directorios Propuesta (Clean Architecture / Feature-based)
@@ -29,6 +29,8 @@ Crear la plataforma web oficial para los universos narrativos del YouTuber Boris
 ```text
 src/
 ├── app/                  # Rutas de Next.js (Pages, Layouts, API Routes)
+│   ├── (marketing)/      # Grupo para Landing Page
+│   └── (wiki)/           # Grupo para Wiki (con Slots avanzados)
 ├── assets/               # Imágenes, fuentes, íconos locales
 ├── components/           # Componentes UI reutilizables (shadcn, etc.)
 ├── content/              # Archivos .mdx para la wiki
@@ -37,68 +39,67 @@ src/
 │   ├── auth/
 │   ├── payments/
 │   └── monsters/
-├── infrastructure/       # Prisma client, adaptadores externos (PlaceToPay)
+├── lib/                  # Prisma client, adaptadores externos (PlaceToPay)
 ├── store/                # Zustand stores
 └── utils/                # Funciones de ayuda
 ```
 
 ## 4. Phased Implementation Plan
 
-### Fase 1: Inicialización y Setup Base
-
+### Fase 1: Inicialización y Setup Base ✅ (COMPLETADO)
 1. Inicializar Next.js con TypeScript, Tailwind CSS, ESLint y Prettier.
 2. Configurar la paleta de colores "Abisal" en `tailwind.config.ts`.
 3. Instalar dependencias clave: shadcn/ui, Lucide React, Zustand, Zod.
-4. Configurar la estructura de carpetas (Clean Architecture).
+4. Configurar la estructura de carpetas y route groups `(marketing)` y `(wiki)`.
 
-### Fase 2: Infraestructura y Base de Datos (Docker)
-
+### Fase 2: Infraestructura y Base de Datos (Docker) ✅ (COMPLETADO)
 1. Crear `docker-compose.yml` (con servicio de PostgreSQL).
-2. Crear `Dockerfile` para Next.js (multi-stage para dev y prod).
-3. Instalar e inicializar Prisma ORM.
+2. Crear `Dockerfile` para Next.js multi-stage para optimización de imagen de producción (`standalone`).
+3. Instalar e inicializar Prisma ORM v7 configurando el adaptador `@prisma/adapter-pg`.
 4. Modelar el esquema de base de datos inicial (Usuarios, Sesiones para NextAuth).
 
-### Fase 3: Landing Page y Diseño UI
-
+### Fase 3: Landing Page y Diseño UI ✅ (COMPLETADO)
 1. Construir el Layout principal (Navbar con el logo, Footer).
 2. Desarrollar la sección "Hero" con la frase “Explora la inmensidad de mis universos y sus historias”.
 3. Construir la sección de "Universos" (Colosos, Capitán de Galeón, Ellos llegaron) utilizando los assets proporcionados.
 4. Implementar sección de Contacto.
 
-### Fase 4: Motor de Wiki (MDX)
-
-1. Configurar `next-mdx-remote` (o equivalente) para leer el directorio `content/`.
-2. Crear un validador de Frontmatter con Zod para asegurar que todos los artículos de los personajes tengan `titulo`, `universo`, `imagen`, etc.
-3. Crear el enrutamiento dinámico `app/wiki/[slug]/page.tsx`.
+### Fase 4: Motor de Wiki (MDX) ✅ (COMPLETADO)
+1. Configurar `next-mdx-remote` para leer el directorio `content/`.
+2. Crear un validador de Frontmatter con Zod v4.
+3. Crear el enrutamiento dinámico `app/(wiki)/wiki/[slug]/page.tsx` y utilizar el store de Zustand para filtrado.
 4. Migrar las descripciones de The Bloop, El Gran Majá, Phillip Forte y DELIRIUM desde el PDF a archivos `.mdx`.
 
-### Fase 5: Autenticación y Pagos
+### Fase 4.1: Estructura Avanzada Wiki (Arquitectura Pro) ⏳ (PENDIENTE)
+1. **Parallel Routes (Slots)**: Crear un slot `@sidebar` en `src/app/(wiki)` para mostrar una navegación lateral persistente que permita saltar entre monstruos sin recargar el layout principal.
+2. **Intercepting Routes**: Implementar la carpeta `src/app/(wiki)/wiki/(.)[slug]` para permitir previsualizar artículos en un modal ("Quick View") desde la lista principal de la wiki, manteniendo la URL contextual.
+3. **Optimización SSG**: Asegurar que todas las rutas de la wiki usen `generateStaticParams` para que el contenido MDX se pre-renderice en tiempo de compilación para SEO y velocidad máxima.
 
-1. Configurar NextAuth.js con el Prisma Adapter.
-2. Integrar Zod y TanStack Forms para formularios de ingreso (si aplica).
-3. Desarrollar un servicio en `src/infrastructure/placetopay` para conectar la pasarela de pagos, preparando las rutas de API necesarias.
+### Fase 5: Autenticación y Pagos ⏳ (PENDIENTE)
+1. Configurar y habilitar proveedores sociales (e.g. Google/GitHub) en la instancia de Auth.js modularizada en `src/core/auth`.
+2. Integrar **Zod y TanStack Forms** para el formulario de donaciones o "Apoyar proyecto" en la landing page.
+3. **Integración PlaceToPay**:
+    - Crear el servicio en `src/lib/placetopay/client.ts` que implemente la autenticación requerida (`login`, `tranKey`, `nonce`, `seed`).
+    - Desarrollar la ruta de API `POST /api/checkout` que llame al endpoint de PlaceToPay `/api/session`.
+    - Desarrollar la ruta de callback `GET /api/checkout/callback` para verificación de estado.
 
-### Fase 6: Pulido, UX y SEO
-
-1. Añadir metadatos de Next.js (Open Graph, Twitter cards) utilizando el logo general.
-2. Afinar animaciones UI para que el sitio se sienta "vivo" (energía de los monstruos).
-3. Revisión exhaustiva de TypeScript (Strict Mode).
+### Fase 6: Pulido, UX y SEO ⏳ (PENDIENTE)
+1. Añadir metadatos de Next.js (Open Graph, Twitter cards, meta titles) a cada ruta (`(marketing)` y `(wiki)`).
+2. Afinar animaciones UI para que el sitio se sienta "vivo" (energía de los monstruos, efectos de hover avanzados).
+3. Configurar manejo de errores y estados de carga (`loading.tsx`, `error.tsx`) de Next.js.
 
 ## 5. Verification & Testing
 
 - Ejecutar el entorno completo mediante Docker Compose `docker-compose up --build`.
-- Validar el renderizado correcto de la landing page con todos los assets (logo, imágenes de los universos).
-- Comprobar que los archivos Markdown de la Wiki se parseen correctamente y muestren el diseño MDX.
-- Probar migraciones de Prisma.
 - Validar accesibilidad y métricas SEO iniciales.
+- Realizar pruebas de flujo de pago en el sandbox de PlaceToPay.
 
 ## 6. Migration & Rollback
 
 - Dado que es un proyecto nuevo, no hay migración de datos previos.
-- Para la infraestructura, las imágenes de Docker estarán etiquetadas por versión. En caso de falla en producción, se puede hacer rollback ejecutando una versión previa de la imagen del contenedor.
+- Para la infraestructura, las imágenes de Docker estarán etiquetadas por versión.
 - Las migraciones de Prisma permitirán hacer `prisma migrate down` en caso de requerir revertir cambios de esquema.
 
 ## 7. Asegurar Documentacion Actualizada
 
-Siempre usar la herramienta mcp context7 para buscar la documetnacion actualizada de cada api, framework o libreria que se vaya a utilizar antes de implementarla en el proyecto.
-
+Siempre usar la herramienta mcp `context7` para buscar la documentación actualizada de cada api, framework o librería que se vaya a utilizar antes de implementarla en el proyecto.
