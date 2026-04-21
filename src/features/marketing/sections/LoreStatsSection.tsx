@@ -13,12 +13,17 @@ export async function LoreStatsSection() {
   ];
 
   return (
-    <section className="py-24 relative overflow-hidden">
+    <section className="py-24 relative overflow-hidden bg-black/10">
       <div className="container mx-auto px-6">
-        <div className="glass-liquid rounded-[4rem] border-white/10 shadow-[0_50px_100px_rgba(0,0,0,0.7)] p-12 md:p-16 relative group border-refractive">
+        <div className="glass-liquid rounded-[4rem] border-white/10 shadow-[0_60px_120px_rgba(0,0,0,0.8)] p-12 md:p-16 relative group border-refractive">
           <div className="glass-reflection opacity-20" />
-          <div className="glass-shine opacity-10" />
+          <div className="glass-shine" />
           
+          <div className="absolute top-10 left-10 flex items-center gap-2 opacity-20 group-hover:opacity-40 transition-opacity">
+            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <span className="text-[8px] font-black uppercase tracking-[0.5em] text-white">Live Data Stream</span>
+          </div>
+
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16 relative z-10 divide-x-0 lg:divide-x divide-white/5">
             {STATS.map((stat, i) => (
               <div 
