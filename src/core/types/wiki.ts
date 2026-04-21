@@ -12,6 +12,8 @@ export const WikiFrontmatterSchema = z.object({
     weight: z.string().optional(), // "20,000 toneladas"
     intelligence: z.number().min(1).max(10).optional(),
     hostility: z.number().min(1).max(10).optional(),
+    power: z.number().min(0).max(100).optional(),
+    defense: z.number().min(0).max(100).optional(),
     biteType: z.string().optional(),
     specialAbilities: z.array(z.string()).optional(),
   }).optional(),

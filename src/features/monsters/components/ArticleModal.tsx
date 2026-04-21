@@ -1,56 +1,77 @@
 'use client';
 
-import * as React from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { 
-  Drawer, 
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerDescription 
-} from "@/components/ui/drawer";
-import { useRouter } from "next/navigation";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import * as React from 'react';
+import { ArticleOverlay } from './article/components/ArticleOverlay';
+import { ArticleToolbar } from './article/components/ArticleToolbar';
+import { ArticleVisualProfile } from './article/components/ArticleVisualProfile';
+import { ArticleIntelligenceContent } from './article/components/ArticleIntelligenceContent';
+import { ArticleBrandingBar } from './article/components/ArticleBrandingBar';
 
 interface ArticleModalProps {
-  children: React.ReactNode;
+  article?: {
+    title: string;
+    image: string;
+    universe: string;
+    description: string;
+    content: string;
+    category: string;
+    stats: {
+      size: string;
+      danger: string;
+      speed: string;
+    };
+  };
   title?: string;
   description?: string;
+  children?: React.ReactNode;
 }
 
-export function ArticleModal({ children, title, description }: ArticleModalProps) {
-  const router = useRouter();
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+export default function ArticleModal({ article, title, description, children }: ArticleModalProps) {
+  const [fileNo, setFileNo] = React.useState<string>("---");
 
-  const onOpenChange = (open: boolean) => {
-    if (!open) {
-      router.back();
-    }
-  };
+  const displayTitle = article?.title || title || "";
+  const displayDescription = article?.description || description || "";
+  const displayUniverse = article?.universe || "Archivo Abisal";
 
-  if (isDesktop) {
-    return (
-      <Dialog open={true} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl w-[95vw] md:w-[90vw] max-h-[95vh] md:max-h-[90vh] p-0 bg-card border-border shadow-2xl overflow-hidden flex flex-col">
-          <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-12">
-            {children}
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+  // Generate stable ID after mount to avoid hydration mismatch and purity errors
+  React.useEffect(() => {
+    setFileNo(Math.random().toString(36).substring(7).toUpperCase());
+  }, []);
 
   return (
-    <Drawer open={true} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[95vh] bg-card border-border flex flex-col">
-        <DrawerHeader className="sr-only">
-          <DrawerTitle>{title || "Artículo"}</DrawerTitle>
-          <DrawerDescription>{description || "Vista rápida del artículo"}</DrawerDescription>
-        </DrawerHeader>
-        <div className="flex-1 overflow-y-auto p-6 pb-12 overflow-x-hidden">
-          {children}
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 lg:p-20 overflow-hidden">
+      <ArticleOverlay />
+
+      {/* Main Glass Structure */}
+      <div className="relative w-full max-w-7xl h-full flex flex-col glass-advanced rounded-[3.5rem] border border-white/20 shadow-[0_50px_100px_rgba(0,0,0,0.8)] animate-in zoom-in-95 duration-500 overflow-hidden bg-black/40">
+        <div className="glass-reflection opacity-40" />
+        
+        <ArticleToolbar />
+
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+          {/* Visual Profile Section - Left */}
+          {article && (
+            <ArticleVisualProfile 
+              image={article.image}
+              title={article.title}
+              universe={article.universe}
+              description={article.description}
+            />
+          )}
+
+          {/* Intelligence Content Section - Right */}
+          <ArticleIntelligenceContent 
+            article={article}
+            displayTitle={displayTitle}
+            displayUniverse={displayUniverse}
+            displayDescription={displayDescription}
+          >
+            {children}
+          </ArticleIntelligenceContent>
         </div>
-      </DrawerContent>
-    </Drawer>
+
+        <ArticleBrandingBar fileNo={fileNo} />
+      </div>
+    </div>
   );
 }

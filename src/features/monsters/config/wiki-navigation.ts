@@ -1,4 +1,15 @@
-import { LucideIcon, Ghost, User, Microscope, Ship, Shield, Skull, Book, BookOpen, Swords } from "lucide-react";
+import { 
+  Skull, 
+  Zap, 
+  Anchor, 
+  ShieldAlert, 
+  Map, 
+  Clock, 
+  Flame,
+  Info,
+  Layers,
+  LucideIcon
+} from "lucide-react";
 
 export interface NavItem {
   title: string;
@@ -7,135 +18,89 @@ export interface NavItem {
   items?: NavItem[];
 }
 
-export interface WikiUniverseNavigation {
+interface UniverseNav {
   title: string;
-  slug: string;
   items: NavItem[];
 }
 
-export const WIKI_NAVIGATION: WikiUniverseNavigation[] = [
+export const WIKI_NAVIGATION: UniverseNav[] = [
   {
     title: "Universo Colosos",
-    slug: "colosos",
     items: [
       {
-        title: "Wiki",
-        url: "/wiki",
-        icon: Book,
+        title: "Bestiario Principal",
+        url: "/wiki/animales-colosos",
+        icon: Skull,
+        items: [
+          { title: "The Bloop", url: "/wiki/the-bloop" },
+          { title: "El Gran Majá", url: "/wiki/el-gran-maja" },
+          { title: "Phillip", url: "/wiki/phillip" },
+          { title: "Bogbo", url: "/wiki/bogbo" },
+        ],
       },
       {
-        title: "Libros",
-        url: "/wiki/libros-colosos",
-        icon: BookOpen,
+        title: "Sectores Críticos",
+        url: "#",
+        icon: Map,
         items: [
-          { title: "El Destello de los Colosos", url: "/wiki/el-destello-de-los-colosos" },
-        ]
+          { title: "Fosa de las Marianas", url: "/wiki/fosa-marianas" },
+          { title: "Isla de la Calavera", url: "/wiki/isla-calavera" },
+        ],
+      },
+      {
+        title: "Alertas Activas",
+        url: "#",
+        icon: ShieldAlert,
+      },
+    ],
+  },
+  {
+    title: "Universo Capitán de Galeón",
+    items: [
+      {
+        title: "Navíos Legendarios",
+        url: "/wiki/barcos",
+        icon: Anchor,
+        items: [
+          { title: "Galeón de Borisao", url: "/wiki/galeon-borisao" },
+          { title: "El Holandés Errante", url: "/wiki/holandes-errante" },
+        ],
       },
       {
         title: "Personajes",
-        url: "/wiki/personajes-colosos",
-        icon: Skull,
-        items: [
-          {
-            title: "Animales",
-            url: "/wiki/animales-colosos",
-            items: [
-              { title: "El Gran Majá", url: "/wiki/el-gran-maja" },
-              { title: "The Bloop", url: "/wiki/the-bloop" },
-              { title: "Vlad Julia", url: "/wiki/vlad-julia" },
-              { title: "Slowdown Criyote", url: "/wiki/slowdown-criyote" },
-              { title: "Luddada", url: "/wiki/luddada" },
-              { title: "Luque", url: "/wiki/luque" },
-              { title: "Pelula", url: "/wiki/pelula" },
-              { title: "Lellymot", url: "/wiki/lellymot" },
-              { title: "Le'Mug", url: "/wiki/le-mug" },
-              { title: "Porcia la gris", url: "/wiki/porcia-la-gris" },
-              { title: "Codateo", url: "/wiki/codateo" },
-              { title: "Caletonia", url: "/wiki/caletonia" },
-              { title: "Bogbo", url: "/wiki/bogbo" },
-              { title: "Lathasus", url: "/wiki/lathasus" },
-              { title: "Solón", url: "/wiki/solon" },
-              { title: "Otto Reinheit", url: "/wiki/otto-reinheit" },
-            ],
-          },
-          {
-            title: "Humanos",
-            url: "/wiki/humanos-colosos",
-            items: [
-              { title: "Phillip Forte", url: "/wiki/phillip-forte" },
-              { title: "Cael Cortés", url: "/wiki/cael-cortes" },
-              { title: "Tabata Reyes", url: "/wiki/tabata-reyes" },
-              { title: "Jorge", url: "/wiki/jorge" },
-              { title: "Dylan", url: "/wiki/dylan" },
-              { title: "Alex", url: "/wiki/alex" },
-              { title: "Renata", url: "/wiki/renata" },
-            ],
-          },
-        ],
+        url: "/wiki/personajes-galeon",
+        icon: Layers,
       },
-      {
-        title: "Especies",
-        url: "/wiki/especies",
-        icon: Microscope,
-        items: [
-          { title: "Supperbial anguilla", url: "/wiki/supperbial-anguilla" },
-          { title: "Labodotype macrostoma", url: "/wiki/labodotype-macrostoma" },
-          { title: "Kaiserosteus loricatus", url: "/wiki/kaiserosteus-loricatus" },
-          { title: "Garddiodon typus", url: "/wiki/garddiodon-typus" },
-          { title: "Phiscanula arcticum", url: "/wiki/phiscanula-arcticum" },
-        ],
-      },
-      {
-        title: "Categorías",
-        url: "/wiki/categorias-monstruos",
-        icon: Ghost,
-        items: [
-          { title: "Colosos", url: "/wiki/categoria-colosos" },
-          { title: "Titanes", url: "/wiki/categoria-titanes" },
-          { title: "Medianos", url: "/wiki/categoria-medianos" },
-        ],
-      },
-      {
-        title: "Vehículos",
-        url: "/wiki/vehiculos",
-        icon: Ship,
-        items: [
-          { title: "Aodos AY01", url: "/wiki/aodos-ay01" },
-          { title: "Breegard", url: "/wiki/breegard" },
-        ],
-      },
-      {
-        title: "Organizaciones",
-        url: "/wiki/organizaciones",
-        icon: Shield,
-        items: [
-          { title: "IPCARO", url: "/wiki/ipcaro" },
-          { title: "DELIRIUM", url: "/wiki/delirium" },
-          { title: "Naciones Rebeldes", url: "/wiki/naciones-rebeldes" },
-        ],
-      },
-      {
-        title: "Versus",
-        url: "/wiki/arena",
-        icon: Swords,
-      }
     ],
   },
   {
-    title: "Capitán de Galeón",
-    slug: "capitan-de-galeon",
+    title: "Universo Ellos Llegaron",
     items: [
-      { title: "Historia", url: "/wiki/capitan-de-galeon", icon: Book },
-      { title: "Navíos", url: "/wiki/navios-galeon", icon: Ship },
-      { title: "Piratas", url: "/wiki/piratas-galeon", icon: Skull },
+      {
+        title: "Cronología de Guerra",
+        url: "/wiki/cronologia",
+        icon: Clock,
+      },
+      {
+        title: "Tecnología Alienígena",
+        url: "/wiki/tecnologia",
+        icon: Zap,
+      },
+      {
+        title: "Protocolos de Supervivencia",
+        url: "/wiki/protocolos",
+        icon: Flame,
+      },
     ],
   },
   {
-    title: "Ellos Llegaron",
-    slug: "ellos-llegaron",
+    title: "Recursos",
     items: [
-      { title: "El Ángel", url: "/wiki/el-angel", icon: Ghost },
-      { title: "Cronología WWII", url: "/wiki/cronologia-wwii", icon: Book },
+      {
+        title: "Acerca de la Wiki",
+        url: "/wiki",
+        icon: Info,
+      },
     ],
   },
 ];

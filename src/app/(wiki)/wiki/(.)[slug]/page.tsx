@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getArticleBySlug } from "@/utils/mdx";
-import { ArticleModal } from "@/features/monsters/components/ArticleModal";
+import ArticleModal from "@/features/monsters/components/ArticleModal";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -48,7 +48,7 @@ export default async function WikiArticleModalPage({ params }: Props) {
           )}
         </header>
 
-        <div className="prose prose-invert prose-blue max-w-none md:prose-lg prose-headings:font-black prose-headings:tracking-tight prose-p:text-muted-foreground prose-p:leading-relaxed prose-img:rounded-2xl prose-img:shadow-lg prose-strong:text-foreground">
+        <div className="prose prose-invert prose-blue max-w-none md:prose-lg prose-headings:font-black prose-headings:tracking-tight prose-headings:text-white prose-p:text-white/90 prose-p:leading-relaxed prose-img:rounded-3xl prose-img:shadow-2xl prose-strong:text-white prose-a:text-primary prose-li:text-white/80">
           <MDXRemote source={content} />
         </div>
       </article>

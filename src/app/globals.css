@@ -50,6 +50,7 @@
 
   --animate-float: float 6s ease-in-out infinite;
   --animate-bounce-slow: bounce-slow 4s ease-in-out infinite;
+  --animate-bubble: bubble 8s infinite linear;
 
   @keyframes float {
     0%, 100% { transform: translateY(0); }
@@ -59,75 +60,34 @@
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
   }
+  @keyframes bubble {
+    0% { transform: translateY(120vh) scale(0.5); opacity: 0; }
+    20% { opacity: 0.8; }
+    80% { opacity: 0.8; }
+    100% { transform: translateY(-20vh) scale(1.5); opacity: 0; }
+  }
 }
 
 :root {
-  --background: oklch(0.18 0.02 260); /* Abyssal Dark Blue */
-  --foreground: oklch(0.95 0.01 260); /* Pale Water Text */
-  --card: oklch(0.20 0.03 260); /* Darker Blue/Grey */
-  --card-foreground: oklch(0.95 0.01 260);
-  --popover: oklch(0.18 0.02 260);
-  --popover-foreground: oklch(0.95 0.01 260);
-  --primary: oklch(0.70 0.20 45); /* Bioluminescent Orange (The Bloop eyes) */
-  --primary-foreground: oklch(0.15 0.02 260);
-  --secondary: oklch(0.85 0.08 230); /* Pale Blue/Teal (The Bloop skin) */
-  --secondary-foreground: oklch(0.15 0.02 260);
-  --muted: oklch(0.25 0.04 260);
-  --muted-foreground: oklch(0.70 0.02 260);
-  --accent: oklch(0.35 0.15 340); /* Menacing Purple/Red (El Gran Maja) */
-  --accent-foreground: oklch(0.98 0.01 260);
-  --destructive: oklch(0.50 0.20 20);
-  --border: oklch(0.25 0.04 260);
-  --input: oklch(0.25 0.04 260);
-  --ring: oklch(0.70 0.20 45);
-  --chart-1: oklch(0.70 0.20 45);
-  --chart-2: oklch(0.85 0.08 230);
-  --chart-3: oklch(0.35 0.15 340);
-  --chart-4: oklch(0.50 0.20 20);
-  --chart-5: oklch(0.80 0.15 180);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.18 0.02 260);
-  --sidebar-foreground: oklch(0.95 0.01 260);
-  --sidebar-primary: oklch(0.70 0.20 45);
-  --sidebar-primary-foreground: oklch(0.15 0.02 260);
-  --sidebar-accent: oklch(0.25 0.04 260);
-  --sidebar-accent-foreground: oklch(0.95 0.01 260);
-  --sidebar-border: oklch(0.25 0.04 260);
-  --sidebar-ring: oklch(0.70 0.20 45);
-}
-
-.dark {
-  --background: oklch(0.15 0.02 260); /* Deep Abyssal Dark Blue */
-  --foreground: oklch(0.95 0.01 260);
-  --card: oklch(0.18 0.03 260);
-  --card-foreground: oklch(0.95 0.01 260);
-  --popover: oklch(0.15 0.02 260);
-  --popover-foreground: oklch(0.95 0.01 260);
+  --background: oklch(0.20 0.12 250);
+  --foreground: oklch(0.98 0.01 240);
+  --card: oklch(0.25 0.12 250);
+  --card-foreground: oklch(0.98 0.01 240);
+  --popover: oklch(0.20 0.10 250);
+  --popover-foreground: oklch(0.98 0.01 240);
   --primary: oklch(0.70 0.20 45);
-  --primary-foreground: oklch(0.10 0.02 260);
-  --secondary: oklch(0.80 0.08 230);
-  --secondary-foreground: oklch(0.10 0.02 260);
-  --muted: oklch(0.22 0.04 260);
-  --muted-foreground: oklch(0.65 0.02 260);
-  --accent: oklch(0.30 0.15 340);
-  --accent-foreground: oklch(0.98 0.01 260);
+  --primary-foreground: oklch(0.98 0.01 240);
+  --secondary: oklch(0.55 0.22 250); 
+  --secondary-foreground: oklch(0.98 0.01 240);
+  --muted: oklch(0.30 0.14 250);
+  --muted-foreground: oklch(0.80 0.05 240);
+  --accent: oklch(0.55 0.25 250);
+  --accent-foreground: oklch(0.98 0.01 240);
   --destructive: oklch(0.45 0.20 20);
-  --border: oklch(0.22 0.04 260);
-  --input: oklch(0.22 0.04 260);
-  --ring: oklch(0.70 0.20 45);
-  --chart-1: oklch(0.70 0.20 45);
-  --chart-2: oklch(0.80 0.08 230);
-  --chart-3: oklch(0.30 0.15 340);
-  --chart-4: oklch(0.45 0.20 20);
-  --chart-5: oklch(0.75 0.15 180);
-  --sidebar: oklch(0.15 0.02 260);
-  --sidebar-foreground: oklch(0.95 0.01 260);
-  --sidebar-primary: oklch(0.70 0.20 45);
-  --sidebar-primary-foreground: oklch(0.10 0.02 260);
-  --sidebar-accent: oklch(0.22 0.04 260);
-  --sidebar-accent-foreground: oklch(0.95 0.01 260);
-  --sidebar-border: oklch(0.22 0.04 260);
-  --sidebar-ring: oklch(0.70 0.20 45);
+  --border: oklch(0.35 0.15 250);
+  --input: oklch(0.35 0.15 250);
+  --ring: oklch(0.55 0.22 250);
+  --radius: 1rem;
 }
 
 @layer base {
@@ -135,9 +95,52 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground bg-[#000a1a] min-h-screen relative font-sans antialiased overflow-x-hidden;
   }
-  html {
-    @apply font-sans;
+  /* Restore the clean Abyssal background (No glass effects) */
+  body::before {
+    content: "";
+    @apply fixed inset-0 z-[-1] bg-[url('/assets/Universo%20Colosos/imagebloop2.png')] bg-cover bg-center opacity-40;
   }
+  body::after {
+    content: "";
+    @apply fixed inset-0 z-[-1] bg-gradient-to-b from-[#003366]/40 via-transparent to-[#000a1a]/90 backdrop-blur-[6px] pointer-events-none;
+  }
+}
+
+@layer utilities {
+  .glass-liquid {
+    @apply relative overflow-hidden transition-all duration-500;
+    background-color: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top-color: rgba(255, 255, 255, 0.2);
+    border-left-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 
+      0 20px 50px rgba(0, 0, 0, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  }
+
+  .glass-advanced {
+    @apply relative overflow-hidden;
+    background: transparent;
+  }
+
+  .glass-advanced::before {
+    content: '';
+    @apply absolute inset-0 rounded-[inherit] -z-10;
+    background: rgba(153, 153, 153, 0.1);
+    backdrop-filter: blur(50px) saturate(200%);
+  }
+
+  .glass-reflection {
+    @apply absolute inset-0 pointer-events-none -z-0 opacity-30;
+    background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+    mix-blend-mode: overlay;
+  }
+
+  .preserve-3d { transform-style: preserve-3d; }
+  .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .rotate-y-180 { transform: rotateY(180deg); }
 }

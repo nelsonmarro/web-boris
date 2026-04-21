@@ -22,6 +22,7 @@ export const metadata: Metadata = {
 import { Providers } from './providers';
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import BubbleTrail from '@/components/ui/bubble-trail';
 
 export default function RootLayout({
   children,
@@ -33,7 +34,8 @@ export default function RootLayout({
       lang="es"
       className={`${inter.variable} ${geistMono.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col relative">
+        <BubbleTrail />
         <TooltipProvider>
           <Providers>{children}</Providers>
         </TooltipProvider>

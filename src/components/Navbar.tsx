@@ -1,33 +1,53 @@
-import Image from "next/image";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+'use client';
+
+import * as React from "react";
+import { cn } from "@/utils/cn";
+import { NavLogo } from "./navbar/components/NavLogo";
+import { NavLinks } from "./navbar/components/NavLinks";
+import { NavActions } from "./navbar/components/NavActions";
 
 interface NavbarProps {
   hideLogoOnDesktop?: boolean;
 }
 
-export default function Navbar({ hideLogoOnDesktop }: NavbarProps) {
+export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
+  const [scrolled, setScrolled] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <nav className={cn(
-      "w-full z-50 transition-all",
-      !hideLogoOnDesktop && "fixed bg-background/80 backdrop-blur-md border-b border-border"
-    )}>
+    <nav
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 py-4",
+        scrolled ? "py-3" : "py-6",
+        hideLogoOnDesktop && "md:px-0 md:py-0 md:relative md:top-auto md:left-auto md:right-auto"
+      )}
+    >
       <div className={cn(
-        "container mx-auto px-4 h-16 flex items-center justify-between",
-        hideLogoOnDesktop && "px-0 w-full"
+        "max-w-7xl mx-auto rounded-full transition-all duration-500 flex items-center justify-between px-8 py-3 glass-liquid",
+        scrolled ? "bg-black/60 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-white/20" : "bg-black/20 border-white/10",
+        hideLogoOnDesktop && "md:bg-transparent md:border-none md:shadow-none md:px-0 md:py-0 md:w-full"
       )}>
-        <Link href="/" className={cn(
-          "flex items-center gap-2 transition-transform hover:scale-105",
-          hideLogoOnDesktop && "md:hidden"
+        {/* Shine and Reflection layers */}
+        {!hideLogoOnDesktop && (
+          <>
+            <div className="glass-shine opacity-10" />
+            <div className="glass-reflection" />
+          </>
+        )}
+
+        <NavLogo hideLogoOnDesktop={hideLogoOnDesktop} />
+
+        <div className={cn(
+          "hidden md:flex items-center gap-2 relative z-10",
+          hideLogoOnDesktop && "md:gap-1"
         )}>
-          <Image src="/assets/logo.png" alt="BorisaoBlois Logo" width={40} height={40} className="rounded-full" />
-          <span className="text-xl font-bold text-foreground">BorisaoBlois</span>
-        </Link>
-        <div className="hidden md:flex items-center gap-6 ml-auto">
-          <Link href="/" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Inicio</Link>
-          <Link href="/wiki" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Wiki</Link>
-          <Link href="/#universos" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Universos</Link>
-          <Link href="/#contacto" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">Contacto</Link>
+          <NavLinks />
+          <NavActions />
         </div>
       </div>
     </nav>
