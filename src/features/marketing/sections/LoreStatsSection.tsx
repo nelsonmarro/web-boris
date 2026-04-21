@@ -1,16 +1,17 @@
-'use client';
-
 import * as React from 'react';
 import { BookOpen, Users, Play, Globe } from 'lucide-react';
+import { getLoreStats } from '../actions/get-lore-stats';
 
-const STATS = [
-  { label: 'Entradas de Lore', value: '450+', icon: BookOpen, color: 'text-primary' },
-  { label: 'Exploradores Activos', value: '1.2M', icon: Users, color: 'text-blue-400' },
-  { label: 'Archivos Visuales', value: '120+', icon: Play, color: 'text-red-500' },
-  { label: 'Universos Paralelos', value: '3', icon: Globe, color: 'text-emerald-400' },
-];
+export async function LoreStatsSection() {
+  const statsData = await getLoreStats();
 
-export function LoreStatsSection() {
+  const STATS = [
+    { label: 'Entradas de Lore', value: `${statsData.loreEntries}+`, icon: BookOpen, color: 'text-primary' },
+    { label: 'Exploradores Activos', value: statsData.explorers, icon: Users, color: 'text-blue-400' },
+    { label: 'Archivos Visuales', value: `${statsData.visualFiles}+`, icon: Play, color: 'text-red-500' },
+    { label: 'Universos Paralelos', value: statsData.universes.toString(), icon: Globe, color: 'text-emerald-400' },
+  ];
+
   return (
     <section className="py-20 relative overflow-hidden">
       <div className="container mx-auto px-6">
@@ -24,7 +25,7 @@ export function LoreStatsSection() {
                  <stat.icon className={`w-7 h-7 ${stat.color} drop-shadow-[0_0_10px_currentColor]`} />
               </div>
               <div className="space-y-1">
-                <h3 className="text-4xl font-black text-white tracking-tighter italic">{stat.value}</h3>
+                <h3 className="text-4xl font-black text-white tracking-tighter italic uppercase">{stat.value}</h3>
                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40">{stat.label}</p>
               </div>
             </div>
