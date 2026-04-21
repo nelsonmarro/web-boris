@@ -14,11 +14,11 @@ interface FlipCardProps {
 
 export function FlipCard({ universe }: { universe: FlipCardProps }) {
   return (
-    <div className="group h-[480px] w-full [perspective:1500px]">
-      <div className="relative w-full h-full transition-all duration-700 preserve-3d group-hover:rotate-y-180">
+    <div className="group h-[480px] w-full [perspective:2000px]">
+      <div className="relative w-full h-full transition-transform duration-700 preserve-3d group-hover:rotate-y-180 will-change-transform rotate-y-0">
         
         {/* FRONT FACE: Portada con Imagen y Título */}
-        <div className="absolute inset-0 w-full h-full backface-hidden rounded-[2.5rem] overflow-hidden border border-white/20 shadow-[0_30px_60px_rgba(0,0,0,0.5)] glass-liquid">
+        <div className="absolute inset-0 top-0 left-0 w-full h-full backface-hidden rounded-[2.5rem] overflow-hidden border border-white/20 shadow-[0_30px_60px_rgba(0,0,0,0.5)] glass-liquid z-20">
           <div className="glass-reflection opacity-40" />
           
           <Image 
@@ -26,6 +26,7 @@ export function FlipCard({ universe }: { universe: FlipCardProps }) {
             alt={universe.title} 
             fill 
             className="object-cover transition-transform duration-1000 group-hover:scale-110"
+            sizes="(max-width: 768px) 100vw, 33vw"
           />
           
           {/* Gradient for contrast */}
@@ -42,7 +43,7 @@ export function FlipCard({ universe }: { universe: FlipCardProps }) {
         </div>
 
         {/* BACK FACE: Detalles y Link */}
-        <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 glass-liquid rounded-[2.5rem] p-10 flex flex-col overflow-hidden border-white/20 shadow-[0_30px_60px_rgba(0,0,0,0.5)]">
+        <div className="absolute inset-0 top-0 left-0 w-full h-full backface-hidden rotate-y-180 glass-liquid rounded-[2.5rem] p-10 flex flex-col overflow-hidden border border-white/20 shadow-[0_30px_60px_rgba(0,0,0,0.5)] z-10">
           <div className="glass-reflection opacity-50" />
           
           {/* Fondo Decorativo de Icono */}
