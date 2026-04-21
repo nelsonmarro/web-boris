@@ -28,8 +28,8 @@ export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
       )}
     >
       <div className={cn(
-        "max-w-7xl mx-auto rounded-full transition-all duration-500 flex items-center justify-between px-8 py-3 glass-liquid",
-        scrolled ? "bg-black/60 shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-white/20" : "bg-black/20 border-white/10",
+        "max-w-7xl mx-auto rounded-full transition-all duration-700 flex items-center justify-between px-8 py-3 glass-liquid border-refractive",
+        scrolled ? "bg-black/60 shadow-[0_20px_50px_rgba(0,0,0,0.6)] border-white/30" : "bg-black/10 border-white/10",
         hideLogoOnDesktop && "md:bg-transparent md:border-none md:shadow-none md:px-0 md:py-0 md:w-full"
       )}>
         {/* Shine and Reflection layers */}

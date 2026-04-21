@@ -43,7 +43,7 @@ export default function ArticleModal({ article, title, description, children }: 
       <ArticleOverlay />
 
       {/* Main Glass Structure */}
-      <div className="relative w-full max-w-7xl h-full flex flex-col glass-advanced rounded-[3.5rem] border border-white/20 shadow-[0_50px_100px_rgba(0,0,0,0.8)] animate-in zoom-in-95 duration-500 overflow-hidden bg-black/40">
+      <div className="relative w-full max-w-7xl h-full flex flex-col glass-advanced rounded-[3.5rem] border border-white/20 shadow-[0_50px_100px_rgba(0,0,0,0.8)] animate-in zoom-in-95 duration-500 overflow-hidden bg-black/40 border-refractive">
         <div className="glass-reflection opacity-40" />
         
         <ArticleToolbar />

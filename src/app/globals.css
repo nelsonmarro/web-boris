@@ -95,52 +95,104 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply text-foreground bg-[#000a1a] min-h-screen relative font-sans antialiased overflow-x-hidden;
+    @apply text-foreground bg-[#00060d] min-h-screen relative font-sans antialiased overflow-x-hidden cursor-default;
   }
-  /* Restore the clean Abyssal background (No glass effects) */
+  
+  /* Deep Abyssal Background */
   body::before {
     content: "";
-    @apply fixed inset-0 z-[-1] bg-[url('/assets/Universo%20Colosos/imagebloop2.png')] bg-cover bg-center opacity-40;
+    @apply fixed inset-0 z-[-2] bg-[url('/assets/Universo%20Colosos/imagebloop2.png')] bg-cover bg-center opacity-30 scale-105;
+    filter: saturate(0.5) contrast(1.2) brightness(0.6) blur(2px);
   }
+
+  /* Liquid Overlay & Caustics */
   body::after {
     content: "";
-    @apply fixed inset-0 z-[-1] bg-gradient-to-b from-[#003366]/40 via-transparent to-[#000a1a]/90 backdrop-blur-[6px] pointer-events-none;
+    @apply fixed inset-0 z-[-1] pointer-events-none;
+    background: 
+      linear-gradient(to b, rgba(0, 10, 26, 0.4), rgba(0, 10, 26, 0.9)),
+      radial-gradient(circle at 50% 50%, rgba(0, 51, 102, 0.2) 0%, transparent 70%);
+    backdrop-filter: blur(8px);
+  }
+
+  /* Submarine Vignette */
+  .abyssal-vignette {
+    @apply fixed inset-0 z-[-1] pointer-events-none;
+    background: radial-gradient(circle, transparent 20%, rgba(0, 0, 0, 0.7) 100%);
   }
 }
 
 @layer utilities {
   .glass-liquid {
-    @apply overflow-hidden transition-all duration-500;
-    background-color: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-top-color: rgba(255, 255, 255, 0.2);
-    border-left-color: rgba(255, 255, 255, 0.15);
+    @apply overflow-hidden transition-all duration-700;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+    backdrop-filter: blur(30px) saturate(160%) contrast(110%);
+    -webkit-backdrop-filter: blur(30px) saturate(160%) contrast(110%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 
-      0 20px 50px rgba(0, 0, 0, 0.4),
-      inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      0 30px 60px -12px rgba(0, 0, 0, 0.5),
+      inset 0 1px 2px rgba(255, 255, 255, 0.1),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.3);
   }
 
-  .glass-advanced {
-    @apply relative overflow-hidden;
-    background: transparent;
+  .glass-liquid:hover {
+    @apply border-white/20;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+    box-shadow: 
+      0 40px 80px -15px rgba(0, 0, 0, 0.7),
+      0 0 30px rgba(255, 115, 0, 0.05),
+      inset 0 1px 3px rgba(255, 255, 255, 0.2);
   }
 
-  .glass-advanced::before {
+  /* Chromatic Aberration Border */
+  .border-refractive {
+    position: relative;
+  }
+  .border-refractive::after {
     content: '';
-    @apply absolute inset-0 rounded-[inherit] -z-10;
-    background: rgba(153, 153, 153, 0.1);
-    backdrop-filter: blur(50px) saturate(200%);
+    @apply absolute -inset-[1px] rounded-[inherit] pointer-events-none -z-10;
+    padding: 1px;
+    background: linear-gradient(45deg, 
+      rgba(255, 0, 0, 0.15), 
+      rgba(0, 255, 0, 0.1), 
+      rgba(0, 0, 255, 0.15)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  /* Floating Caustics Pattern */
+  .caustics-layer {
+    @apply fixed inset-0 z-[-1] opacity-10 pointer-events-none mix-blend-screen;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.005' numOctaves='3' stitchTiles='stitch' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E");
+    animation: caustic-flow 60s linear infinite;
+  }
+
+  @keyframes caustic-flow {
+    from { transform: scale(1) rotate(0deg); }
+    to { transform: scale(1.5) rotate(5deg); }
   }
 
   .glass-reflection {
-    @apply absolute inset-0 pointer-events-none -z-0 opacity-30;
-    background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
-    mix-blend-mode: overlay;
+    @apply absolute inset-0 pointer-events-none z-0 opacity-20;
+    background: linear-gradient(105deg, 
+      rgba(255, 255, 255, 0) 0%, 
+      rgba(255, 255, 255, 0.15) 45%, 
+      rgba(255, 255, 255, 0.2) 50%, 
+      rgba(255, 255, 255, 0.15) 55%, 
+      rgba(255, 255, 255, 0) 100%
+    );
+    transform: translateX(-100%);
+    animation: glass-sweep 10s ease-in-out infinite;
   }
 
-  .preserve-3d { transform-style: preserve-3d; }
-  .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-  .rotate-y-180 { transform: rotateY(180deg); }
+  @keyframes glass-sweep {
+    0% { transform: translateX(-100%) skewX(-25deg); }
+    20%, 100% { transform: translateX(200%) skewX(-25deg); }
+  }
 }
+

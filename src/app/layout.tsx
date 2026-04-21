@@ -35,7 +35,11 @@ export default function RootLayout({
       className={`${inter.variable} ${geistMono.variable} dark h-full antialiased`}
     >
       <body className="min-h-full flex flex-col relative">
+        {/* Submarine Atmospheric Layers */}
+        <div className="caustics-layer" />
+        <div className="abyssal-vignette" />
         <BubbleTrail />
+        
         <TooltipProvider>
           <Providers>{children}</Providers>
         </TooltipProvider>

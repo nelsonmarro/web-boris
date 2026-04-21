@@ -27,7 +27,7 @@ export function HeroVisual({ imageSrc, alt, badgeEmoji, badgeLabel, badgeTitle }
       </div>
 
       {/* Floating Action Card - NORMALIZED SCALE & REFINED ALIGNMENT */}
-      <div className="absolute bottom-[-8%] left-[-8%] glass-liquid p-6 md:p-8 rounded-[2.5rem] shadow-[0_30px_70px_rgba(0,0,0,0.8)] z-30 flex items-center gap-6 border-white/20 backdrop-blur-3xl group transition-all hover:scale-105">
+      <div className="absolute bottom-[-8%] left-[-8%] glass-liquid p-6 md:p-8 rounded-[2.5rem] shadow-[0_30px_70px_rgba(0,0,0,0.8)] z-30 flex items-center gap-6 border-white/20 backdrop-blur-3xl group transition-all hover:scale-105 border-refractive">
         <div className="glass-reflection opacity-40" />
         
         <div className="w-16 h-16 md:w-20 md:h-20 bg-white/5 backdrop-blur-3xl rounded-[1.5rem] flex items-center justify-center border border-white/20 shadow-[0_10px_20px_rgba(0,0,0,0.3)] relative z-10 rotate-[-8deg] group-hover:rotate-0 transition-all duration-500 bg-gradient-to-br from-white/10 to-transparent">

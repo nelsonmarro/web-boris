@@ -52,41 +52,41 @@ export default async function WikiArticlePage({ params }: Props) {
     <div className="min-h-screen flex flex-col bg-transparent">
       <Navbar />
       <main className="flex-1 container mx-auto px-6 py-28 max-w-5xl">
-        <article className="glass-liquid rounded-[3rem] border-white/10 shadow-[0_40px_80px_rgba(0,0,0,0.6)] overflow-hidden relative">
+        <article className="glass-liquid rounded-[3rem] border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.7)] overflow-hidden relative border-refractive">
           <div className="glass-reflection opacity-20" />
           
-          <header className="relative h-[400px] md:h-[500px] w-full overflow-hidden border-b border-white/10">
+          <header className="relative h-[400px] md:h-[550px] w-full overflow-hidden border-b border-white/10 group">
             {frontmatter.image && (
               <Image
                 src={frontmatter.image}
                 alt={frontmatter.title}
                 fill
-                className="object-cover opacity-80"
+                className="object-cover opacity-80 transition-transform duration-[3s] group-hover:scale-110"
                 priority
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#00060d] via-[#00060d]/40 to-transparent" />
             
             <div className="absolute bottom-0 left-0 w-full p-10 md:p-16 space-y-6">
               <div className="flex flex-wrap gap-3">
-                <span className="text-[10px] font-black px-4 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-full uppercase tracking-[0.2em]">
+                <span className="text-[10px] font-black px-4 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-full uppercase tracking-[0.2em] backdrop-blur-md">
                   {frontmatter.universe}
                 </span>
                 {frontmatter.category && (
-                  <span className="text-[10px] font-black px-4 py-1.5 bg-white/5 text-white/60 border border-white/10 rounded-full uppercase tracking-[0.2em]">
+                  <span className="text-[10px] font-black px-4 py-1.5 bg-white/5 text-white/60 border border-white/10 rounded-full uppercase tracking-[0.2em] backdrop-blur-md">
                     {frontmatter.category}
                   </span>
                 )}
               </div>
-              <h1 className="text-5xl md:text-8xl font-black text-white italic tracking-tighter leading-none drop-shadow-2xl uppercase">
+              <h1 className="text-5xl md:text-8xl font-black text-white italic tracking-tighter leading-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] uppercase">
                 {frontmatter.title}
               </h1>
             </div>
           </header>
 
-          <div className="p-10 md:p-16 relative z-10">
+          <div className="p-10 md:p-16 relative z-10 bg-gradient-to-b from-white/[0.02] to-transparent">
              {frontmatter.description && (
-                <p className="text-xl md:text-2xl text-white/50 font-bold mb-12 leading-relaxed italic border-l-4 border-primary/30 pl-8">
+                <p className="text-xl md:text-2xl text-white/50 font-bold mb-16 leading-relaxed italic border-l-4 border-primary/30 pl-8 drop-shadow-md">
                    &quot;{frontmatter.description}&quot;
                 </p>
              )}
@@ -94,11 +94,16 @@ export default async function WikiArticlePage({ params }: Props) {
              <MdxRenderer content={content} />
           </div>
 
-          <footer className="px-10 md:px-16 py-8 border-t border-white/5 bg-black/20 flex items-center justify-between">
-             <div className="text-[9px] font-black uppercase tracking-[0.4em] text-white/20">
-                Archivo desclasificado // Iniciativa Abisal
+          <footer className="px-10 md:px-16 py-10 border-t border-white/5 bg-black/40 flex flex-col md:flex-row items-center justify-between gap-6">
+             <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                   <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                </div>
+                <div className="text-[9px] font-black uppercase tracking-[0.4em] text-white/20">
+                   Archivo desclasificado // Iniciativa Abisal
+                </div>
              </div>
-             <div className="text-[9px] font-black uppercase tracking-[0.4em] text-primary italic">
+             <div className="text-[10px] font-black uppercase tracking-[0.5em] text-primary italic drop-shadow-[0_0_10px_rgba(255,115,0,0.3)]">
                 Borisao Archives
              </div>
           </footer>

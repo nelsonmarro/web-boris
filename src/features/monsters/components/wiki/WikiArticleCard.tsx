@@ -18,7 +18,7 @@ export function WikiArticleCard({ slug, frontmatter }: ArticleCardProps) {
   return (
     <Link 
       href={`/wiki/${slug}`}
-      className="group glass-liquid rounded-[2.5rem] border-white/5 p-8 flex flex-col gap-6 transition-all hover:scale-[1.02] hover:border-white/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
+      className="group glass-liquid rounded-[2.5rem] border-white/5 p-8 flex flex-col gap-6 transition-all hover:scale-[1.02] hover:border-white/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] border-refractive"
     >
       <div className="glass-reflection opacity-20" />
       
