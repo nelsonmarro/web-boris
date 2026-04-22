@@ -55,14 +55,16 @@ export function FeaturedVideosSection() {
               key={video.id} 
               className={`group space-y-6 ${video.priority ? 'md:col-span-2' : 'md:col-span-1'}`}
             >
-              <div className="relative aspect-video rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] glass-liquid border-refractive">
+              <div className="relative aspect-video rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] glass-liquid border-refractive flex items-center justify-center">
                  <div className="glass-reflection opacity-30" />
                  
-                 <YouTubeEmbed 
-                    videoid={video.id} 
-                    params="controls=1&rel=0"
-                    style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; object-fit: cover;"
-                 />
+                 <div className="absolute inset-0 w-full h-full">
+                    <YouTubeEmbed 
+                        videoid={video.id} 
+                        params="controls=1&rel=0"
+                        style="width: 100% !important; height: 100% !important; position: absolute; inset: 0;"
+                    />
+                 </div>
 
                  {/* Hover Overlay - Only shows before interaction */}
                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none group-hover:bg-black/10 transition-colors z-0">
