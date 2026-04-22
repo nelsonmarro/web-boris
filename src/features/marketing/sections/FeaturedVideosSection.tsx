@@ -49,19 +49,18 @@ export function FeaturedVideosSection() {
            </Link>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
           {VIDEOS.map((video) => (
             <div 
               key={video.id} 
-              className={`group space-y-6 ${video.priority ? 'lg:col-span-1' : ''}`}
+              className={`group space-y-6 ${video.priority ? 'md:col-span-2' : 'md:col-span-1'}`}
             >
-              <div className="relative aspect-video rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] glass-liquid">
+              <div className="relative aspect-video rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] glass-liquid border-refractive">
                  <div className="glass-reflection opacity-30" />
                  
                  <YouTubeEmbed 
                     videoid={video.id} 
                     params="controls=1&rel=0"
-                    // style="width: 100%; height: 100%;"
                  />
 
                  {/* Hover Overlay - Only shows before interaction */}
@@ -74,7 +73,7 @@ export function FeaturedVideosSection() {
               
               <div className="space-y-2 px-4">
                  <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">{video.category}</span>
-                 <h3 className={`font-black text-white italic uppercase tracking-tighter leading-tight group-hover:text-primary transition-colors ${video.priority ? 'text-2xl md:text-3xl' : 'text-xl md:text-2xl'}`}>
+                 <h3 className={`font-black text-white italic uppercase tracking-tighter leading-tight group-hover:text-primary transition-colors ${video.priority ? 'text-2xl md:text-4xl' : 'text-xl md:text-2xl'}`}>
                     {video.title}
                  </h3>
               </div>
