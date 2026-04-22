@@ -61,6 +61,7 @@ export function FeaturedVideosSection() {
                  <YouTubeEmbed 
                     videoid={video.id} 
                     params="controls=1&rel=0"
+                    style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; object-fit: cover;"
                  />
 
                  {/* Hover Overlay - Only shows before interaction */}
