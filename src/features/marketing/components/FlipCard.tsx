@@ -18,7 +18,10 @@ export function FlipCard({ universe }: { universe: FlipCardProps }) {
       <div className="relative w-full h-full transition-transform duration-700 preserve-3d group-hover:rotate-y-180 will-change-transform rotate-y-0">
         
         {/* FRONT FACE: Portada con Imagen y Título */}
-        <div className="absolute inset-0 top-0 left-0 w-full h-full backface-hidden rounded-[2.5rem] overflow-hidden border border-white/20 shadow-[0_30px_60px_rgba(0,0,0,0.5)] glass-liquid z-20">
+        <div 
+          className="absolute inset-0 top-0 left-0 w-full h-full backface-hidden rounded-[2.5rem] overflow-hidden border border-white/20 shadow-[0_30px_60px_rgba(0,0,0,0.5)] glass-liquid"
+          style={{ transform: 'translateZ(1px)' }}
+        >
           <div className="glass-reflection opacity-40" />
           
           <Image 
@@ -43,7 +46,10 @@ export function FlipCard({ universe }: { universe: FlipCardProps }) {
         </div>
 
         {/* BACK FACE: Detalles y Link */}
-        <div className="absolute inset-0 top-0 left-0 w-full h-full backface-hidden rotate-y-180 glass-liquid rounded-[2.5rem] p-10 flex flex-col overflow-hidden border border-white/20 shadow-[0_30px_60px_rgba(0,0,0,0.5)] z-10">
+        <div 
+          className="absolute inset-0 top-0 left-0 w-full h-full backface-hidden glass-liquid rounded-[2.5rem] p-10 flex flex-col overflow-hidden border border-white/20 shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
+          style={{ transform: 'rotateY(180deg) translateZ(1px)' }}
+        >
           <div className="glass-reflection opacity-50" />
           
           {/* Fondo Decorativo de Icono */}

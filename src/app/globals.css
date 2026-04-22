@@ -198,5 +198,13 @@
     0% { transform: translateX(-100%) skewX(-25deg); }
     20%, 100% { transform: translateX(200%) skewX(-25deg); }
   }
+
+  /* 3D Transform Utilities */
+  .preserve-3d { transform-style: preserve-3d; }
+  .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .rotate-y-180 { transform: rotateY(180deg); }
+  .rotate-y-0 { transform: rotateY(0deg); }
+  .translate-z-1 { transform: translateZ(1px); }
+  .translate-z--1 { transform: translateZ(-1px); }
 }
 
