@@ -34,37 +34,39 @@ export default function BubbleTrail() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    const handleMouseMove = (e: MouseEvent) => {
-      mouse.current.x = e.clientX;
-      mouse.current.y = e.clientY;
-      isMoving.current = true;
-
-      // Create a new bubble on mouse move (limit creation rate by adding random chance or distance check)
-      if (Math.random() > 0.3) {
-        const size = Math.random() * 8 + 4; // 4px to 12px
+    const handleClick = (e: MouseEvent) => {
+      const burstCount = Math.floor(Math.random() * 5) + 5; // 5 to 10 bubbles per click
+      
+      for (let i = 0; i < burstCount; i++) {
+        const size = Math.random() * 10 + 4; // 4px to 14px
         // Frutiger Aero / Crystal blueish-white colors
         const colors = [
-          'rgba(255, 255, 255, 0.8)',
-          'rgba(180, 230, 255, 0.6)',
-          'rgba(200, 240, 255, 0.7)',
+          'rgba(255, 255, 255, 0.9)',
+          'rgba(180, 230, 255, 0.7)',
+          'rgba(200, 240, 255, 0.8)',
+          'rgba(100, 200, 255, 0.6)',
         ];
         
+        // Spread bubbles out in a circle
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 3 + 1;
+
         bubbles.current.push({
-          x: mouse.current.x + (Math.random() * 20 - 10),
-          y: mouse.current.y + (Math.random() * 20 - 10),
+          x: e.clientX + (Math.random() * 10 - 5),
+          y: e.clientY + (Math.random() * 10 - 5),
           size,
           color: colors[Math.floor(Math.random() * colors.length)],
           velocity: {
-            x: (Math.random() - 0.5) * 1.5,
-            y: (Math.random() - 0.5) * 1.5 - 1 // slight upward drift like bubbles
+            x: Math.cos(angle) * speed * 0.5,
+            y: Math.sin(angle) * speed * 0.5 - (Math.random() * 2 + 1) // Force mostly upward trajectory
           },
           life: 0,
-          maxLife: Math.random() * 30 + 30 // 30 to 60 frames
+          maxLife: Math.random() * 40 + 40 // 40 to 80 frames
         });
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousedown', handleClick);
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -110,7 +112,7 @@ export default function BubbleTrail() {
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousedown', handleClick);
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
