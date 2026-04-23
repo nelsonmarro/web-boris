@@ -1,6 +1,6 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
@@ -53,37 +53,57 @@
   --animate-bubble: bubble 8s infinite linear;
 
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
   }
   @keyframes bounce-slow {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
   @keyframes bubble {
-    0% { transform: translateY(120vh) scale(0.5); opacity: 0; }
-    20% { opacity: 0.8; }
-    80% { opacity: 0.8; }
-    100% { transform: translateY(-20vh) scale(1.5); opacity: 0; }
+    0% {
+      transform: translateY(120vh) scale(0.5);
+      opacity: 0;
+    }
+    20% {
+      opacity: 0.8;
+    }
+    80% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(-20vh) scale(1.5);
+      opacity: 0;
+    }
   }
 }
 
 :root {
-  --background: oklch(0.20 0.12 250);
+  --background: oklch(0.2 0.12 250);
   --foreground: oklch(0.98 0.01 240);
   --card: oklch(0.25 0.12 250);
   --card-foreground: oklch(0.98 0.01 240);
-  --popover: oklch(0.20 0.10 250);
+  --popover: oklch(0.2 0.1 250);
   --popover-foreground: oklch(0.98 0.01 240);
-  --primary: oklch(0.70 0.20 45);
+  --primary: oklch(0.7 0.2 45);
   --primary-foreground: oklch(0.98 0.01 240);
-  --secondary: oklch(0.55 0.22 250); 
+  --secondary: oklch(0.55 0.22 250);
   --secondary-foreground: oklch(0.98 0.01 240);
-  --muted: oklch(0.30 0.14 250);
-  --muted-foreground: oklch(0.80 0.05 240);
+  --muted: oklch(0.3 0.14 250);
+  --muted-foreground: oklch(0.8 0.05 240);
   --accent: oklch(0.55 0.25 250);
   --accent-foreground: oklch(0.98 0.01 240);
-  --destructive: oklch(0.45 0.20 20);
+  --destructive: oklch(0.45 0.2 20);
   --border: oklch(0.35 0.15 250);
   --input: oklch(0.35 0.15 250);
   --ring: oklch(0.55 0.22 250);
@@ -95,56 +115,78 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply text-foreground bg-[#00060d] min-h-screen relative font-sans antialiased overflow-x-hidden cursor-default;
+    @apply text-foreground bg-[#00122e] min-h-screen relative font-sans antialiased overflow-x-hidden cursor-default;
   }
-  
+
   /* Deep Abyssal Background */
   body::before {
-    content: "";
-    @apply fixed inset-0 z-[-2] bg-[url('/assets/Universo%20Colosos/imagebloop2.png')] bg-cover bg-center opacity-30 scale-105;
-    filter: saturate(0.5) contrast(1.2) brightness(0.6) blur(2px);
+    content: '';
+    @apply fixed inset-0 z-[-2] bg-[url('/assets/Universo%20Colosos/imagebloop2.png')] bg-cover bg-center opacity-40 scale-105;
+    filter: saturate(0.6) contrast(1.1) brightness(0.8) blur(2px);
   }
 
   /* Liquid Overlay & Caustics */
   body::after {
-    content: "";
+    content: '';
     @apply fixed inset-0 z-[-1] pointer-events-none;
-    background: 
-      linear-gradient(to b, rgba(0, 10, 26, 0.4), rgba(0, 10, 26, 0.9)),
-      radial-gradient(circle at 50% 50%, rgba(0, 51, 102, 0.2) 0%, transparent 70%);
+    background:
+      linear-gradient(to bottom, rgba(0, 32, 63, 0.4), rgba(0, 22, 45, 0.85)),
+      radial-gradient(
+        circle at 50% 50%,
+        rgba(0, 100, 160, 0.2) 0%,
+        transparent 70%
+      );
     backdrop-filter: blur(8px);
   }
 
   /* Submarine Vignette */
   .abyssal-vignette {
     @apply fixed inset-0 z-[-1] pointer-events-none;
-    background: radial-gradient(circle, transparent 20%, rgba(0, 0, 0, 0.7) 100%);
+    background: radial-gradient(
+      circle,
+      transparent 20%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
   }
 }
 
 @layer utilities {
   .glass-liquid {
     @apply overflow-hidden transition-all duration-700;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    );
     backdrop-filter: blur(40px) saturate(160%) contrast(110%);
     -webkit-backdrop-filter: blur(40px) saturate(160%) contrast(110%);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-top: 1px solid rgba(255, 255, 255, 0.25);
     border-left: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 
+    box-shadow:
       0 30px 70px -10px rgba(0, 0, 0, 0.6),
       inset 0 1px 2px rgba(255, 255, 255, 0.15);
   }
 
   .glass-shine {
     @apply absolute inset-0 pointer-events-none z-0 opacity-10;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, transparent 40%, transparent 60%, rgba(255, 255, 255, 0.1) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      transparent 40%,
+      transparent 60%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
   }
 
   .glass-liquid:hover {
     @apply border-white/20;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-    box-shadow: 
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    box-shadow:
       0 40px 80px -15px rgba(0, 0, 0, 0.7),
       0 0 30px rgba(255, 115, 0, 0.05),
       inset 0 1px 3px rgba(255, 255, 255, 0.2);
@@ -158,13 +200,18 @@
     content: '';
     @apply absolute -inset-[1px] rounded-[inherit] pointer-events-none -z-10;
     padding: 1px;
-    background: linear-gradient(45deg, 
-      rgba(255, 0, 0, 0.15), 
-      rgba(0, 255, 0, 0.1), 
+    background: linear-gradient(
+      45deg,
+      rgba(255, 0, 0, 0.15),
+      rgba(0, 255, 0, 0.1),
       rgba(0, 0, 255, 0.15)
     );
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
   }
@@ -177,17 +224,22 @@
   }
 
   @keyframes caustic-flow {
-    from { transform: scale(1) rotate(0deg); }
-    to { transform: scale(1.5) rotate(5deg); }
+    from {
+      transform: scale(1) rotate(0deg);
+    }
+    to {
+      transform: scale(1.5) rotate(5deg);
+    }
   }
 
   .glass-reflection {
     @apply absolute inset-0 pointer-events-none z-0 opacity-20;
-    background: linear-gradient(105deg, 
-      rgba(255, 255, 255, 0) 0%, 
-      rgba(255, 255, 255, 0.15) 45%, 
-      rgba(255, 255, 255, 0.2) 50%, 
-      rgba(255, 255, 255, 0.15) 55%, 
+    background: linear-gradient(
+      105deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.15) 45%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.15) 55%,
       rgba(255, 255, 255, 0) 100%
     );
     transform: translateX(-100%);
@@ -195,16 +247,43 @@
   }
 
   @keyframes glass-sweep {
-    0% { transform: translateX(-100%) skewX(-25deg); }
-    20%, 100% { transform: translateX(200%) skewX(-25deg); }
+    0% {
+      transform: translateX(-100%) skewX(-25deg);
+    }
+    20%,
+    100% {
+      transform: translateX(200%) skewX(-25deg);
+    }
   }
 
   /* 3D Transform Utilities */
-  .preserve-3d { transform-style: preserve-3d; }
-  .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-  .rotate-y-180 { transform: rotateY(180deg); }
-  .rotate-y-0 { transform: rotateY(0deg); }
-  .translate-z-1 { transform: translateZ(1px); }
-  .translate-z--1 { transform: translateZ(-1px); }
-}
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+  .rotate-y-0 {
+    transform: rotateY(0deg);
+  }
+  .translate-z-1 {
+    transform: translateZ(1px);
+  }
+  .translate-z--1 {
+    transform: translateZ(-1px);
+  }
 
+  /* YouTube Embed Fixes */
+  lite-youtube {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    position: absolute !important;
+    inset: 0 !important;
+  }
+}
