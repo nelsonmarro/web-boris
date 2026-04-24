@@ -121,8 +121,8 @@
   /* Deep Abyssal Background */
   body::before {
     content: '';
-    @apply fixed inset-0 z-[-2] bg-[url('/assets/Universo%20Colosos/imagebloop2.png')] bg-cover bg-center opacity-50 scale-105;
-    filter: saturate(0.8) contrast(1.1) brightness(1.0) blur(2px);
+    @apply fixed inset-0 z-[-2] bg-[url('/assets/Universo%20Colosos/Stock%20aleatorio/Toma44.1Battle_Composted0060.png')] bg-cover bg-center opacity-50 scale-105;
+    filter: saturate(0.8) contrast(1.1) brightness(1) blur(1px);
   }
 
   /* Liquid Overlay & Caustics */
