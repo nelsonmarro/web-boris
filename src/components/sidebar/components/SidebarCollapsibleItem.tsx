@@ -23,7 +23,7 @@ export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
       <SidebarMenuItem>
         <SidebarMenuButton 
           tooltip={item.title} 
-          className="h-8 hover:bg-white/5 transition-all group rounded-md mb-0 flex items-center px-4"
+          className="min-h-[36px] h-auto py-2 hover:bg-white/5 transition-all group rounded-md mb-0.5 flex items-center px-4"
           asChild
         >
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -37,18 +37,18 @@ export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
   }
 
   return (
-    <Collapsible render={<SidebarMenuItem />} className="group/collapsible">
+    <Collapsible render={<SidebarMenuItem />} className="group/collapsible mb-0.5">
       <CollapsibleTrigger render={
         <SidebarMenuButton 
-          className="h-8 hover:bg-white/5 transition-all rounded-md px-4 flex items-center group mb-0"
+          className="min-h-[36px] h-auto py-2 hover:bg-white/5 transition-all rounded-md px-4 flex items-center group mb-0"
         />
       }>
         {item.icon && <item.icon className="h-4 w-4 mr-3 text-primary shrink-0" />}
         <span className="font-medium text-[13.5px] text-white/80 group-hover:text-white">{item.title}</span>
-        <ChevronRight className="ml-auto h-3 w-3 transition-transform duration-300 text-white/20 group-data-[state=open]/collapsible:rotate-90 group-data-[state=open]/collapsible:text-primary" />
+        <ChevronRight className="ml-auto h-3 w-3 transition-transform duration-300 text-white/20 group-data-[state=open]/collapsible:rotate-90 group-data-[state=open]/collapsible:text-primary shrink-0" />
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <SidebarMenuSub className="ml-0 pl-0 border-none translate-x-0 space-y-0">
+        <SidebarMenuSub className="ml-0 pl-0 border-none translate-x-0 space-y-0.5 mt-0.5 mb-1">
           {item.items.map((subItem) => (
             <SidebarSubItem key={subItem.title} item={subItem} />
           ))}
@@ -63,7 +63,7 @@ function SidebarSubItem({ item }: { item: NavItem }) {
     return (
       <SidebarMenuSubItem>
         <SidebarMenuSubButton 
-          className="hover:text-primary transition-all h-8 rounded-md pl-11 flex items-center bg-transparent border-none translate-x-0" 
+          className="hover:text-primary transition-all min-h-[32px] h-auto py-1.5 rounded-md pl-11 flex items-center bg-transparent border-none translate-x-0" 
           asChild
         >
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -79,18 +79,18 @@ function SidebarSubItem({ item }: { item: NavItem }) {
     <Collapsible render={<SidebarMenuSubItem />} className="group/sub-collapsible">
       <CollapsibleTrigger render={
         <SidebarMenuSubButton 
-          className="hover:text-primary transition-all h-8 rounded-md pl-11 flex items-center bg-transparent border-none translate-x-0"
+          className="hover:text-primary transition-all min-h-[32px] h-auto py-1.5 rounded-md pl-11 flex items-center bg-transparent border-none translate-x-0"
         />
       }>
         <span className="text-[13px] font-medium text-white/70 group-hover:text-white">{item.title}</span>
-        <ChevronRight className="ml-auto h-3 w-3 transition-transform duration-300 text-white/10 group-data-[state=open]/sub-collapsible:rotate-90" />
+        <ChevronRight className="ml-auto h-3 w-3 transition-transform duration-300 text-white/10 group-data-[state=open]/sub-collapsible:rotate-90 shrink-0" />
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <SidebarMenuSub className="ml-0 pl-0 border-none translate-x-0 space-y-0">
+        <SidebarMenuSub className="ml-0 pl-0 border-none translate-x-0 space-y-0.5 mt-0.5 mb-0.5">
           {item.items.map((deepItem) => (
             <SidebarMenuSubItem key={deepItem.title}>
               <SidebarMenuSubButton 
-                className="hover:text-primary transition-all h-7 rounded-sm pl-16 flex items-center bg-transparent border-none translate-x-0" 
+                className="hover:text-primary transition-all min-h-[28px] h-auto py-1 rounded-sm pl-16 flex items-center bg-transparent border-none translate-x-0" 
                 asChild
               >
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
