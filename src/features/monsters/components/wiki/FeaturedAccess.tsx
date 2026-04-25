@@ -12,7 +12,7 @@ export function FeaturedAccessCard({ title, slug, icon: Icon, color, universe }:
   return (
     <Link
       href={`/wiki/${slug}`}
-      className="group relative flex flex-col justify-end overflow-hidden rounded-[2.5rem] glass-liquid border-white/5 p-8 h-64 transition-all duration-500 hover:scale-[1.03] hover:border-primary/30 border-refractive"
+      className="group relative flex flex-col justify-end overflow-hidden rounded-[2.5rem] glass-liquid bg-black/30 border-white/5 p-8 h-64 transition-all duration-500 hover:scale-[1.03] hover:border-primary/30 border-refractive"
     >
       <div className="glass-reflection opacity-20" />
 
@@ -23,7 +23,7 @@ export function FeaturedAccessCard({ title, slug, icon: Icon, color, universe }:
       </div>
 
       <div className="absolute top-8 left-8 flex flex-col">
-         <span className="text-[7px] font-bold uppercase tracking-wider text-white/20 leading-none mb-1">Nivel de Acceso</span>
+         <span className="text-[7px] font-bold uppercase tracking-wider text-white/40 leading-none mb-1">Nivel de Acceso</span>
          <span className="text-[8px] font-bold uppercase tracking-[0.1em] text-primary italic">Confirmado</span>
       </div>
 
