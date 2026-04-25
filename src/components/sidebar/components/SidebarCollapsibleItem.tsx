@@ -37,6 +37,7 @@ export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
     <Collapsible render={<SidebarMenuItem />} className="group/collapsible mb-0.5">
       <CollapsibleTrigger render={
         <SidebarMenuButton 
+          tooltip={item.title}
           className="min-h-[36px] h-auto py-2 hover:bg-white/5 transition-all rounded-md px-4 flex items-center group mb-0"
         />
       }>
