@@ -8,7 +8,7 @@ import { SidebarActionGroup } from "./sidebar/components/SidebarActionGroup";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props} className="border-r border-white/5 bg-[#00060d] shadow-2xl">
+    <Sidebar collapsible="icon" {...props} className="border-r border-white/5 bg-[#001226] shadow-2xl">
       <div className="relative z-10 flex flex-col h-full">
         <SidebarBranding />
         <SidebarNavigation />
