@@ -28,7 +28,6 @@ export function FeaturedAccessCard({ title, slug, icon: Icon, color, universe }:
       </div>
 
       <div className="relative z-10 space-y-1">
-...
         <span className="text-[10px] font-bold text-primary uppercase tracking-wider">
           {universe}
         </span>

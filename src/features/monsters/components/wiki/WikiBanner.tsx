@@ -19,7 +19,7 @@ export function WikiBanner({ label, title, gradientTitle, description }: WikiBan
 
       {/* Glow Effects */}
       <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] mix-blend-screen pointer-events-none opacity-50 group-hover:opacity-70 transition-opacity duration-1000" />
-...
+      
       <div className="relative z-10 max-w-4xl space-y-8">
         <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 text-white/80 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md">
           <Database className="h-3.5 w-3.5 text-primary" />
