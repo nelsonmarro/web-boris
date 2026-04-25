@@ -25,9 +25,9 @@ export async function sendContactEmail(formData: FormData) {
     const validatedData = ContactSchema.safeParse(rawData);
 
     if (!validatedData.success) {
-      return { 
-        error: 'Por favor, revisa los datos ingresados e inténtalo de nuevo.', 
-        details: validatedData.error.flatten().fieldErrors 
+      return {
+        error: 'Por favor, revisa los datos ingresados e cuinténtalo de nuevo.',
+        details: validatedData.error.flatten().fieldErrors,
       };
     }
 
@@ -50,13 +50,17 @@ export async function sendContactEmail(formData: FormData) {
 
     if (error) {
       console.error('Resend API Error:', error);
-      return { error: 'Ocurrió un error al enviar el correo. Por favor, intenta de nuevo más tarde.' };
+      return {
+        error:
+          'Ocurrió un error al enviar el correo. Por favor, intenta de nuevo más tarde.',
+      };
     }
 
     return { success: true };
-
   } catch (error) {
     console.error('Server Action Error:', error);
-    return { error: 'Error interno del servidor. Por favor, intenta más tarde.' };
+    return {
+      error: 'Error interno del servidor. Por favor, intenta más tarde.',
+    };
   }
 }

@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import { getArticleBySlug, getAllArticles } from "@/utils/mdx";
-import { MdxRenderer } from "@/features/monsters/components/wiki/mdx/MdxRenderer";
+import { WikiArticleHeader } from "@/features/monsters/components/wiki/article/WikiArticleHeader";
+import { WikiArticleContent } from "@/features/monsters/components/wiki/article/WikiArticleContent";
+import { WikiArticleFooter } from "@/features/monsters/components/wiki/article/WikiArticleFooter";
 import type { Metadata } from "next";
 
 interface Props {
@@ -51,58 +52,19 @@ export default async function WikiArticlePage({ params }: Props) {
       <article className="glass-liquid rounded-[3rem] border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.7)] overflow-hidden relative border-refractive">
         <div className="glass-reflection opacity-20" />
         
-        <header className="relative h-[400px] md:h-[550px] w-full overflow-hidden border-b border-white/10 group">
-          {frontmatter.image && (
-            <Image
-              src={frontmatter.image}
-              alt={frontmatter.title}
-              fill
-              className="object-cover opacity-80 transition-transform duration-[3s] group-hover:scale-110"
-              priority
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#00060d] via-[#00060d]/40 to-transparent" />
-          
-          <div className="absolute bottom-0 left-0 w-full p-8 md:p-16 space-y-6">
-            <div className="flex flex-wrap gap-3">
-              <span className="text-[9px] md:text-[10px] font-bold px-4 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-full uppercase tracking-wider backdrop-blur-md">
-                {frontmatter.universe}
-              </span>
-              {frontmatter.category && (
-                <span className="text-[9px] md:text-[10px] font-bold px-4 py-1.5 bg-white/5 text-white/60 border border-white/10 rounded-full uppercase tracking-wider backdrop-blur-md">
-                  {frontmatter.category}
-                </span>
-              )}
-            </div>
-            <h1 className="text-4xl md:text-8xl font-bold text-white italic tracking-tight leading-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] uppercase">
-              {frontmatter.title}
-            </h1>
-          </div>
-        </header>
+        <WikiArticleHeader 
+          title={frontmatter.title} 
+          universe={frontmatter.universe} 
+          category={frontmatter.category} 
+          image={frontmatter.image} 
+        />
 
-        <div className="p-8 md:p-16 relative z-10 bg-gradient-to-b from-white/[0.02] to-transparent">
-           {frontmatter.description && (
-              <p className="text-lg md:text-2xl text-white/50 font-bold mb-12 md:mb-16 leading-relaxed italic border-l-4 border-primary/30 pl-6 md:pl-8 drop-shadow-md">
-                 &quot;{frontmatter.description}&quot;
-              </p>
-           )}
-           
-           <MdxRenderer content={content} />
-        </div>
+        <WikiArticleContent 
+          description={frontmatter.description} 
+          content={content} 
+        />
 
-        <footer className="px-8 md:px-16 py-10 border-t border-white/5 bg-black/40 flex flex-col md:flex-row items-center justify-between gap-6">
-           <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              </div>
-              <div className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider text-white/20">
-                 Archivo desclasificado // Iniciativa Abisal
-              </div>
-           </div>
-           <div className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-primary italic drop-shadow-[0_0_10px_rgba(255,115,0,0.3)]">
-              Borisao Archives
-           </div>
-        </footer>
+        <WikiArticleFooter />
       </article>
     </div>
   );
