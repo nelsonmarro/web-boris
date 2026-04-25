@@ -9,8 +9,8 @@ export function SidebarNavigation() {
   return (
     <SidebarContent className="relative z-10 py-4 scrollbar-none">
       {WIKI_NAVIGATION.map((universe) => (
-        <SidebarGroup key={universe.title} className="mb-4">
-          <SidebarGroupLabel className="text-primary font-black tracking-[0.2em] text-[10px] uppercase mb-2 px-6 group-data-[collapsible=icon]:hidden">
+        <SidebarGroup key={universe.title} className="mb-2">
+          <SidebarGroupLabel className="text-primary font-bold tracking-[0.05em] text-[11px] uppercase mb-2 px-6 group-data-[collapsible=icon]:hidden">
             {universe.title}
           </SidebarGroupLabel>
           <SidebarMenu className="px-2">

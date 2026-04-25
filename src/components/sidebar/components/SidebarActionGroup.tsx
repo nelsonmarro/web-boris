@@ -7,17 +7,17 @@ import { SidebarFooter as BaseFooter, SidebarMenu, SidebarMenuItem, SidebarMenuB
 
 export function SidebarActionGroup() {
   return (
-    <BaseFooter className="p-4 border-t border-white/5 relative z-10 bg-black/20">
+    <BaseFooter className="p-4 border-t border-white/5 relative z-10">
       <SidebarMenu>
          <SidebarMenuItem>
            <SidebarMenuButton 
               tooltip="Volver al Inicio"
-              className="h-12 bg-white/5 hover:bg-primary/10 text-white/80 hover:text-primary transition-all rounded-2xl border border-white/10 hover:border-primary/30 group"
+              className="h-10 hover:bg-white/5 text-white/60 hover:text-white transition-all rounded-lg group"
               asChild
            >
               <Link href="/" className="flex items-center gap-3 px-4 w-full">
                  <ChevronRight className="rotate-180 w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
-                 <span className="font-black uppercase tracking-widest text-[10px] group-data-[collapsible=icon]:hidden">Inicio</span>
+                 <span className="font-medium text-[13px] group-data-[collapsible=icon]:hidden">Volver a Inicio</span>
               </Link>
            </SidebarMenuButton>
          </SidebarMenuItem>
