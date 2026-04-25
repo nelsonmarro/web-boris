@@ -17,7 +17,7 @@ export function AboutBorisSection() {
 
           <div className="flex flex-col lg:flex-row items-stretch">
             {/* Visual Column */}
-            <div className="w-full lg:w-1/2 relative min-h-[400px] lg:min-h-0 overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
+            <div className="w-full lg:w-1/2 relative min-h-[300px] sm:min-h-[400px] lg:min-h-0 overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
               <Image
                 src="/assets/Logo2.png"
                 alt="BorisaoBlois Creator"
