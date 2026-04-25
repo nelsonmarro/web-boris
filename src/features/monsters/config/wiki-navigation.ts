@@ -46,8 +46,22 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
         url: "#",
         icon: Skull,
         items: [
-          { title: "Animales", url: "/wiki/animales-colosos" },
-          { title: "Humanos", url: "/wiki/humanos-colosos" },
+          { 
+            title: "Animales", 
+            url: "/wiki/animales-colosos",
+            items: [
+              { title: "El Gran Majá", url: "/wiki/el-gran-maja" },
+              { title: "The Bloop", url: "/wiki/the-bloop" },
+              { title: "Bogbo", url: "/wiki/bogbo" },
+            ]
+          },
+          { 
+            title: "Humanos", 
+            url: "/wiki/humanos-colosos",
+            items: [
+              { title: "Phillip Forte", url: "/wiki/phillip-forte" },
+            ]
+          },
         ],
       },
       {
