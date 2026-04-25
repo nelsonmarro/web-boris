@@ -7,19 +7,23 @@ import { SidebarCollapsibleItem } from "./SidebarCollapsibleItem";
 
 export function SidebarNavigation() {
   return (
-    <SidebarContent className="relative z-10 py-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+    <SidebarContent className="relative z-10 py-8 scrollbar-none">
+      <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black/40 to-transparent pointer-events-none" />
+      
       {WIKI_NAVIGATION.map((universe) => (
-        <SidebarGroup key={universe.title} className="mb-6">
-          <SidebarGroupLabel className="text-white/40 font-black tracking-[0.3em] text-[9px] uppercase mb-4 px-6 group-data-[collapsible=icon]:hidden">
+        <SidebarGroup key={universe.title} className="mb-8">
+          <SidebarGroupLabel className="text-white/30 font-black tracking-[0.4em] text-[8px] uppercase mb-5 px-8 group-data-[collapsible=icon]:hidden italic">
             {universe.title}
           </SidebarGroupLabel>
-          <SidebarMenu className="px-2">
+          <SidebarMenu className="px-4">
             {universe.items.map((item) => (
               <SidebarCollapsibleItem key={item.title} item={item} />
             ))}
           </SidebarMenu>
         </SidebarGroup>
       ))}
+
+      <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
     </SidebarContent>
   );
 }

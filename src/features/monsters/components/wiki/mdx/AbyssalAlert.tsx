@@ -50,7 +50,7 @@ export function AbyssalAlert({ variant = 'info', title, children, className }: A
 
   return (
     <div className={cn(
-      "relative overflow-hidden rounded-3xl border p-6 my-8 glass-liquid",
+      "relative overflow-hidden rounded-3xl border p-6 my-8 glass-liquid border-refractive",
       config.bg,
       config.border,
       className

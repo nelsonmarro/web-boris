@@ -11,7 +11,7 @@ interface AbyssalTableProps {
 
 export function AbyssalTable({ headers, rows, className }: AbyssalTableProps) {
   return (
-    <div className={cn("my-8 overflow-hidden rounded-[2rem] border border-white/10 glass-liquid shadow-2xl", className)}>
+    <div className={cn("my-8 overflow-hidden rounded-[2rem] border border-white/10 glass-liquid shadow-2xl border-refractive", className)}>
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -19,7 +19,7 @@ export function AbyssalTable({ headers, rows, className }: AbyssalTableProps) {
               {headers.map((header, i) => (
                 <th 
                   key={i} 
-                  className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.3em] text-primary italic"
+                  className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-primary italic drop-shadow-[0_0_8px_rgba(255,115,0,0.3)]"
                 >
                   {header}
                 </th>
@@ -28,11 +28,11 @@ export function AbyssalTable({ headers, rows, className }: AbyssalTableProps) {
           </thead>
           <tbody className="divide-y divide-white/5">
             {rows.map((row, i) => (
-              <tr key={i} className="hover:bg-white/[0.02] transition-colors group">
+              <tr key={i} className="hover:bg-white/[0.03] transition-colors group">
                 {row.map((cell, j) => (
                   <td 
                     key={j} 
-                    className="px-6 py-5 text-sm font-medium text-white/70 group-hover:text-white transition-colors"
+                    className="px-6 py-6 text-sm font-medium text-white/60 group-hover:text-white transition-colors"
                   >
                     {cell}
                   </td>

@@ -8,22 +8,27 @@ interface FeaturedAccessCardProps {
   color: string;
   universe: string;
 }
-
 export function FeaturedAccessCard({ title, slug, icon: Icon, color, universe }: FeaturedAccessCardProps) {
   return (
     <Link
       href={`/wiki/${slug}`}
-      className="group relative flex flex-col justify-end overflow-hidden rounded-[2.5rem] glass-liquid border-white/5 p-8 h-64 transition-all duration-500 hover:scale-[1.03] hover:border-primary/30"
+      className="group relative flex flex-col justify-end overflow-hidden rounded-[2.5rem] glass-liquid border-white/5 p-8 h-64 transition-all duration-500 hover:scale-[1.03] hover:border-primary/30 border-refractive"
     >
       <div className="glass-reflection opacity-20" />
-      
+
       <div className="absolute top-8 right-8">
         <Icon
           className={`h-12 w-12 ${color} opacity-40 group-hover:opacity-100 transition-all duration-700 group-hover:scale-110 drop-shadow-[0_0_20px_currentColor]`}
         />
       </div>
 
+      <div className="absolute top-8 left-8 flex flex-col">
+         <span className="text-[7px] font-black uppercase tracking-[0.3em] text-white/20 leading-none mb-1">Nivel de Acceso</span>
+         <span className="text-[8px] font-black uppercase tracking-[0.1em] text-primary italic">Confirmado</span>
+      </div>
+
       <div className="relative z-10 space-y-1">
+...
         <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
           {universe}
         </span>
