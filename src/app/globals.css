@@ -237,13 +237,12 @@
     background: linear-gradient(
       105deg,
       rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.15) 45%,
-      rgba(255, 255, 255, 0.2) 50%,
-      rgba(255, 255, 255, 0.15) 55%,
+      rgba(255, 255, 255, 0.1) 45%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.1) 55%,
       rgba(255, 255, 255, 0) 100%
     );
-    transform: translateX(-100%);
-    animation: glass-sweep 10s ease-in-out infinite;
+    transform: translateX(10%) skewX(-25deg);
   }
 
   @keyframes glass-sweep {
