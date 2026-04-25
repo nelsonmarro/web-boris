@@ -50,7 +50,7 @@ export default async function WikiIndex() {
           <div className="space-y-4">
             <div className="flex items-center gap-4">
                <div className="h-10 w-1.5 bg-primary rounded-full shadow-[0_0_20px_rgba(255,115,0,0.8)] animate-pulse" />
-               <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter drop-shadow-[0_4px_10px_rgba(255,255,255,0.1)]">
+               <h2 className="text-4xl md:text-5xl font-bold text-white uppercase italic tracking-tight drop-shadow-[0_4px_10px_rgba(255,255,255,0.1)]">
                  Explorar <span className="text-primary">Biblioteca</span>
                </h2>
             </div>
@@ -61,8 +61,8 @@ export default async function WikiIndex() {
           
           <div className="hidden md:flex items-center gap-3 px-6 py-3 rounded-2xl glass-liquid border-white/10 shadow-xl border-refractive">
              <div className="flex flex-col text-right">
-                <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white/20 leading-none">Registros</span>
-                <span className="text-xl font-black text-white italic leading-tight">{articles.length}</span>
+                <span className="text-[8px] font-bold uppercase tracking-wider text-white/20 leading-none">Registros</span>
+                <span className="text-xl font-bold text-white italic leading-tight">{articles.length}</span>
              </div>
           </div>
         </div>

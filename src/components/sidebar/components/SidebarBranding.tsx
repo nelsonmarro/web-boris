@@ -13,8 +13,8 @@ export function SidebarBranding() {
           <Image src="/assets/logo.png" alt="Logo" width={32} height={32} className="rounded-full" />
         </div>
         <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-          <span className="truncate font-bold text-white text-base tracking-tight">Borisao Wiki</span>
-          <span className="truncate text-[10px] text-primary font-bold uppercase tracking-[0.1em]">Oficial Lore</span>
+          <span className="truncate font-bold text-white text-base">Borisao Wiki</span>
+          <span className="truncate text-[10px] text-primary font-bold uppercase tracking-wider">Oficial Lore</span>
         </div>
       </Link>
     </BaseHeader>

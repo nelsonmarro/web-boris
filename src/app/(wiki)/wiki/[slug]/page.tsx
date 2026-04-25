@@ -65,16 +65,16 @@ export default async function WikiArticlePage({ params }: Props) {
           
           <div className="absolute bottom-0 left-0 w-full p-8 md:p-16 space-y-6">
             <div className="flex flex-wrap gap-3">
-              <span className="text-[9px] md:text-[10px] font-black px-4 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-full uppercase tracking-[0.2em] backdrop-blur-md">
+              <span className="text-[9px] md:text-[10px] font-bold px-4 py-1.5 bg-primary/20 text-primary border border-primary/30 rounded-full uppercase tracking-wider backdrop-blur-md">
                 {frontmatter.universe}
               </span>
               {frontmatter.category && (
-                <span className="text-[9px] md:text-[10px] font-black px-4 py-1.5 bg-white/5 text-white/60 border border-white/10 rounded-full uppercase tracking-[0.2em] backdrop-blur-md">
+                <span className="text-[9px] md:text-[10px] font-bold px-4 py-1.5 bg-white/5 text-white/60 border border-white/10 rounded-full uppercase tracking-wider backdrop-blur-md">
                   {frontmatter.category}
                 </span>
               )}
             </div>
-            <h1 className="text-4xl md:text-8xl font-black text-white italic tracking-tighter leading-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] uppercase">
+            <h1 className="text-4xl md:text-8xl font-bold text-white italic tracking-tight leading-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] uppercase">
               {frontmatter.title}
             </h1>
           </div>
@@ -95,11 +95,11 @@ export default async function WikiArticlePage({ params }: Props) {
               <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               </div>
-              <div className="text-[8px] md:text-[9px] font-black uppercase tracking-[0.4em] text-white/20">
+              <div className="text-[8px] md:text-[9px] font-bold uppercase tracking-wider text-white/20">
                  Archivo desclasificado // Iniciativa Abisal
               </div>
            </div>
-           <div className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.5em] text-primary italic drop-shadow-[0_0_10px_rgba(255,115,0,0.3)]">
+           <div className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-primary italic drop-shadow-[0_0_10px_rgba(255,115,0,0.3)]">
               Borisao Archives
            </div>
         </footer>
