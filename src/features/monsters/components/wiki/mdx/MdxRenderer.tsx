@@ -22,26 +22,28 @@ const mdxComponents = {
     <h3 className="text-xl font-bold text-primary uppercase tracking-wider mt-8 mb-3" {...props} />
   ),
   p: (props: React.HTMLAttributes<HTMLParagraphElement>) => (
-    <p className="text-lg text-white/70 leading-relaxed font-medium mb-6" {...props} />
+    <p className="text-lg text-white/90 leading-relaxed font-medium mb-6" {...props} />
   ),
   ul: (props: React.HTMLAttributes<HTMLUListElement>) => (
     <ul className="list-none space-y-4 mb-8 pl-4" {...props} />
   ),
-  li: (props: React.HTMLAttributes<HTMLLIElement>) => (
-    <li className="flex items-start gap-3 text-white/80 font-medium" {...props}>
+  li: ({ children, ...props }: React.HTMLAttributes<HTMLLIElement>) => (
+    <li className="flex items-start gap-3 text-white/90 font-medium" {...props}>
       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2.5 shrink-0 shadow-[0_0_8px_rgba(255,115,0,0.8)]" />
-      <span>{props.children}</span>
+      <span>{children}</span>
     </li>
   ),
   img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
     <span className="relative block aspect-video w-full my-12 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl glass-liquid">
       <span className="block absolute inset-0 glass-reflection opacity-30" />
-      <Image 
-        src={(props.src as string) || ""} 
-        alt={props.alt || ""} 
-        fill 
-        className="object-cover transition-transform duration-1000 hover:scale-105" 
-      />
+      {props.src && (
+        <Image 
+          src={props.src as string} 
+          alt={props.alt || ""} 
+          fill 
+          className="object-cover transition-transform duration-1000 hover:scale-105" 
+        />
+      )}
     </span>
   ),
   hr: () => (

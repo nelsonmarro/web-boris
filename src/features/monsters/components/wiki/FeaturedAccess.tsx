@@ -12,18 +12,18 @@ export function FeaturedAccessCard({ title, slug, icon: Icon, color, universe }:
   return (
     <Link
       href={`/wiki/${slug}`}
-      className="group relative flex flex-col justify-end overflow-hidden rounded-[2.5rem] glass-liquid bg-black/30 border-white/5 p-8 h-64 transition-all duration-500 hover:scale-[1.03] hover:border-primary/30 border-refractive"
+      className="group relative flex flex-col justify-end overflow-hidden rounded-[2.5rem] glass-liquid bg-[#061d33] border-white/10 p-8 h-64 transition-all duration-500 hover:scale-[1.03] hover:border-primary/50 border-refractive shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
     >
       <div className="glass-reflection opacity-20" />
 
       <div className="absolute top-8 right-8">
         <Icon
-          className={`h-12 w-12 ${color} opacity-40 group-hover:opacity-100 transition-all duration-700 group-hover:scale-110 drop-shadow-[0_0_20px_currentColor]`}
+          className={`h-12 w-12 ${color} opacity-60 group-hover:opacity-100 transition-all duration-700 group-hover:scale-110 drop-shadow-[0_0_20px_currentColor]`}
         />
       </div>
 
       <div className="absolute top-8 left-8 flex flex-col">
-         <span className="text-[7px] font-bold uppercase tracking-wider text-white/40 leading-none mb-1">Nivel de Acceso</span>
+         <span className="text-[7px] font-bold uppercase tracking-wider text-white/60 leading-none mb-1">Nivel de Acceso</span>
          <span className="text-[8px] font-bold uppercase tracking-[0.1em] text-primary italic">Confirmado</span>
       </div>
 
@@ -31,13 +31,13 @@ export function FeaturedAccessCard({ title, slug, icon: Icon, color, universe }:
         <span className="text-[10px] font-bold text-primary uppercase tracking-wider">
           {universe}
         </span>
-        <h3 className="text-3xl font-bold text-white italic uppercase leading-none">
+        <h3 className="text-3xl font-bold text-white italic uppercase leading-none group-hover:text-primary transition-colors">
           {title}
         </h3>
       </div>
 
       {/* Hover Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
     </Link>
   );
 }
