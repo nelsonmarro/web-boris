@@ -23,13 +23,13 @@ export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
       <SidebarMenuItem>
         <SidebarMenuButton 
           tooltip={item.title} 
-          className="h-9 hover:bg-white/5 transition-all group rounded-md mb-0.5 flex items-center px-4"
+          className="h-8 hover:bg-white/5 transition-all group rounded-md mb-0 flex items-center px-4"
           asChild
         >
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           <Link href={item.url as any} aria-label={`Ir a ${item.title}`}>
-            {item.icon && <item.icon className="h-4 w-4 mr-3 text-primary group-hover:scale-105 transition-transform" />}
-            <span className="font-medium text-[14px] text-white/80 group-hover:text-white transition-colors">{item.title}</span>
+            {item.icon && <item.icon className="h-4 w-4 mr-3 text-primary shrink-0" />}
+            <span className="font-medium text-[13.5px] text-white/80 group-hover:text-white transition-colors">{item.title}</span>
           </Link>
         </SidebarMenuButton>
       </SidebarMenuItem>
@@ -37,20 +37,20 @@ export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
   }
 
   return (
-    <Collapsible className="group/collapsible mb-0.5" asChild>
+    <Collapsible className="group/collapsible" asChild>
       <SidebarMenuItem>
         <CollapsibleTrigger asChild>
           <SidebarMenuButton 
             tooltip={item.title} 
-            className="h-9 hover:bg-white/5 transition-all rounded-md px-4 flex items-center group"
+            className="h-8 hover:bg-white/5 transition-all rounded-md px-4 flex items-center group mb-0"
           >
-            {item.icon && <item.icon className="h-4 w-4 mr-3 text-primary group-hover:scale-105 transition-transform" />}
-            <span className="font-medium text-[14px] text-white/80 group-hover:text-white">{item.title}</span>
-            <ChevronRight className="ml-auto h-3.5 w-3.5 transition-transform duration-300 text-white/20 group-data-[state=open]/collapsible:rotate-90 group-data-[state=open]/collapsible:text-primary" />
+            {item.icon && <item.icon className="h-4 w-4 mr-3 text-primary shrink-0" />}
+            <span className="font-medium text-[13.5px] text-white/80 group-hover:text-white">{item.title}</span>
+            <ChevronRight className="ml-auto h-3 w-3 transition-transform duration-300 text-white/20 group-data-[state=open]/collapsible:rotate-90 group-data-[state=open]/collapsible:text-primary" />
           </SidebarMenuButton>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <SidebarMenuSub className="ml-6 pl-4 space-y-0.5 mt-1 mb-2 border-none">
+          <SidebarMenuSub className="ml-0 pl-0 border-none translate-x-0 space-y-0">
             {item.items.map((subItem) => (
               <SidebarSubItem key={subItem.title} item={subItem} />
             ))}
@@ -66,7 +66,7 @@ function SidebarSubItem({ item }: { item: NavItem }) {
     return (
       <SidebarMenuSubItem>
         <SidebarMenuSubButton 
-          className="hover:text-primary transition-all h-8 rounded-md px-3 group/sub flex items-center" 
+          className="hover:text-primary transition-all h-8 rounded-md pl-11 flex items-center bg-transparent border-none translate-x-0" 
           asChild
         >
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -83,18 +83,18 @@ function SidebarSubItem({ item }: { item: NavItem }) {
       <SidebarMenuSubItem>
         <CollapsibleTrigger asChild>
           <SidebarMenuSubButton 
-            className="hover:text-primary transition-all h-8 rounded-md px-3 flex items-center"
+            className="hover:text-primary transition-all h-8 rounded-md pl-11 flex items-center bg-transparent border-none translate-x-0"
           >
-            <span className="text-[13px] font-medium text-white/70">{item.title}</span>
+            <span className="text-[13px] font-medium text-white/70 group-hover:text-white">{item.title}</span>
             <ChevronRight className="ml-auto h-3 w-3 transition-transform duration-300 text-white/10 group-data-[state=open]/sub-collapsible:rotate-90" />
           </SidebarMenuSubButton>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <SidebarMenuSub className="ml-4 pl-4 space-y-0.5 mt-1 border-none">
+          <SidebarMenuSub className="ml-0 pl-0 border-none translate-x-0 space-y-0">
             {item.items.map((deepItem) => (
               <SidebarMenuSubItem key={deepItem.title}>
                 <SidebarMenuSubButton 
-                  className="hover:text-primary transition-all h-7 rounded-sm px-2 group/deep flex items-center" 
+                  className="hover:text-primary transition-all h-7 rounded-sm pl-16 flex items-center bg-transparent border-none translate-x-0" 
                   asChild
                 >
                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
