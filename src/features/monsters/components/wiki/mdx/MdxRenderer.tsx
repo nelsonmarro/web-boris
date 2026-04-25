@@ -34,15 +34,15 @@ const mdxComponents = {
     </li>
   ),
   img: (props: any) => (
-    <div className="relative aspect-video w-full my-12 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl glass-liquid">
-      <div className="glass-reflection opacity-30" />
+    <span className="relative block aspect-video w-full my-12 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl glass-liquid">
+      <span className="block absolute inset-0 glass-reflection opacity-30" />
       <Image 
         src={props.src} 
         alt={props.alt || ""} 
         fill 
         className="object-cover transition-transform duration-1000 hover:scale-105" 
       />
-    </div>
+    </span>
   ),
   hr: () => (
     <hr className="my-12 border-white/5" />
