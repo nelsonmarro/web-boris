@@ -23,16 +23,16 @@ export function FeaturedAccessCard({ title, slug, icon: Icon, color, universe }:
       </div>
 
       <div className="absolute top-8 left-8 flex flex-col">
-         <span className="text-[7px] font-black uppercase tracking-[0.3em] text-white/20 leading-none mb-1">Nivel de Acceso</span>
-         <span className="text-[8px] font-black uppercase tracking-[0.1em] text-primary italic">Confirmado</span>
+         <span className="text-[7px] font-bold uppercase tracking-wider text-white/20 leading-none mb-1">Nivel de Acceso</span>
+         <span className="text-[8px] font-bold uppercase tracking-[0.1em] text-primary italic">Confirmado</span>
       </div>
 
       <div className="relative z-10 space-y-1">
 ...
-        <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
+        <span className="text-[10px] font-bold text-primary uppercase tracking-wider">
           {universe}
         </span>
-        <h3 className="text-3xl font-black text-white italic uppercase leading-none">
+        <h3 className="text-3xl font-bold text-white italic uppercase leading-none">
           {title}
         </h3>
       </div>
@@ -48,7 +48,7 @@ export function FeaturedAccessGrid({ items }: { items: FeaturedAccessCardProps[]
     <section className="space-y-10">
       <div className="flex items-center gap-4">
         <div className="h-10 w-1.5 bg-primary rounded-full shadow-[0_0_20px_rgba(255,115,0,0.8)]" />
-        <h2 className="text-3xl font-black text-white uppercase italic tracking-tighter">
+        <h2 className="text-3xl font-bold text-white uppercase italic tracking-tight">
           Accesos Destacados
         </h2>
       </div>

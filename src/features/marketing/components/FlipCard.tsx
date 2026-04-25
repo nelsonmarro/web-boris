@@ -36,10 +36,10 @@ export function FlipCard({ universe }: { universe: FlipCardProps }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
           
           <div className="absolute inset-0 p-10 flex flex-col justify-end z-10">
-            <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-2 drop-shadow-md">
+            <span className="text-[10px] font-bold text-primary uppercase tracking-wider mb-2 drop-shadow-md">
               {universe.count}
             </span>
-            <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] leading-none">
+            <h3 className="text-3xl font-bold text-white italic uppercase tracking-tight drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] leading-none">
               {universe.title}
             </h3>
           </div>
@@ -62,7 +62,7 @@ export function FlipCard({ universe }: { universe: FlipCardProps }) {
           </div>
 
           <div className="space-y-3 mb-8 relative z-10">
-            <h3 className="text-3xl font-black text-white italic uppercase tracking-tighter drop-shadow-md">
+            <h3 className="text-3xl font-bold text-white italic uppercase tracking-tight drop-shadow-md">
               {universe.title}
             </h3>
             <div className="h-1 w-12 bg-primary rounded-full" />
@@ -76,11 +76,11 @@ export function FlipCard({ universe }: { universe: FlipCardProps }) {
             <Link 
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               href={`/wiki?universe=${universe.title}` as any}
-              className="flex items-center text-white font-black uppercase tracking-widest text-[11px] gap-2 drop-shadow-md hover:text-primary transition-colors group/link"
+              className="flex items-center text-white font-bold uppercase tracking-wider text-[11px] gap-2 drop-shadow-md hover:text-primary transition-colors group/link"
             >
               Explorar Lore <ArrowRight className="h-4 w-4 text-primary group-hover/link:translate-x-1 transition-transform" />
             </Link>
-            <div className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
+            <div className="text-[10px] font-bold text-white/30 uppercase tracking-wider">
               Borisao Archive
             </div>
           </div>

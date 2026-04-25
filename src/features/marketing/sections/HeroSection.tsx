@@ -21,10 +21,10 @@ export function HeroSection() {
           <BrandCapsule>Iniciativa Archivo Abisal</BrandCapsule>
 
           <div className="space-y-0">
-            <h1 className="text-5xl md:text-7xl font-black text-white leading-tight tracking-tighter drop-shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
+            <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight tracking-tight drop-shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
               SUMÉRGETE
             </h1>
-            <h1 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400 leading-none tracking-tighter italic drop-shadow-[0_8px_20px_rgba(255,115,0,0.4)]">
+            <h1 className="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400 leading-none tracking-tight italic drop-shadow-[0_8px_20px_rgba(255,115,0,0.4)]">
               EN EL LORE
             </h1>
           </div>
@@ -41,7 +41,7 @@ export function HeroSection() {
             <Link href="/wiki">
               <Button
                 size="lg"
-                className="h-14 px-10 text-[10px] font-black tracking-[0.3em] shadow-[0_15px_30px_rgba(255,115,0,0.4)] bg-primary hover:scale-[1.05] transition-all rounded-full border-t border-white/20 uppercase italic"
+                className="h-14 px-10 text-[10px] font-bold tracking-wider shadow-[0_15px_30px_rgba(255,115,0,0.4)] bg-primary hover:scale-[1.05] transition-all rounded-full border-t border-white/20 uppercase italic"
               >
                 ACCEDER A LA WIKI
               </Button>
@@ -50,7 +50,7 @@ export function HeroSection() {
               <Button
                 size="lg"
                 variant="outline"
-                className="h-14 px-10 text-[10px] font-black tracking-[0.3em] glass-liquid border-white/20 text-white rounded-full hover:bg-white/10 transition-all hover:border-white/40 shadow-[0_15px_25px_rgba(0,0,0,0.3)] uppercase italic"
+                className="h-14 px-10 text-[10px] font-bold tracking-wider glass-liquid border-white/20 text-white rounded-full hover:bg-white/10 transition-all hover:border-white/40 shadow-[0_15px_25px_rgba(0,0,0,0.3)] uppercase italic"
               >
                 VER UNIVERSOS
               </Button>

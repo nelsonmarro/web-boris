@@ -41,7 +41,7 @@ export function UniversePreviewSection() {
       
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-20 space-y-6">
-          <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+          <h2 className="text-4xl md:text-5xl font-bold text-white uppercase italic tracking-tight drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
             Explora los Universos
           </h2>
           <p className="text-lg text-white/70 font-medium leading-relaxed drop-shadow-md">

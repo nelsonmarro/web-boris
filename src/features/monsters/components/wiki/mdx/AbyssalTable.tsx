@@ -19,7 +19,7 @@ export function AbyssalTable({ headers, rows, className }: AbyssalTableProps) {
               {headers.map((header, i) => (
                 <th 
                   key={i} 
-                  className="px-6 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-primary italic drop-shadow-[0_0_8px_rgba(255,115,0,0.3)]"
+                  className="px-6 py-6 text-[10px] font-bold uppercase tracking-wider text-primary italic drop-shadow-[0_0_8px_rgba(255,115,0,0.3)]"
                 >
                   {header}
                 </th>

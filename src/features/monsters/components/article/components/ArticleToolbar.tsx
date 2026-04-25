@@ -28,7 +28,7 @@ export function ArticleToolbar() {
           <div className="w-px h-8 bg-white/10 mx-1" />
           <Button 
             onClick={() => router.back()}
-            className="h-12 px-8 rounded-xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest text-[11px] italic transition-transform active:scale-95"
+            className="h-12 px-8 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold uppercase tracking-wider text-[11px] italic transition-transform active:scale-95"
           >
             CERRAR ARCHIVO
           </Button>

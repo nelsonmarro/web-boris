@@ -59,10 +59,10 @@ export async function LoreStatsSection() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-5xl md:text-6xl font-black text-white tracking-tighter italic uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
+                  <h3 className="text-5xl md:text-6xl font-bold text-white tracking-tight italic uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
                     {stat.value}
                   </h3>
-                  <p className="text-[11px] font-black uppercase tracking-[0.4em] text-white/40 group-hover/item:text-white/80 transition-colors">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-white/40 group-hover/item:text-white/80 transition-colors">
                     {stat.label}
                   </p>
                 </div>

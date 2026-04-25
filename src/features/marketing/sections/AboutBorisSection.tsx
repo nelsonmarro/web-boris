@@ -29,7 +29,7 @@ export function AboutBorisSection() {
               {/* Floating Tag */}
               <div className="absolute top-10 left-10 inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 backdrop-blur-3xl border border-white/20 shadow-2xl">
                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-[10px] font-black text-white uppercase tracking-[0.2em]">
+                <span className="text-[10px] font-bold text-white uppercase tracking-wider">
                   Señal de Origen
                 </span>
               </div>
@@ -40,11 +40,11 @@ export function AboutBorisSection() {
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-3 text-primary">
                   <Sparkles className="w-5 h-5" />
-                  <span className="text-[11px] font-black uppercase tracking-[0.4em]">
+                  <span className="text-[11px] font-bold uppercase tracking-wider">
                     El Arquitecto del Lore
                   </span>
                 </div>
-                <h2 className="text-4xl md:text-7xl font-black text-white italic tracking-tighter uppercase leading-none">
+                <h2 className="text-4xl md:text-7xl font-bold text-white italic tracking-tight uppercase leading-none">
                   Borisao<span className="text-primary">Blois</span>
                 </h2>
                 <p className="text-xl text-white/60 font-medium leading-relaxed">
@@ -57,18 +57,18 @@ export function AboutBorisSection() {
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">
+                  <p className="text-[9px] font-bold text-white/30 uppercase tracking-wider">
                     Comunidad
                   </p>
-                  <p className="text-3xl font-black text-white italic tracking-tight uppercase">
+                  <p className="text-3xl font-bold text-white italic tracking-tight uppercase">
                     +2M Exploradores
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-[9px] font-black text-white/30 uppercase tracking-widest">
+                  <p className="text-[9px] font-bold text-white/30 uppercase tracking-wider">
                     Contenido
                   </p>
-                  <p className="text-3xl font-black text-white italic tracking-tight uppercase">
+                  <p className="text-3xl font-bold text-white italic tracking-tight uppercase">
                     Lore Original
                   </p>
                 </div>
@@ -99,7 +99,7 @@ export function AboutBorisSection() {
 
               {/* Boris Personal Signature Style Badge */}
               <div className="pt-8 border-t border-white/5 opacity-40">
-                <p className="text-[8px] font-black uppercase tracking-[0.5em] text-white">
+                <p className="text-[8px] font-bold uppercase tracking-wider text-white">
                   Documentación Autorizada // Código 343-B
                 </p>
               </div>

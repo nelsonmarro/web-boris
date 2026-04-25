@@ -15,11 +15,11 @@ export function ArticleBrandingBar({ fileNo }: ArticleBrandingBarProps) {
              <Waves className="w-5 h-5 text-white" />
           </div>
           <div className="flex flex-col">
-             <span className="text-[8px] font-black text-white uppercase tracking-[0.4em] leading-none">Borisao</span>
-             <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] leading-none">Archives</span>
+             <span className="text-[8px] font-bold text-white uppercase tracking-wider leading-none">Borisao</span>
+             <span className="text-[10px] font-bold text-primary uppercase tracking-wider leading-none">Archives</span>
           </div>
        </div>
-       <div className="text-[8px] font-black text-white/20 uppercase tracking-[0.5em]">
+       <div className="text-[8px] font-bold text-white/20 uppercase tracking-wider">
           File No. {fileNo}
        </div>
     </div>

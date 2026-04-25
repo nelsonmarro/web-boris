@@ -109,7 +109,7 @@ export function NavLinks() {
             href={link.href as any}
             onClick={(e) => handleLinkClick(e, link.href)}
             className={cn(
-              "px-5 py-3 rounded-full text-[13px] font-black uppercase tracking-[0.2em] transition-all hover:text-white hover:bg-white/5 min-h-[44px] flex items-center justify-center relative group",
+              "px-5 py-3 rounded-full text-[13px] font-bold uppercase tracking-wider transition-all hover:text-white hover:bg-white/5 min-h-[44px] flex items-center justify-center relative group",
               active ? "text-primary bg-white/5" : "text-white/70"
             )}
           >

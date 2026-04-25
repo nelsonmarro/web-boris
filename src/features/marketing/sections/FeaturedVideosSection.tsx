@@ -32,18 +32,18 @@ export function FeaturedVideosSection() {
       <div className="container mx-auto px-6 relative z-10">
         <header className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.2em]">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-bold uppercase tracking-wider">
                 <Video className="w-3.5 h-3.5" />
                 Archivo Multimedia
               </div>
-              <h2 className="text-4xl md:text-6xl font-black text-white italic tracking-tighter uppercase">
+              <h2 className="text-4xl md:text-6xl font-bold text-white italic tracking-tight uppercase">
                 Videos <span className="text-primary">Destacados</span>
               </h2>
            </div>
            <Link 
              // eslint-disable-next-line @typescript-eslint/no-explicit-any
              href="https://youtube.com/@BorisaoBlois" 
-             className="text-white/40 hover:text-white text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-2 mb-2 group"
+             className="text-white/40 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center gap-2 mb-2 group"
            >
               CANAL DE BORISAOBLOIS <Play className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
            </Link>
@@ -72,8 +72,8 @@ export function FeaturedVideosSection() {
               </div>
               
               <div className="space-y-2 px-4">
-                 <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">{video.category}</span>
-                 <h3 className={`font-black text-white italic uppercase tracking-tighter leading-tight group-hover:text-primary transition-colors ${video.priority ? 'text-2xl md:text-4xl' : 'text-xl md:text-2xl'}`}>
+                 <span className="text-[10px] font-bold text-primary uppercase tracking-wider">{video.category}</span>
+                 <h3 className={`font-bold text-white italic uppercase tracking-tight leading-tight group-hover:text-primary transition-colors ${video.priority ? 'text-2xl md:text-4xl' : 'text-xl md:text-2xl'}`}>
                     {video.title}
                  </h3>
               </div>

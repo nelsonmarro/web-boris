@@ -18,7 +18,7 @@ export function ArenaSimulator() {
        </div>
 
        <div className="space-y-4 max-w-md relative z-10">
-          <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter">Módulo en Construcción</h2>
+          <h2 className="text-3xl font-bold text-white italic uppercase tracking-tight">Módulo en Construcción</h2>
           <p className="text-white/50 font-medium">
             Nuestros analistas de DELIRIUM están recopilando los datos biométricos necesarios para iniciar las simulaciones.
           </p>
@@ -30,7 +30,7 @@ export function ArenaSimulator() {
           <ArenaFeatureBadge icon={<Zap className="w-4 h-4 text-blue-500" />} label="Habilidades Únicas" />
        </div>
 
-       <Button size="lg" className="h-16 px-12 rounded-2xl bg-primary text-white font-black uppercase tracking-[0.3em] italic shadow-[0_15px_30px_rgba(255,115,0,0.4)] hover:scale-105 transition-all">
+       <Button size="lg" className="h-16 px-12 rounded-2xl bg-primary text-white font-bold uppercase tracking-wider italic shadow-[0_15px_30px_rgba(255,115,0,0.4)] hover:scale-105 transition-all">
           RECIBIR NOTIFICACIÓN
        </Button>
     </div>

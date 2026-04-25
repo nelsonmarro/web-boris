@@ -15,8 +15,8 @@ export function ArticleStatCard({ icon, label, value }: StatCardProps) {
           {icon}
        </div>
        <div className="space-y-1">
-          <p className="text-[9px] font-black text-white/40 uppercase tracking-widest">{label}</p>
-          <p className="text-xl font-black text-white italic uppercase tracking-tighter">{value}</p>
+          <p className="text-[9px] font-bold text-white/40 uppercase tracking-wider">{label}</p>
+          <p className="text-xl font-bold text-white italic uppercase tracking-tight">{value}</p>
        </div>
     </div>
   );

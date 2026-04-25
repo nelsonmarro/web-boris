@@ -41,10 +41,10 @@ export function HeroVisual({
         </div>
 
         <div className="relative z-10 space-y-0.5 pr-4">
-          <p className="text-[9px] text-primary font-black tracking-[0.3em] uppercase drop-shadow-sm">
+          <p className="text-[9px] text-primary font-bold tracking-wider uppercase drop-shadow-sm">
             {badgeLabel}
           </p>
-          <h3 className="text-2xl md:text-3xl font-black text-white italic uppercase tracking-tighter drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] leading-none">
+          <h3 className="text-2xl md:text-3xl font-bold text-white italic uppercase tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] leading-none">
             {badgeTitle}
           </h3>
         </div>

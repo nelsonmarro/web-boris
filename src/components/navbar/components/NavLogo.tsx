@@ -27,7 +27,7 @@ export function NavLogo({ hideLogoOnDesktop }: NavLogoProps) {
           className="rounded-lg object-cover"
         />
       </div>
-      <span className="text-2xl font-black tracking-tighter text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] uppercase italic">
+      <span className="text-2xl font-bold tracking-tight text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] uppercase italic">
         Borisao<span className="text-primary">Blois</span>
       </span>
     </Link>

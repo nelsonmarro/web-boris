@@ -38,10 +38,10 @@ export function ArticleIntelligenceContent({
        
        {!article && (
           <div className="px-12 pt-12">
-             <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-4">
+             <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] font-bold uppercase tracking-wider px-4 py-1.5 rounded-full mb-4">
                 {displayUniverse}
              </Badge>
-             <h1 className="text-4xl md:text-6xl font-black text-white italic uppercase tracking-tighter leading-none drop-shadow-2xl">
+             <h1 className="text-4xl md:text-6xl font-bold text-white italic uppercase tracking-tight leading-none drop-shadow-2xl">
                 {displayTitle}
              </h1>
              {displayDescription && (
@@ -57,7 +57,7 @@ export function ArticleIntelligenceContent({
           {children || (article && (
              activeTab === 'lore' ? (
               <div className="prose prose-invert prose-lg max-w-none space-y-6">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/40 text-[10px] font-black uppercase tracking-widest mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/40 text-[10px] font-bold uppercase tracking-wider mb-8">
                    <Sparkles className="w-3 h-3 text-primary" />
                    Desclasificado por Iniciativa Abisal
                 </div>

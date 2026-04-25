@@ -38,7 +38,7 @@ export function SearchBar({ placeholder = "¿Qué criatura buscas?", onSearch }:
         )}
         <Button 
           onClick={() => onSearch?.(search)}
-          className="h-10 px-8 rounded-full font-black uppercase tracking-widest text-[10px] italic bg-gradient-to-r from-primary to-orange-600 shadow-[0_8px_20px_rgba(255,115,0,0.3)] border-t border-white/20 transition-transform active:scale-95"
+          className="h-10 px-8 rounded-full font-bold uppercase tracking-wider text-[10px] italic bg-gradient-to-r from-primary to-orange-600 shadow-[0_8px_20px_rgba(255,115,0,0.3)] border-t border-white/20 transition-transform active:scale-95"
         >
           BUSCAR
         </Button>

@@ -44,11 +44,11 @@ export function ContactSection() {
         <div className="max-w-5xl mx-auto">
           
           <header className="text-center mb-16 space-y-4">
-             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-4">
+             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider mb-4">
                 <Sparkles className="w-3 h-3" />
                 Línea de Enlace Directa
              </div>
-             <h2 className="text-4xl md:text-6xl font-black text-white italic tracking-tighter">
+             <h2 className="text-4xl md:text-6xl font-bold text-white italic tracking-tight">
                ¿Tienes un <span className="text-primary">Avistamiento?</span>
              </h2>
              <p className="text-white/60 text-lg max-w-2xl mx-auto font-medium">
@@ -136,7 +136,7 @@ export function ContactSection() {
 
                 <Button
                   type="submit"
-                  className="w-full h-16 rounded-2xl bg-gradient-to-r from-primary to-orange-600 text-white font-black uppercase tracking-[0.2em] shadow-[0_10px_30px_rgba(255,115,0,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                  className="w-full h-16 rounded-2xl bg-gradient-to-r from-primary to-orange-600 text-white font-bold uppercase tracking-wider shadow-[0_10px_30px_rgba(255,115,0,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
                 >
                   <Send className="w-5 h-5" />
                   Enviar a Boris
@@ -144,7 +144,7 @@ export function ContactSection() {
               </form>
             </Form>
 
-            <p className="mt-10 text-center text-[10px] text-white/30 uppercase font-black tracking-widest relative z-10">
+            <p className="mt-10 text-center text-[10px] text-white/30 uppercase font-bold tracking-wider relative z-10">
               O si prefieres, envíame un correo directamente a <a href="mailto:borisaoblois343@gmail.com" className="text-primary hover:underline">borisaoblois343@gmail.com</a>
             </p>
           </div>

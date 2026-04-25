@@ -47,7 +47,7 @@ export function WikiSearch({
       {/* Search Status Dot */}
       <div className="absolute right-14 top-1/2 -translate-y-1/2 flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5 group-focus-within:border-primary/20 transition-colors">
          <div className={cn("w-1.5 h-1.5 rounded-full transition-colors", value ? "bg-primary animate-pulse" : "bg-white/20")} />
-         <span className="text-[8px] font-black uppercase tracking-widest text-white/20">Sync</span>
+         <span className="text-[8px] font-bold uppercase tracking-wider text-white/20">Sync</span>
       </div>
 
       {value && (

@@ -64,7 +64,7 @@ export function AbyssalAlert({ variant = 'info', title, children, className }: A
         
         <div className="space-y-1">
           {title && (
-            <h4 className={cn("text-[10px] font-black uppercase tracking-[0.3em]", config.accent)}>
+            <h4 className={cn("text-[10px] font-bold uppercase tracking-wider", config.accent)}>
               {title}
             </h4>
           )}

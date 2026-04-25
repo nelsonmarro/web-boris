@@ -99,7 +99,7 @@ export default async function WikiArticlePage({ params }: Props) {
                  Archivo desclasificado // Iniciativa Abisal
               </div>
            </div>
-           <div className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-primary italic drop-shadow-[0_0_10px_rgba(255,115,0,0.3)]">
+           <div className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-primary italic drop-shadow-[0_0_10px_rgba(255,115,0,0.3)]">
               Borisao Archives
            </div>
         </footer>

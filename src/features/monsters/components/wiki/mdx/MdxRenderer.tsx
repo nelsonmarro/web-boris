@@ -13,13 +13,13 @@ const mdxComponents = {
   
   // Standard HTML overrides
   h1: (props: any) => (
-    <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter uppercase mt-12 mb-6" {...props} />
+    <h1 className="text-4xl md:text-5xl font-bold text-white italic tracking-tight uppercase mt-12 mb-6" {...props} />
   ),
   h2: (props: any) => (
-    <h2 className="text-2xl md:text-3xl font-black text-white italic tracking-tight uppercase mt-10 mb-4 border-l-4 border-primary pl-4" {...props} />
+    <h2 className="text-2xl md:text-3xl font-bold text-white italic tracking-tight uppercase mt-10 mb-4 border-l-4 border-primary pl-4" {...props} />
   ),
   h3: (props: any) => (
-    <h3 className="text-xl font-black text-primary uppercase tracking-widest mt-8 mb-3" {...props} />
+    <h3 className="text-xl font-bold text-primary uppercase tracking-wider mt-8 mb-3" {...props} />
   ),
   p: (props: any) => (
     <p className="text-lg text-white/70 leading-relaxed font-medium mb-6" {...props} />
@@ -55,7 +55,7 @@ interface MdxRendererProps {
 
 export function MdxRenderer({ content }: MdxRendererProps) {
   return (
-    <div className="prose prose-invert prose-lg max-w-none prose-p:leading-relaxed prose-headings:tracking-tighter">
+    <div className="prose prose-invert prose-lg max-w-none prose-p:leading-relaxed prose-headings:tracking-tight">
       <MDXRemote 
         source={content} 
         components={mdxComponents}

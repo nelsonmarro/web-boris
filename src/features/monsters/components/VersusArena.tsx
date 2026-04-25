@@ -24,11 +24,11 @@ export default function VersusArena() {
         <ArenaSimulator />
 
         <footer className="mt-12 flex items-center justify-between border-t border-white/5 pt-8 opacity-40">
-           <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white">
+           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-white">
               <Info className="w-3 h-3" />
               Simulador Beta
            </div>
-           <p className="text-[9px] font-black uppercase tracking-[0.4em] text-white">Borisao Archive // {new Date().getFullYear()}</p>
+           <p className="text-[9px] font-bold uppercase tracking-wider text-white">Borisao Archive // {new Date().getFullYear()}</p>
         </footer>
       </div>
     </div>

@@ -23,7 +23,7 @@ export default async function WikiArticleModalPage({ params }: Props) {
       <article className="w-full">
         <header className="mb-10 text-center">
           <div className="flex justify-center gap-3 mb-6">
-            <span className="text-[10px] uppercase tracking-wider font-black px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full">
+            <span className="text-[10px] uppercase tracking-wider font-bold px-3 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full">
               {frontmatter.universe}
             </span>
             {frontmatter.category && (
@@ -32,7 +32,7 @@ export default async function WikiArticleModalPage({ params }: Props) {
               </span>
             )}
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-foreground mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
             {frontmatter.title}
           </h1>
           {frontmatter.image && (
@@ -48,7 +48,7 @@ export default async function WikiArticleModalPage({ params }: Props) {
           )}
         </header>
 
-        <div className="prose prose-invert prose-blue max-w-none md:prose-lg prose-headings:font-black prose-headings:tracking-tight prose-headings:text-white prose-p:text-white/90 prose-p:leading-relaxed prose-img:rounded-3xl prose-img:shadow-2xl prose-strong:text-white prose-a:text-primary prose-li:text-white/80">
+        <div className="prose prose-invert prose-blue max-w-none md:prose-lg prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-white prose-p:text-white/90 prose-p:leading-relaxed prose-img:rounded-3xl prose-img:shadow-2xl prose-strong:text-white prose-a:text-primary prose-li:text-white/80">
           <MDXRemote source={content} />
         </div>
       </article>

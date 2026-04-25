@@ -13,7 +13,7 @@ interface ContactFieldProps {
 export function ContactField({ label, icon: Icon, error, children, className }: ContactFieldProps) {
   return (
     <div className={cn("space-y-2", className)}>
-      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 mb-1 block pl-1">
+      <label className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1 block pl-1">
         {label}
       </label>
       <div className="relative group">
@@ -33,7 +33,7 @@ export function ContactField({ label, icon: Icon, error, children, className }: 
 export function ContactTextAreaField({ label, icon: Icon, error, children, className }: ContactFieldProps) {
   return (
     <div className={cn("space-y-2", className)}>
-      <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 mb-1 block pl-1">
+      <label className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1 block pl-1">
         {label}
       </label>
       <div className="relative group">

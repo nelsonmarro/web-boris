@@ -13,7 +13,7 @@ export function BrandCapsule({ children, className }: BrandCapsuleProps) {
       className
     )}>
       <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse" />
-      <span className="text-white text-[10px] font-black tracking-[0.2em] uppercase">
+      <span className="text-white text-[10px] font-bold tracking-wider uppercase">
         {children}
       </span>
     </div>

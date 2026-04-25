@@ -13,7 +13,7 @@ export function ArenaFeatureBadge({ icon, label }: FeatureBadgeProps) {
        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:bg-primary/10 transition-all">
           {icon}
        </div>
-       <span className="text-[10px] font-black uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">
+       <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 group-hover:text-white transition-colors">
          {label}
        </span>
     </div>
