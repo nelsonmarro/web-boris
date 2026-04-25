@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { cn } from "@/utils/cn";
 
 const NAV_LINKS = [
@@ -14,7 +14,6 @@ const NAV_LINKS = [
 
 export function NavLinks() {
   const pathname = usePathname();
-  const router = useRouter();
   const [activeHash, setActiveHash] = React.useState("");
 
   React.useEffect(() => {

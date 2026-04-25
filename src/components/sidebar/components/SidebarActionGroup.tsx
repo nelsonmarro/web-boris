@@ -13,12 +13,10 @@ export function SidebarActionGroup() {
            <SidebarMenuButton 
               tooltip="Volver al Inicio"
               className="h-10 hover:bg-white/5 text-white/60 hover:text-white transition-all rounded-lg group"
-              asChild
+              render={<Link href="/" className="flex items-center gap-3 px-4 w-full" />}
            >
-              <Link href="/" className="flex items-center gap-3 px-4 w-full">
                  <ChevronRight className="rotate-180 w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
                  <span className="font-medium text-[13px] group-data-[collapsible=icon]:hidden">Volver a Inicio</span>
-              </Link>
            </SidebarMenuButton>
          </SidebarMenuItem>
       </SidebarMenu>

@@ -21,11 +21,10 @@ export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
   if (!item.items || item.items.length === 0) {
     return (
       <SidebarMenuItem>
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <SidebarMenuButton 
           tooltip={item.title} 
           className="min-h-[36px] h-auto py-2 hover:bg-white/5 transition-all group rounded-md mb-0.5 flex items-center px-4"
-          render={<Link href={item.url as any} aria-label={`Ir a ${item.title}`} />}
+          render={<Link href={item.url as React.ComponentProps<typeof Link>['href']} aria-label={`Ir a ${item.title}`} />}
         >
           {item.icon && <item.icon className="h-4 w-4 mr-3 text-primary shrink-0" />}
           <span className="font-medium text-[13.5px] text-white/80 group-hover:text-white transition-colors">{item.title}</span>
@@ -60,10 +59,9 @@ function SidebarSubItem({ item }: { item: NavItem }) {
   if (!item.items || item.items.length === 0) {
     return (
       <SidebarMenuSubItem>
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <SidebarMenuSubButton 
           className="hover:text-primary transition-all min-h-[32px] h-auto py-1.5 rounded-md pl-11 flex items-center bg-transparent border-none translate-x-0" 
-          render={<Link href={item.url as any} />}
+          render={<Link href={item.url as React.ComponentProps<typeof Link>['href']} />}
         >
           <span className="text-[13px] font-medium text-white/60 group-hover/sub:text-primary transition-colors">{item.title}</span>
         </SidebarMenuSubButton>
@@ -86,10 +84,9 @@ function SidebarSubItem({ item }: { item: NavItem }) {
         <SidebarMenuSub className="ml-0 pl-0 border-none translate-x-0 space-y-0.5 mt-0.5 mb-0.5">
           {item.items.map((deepItem) => (
             <SidebarMenuSubItem key={deepItem.title}>
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               <SidebarMenuSubButton 
                 className="hover:text-primary transition-all min-h-[28px] h-auto py-1 rounded-sm pl-16 flex items-center bg-transparent border-none translate-x-0" 
-                render={<Link href={deepItem.url as any} />}
+                render={<Link href={deepItem.url as React.ComponentProps<typeof Link>['href']} />}
               >
                 <span className="text-[12px] font-medium text-white/40 group-hover/deep:text-primary transition-colors">{deepItem.title}</span>
               </SidebarMenuSubButton>

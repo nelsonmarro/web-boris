@@ -15,8 +15,6 @@ interface Bubble {
 export default function BubbleTrail() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bubbles = useRef<Bubble[]>([]);
-  const mouse = useRef({ x: -100, y: -100 });
-  const isMoving = useRef(false);
   const animationFrameId = useRef<number | null>(null);
 
   useEffect(() => {

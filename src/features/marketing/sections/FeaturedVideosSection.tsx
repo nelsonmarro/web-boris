@@ -41,7 +41,7 @@ export function FeaturedVideosSection() {
               </h2>
            </div>
            <Link 
-             // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              
              href="https://youtube.com/@BorisaoBlois" 
              className="text-white/40 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center gap-2 mb-2 group"
            >
