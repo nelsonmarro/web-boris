@@ -11,7 +11,7 @@ export default function WikiLayout({
 }) {
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-transparent">
+      <div className="flex min-h-screen w-full bg-[#001a33] relative z-0">
         <AppSidebar />
         <SidebarInset className="flex flex-col min-w-0 bg-transparent overflow-hidden">
           <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-2 bg-[#001226] border-b border-white/5 px-6 shadow-sm">
