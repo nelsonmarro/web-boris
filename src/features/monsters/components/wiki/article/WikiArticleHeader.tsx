@@ -9,11 +9,11 @@ interface WikiArticleHeaderProps {
 
 export function WikiArticleHeader({ title, universe, category }: WikiArticleHeaderProps) {
   return (
-    <header className="p-8 md:p-12 border-b border-white/5 bg-[#00060d]/40 backdrop-blur-3xl relative z-20">
-      <div className="flex flex-col gap-6">
+    <header className="pt-10 pb-6 px-8 md:px-12 lg:px-16 border-b border-white/10 relative z-20">
+      <div className="max-w-[1400px] mx-auto flex flex-col gap-4">
         {/* Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">
-          <Link href="/wiki" className="hover:text-primary transition-colors">Lore</Link>
+        <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
+          <Link href="/wiki" className="hover:text-primary transition-colors">Explore</Link>
           <ChevronRight className="h-3 w-3" />
           <span className="hover:text-primary transition-colors cursor-pointer">{universe}</span>
           {category && (
@@ -26,29 +26,23 @@ export function WikiArticleHeader({ title, universe, category }: WikiArticleHead
 
         {/* Title and Actions */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="space-y-2">
-            <div className="h-1 w-20 bg-primary rounded-full shadow-[0_0_15px_rgba(255,115,0,0.5)]" />
-            <h1 className="text-4xl md:text-7xl font-bold text-white italic tracking-tight uppercase leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
-              {title}
-            </h1>
-          </div>
+          <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-none">
+            {title}
+          </h1>
 
-          <div className="flex items-center gap-3">
-             <button className="p-3 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition-all hover:scale-105" title="Compartir">
-                <Share2 className="w-4 h-4" />
+          <div className="flex items-center gap-2">
+             <button className="px-4 py-2 flex items-center gap-2 rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all font-bold text-xs uppercase tracking-wider" title="Compartir">
+                <Share2 className="w-4 h-4" /> Compartir
              </button>
-             <button className="p-3 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition-all hover:scale-105" title="Historial">
-                <History className="w-4 h-4" />
+             <button className="p-2 rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-all" title="Historial">
+                <History className="w-5 h-5" />
              </button>
-             <button className="p-3 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition-all hover:scale-105" title="Imprimir">
-                <Printer className="w-4 h-4" />
+             <button className="p-2 rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-all" title="Imprimir">
+                <Printer className="w-5 h-5" />
              </button>
           </div>
         </div>
       </div>
-
-      {/* Decorative scanning line */}
-      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
     </header>
   );
 }

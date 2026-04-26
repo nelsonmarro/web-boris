@@ -8,11 +8,11 @@ interface WikiArticleContentProps {
 
 export function WikiArticleContent({ description, content }: WikiArticleContentProps) {
   return (
-    <div className="p-8 md:p-16 relative z-10 bg-gradient-to-b from-white/[0.02] to-transparent">
+    <div className="px-8 md:px-12 lg:px-16 py-8 relative z-10">
       {description && (
-        <p className="text-lg md:text-2xl text-white/50 font-bold mb-12 md:mb-16 leading-relaxed italic border-l-4 border-primary/30 pl-6 md:pl-8 drop-shadow-md">
-          &quot;{description}&quot;
-        </p>
+        <div className="mb-8 p-4 bg-[#1a1a1a] border-l-4 border-primary/60 text-white/80 text-sm md:text-base font-medium rounded-r-lg">
+          {description}
+        </div>
       )}
       
       <MdxRenderer content={content} />

@@ -48,22 +48,24 @@ export default async function WikiArticlePage({ params }: Props) {
   const { frontmatter, content } = article;
 
   return (
-    <div className="container mx-auto px-4 lg:px-8 py-10 md:py-16 max-w-7xl">
-      <article className="glass-liquid rounded-[3rem] border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.7)] overflow-hidden relative border-refractive">
-        <div className="glass-reflection opacity-20" />
-        
+    <div className="w-full min-h-screen bg-[#061a2e]">
+      <article className="w-full">
         <WikiArticleHeader 
           title={frontmatter.title} 
           universe={frontmatter.universe} 
           category={frontmatter.category} 
         />
 
-        <WikiArticleContent 
-          description={frontmatter.description} 
-          content={content} 
-        />
+        <div className="max-w-[1400px] mx-auto w-full">
+          <WikiArticleContent 
+            description={frontmatter.description} 
+            content={content} 
+          />
+        </div>
 
-        <WikiArticleFooter />
+        <div className="max-w-[1400px] mx-auto w-full pb-20">
+          <WikiArticleFooter />
+        </div>
       </article>
     </div>
   );
