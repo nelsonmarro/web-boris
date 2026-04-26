@@ -4,12 +4,22 @@ import Image from 'next/image';
 import { AbyssalAlert } from './AbyssalAlert';
 import { AbyssalTable } from './AbyssalTable';
 import { Badge } from '@/components/ui/badge';
+import { WikiInfobox, InfoSection, InfoField } from './WikiInfobox';
+import { WikiQuote } from './WikiQuote';
+import { WikiGallery } from './WikiGallery';
+import { WikiTOC } from './WikiTOC';
 
 const mdxComponents = {
   // Custom styled components for MDX
   AbyssalAlert,
   AbyssalTable,
   Badge,
+  WikiInfobox,
+  InfoSection,
+  InfoField,
+  WikiQuote,
+  WikiGallery,
+  WikiTOC,
   
   // Standard HTML overrides
   h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (

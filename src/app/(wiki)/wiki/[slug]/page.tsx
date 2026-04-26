@@ -48,7 +48,7 @@ export default async function WikiArticlePage({ params }: Props) {
   const { frontmatter, content } = article;
 
   return (
-    <div className="container mx-auto px-4 md:px-6 py-10 md:py-20 max-w-5xl">
+    <div className="container mx-auto px-4 lg:px-8 py-10 md:py-16 max-w-7xl">
       <article className="glass-liquid rounded-[3rem] border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.7)] overflow-hidden relative border-refractive">
         <div className="glass-reflection opacity-20" />
         
@@ -56,7 +56,6 @@ export default async function WikiArticlePage({ params }: Props) {
           title={frontmatter.title} 
           universe={frontmatter.universe} 
           category={frontmatter.category} 
-          image={frontmatter.image} 
         />
 
         <WikiArticleContent 
