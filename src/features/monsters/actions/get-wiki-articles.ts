@@ -8,6 +8,7 @@ export interface GetWikiArticlesParams {
   pageSize?: number;
   search?: string;
   universe?: string;
+  category?: string;
 }
 
 export interface GetWikiArticlesResult {
@@ -20,7 +21,8 @@ export async function getWikiArticles({
   page = 1,
   pageSize = 6,
   search = "",
-  universe = ""
+  universe = "all",
+  category = "all"
 }: GetWikiArticlesParams): Promise<GetWikiArticlesResult> {
   // In a real DB, we would use skip/take and where
   // Here we fetch all and filter/slice since it's MDX files
@@ -36,9 +38,15 @@ export async function getWikiArticles({
     );
   }
 
-  if (universe) {
+  if (universe && universe !== "all") {
     articles = articles.filter(article => 
       article.frontmatter.universe === universe
+    );
+  }
+
+  if (category && category !== "all") {
+    articles = articles.filter(article => 
+      article.frontmatter.category === category
     );
   }
 

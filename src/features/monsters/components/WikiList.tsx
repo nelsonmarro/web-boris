@@ -11,6 +11,8 @@ import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 
 export function WikiList() {
   const [search, setSearch] = React.useState("");
+  const [universe, setUniverse] = React.useState("all");
+  const [category, setCategory] = React.useState("all");
   const [page, setPage] = React.useState(1);
   const pageSize = 6;
 
@@ -26,9 +28,26 @@ export function WikiList() {
     return () => clearTimeout(timer);
   }, [search]);
 
+  // Handle filter changes
+  const handleUniverseChange = (val: string | null) => {
+    setUniverse(val || "all");
+    setPage(1);
+  };
+
+  const handleCategoryChange = (val: string | null) => {
+    setCategory(val || "all");
+    setPage(1);
+  };
+
   const { data, isPending, isPlaceholderData, isFetching } = useQuery({
-    queryKey: ['wiki-articles', page, debouncedSearch],
-    queryFn: () => getWikiArticles({ page, pageSize, search: debouncedSearch }),
+    queryKey: ['wiki-articles', page, debouncedSearch, universe, category],
+    queryFn: () => getWikiArticles({ 
+      page, 
+      pageSize, 
+      search: debouncedSearch,
+      universe,
+      category
+    }),
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -39,7 +58,13 @@ export function WikiList() {
   return (
     <div className="space-y-10">
       {/* Search and Filters Section */}
-      <WikiFilters onSearchChange={setSearch} />
+      <WikiFilters 
+        onSearchChange={setSearch} 
+        onUniverseChange={handleUniverseChange}
+        onCategoryChange={handleCategoryChange}
+        currentUniverse={universe}
+        currentCategory={category}
+      />
 
       {/* Results Grid */}
       <div className="relative min-h-[400px]">
