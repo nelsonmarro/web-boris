@@ -10,7 +10,7 @@ interface Article {
   };
 }
 
-export function WikiExplorerSection({ articles }: { articles: Article[] }) {
+export function WikiExplorerSection() {
   return (
     <section className="space-y-12 pb-20 relative">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
@@ -25,18 +25,11 @@ export function WikiExplorerSection({ articles }: { articles: Article[] }) {
             Filtra por universos o categorías para hallar información clasificada. Accede a los registros biométricos y cronologías oficiales.
           </p>
         </div>
-        
-        <div className="hidden md:flex items-center gap-3 px-6 py-3 rounded-2xl glass-liquid border-white/10 shadow-xl border-refractive">
-          <div className="flex flex-col text-right">
-            <span className="text-[8px] font-bold uppercase tracking-wider text-white/20 leading-none">Registros</span>
-            <span className="text-xl font-bold text-white italic leading-tight">{articles.length}</span>
-          </div>
-        </div>
       </div>
       
       <div className="relative">
         <div className="absolute -inset-4 bg-primary/5 blur-[80px] rounded-full pointer-events-none opacity-30" />
-        <WikiList articles={articles} />
+        <WikiList />
       </div>
     </section>
   );

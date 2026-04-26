@@ -70,14 +70,17 @@ export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
         {/* Mobile Menu */}
         <div className="md:hidden flex items-center gap-2 relative z-10">
           <Sheet>
-            <SheetTrigger 
+            <SheetTrigger
               render={
                 <button className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors">
                   <Menu className="w-5 h-5" />
                 </button>
               }
             />
-            <SheetContent side="right" className="bg-[#001226] border-l border-white/10 p-0 w-[80%] max-w-[300px]">
+            <SheetContent
+              side="right"
+              className="bg-[#001226] border-l border-white/10 p-0 w-[80%] max-w-[300px]"
+            >
               <SheetHeader className="p-8 border-b border-white/5">
                 <SheetTitle className="text-left">
                   <NavLogo />

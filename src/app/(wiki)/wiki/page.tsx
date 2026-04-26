@@ -1,12 +1,9 @@
-import { getAllArticles } from '@/utils/mdx';
 import { Shield, Skull, Zap } from 'lucide-react';
 import { WikiBanner } from '@/features/monsters/components/wiki/WikiBanner';
 import { FeaturedAccessGrid } from '@/features/monsters/components/wiki/FeaturedAccess';
 import { WikiExplorerSection } from '@/features/monsters/components/wiki/WikiExplorerSection';
 
 export default async function WikiIndex() {
-  const articles = await getAllArticles();
-
   const featuredItems = [
     {
       title: 'El Gran Majá',
@@ -45,7 +42,7 @@ export default async function WikiIndex() {
       <FeaturedAccessGrid items={featuredItems} />
 
       {/* Full Explorer Section */}
-      <WikiExplorerSection articles={articles} />
+      <WikiExplorerSection />
     </div>
   );
 }
