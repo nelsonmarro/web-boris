@@ -9,7 +9,7 @@ interface WikiBannerProps {
 
 export function WikiBanner({ label, title, gradientTitle, description }: WikiBannerProps) {
   return (
-    <section className="relative glass-liquid bg-[#0b2e4d] rounded-[3rem] p-10 md:p-16 border-white/20 shadow-[0_40px_80px_rgba(0,0,0,0.6)] overflow-hidden group border-refractive">
+    <section className="relative glass-liquid bg-[#061a2e] rounded-[3rem] p-10 md:p-16 border-white/20 shadow-[0_40px_80px_rgba(0,0,0,0.6)] overflow-hidden group border-refractive">
       <div className="glass-reflection opacity-30" />
 
       {/* Scanning Line Animation */}

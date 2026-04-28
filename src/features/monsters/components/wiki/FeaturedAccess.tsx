@@ -12,7 +12,7 @@ export function FeaturedAccessCard({ title, slug, icon: Icon, color, universe }:
   return (
     <Link
       href={`/wiki/${slug}`}
-      className="group relative flex flex-col justify-end overflow-hidden rounded-[2.5rem] glass-liquid bg-[#0b2e4d] border-white/10 p-8 h-64 transition-all duration-500 hover:scale-[1.03] hover:border-primary/50 border-refractive shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+      className="group relative flex flex-col justify-end overflow-hidden rounded-[2.5rem] glass-liquid bg-[#061a2e] border-white/10 p-8 h-64 transition-all duration-500 hover:scale-[1.03] hover:border-primary/50 border-refractive shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
     >
       <div className="glass-reflection opacity-20" />
 

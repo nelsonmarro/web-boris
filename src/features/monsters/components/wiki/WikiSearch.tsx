@@ -39,7 +39,7 @@ export function WikiSearch({
         onChange={handleChange}
         placeholder={placeholder}
         className={cn(
-          "h-16 pl-14 pr-12 bg-[#0b2e4d] border-white/20 rounded-[1.5rem] focus:border-primary/60 focus:ring-primary/20 transition-all font-bold text-white placeholder:text-white/60 text-lg shadow-[inset_0_2px_4px_rgba(255,255,255,0.05)] focus:shadow-[0_0_30px_rgba(255,115,0,0.15)]",
+          "h-16 pl-14 pr-12 bg-[#061a2e] border-white/20 rounded-[1.5rem] focus:border-primary/60 focus:ring-primary/20 transition-all font-bold text-white placeholder:text-white/60 text-lg shadow-[inset_0_2px_4px_rgba(255,255,255,0.05)] focus:shadow-[0_0_30px_rgba(255,115,0,0.15)]",
           inputClassName
         )}
       />

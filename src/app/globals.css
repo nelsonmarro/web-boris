@@ -129,7 +129,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply text-foreground bg-[#001f40] min-h-screen relative font-sans antialiased overflow-x-hidden cursor-default;
+    @apply text-foreground bg-[#0a2339] min-h-screen relative font-sans antialiased overflow-x-hidden cursor-default;
   }
 
   /* Submarine Vignette */

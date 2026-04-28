@@ -37,10 +37,10 @@ export function WikiFilters({
       <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
         {/* Universe Filter */}
         <Select value={currentUniverse} onValueChange={onUniverseChange}>
-          <SelectTrigger className="w-full sm:w-[200px] h-14 bg-[#0b2e4d] border-white/10 rounded-2xl text-white font-bold focus:ring-primary/20">
+          <SelectTrigger className="w-full sm:w-[200px] h-14 bg-[#061a2e] border-white/10 rounded-2xl text-white font-bold focus:ring-primary/20">
             <SelectValue placeholder="Universo" />
           </SelectTrigger>
-          <SelectContent className="bg-[#0b2e4d] border-white/10 text-white min-w-[200px]">
+          <SelectContent className="bg-[#061a2e] border-white/10 text-white min-w-[200px]">
             <SelectItem value="all">Todos los Universos</SelectItem>
             <SelectItem value="Colosos">Colosos</SelectItem>
             <SelectItem value="Capitán de Galeón">Capitán de Galeón</SelectItem>
@@ -50,10 +50,10 @@ export function WikiFilters({
 
         {/* Category Filter */}
         <Select value={currentCategory} onValueChange={onCategoryChange}>
-          <SelectTrigger className="w-full sm:w-[200px] h-14 bg-[#0b2e4d] border-white/10 rounded-2xl text-white font-bold focus:ring-primary/20">
+          <SelectTrigger className="w-full sm:w-[200px] h-14 bg-[#061a2e] border-white/10 rounded-2xl text-white font-bold focus:ring-primary/20">
             <SelectValue placeholder="Categoría" />
           </SelectTrigger>
-          <SelectContent className="bg-[#0b2e4d] border-white/10 text-white min-w-[200px]">
+          <SelectContent className="bg-[#061a2e] border-white/10 text-white min-w-[200px]">
             <SelectItem value="all">Todas las Categorías</SelectItem>
             <SelectItem value="Especies">Especies</SelectItem>
             <SelectItem value="Animales">Animales</SelectItem>

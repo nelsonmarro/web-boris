@@ -15,7 +15,7 @@ export function WikiArticleCard({ slug, frontmatter }: ArticleCardProps) {
   return (
     <Link 
       href={`/wiki/${slug}`}
-      className="group glass-liquid bg-[#0b2e4d] rounded-[2.5rem] border-white/10 overflow-hidden flex flex-col transition-all hover:scale-[1.02] hover:border-primary/40 hover:shadow-[0_30px_60px_rgba(0,0,0,0.6)] border-refractive"
+      className="group glass-liquid bg-[#061a2e] rounded-[2.5rem] border-white/10 overflow-hidden flex flex-col transition-all hover:scale-[1.02] hover:border-primary/40 hover:shadow-[0_30px_60px_rgba(0,0,0,0.6)] border-refractive"
     >
       {/* Image Header */}
       <div className="relative w-full aspect-video bg-black/40 overflow-hidden">
@@ -33,7 +33,7 @@ export function WikiArticleCard({ slug, frontmatter }: ArticleCardProps) {
             <span className="text-[10px] font-bold uppercase tracking-widest text-white">Sin Imagen</span>
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0b2e4d] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#061a2e] via-transparent to-transparent" />
       </div>
 
       <div className="p-8 flex flex-col gap-4 flex-1">
