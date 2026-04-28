@@ -278,4 +278,41 @@
     position: absolute !important;
     inset: 0 !important;
   }
+
+  @media print {
+    /* Hide non-essential UI */
+    .sidebar, 
+    nav[role="navigation"], 
+    header.sticky, 
+    footer,
+    .print\:hidden {
+      display: none !important;
+    }
+
+    /* Reset layout for print */
+    body {
+      background: white !important;
+      color: black !important;
+    }
+
+    main {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+    }
+
+    .wiki-content {
+      padding: 0 !important;
+      color: black !important;
+    }
+
+    h1, h2, h3, h4, p, li {
+      color: black !important;
+    }
+
+    /* Keep important wiki components */
+    .bg-\[\#0a2339\] {
+      background: transparent !important;
+    }
+  }
 }
