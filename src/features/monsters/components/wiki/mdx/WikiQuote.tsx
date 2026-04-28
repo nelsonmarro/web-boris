@@ -17,9 +17,9 @@ export function WikiQuote({ children, author, source }: WikiQuoteProps) {
       <Quote className="absolute top-8 left-8 w-16 h-16 text-primary/10 -scale-x-100" />
       
       <blockquote className="relative z-10">
-        <p className="text-xl md:text-3xl font-bold text-white leading-relaxed text-center px-4 md:px-16 drop-shadow-lg italic">
+        <div className="text-xl md:text-3xl font-bold text-white leading-relaxed text-center px-4 md:px-16 drop-shadow-lg italic">
           &quot;{children}&quot;
-        </p>
+        </div>
         
         {(author || source) && (
           <footer className="mt-10 flex flex-col items-center">

@@ -76,9 +76,9 @@ export function WikiInfobox({ title, image, imageCaption, children, className }:
           </div>
           {imageCaption && (
             <div className="mt-3">
-              <p className="text-center text-[10px] font-bold text-white/30 uppercase tracking-widest italic">
+              <div className="text-center text-[10px] font-bold text-white/30 uppercase tracking-widest italic">
                 {imageCaption}
-              </p>
+              </div>
             </div>
           )}
         </div>

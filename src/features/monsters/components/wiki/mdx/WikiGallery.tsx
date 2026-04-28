@@ -38,9 +38,9 @@ export function WikiGallery({ images = [] }: WikiGalleryProps) {
           </div>
           
           {img.caption && (
-            <p className="px-4 text-center text-[10px] font-bold text-white/40 group-hover:text-primary transition-colors uppercase tracking-[0.2em] leading-relaxed italic">
+            <div className="px-4 text-center text-[10px] font-bold text-white/40 group-hover:text-primary transition-colors uppercase tracking-[0.2em] leading-relaxed italic">
               {img.caption}
-            </p>
+            </div>
           )}
         </div>
       ))}

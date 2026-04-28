@@ -31,8 +31,8 @@ const mdxComponents = {
   h3: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h3 className="text-xl font-bold text-primary uppercase tracking-wider mt-8 mb-3" {...props} />
   ),
-  p: (props: React.HTMLAttributes<HTMLParagraphElement>) => (
-    <p className="text-lg text-white/90 leading-relaxed font-medium mb-6" {...props} />
+  p: (props: React.HTMLAttributes<HTMLDivElement>) => (
+    <div className="text-lg text-white/90 leading-relaxed font-medium mb-6" {...props} />
   ),
   ul: (props: React.HTMLAttributes<HTMLUListElement>) => (
     <ul className="list-none space-y-4 mb-8 pl-4" {...props} />
