@@ -8,7 +8,7 @@ interface WikiArticleContentProps {
 
 export function WikiArticleContent({ description, content }: WikiArticleContentProps) {
   return (
-    <div className="px-8 md:px-12 lg:px-16 py-8 relative z-10">
+    <div className="wiki-content px-8 md:px-12 lg:px-16 py-8 relative z-10">
       {description && (
         <div className="mb-8 p-4 bg-[#1a1a1a] border-l-4 border-primary/60 text-white/80 text-sm md:text-base font-medium rounded-r-lg">
           {description}

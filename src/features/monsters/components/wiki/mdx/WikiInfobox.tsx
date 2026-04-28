@@ -58,9 +58,9 @@ export function WikiInfobox({ title, image, imageCaption, children, className }:
     )}>
       {/* Header */}
       <div className="bg-primary p-5 text-center shadow-lg">
-        <h3 className="text-xl font-bold text-white italic uppercase tracking-tight">
+        <div className="text-xl font-bold text-white italic uppercase tracking-tight">
           {title}
-        </h3>
+        </div>
       </div>
 
       {/* Image */}
