@@ -2,7 +2,7 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import { AppSidebar } from "@/components/AppSidebar";
 import { NavLinks } from "@/components/navbar/components/NavLinks";
 import { NavActions } from "@/components/navbar/components/NavActions";
-import Footer from "@/components/Footer";
+import { WikiFooter } from "@/features/monsters/components/wiki/WikiFooter";
 
 export default function WikiLayout({
   children,
@@ -47,7 +47,7 @@ export default function WikiLayout({
             <div className="relative z-10">
               {children}
             </div>
-            <Footer />
+            <WikiFooter />
           </main>
         </SidebarInset>
       </div>
