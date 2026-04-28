@@ -58,7 +58,7 @@ export function WikiTOC() {
   if (headings.length === 0) return null;
 
   return (
-    <nav className="my-10 inline-block min-w-[320px] bg-[#071d31] border border-white/10 rounded-lg shadow-2xl overflow-hidden">
+    <nav className="my-10 inline-block min-w-[320px] bg-[#061a2e] border border-white/10 rounded-lg shadow-2xl overflow-hidden">
       {/* Header Style Wikipedia/Fandom */}
       <div className="px-5 py-3 border-b border-white/5 flex items-center justify-between bg-black/20">
         <div className="flex items-center gap-3">

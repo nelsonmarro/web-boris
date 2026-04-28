@@ -53,7 +53,7 @@ interface WikiInfoboxProps {
 export function WikiInfobox({ title, image, imageCaption, children, className }: WikiInfoboxProps) {
   return (
     <aside className={cn(
-      "w-full lg:w-[350px] lg:float-right lg:ml-8 mb-8 lg:mb-4 bg-[#0a2339] rounded-2xl border border-white/10 shadow-2xl overflow-hidden z-20",
+      "w-full lg:w-[350px] lg:float-right lg:ml-8 mb-8 lg:mb-4 bg-[#061a2e] rounded-2xl border border-white/10 shadow-2xl overflow-hidden z-20",
       className
     )}>
       {/* Header */}

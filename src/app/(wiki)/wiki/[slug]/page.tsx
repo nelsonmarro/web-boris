@@ -48,7 +48,7 @@ export default async function WikiArticlePage({ params }: Props) {
   const { frontmatter, content } = article;
 
   return (
-    <div className="w-full min-h-screen bg-[#061a2e]">
+    <div className="w-full min-h-screen bg-[#0a2339]">
       <article className="w-full">
         <WikiArticleHeader 
           title={frontmatter.title} 

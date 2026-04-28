@@ -11,7 +11,7 @@ interface WikiQuoteProps {
 
 export function WikiQuote({ children, author, source }: WikiQuoteProps) {
   return (
-    <div className="relative my-12 p-8 md:p-14 bg-[#0a2339] rounded-3xl border border-white/10 shadow-2xl overflow-hidden group">
+    <div className="relative my-12 p-8 md:p-14 bg-[#061a2e] rounded-3xl border border-white/10 shadow-2xl overflow-hidden group">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
       
       <Quote className="absolute top-8 left-8 w-16 h-16 text-primary/10 -scale-x-100" />
