@@ -1,59 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { ListTree } from 'lucide-react';
-
-interface Heading {
-  id: string;
-  text: string;
-  level: number;
-  numbering: string;
-}
+import { ListTree, ChevronDown, ChevronUp } from 'lucide-react';
+import { useWikiHeadings } from '../../../hooks/useWikiHeadings';
 
 export function WikiTOC() {
-  const [headings, setHeadings] = React.useState<Heading[]>([]);
+  const headings = useWikiHeadings('.wiki-content');
   const [isOpen, setIsOpen] = React.useState(true);
-
-  React.useEffect(() => {
-    const container = document.querySelector('.wiki-content');
-    if (!container) return;
-
-    const elements = Array.from(container.querySelectorAll('h2, h3'));
-    
-    // Assign IDs to elements if they don't have one
-    elements.forEach((elem) => {
-      if (!elem.id) {
-        elem.id = elem.textContent?.toLowerCase().trim().replace(/\s+/g, '-') || '';
-      }
-    });
-
-    // Calculate hierarchical numbering
-    let h2Count = 0;
-    let h3Count = 0;
-    
-    const processedHeadings: Heading[] = elements.map((elem) => {
-      const level = Number(elem.tagName.replace('H', ''));
-      let numbering = '';
-
-      if (level === 2) {
-        h2Count++;
-        h3Count = 0;
-        numbering = `${h2Count}.`;
-      } else if (level === 3) {
-        h3Count++;
-        numbering = `${h2Count}.${h3Count}.`;
-      }
-
-      return {
-        id: elem.id,
-        text: elem.textContent || '',
-        level,
-        numbering,
-      };
-    });
-
-    setHeadings(processedHeadings);
-  }, []);
 
   if (headings.length === 0) return null;
 
