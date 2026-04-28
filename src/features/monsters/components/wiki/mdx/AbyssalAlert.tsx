@@ -16,29 +16,29 @@ interface AbyssalAlertProps {
 const variants: Record<AlertVariant, { icon: LucideIcon; bg: string; border: string; text: string; accent: string }> = {
   info: {
     icon: Info,
-    bg: 'bg-blue-500/5',
-    border: 'border-blue-500/20',
+    bg: 'bg-[#0a2339]',
+    border: 'border-blue-500/30',
     text: 'text-blue-200/80',
     accent: 'text-blue-400',
   },
   warning: {
     icon: ShieldAlert,
-    bg: 'bg-orange-500/5',
-    border: 'border-orange-500/20',
+    bg: 'bg-[#1a1406]',
+    border: 'border-orange-500/30',
     text: 'text-orange-200/80',
     accent: 'text-orange-400',
   },
   danger: {
     icon: ShieldAlert,
-    bg: 'bg-red-500/10',
-    border: 'border-red-500/30',
-    text: 'text-red-200/90',
+    bg: 'bg-[#1a0606]',
+    border: 'border-red-500/40',
+    text: 'text-red-100/90',
     accent: 'text-red-500',
   },
   classified: {
     icon: Skull,
-    bg: 'bg-primary/5',
-    border: 'border-primary/20',
+    bg: 'bg-[#0a2339]',
+    border: 'border-primary/40',
     text: 'text-white/80',
     accent: 'text-primary',
   },
@@ -50,25 +50,23 @@ export function AbyssalAlert({ variant = 'info', title, children, className }: A
 
   return (
     <div className={cn(
-      "relative overflow-hidden rounded-3xl border p-6 my-8 glass-liquid border-refractive",
+      "relative overflow-hidden rounded-2xl border p-6 my-8 shadow-xl",
       config.bg,
       config.border,
       className
     )}>
-      <div className="glass-reflection opacity-20" />
-      
       <div className="flex gap-4 relative z-10">
-        <div className={cn("shrink-0 w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center", config.accent)}>
-          <Icon className="w-5 h-5" />
+        <div className={cn("shrink-0 w-12 h-12 rounded-xl bg-black/20 border border-white/5 flex items-center justify-center", config.accent)}>
+          <Icon className="w-6 h-6" />
         </div>
         
-        <div className="space-y-1">
+        <div className="space-y-1 py-1">
           {title && (
-            <h4 className={cn("text-[10px] font-bold uppercase tracking-wider", config.accent)}>
+            <h4 className={cn("text-[11px] font-bold uppercase tracking-[0.2em] italic", config.accent)}>
               {title}
             </h4>
           )}
-          <div className={cn("text-sm font-medium leading-relaxed", config.text)}>
+          <div className={cn("text-base font-medium leading-relaxed", config.text)}>
             {children}
           </div>
         </div>

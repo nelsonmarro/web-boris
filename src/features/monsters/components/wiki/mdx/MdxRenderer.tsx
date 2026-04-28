@@ -44,14 +44,13 @@ const mdxComponents = {
     </li>
   ),
   img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
-    <span className="relative block aspect-video w-full my-12 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl glass-liquid">
-      <span className="block absolute inset-0 glass-reflection opacity-30" />
+    <span className="relative block aspect-video w-full my-12 rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#0a2339]">
       {props.src && (
         <Image 
           src={props.src as string} 
           alt={props.alt || ""} 
           fill 
-          className="object-cover transition-transform duration-1000 hover:scale-105" 
+          className="object-cover opacity-90 transition-opacity hover:opacity-100" 
         />
       )}
     </span>
