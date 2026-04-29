@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import { Play, Video } from 'lucide-react';
 import Link from 'next/link';
 import { YouTubeEmbed } from '@next/third-parties/google';
