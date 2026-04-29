@@ -58,7 +58,7 @@ export default async function WikiArticlePage({ params }: Props) {
 
         <div className="max-w-[1400px] mx-auto w-full">
           <WikiArticleContent 
-            description={frontmatter.description} 
+            frontmatter={frontmatter} 
             content={content} 
           />
         </div>
