@@ -8,7 +8,7 @@ export default function MarketingLayout({
   return (
     <div className="landing-bg-wrapper min-h-full flex flex-col relative">
       {/* Background Image and Overlays */}
-      <div className="fixed inset-0 z-[-2] bg-[url('/assets/Universo%20Colosos/Stock%20aleatorio/TomaFinal_8_Composted0010.png')] bg-cover bg-center opacity-50 scale-105 saturate-[0.8] contrast-[1.1] brightness-100 blur-[1px]" />
+      <div className="fixed inset-0 z-[-2] bg-[url('/assets/Universo_Colosos/Stock_aleatorio/TomaFinal_8_Composted0010.png')] bg-cover bg-center opacity-50 scale-105 saturate-[0.8] contrast-[1.1] brightness-100 blur-[1px]" />
       
       {/* Liquid Overlay & Caustics */}
       <div className="fixed inset-0 z-[-1] pointer-events-none bg-gradient-to-b from-[rgba(0,50,90,0.3)] to-[rgba(0,30,60,0.8)] backdrop-blur-[8px]" style={{

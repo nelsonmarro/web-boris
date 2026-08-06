@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import { Quote } from 'lucide-react';
 
@@ -11,28 +9,36 @@ interface WikiQuoteProps {
 
 export function WikiQuote({ children, author, source }: WikiQuoteProps) {
   return (
-    <div className="relative my-12 p-8 md:p-14 bg-[#061a2e] rounded-3xl border border-white/10 shadow-2xl overflow-hidden group">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
-      
-      <Quote className="absolute top-8 left-8 w-16 h-16 text-primary/10 -scale-x-100" />
-      
-      <blockquote className="relative z-10">
-        <div className="text-xl md:text-3xl font-bold text-white leading-relaxed text-center px-4 md:px-16 drop-shadow-lg italic">
-          &quot;{children}&quot;
+    <div className="relative my-4 px-10 md:px-16 py-4 group">
+      {/* Decorative vertical line (classic wiki) */}
+      <div className="absolute left-9 top-0 bottom-0 w-[2px] bg-primary/20 rounded-full" />
+
+      <Quote className="absolute top-0 left-0 w-8 h-8 text-primary opacity-40 -scale-x-100" />
+      <Quote className="absolute bottom-42 right-100 w-8 h-8 text-primary opacity-40 rotate-180" />
+
+      <blockquote className="relative">
+        <div className="text-lg md:text-xl font-medium text-white/90 leading-relaxed italic">
+          {children}
         </div>
-        
+
         {(author || source) && (
-          <footer className="mt-10 flex flex-col items-center">
-            <div className="w-16 h-1 bg-primary/60 rounded-full mb-6 shadow-[0_0_15px_rgba(255,115,0,0.5)]" />
-            <cite className="not-italic flex flex-col items-center">
-              {author && <span className="text-primary font-bold uppercase tracking-[0.3em] text-[11px] mb-2">{author}</span>}
-              {source && <span className="text-white/30 font-bold text-[9px] uppercase tracking-widest">{source}</span>}
+          <footer className="mt-4 flex items-center gap-2">
+            <span className="text-primary opacity-60">—</span>
+            <cite className="not-italic text-sm font-bold flex items-center gap-2">
+              {author && (
+                <span className="text-primary/90 uppercase tracking-widest text-[11px]">
+                  {author}
+                </span>
+              )}
+              {source && (
+                <span className="text-white/30 text-[10px] italic">
+                  [{source}]
+                </span>
+              )}
             </cite>
           </footer>
         )}
       </blockquote>
-
-      <Quote className="absolute bottom-8 right-8 w-16 h-16 text-primary/10" />
     </div>
   );
 }

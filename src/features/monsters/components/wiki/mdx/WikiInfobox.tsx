@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import Image from 'next/image';
 import { cn } from '@/utils/cn';
@@ -53,30 +55,41 @@ interface WikiInfoboxProps {
 export function WikiInfobox({ title, image, imageCaption, children, className }: WikiInfoboxProps) {
   return (
     <aside className={cn(
-      "w-full lg:w-[350px] lg:float-right lg:ml-8 mb-8 lg:mb-4 bg-[#061a2e] rounded-2xl border border-white/10 shadow-2xl overflow-hidden z-20",
+      "w-full md:w-[350px] md:float-right md:ml-8 mb-8 md:mb-4 bg-[#061a2e] rounded-2xl border border-white/10 shadow-2xl overflow-hidden z-20",
       className
     )}>
       {/* Header */}
-      <div className="bg-primary p-5 text-center shadow-lg">
-        <div className="text-xl font-bold text-white italic uppercase tracking-tight">
+      <div className="bg-primary/90 p-5 text-center shadow-lg border-b border-primary">
+        <div className="text-xl font-black text-white italic uppercase tracking-widest drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
           {title}
         </div>
       </div>
 
-      {/* Image */}
+      {/* Image - Filling the rectangle edge-to-edge */}
       {image && (
-        <div className="p-4 border-b border-white/5 bg-black/20">
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg border border-white/10">
+        <div className="relative border-b border-white/10 bg-black/40 group/img">
+          <a 
+            href={image} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="relative block aspect-[4/5] w-full overflow-hidden cursor-zoom-in"
+          >
             <Image 
               src={image} 
               alt={title} 
               fill 
-              className="object-cover" 
+              className="object-cover transition-transform duration-700 group-hover/img:scale-105" 
+              priority
             />
-          </div>
+            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+               <div className="bg-primary/20 backdrop-blur-md p-2 rounded-full border border-primary/40 scale-75">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white w-4 h-4"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+               </div>
+            </div>
+          </a>
           {imageCaption && (
-            <div className="mt-3">
-              <div className="text-center text-[10px] font-bold text-white/30 uppercase tracking-widest italic">
+            <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm p-3 border-t border-white/5">
+              <div className="text-center text-[10px] font-bold text-white/60 uppercase tracking-widest italic leading-relaxed">
                 {imageCaption}
               </div>
             </div>

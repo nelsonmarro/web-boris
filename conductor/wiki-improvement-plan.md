@@ -23,11 +23,11 @@ La Wiki actual es funcional pero carece de una estructura de navegación jerárq
 
 ### Fase 2: Estabilización de Contenido (MDX)
 1. Actualizar `src/content/the-bloop.mdx`:
-   - Cambiar imagen a `/assets/Universo Colosos/bloopresolution.png`.
+   - Cambiar imagen a `/assets/Universo_Colosos/The_Bloop/bloopresolution.png`.
 2. Actualizar `src/content/el-gran-maja.mdx`:
-   - Cambiar imagen a `/assets/Universo Colosos/elgranmajaResolution.png`.
+   - Cambiar imagen a `/assets/Universo_Colosos/El_Gran_Maja/elgranmajaResolution.png`.
 3. Actualizar `src/content/phillip-forte.mdx`:
-   - Cambiar imagen a `/assets/Universo Colosos/phillipresolution.png`.
+   - Cambiar imagen a `/assets/Universo_Colosos/Phillip_Forte/phillipresolution.png`.
 4. Crear artículos base para completar la jerarquía (placeholders para Especies, Vehículos, etc.).
 
 ### Fase 3: Sidebar y Layout

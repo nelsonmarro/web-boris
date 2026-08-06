@@ -36,7 +36,7 @@ export function WikiArticleActions({ title }: WikiArticleActionsProps) {
         setIsCopying(true);
         toast.success('Enlace copiado al portapapeles');
         setTimeout(() => setIsCopying(false), 2000);
-      } catch (err) {
+      } catch {
         toast.error('No se pudo copiar el enlace');
       }
     }

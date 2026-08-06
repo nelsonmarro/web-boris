@@ -26,7 +26,15 @@ export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
   // Check if any child is active to auto-expand (optional, but good UX)
   const isChildActive = item.items?.some(sub => 
     pathname === sub.url || sub.items?.some(deep => pathname === deep.url)
-  );
+  ) ?? false;
+
+  const [isOpen, setIsOpen] = React.useState(isChildActive);
+
+  React.useEffect(() => {
+    if (isChildActive) {
+      setIsOpen(true);
+    }
+  }, [isChildActive]);
 
   if (!item.items || item.items.length === 0) {
     return (
@@ -59,7 +67,8 @@ export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
 
   return (
     <Collapsible 
-      defaultOpen={isChildActive}
+      open={isOpen}
+      onOpenChange={setIsOpen}
       render={<SidebarMenuItem />} 
       className="group/collapsible mb-0.5"
     >
@@ -87,7 +96,15 @@ export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
 function SidebarSubItem({ item }: { item: NavItem }) {
   const pathname = usePathname();
   const isActive = pathname === item.url;
-  const isDeepChildActive = item.items?.some(deep => pathname === deep.url);
+  const isDeepChildActive = item.items?.some(deep => pathname === deep.url) ?? false;
+
+  const [isOpen, setIsOpen] = React.useState(isDeepChildActive);
+
+  React.useEffect(() => {
+    if (isDeepChildActive) {
+      setIsOpen(true);
+    }
+  }, [isDeepChildActive]);
 
   if (!item.items || item.items.length === 0) {
     return (
@@ -113,7 +130,8 @@ function SidebarSubItem({ item }: { item: NavItem }) {
 
   return (
     <Collapsible 
-      defaultOpen={isDeepChildActive}
+      open={isOpen}
+      onOpenChange={setIsOpen}
       render={<SidebarMenuSubItem />} 
       className="group/sub-collapsible"
     >

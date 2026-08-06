@@ -7,7 +7,7 @@ const UNIVERSES = [
   {
     id: 'colosos',
     title: 'Colosos',
-    image: '/assets/Universo Colosos/thebloop1resolucion.png',
+    image: '/assets/Universo_Colosos/The_Bloop/thebloop1resolucion.png',
     icon: '🦖',
     count: '42 Entidades',
     description: 'Bestias colosales que remecen el curso del ecosistema y la presencia humana.',
@@ -16,7 +16,7 @@ const UNIVERSES = [
   {
     id: 'capitan-de-galeon',
     title: 'Capitán de Galeón',
-    image: '/assets/Universo Capitán de Galeón/Borisao 2 F (1).png',
+    image: '/assets/Universo_Capitán_de_Galeón/Borisao/Borisao_2_F_(1).png',
     icon: '⚓',
     count: '15 Personajes',
     description: 'Batallas entre grandes navíos, capitanes excéntricos y piratas de otro mundo.',
@@ -25,7 +25,7 @@ const UNIVERSES = [
   {
     id: 'ellos-llegaron',
     title: 'Ellos Llegaron',
-    image: '/assets/Universo Ellos llegaron/ellosllegaron1.1.png',
+    image: '/assets/Universo_Ellos_llegaron/El_Angel/ellosllegaron1.1.png',
     icon: '👽',
     count: '28 Eventos',
     description: 'La Tierra de los años 40 sacudida por un enemigo implacable venido de la nada.',

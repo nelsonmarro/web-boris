@@ -11,7 +11,7 @@ export function WikiFooter() {
           <div className="space-y-6 lg:col-span-1">
             <div className="flex items-center gap-3">
                <div className="relative w-11 h-11 overflow-hidden rounded-xl border border-white/20 bg-white/5 p-1 shadow-[0_0_20px_rgba(255,115,0,0.1)]">
-                  <Image src="/assets/logo.png" alt="Logo" width={44} height={44} className="rounded-lg object-cover" />
+                  <Image src="/assets/Branding/logo.png" alt="Logo" width={44} height={44} className="rounded-lg object-cover" />
                </div>
                <span className="text-2xl font-bold tracking-tight text-white uppercase italic">Borisao<span className="text-primary">Blois</span></span>
             </div>

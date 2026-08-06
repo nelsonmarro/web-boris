@@ -19,7 +19,7 @@ export function AboutBorisSection() {
             {/* Visual Column */}
             <div className="w-full lg:w-1/2 relative min-h-[300px] sm:min-h-[400px] lg:min-h-0 overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
               <Image
-                src="/assets/Logo2.png"
+                src="/assets/Branding/Logo2.png"
                 alt="BorisaoBlois Creator"
                 fill
                 className="object-cover transition-transform duration-[2s] group-hover:scale-105"

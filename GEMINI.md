@@ -74,3 +74,6 @@ npm run start
 - **Server Components:** Priorizar el uso de React Server Components para el renderizado de datos de la wiki y SEO.
 - **Prisma v7 Patterns:** El cliente de Prisma debe instanciarse utilizando el adaptador de driver (`@prisma/adapter-pg`) para compatibilidad con entornos modernos.
 - **Next.js 16 Proxy:** La lógica de middleware de autenticación se encuentra en `src/proxy.ts` siguiendo la convención de Next.js 16.
+
+## Handover & Migration
+Para más detalles sobre el estado actual del proyecto, estándares visuales y tareas pendientes durante la migración a `antigravity-cli`, consulte el archivo [docs/HANDOVER.md](docs/HANDOVER.md).

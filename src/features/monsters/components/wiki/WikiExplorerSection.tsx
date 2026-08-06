@@ -1,15 +1,5 @@
 import { WikiList } from "@/features/monsters/components/WikiList";
 
-interface Article {
-  slug: string;
-  frontmatter: {
-    title: string;
-    universe: string;
-    category?: string;
-    description?: string;
-  };
-}
-
 export function WikiExplorerSection() {
   return (
     <section className="space-y-12 pb-20 relative">

@@ -60,7 +60,7 @@ export function HeroSection() {
 
         <div className="order-1 lg:order-2">
           <HeroVisual
-            imageSrc="/assets/Universo Colosos/bloop (1).png"
+            imageSrc="/assets/Universo_Colosos/The_Bloop/bloop_(1).png"
             alt="Bloop Ojo Solo"
             badgeEmoji="🐋"
             badgeLabel="Último Avistamiento"

@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { ListTree, ChevronDown, ChevronUp } from 'lucide-react';
+import { ListTree } from 'lucide-react';
 import { useWikiHeadings } from '../../../hooks/useWikiHeadings';
 
 export function WikiTOC() {
@@ -11,7 +11,7 @@ export function WikiTOC() {
   if (headings.length === 0) return null;
 
   return (
-    <nav className="my-10 inline-block min-w-[320px] bg-[#061a2e] border border-white/10 rounded-lg shadow-2xl overflow-hidden">
+    <nav className="mb-8 mt-2 inline-block min-w-full md:min-w-[320px] bg-[#061a2e] border border-white/10 rounded-lg shadow-2xl overflow-hidden">
       {/* Header Style Wikipedia/Fandom */}
       <div className="px-5 py-3 border-b border-white/5 flex items-center justify-between bg-black/20">
         <div className="flex items-center gap-3">
