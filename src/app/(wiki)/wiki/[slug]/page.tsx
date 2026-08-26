@@ -4,6 +4,7 @@ import { WikiArticleHeader } from '@/features/monsters/components/wiki/article/W
 import { WikiArticleContent } from '@/features/monsters/components/wiki/article/WikiArticleContent';
 import { WikiArticleFooter } from '@/features/monsters/components/wiki/article/WikiArticleFooter';
 import type { Metadata } from 'next';
+import { getRelatedArticles } from '@/features/monsters/lib/related';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -50,6 +51,7 @@ export default async function WikiArticlePage({ params }: Props) {
   }
 
   const { frontmatter, content } = article;
+  const related = getRelatedArticles(slug, await getAllArticles());
 
   return (
     <div className="w-full min-h-screen bg-[#0a2339]">
@@ -62,7 +64,7 @@ export default async function WikiArticlePage({ params }: Props) {
 
         <WikiArticleContent frontmatter={frontmatter} content={content} />
 
-        <WikiArticleFooter />
+        <WikiArticleFooter related={related} />
       </article>
     </div>
   );

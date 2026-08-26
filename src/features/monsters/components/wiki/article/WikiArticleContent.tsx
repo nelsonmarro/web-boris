@@ -4,8 +4,10 @@ import {
   InfoSection,
   InfoField,
 } from '@/features/monsters/components/wiki/mdx/WikiInfobox';
+import { InfoStats } from '@/features/monsters/components/wiki/mdx/InfoStats';
 import { WikiTOC } from '@/features/monsters/components/wiki/mdx/WikiTOC';
 import { WikiFrontmatter } from '@/core/types/wiki';
+import { hasStats } from '@/features/monsters/lib/stats';
 
 interface WikiArticleContentProps {
   frontmatter: WikiFrontmatter;
@@ -18,6 +20,8 @@ export function WikiArticleContent({
   content,
 }: WikiArticleContentProps) {
   const { title, description, image, imageCaption, infobox } = frontmatter;
+  const hasInfobox = !!infobox && Object.keys(infobox).length > 0;
+  const showStats = hasStats(frontmatter);
 
   return (
     <div className="wiki-content px-4 md:px-12 py-8 relative z-10">
@@ -30,20 +34,22 @@ export function WikiArticleContent({
         )}
 
         {/* Infobox floats on the right side of the content. Must be rendered before main text. */}
-        {infobox && Object.keys(infobox).length > 0 && (
+        {(hasInfobox || showStats) && (
           <WikiInfobox
             title={title}
             image={image}
             imageCaption={imageCaption}
             className="w-full md:w-[350px] md:float-right md:ml-8 mb-8 md:mb-4 clear-right"
           >
-            {Object.entries(infobox).map(([sectionTitle, fields]) => (
-              <InfoSection key={sectionTitle} title={sectionTitle}>
-                {Object.entries(fields).map(([label, value]) => (
-                  <InfoField key={label} label={label} value={value} />
-                ))}
-              </InfoSection>
-            ))}
+            {hasInfobox &&
+              Object.entries(infobox).map(([sectionTitle, fields]) => (
+                <InfoSection key={sectionTitle} title={sectionTitle}>
+                  {Object.entries(fields).map(([label, value]) => (
+                    <InfoField key={label} label={label} value={value} />
+                  ))}
+                </InfoSection>
+              ))}
+            {showStats && <InfoStats stats={frontmatter.stats} />}
           </WikiInfobox>
         )}
 
