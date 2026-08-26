@@ -1,10 +1,7 @@
 import { WIKI_NAVIGATION, type NavItem } from '@/features/monsters/config/wiki-navigation';
-import type { WikiArticle, WikiFrontmatter } from '@/core/types/wiki';
+import { toSummary, type WikiArticle, type WikiArticleSummary } from '@/core/types/wiki';
 
-export interface WikiArticleSummary {
-  slug: string;
-  frontmatter: WikiFrontmatter;
-}
+export type { WikiArticleSummary };
 
 const slugFromUrl = (url: string): string | null =>
   url.startsWith('/wiki/') ? url.slice('/wiki/'.length) : null;
@@ -50,7 +47,7 @@ export function getRelatedArticles(
   const push = (article: WikiArticle | undefined) => {
     if (!article || seen.has(article.slug) || picked.length >= max) return;
     seen.add(article.slug);
-    picked.push({ slug: article.slug, frontmatter: article.frontmatter });
+    picked.push(toSummary(article));
   };
 
   for (const url of findNavSiblings(slug)) {

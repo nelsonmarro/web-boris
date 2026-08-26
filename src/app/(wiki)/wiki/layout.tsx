@@ -8,6 +8,7 @@ import { NavLinks } from '@/components/navbar/components/NavLinks';
 import { NavActions } from '@/components/navbar/components/NavActions';
 import { WikiFooter } from '@/features/monsters/components/wiki/WikiFooter';
 import BubbleTrail from '@/components/ui/bubble-trail';
+import { WikiCommandPalette } from '@/features/monsters/components/wiki/WikiCommandPalette';
 
 export default function WikiLayout({
   children,
@@ -42,20 +43,10 @@ export default function WikiLayout({
               </div>
             </div>
 
-            <div className="hidden lg:flex items-center gap-4 px-6 border-l border-white/10 ml-4">
-              <div className="flex flex-col text-right">
-                <span className="text-[8px] font-bold uppercase tracking-wider text-white/20">
-                  Status
-                </span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-green-500/80 animate-pulse">
-                  Encriptado
-                </span>
-              </div>
-              <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
-                <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.8)]" />
-              </div>
-            </div>
-          </header>
+          <div className="flex items-center gap-4 pl-4 md:ml-4 md:border-l md:border-white/10 md:pl-6">
+            <WikiCommandPalette />
+          </div>
+        </header>
           <div className="flex-1 relative">
             <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
             <div className="relative z-10">{children}</div>

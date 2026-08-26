@@ -1,8 +1,11 @@
-import { WikiList } from "@/features/monsters/components/WikiList";
+import { WikiList } from '@/features/monsters/components/WikiList';
+import { getFilterOptions } from '@/features/monsters/actions/get-wiki-articles';
 
-export function WikiExplorerSection() {
+export async function WikiExplorerSection() {
+  const options = await getFilterOptions();
+
   return (
-    <section className="space-y-12 pb-20 relative">
+    <section id="explorar" className="space-y-12 pb-20 relative scroll-mt-24">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
         <div className="space-y-4">
           <div className="flex items-center gap-4">
@@ -16,10 +19,10 @@ export function WikiExplorerSection() {
           </p>
         </div>
       </div>
-      
+
       <div className="relative">
         <div className="absolute -inset-4 bg-primary/5 blur-[80px] rounded-full pointer-events-none opacity-30" />
-        <WikiList />
+        <WikiList options={options} />
       </div>
     </section>
   );

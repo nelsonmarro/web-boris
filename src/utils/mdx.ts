@@ -1,13 +1,16 @@
 import fs from 'fs';
 import path from 'path';
+import { cache } from 'react';
 import matter from 'gray-matter';
 import { WikiFrontmatterSchema, WikiArticle } from '@/core/types/wiki';
 
 const CONTENT_PATH = path.join(process.cwd(), 'src/content');
+const IS_PROD = process.env.NODE_ENV === 'production';
 
-export async function getArticleBySlug(
-  slug: string,
-): Promise<WikiArticle | null> {
+/** Memo de proceso: en producción el contenido es inmutable tras el build. */
+let allArticlesMemo: WikiArticle[] | null = null;
+
+export async function getArticleBySlug(slug: string): Promise<WikiArticle | null> {
   try {
     const fullPath = path.join(CONTENT_PATH, `${slug}.mdx`);
     const fileContents = fs.readFileSync(fullPath, 'utf8');
@@ -15,33 +18,27 @@ export async function getArticleBySlug(
 
     const frontmatter = WikiFrontmatterSchema.parse(data);
 
-    return {
-      slug,
-      frontmatter,
-      content,
-    };
+    return { slug, frontmatter, content };
   } catch (error) {
     console.error(`Error reading article ${slug}:`, error);
     return null;
   }
 }
 
-export async function getAllArticles(): Promise<WikiArticle[]> {
-  if (!fs.existsSync(CONTENT_PATH)) {
-    return [];
-  }
-  const files = fs.readdirSync(CONTENT_PATH);
+/** Lee todos los MDX. Deduplicado por request (React cache) y memoizado en producción. */
+export const getAllArticles = cache(async (): Promise<WikiArticle[]> => {
+  if (IS_PROD && allArticlesMemo) return allArticlesMemo;
+  if (!fs.existsSync(CONTENT_PATH)) return [];
+
+  const files = fs.readdirSync(CONTENT_PATH).filter((file) => file.endsWith('.mdx'));
   const articles: WikiArticle[] = [];
 
   for (const file of files) {
-    if (file.endsWith('.mdx')) {
-      const slug = file.replace(/\.mdx$/, '');
-      const article = await getArticleBySlug(slug);
-      if (article) {
-        articles.push(article);
-      }
-    }
+    const article = await getArticleBySlug(file.replace(/\.mdx$/, ''));
+    if (article) articles.push(article);
   }
 
+  articles.sort((a, b) => a.frontmatter.title.localeCompare(b.frontmatter.title, 'es'));
+  if (IS_PROD) allArticlesMemo = articles;
   return articles;
-}
+});

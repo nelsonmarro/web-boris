@@ -8,9 +8,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
+import type { WikiFilterOptions } from '@/features/monsters/actions/get-wiki-articles';
 
 interface WikiFiltersProps {
+  options: WikiFilterOptions;
   onSearchChange: (value: string) => void;
   onUniverseChange: (value: string | null) => void;
   onCategoryChange: (value: string | null) => void;
@@ -18,53 +20,65 @@ interface WikiFiltersProps {
   currentCategory: string;
 }
 
-export function WikiFilters({ 
-  onSearchChange, 
-  onUniverseChange, 
+/** Etiquetas en plural para mostrar; el `value` es el string exacto del frontmatter. */
+const CATEGORY_LABELS: Record<string, string> = {
+  Coloso: 'Colosos',
+  Titán: 'Titanes',
+  Animal: 'Animales',
+  Especie: 'Especies',
+  Humano: 'Humanos',
+  Organización: 'Organizaciones',
+  Vehículo: 'Vehículos',
+  Libro: 'Libros',
+  Entidad: 'Entidades',
+  Categoría: 'Categorías',
+  Directorio: 'Directorios',
+};
+
+const triggerClass =
+  'w-full sm:w-[200px] h-14 bg-[#061a2e] border-white/10 rounded-2xl text-white font-bold focus:ring-primary/20';
+const contentClass = 'bg-[#061a2e] border-white/10 text-white min-w-[200px]';
+
+export function WikiFilters({
+  options,
+  onSearchChange,
+  onUniverseChange,
   onCategoryChange,
   currentUniverse,
-  currentCategory
+  currentCategory,
 }: WikiFiltersProps) {
   return (
     <div className="flex flex-col lg:flex-row gap-4 items-center w-full">
       <div className="flex-1 w-full lg:max-w-xl">
-        <WikiSearch 
-          onSearch={onSearchChange} 
-          placeholder="Filtrar por nombre..."
-        />
+        <WikiSearch onSearch={onSearchChange} placeholder="Filtrar por nombre..." />
       </div>
-      
+
       <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-        {/* Universe Filter */}
         <Select value={currentUniverse} onValueChange={onUniverseChange}>
-          <SelectTrigger className="w-full sm:w-[200px] h-14 bg-[#061a2e] border-white/10 rounded-2xl text-white font-bold focus:ring-primary/20">
+          <SelectTrigger className={triggerClass}>
             <SelectValue placeholder="Universo" />
           </SelectTrigger>
-          <SelectContent className="bg-[#061a2e] border-white/10 text-white min-w-[200px]">
+          <SelectContent className={contentClass}>
             <SelectItem value="all">Todos los Universos</SelectItem>
-            <SelectItem value="Colosos">Colosos</SelectItem>
-            <SelectItem value="Capitán de Galeón">Capitán de Galeón</SelectItem>
-            <SelectItem value="Ellos Llegaron">Ellos Llegaron</SelectItem>
+            {options.universes.map((universe) => (
+              <SelectItem key={universe} value={universe}>
+                {universe}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
 
-        {/* Category Filter */}
         <Select value={currentCategory} onValueChange={onCategoryChange}>
-          <SelectTrigger className="w-full sm:w-[200px] h-14 bg-[#061a2e] border-white/10 rounded-2xl text-white font-bold focus:ring-primary/20">
+          <SelectTrigger className={triggerClass}>
             <SelectValue placeholder="Categoría" />
           </SelectTrigger>
-          <SelectContent className="bg-[#061a2e] border-white/10 text-white min-w-[200px]">
+          <SelectContent className={contentClass}>
             <SelectItem value="all">Todas las Categorías</SelectItem>
-            <SelectItem value="Coloso">Colosos</SelectItem>
-            <SelectItem value="Titán">Titanes</SelectItem>
-            <SelectItem value="Animal">Animales</SelectItem>
-            <SelectItem value="Especie">Especies</SelectItem>
-            <SelectItem value="Humano">Humanos</SelectItem>
-            <SelectItem value="Organización">Organizaciones</SelectItem>
-            <SelectItem value="Vehículo">Vehículos</SelectItem>
-            <SelectItem value="Historia">Historia</SelectItem>
-            <SelectItem value="Libro">Libros</SelectItem>
-            <SelectItem value="Entidad">Entidades</SelectItem>
+            {options.categories.map((category) => (
+              <SelectItem key={category} value={category}>
+                {CATEGORY_LABELS[category] ?? category}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
