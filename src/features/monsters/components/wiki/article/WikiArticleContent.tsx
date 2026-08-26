@@ -24,7 +24,7 @@ export function WikiArticleContent({
       <div className="mx-auto relative">
         {/* Description / Introduction Box */}
         {description && (
-          <div className="mb-6 p-4 bg-[#1a1a1a] border-l-4 border-primary/60 text-white/80 text-sm md:text-base font-medium rounded-r-lg">
+          <div className="mb-6 p-4 bg-[#061a2e]/80 border-l-4 border-primary text-white/80 text-sm md:text-base font-medium rounded-r-lg">
             {description}
           </div>
         )}

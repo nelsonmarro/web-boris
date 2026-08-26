@@ -17,6 +17,8 @@ import {
   WikiImage,
 } from '@/features/monsters/components/wiki/mdx/WikiGallery';
 import { WikiTOC } from '@/features/monsters/components/wiki/mdx/WikiTOC';
+import { RegistroDelirium } from '@/features/monsters/components/wiki/mdx/RegistroDelirium';
+import { WikiTabs, WikiTab } from '@/features/monsters/components/wiki/mdx/WikiTabs';
 
 const components = {
   AbyssalAlert,
@@ -29,6 +31,9 @@ const components = {
   WikiGallery,
   WikiImage,
   WikiTOC,
+  RegistroDelirium,
+  WikiTabs,
+  WikiTab,
 
   // Standard HTML overrides
   h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
@@ -39,7 +44,7 @@ const components = {
   ),
   h2: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h2
-      className="text-2xl font-black text-white italic tracking-widest uppercase mt-28 mb-10 pl-5 py-5 clear-both relative bg-gradient-to-r from-primary/20 via-primary/5 to-transparent border-t border-white/5 flex items-center group"
+      className="text-2xl font-black text-white italic tracking-widest uppercase mt-16 mb-8 pl-5 py-5 clear-both relative bg-gradient-to-r from-primary/20 via-primary/5 to-transparent border-t border-white/5 flex items-center group"
       {...props}
     >
       <span className="relative z-10 drop-shadow-[0_2px_8px_rgba(255,115,0,0.6)] group-hover:text-primary transition-colors duration-300">

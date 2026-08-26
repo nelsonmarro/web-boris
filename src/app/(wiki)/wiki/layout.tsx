@@ -19,7 +19,7 @@ export default function WikiLayout({
       <BubbleTrail />
       <div className="flex min-h-screen w-full bg-[#0a2339] relative z-0">
         <AppSidebar />
-        <SidebarInset className="flex flex-col min-w-0 bg-transparent overflow-hidden">
+        <SidebarInset className="flex flex-col min-w-0 bg-transparent overflow-x-clip">
           <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-2 bg-[#061a2e] border-b border-white/5 px-6 shadow-sm">
             <div className="flex items-center gap-2">
               <SidebarTrigger className="-ml-1 text-primary hover:bg-primary/10 transition-all hover:scale-110 active:scale-95" />
@@ -56,11 +56,11 @@ export default function WikiLayout({
               </div>
             </div>
           </header>
-          <main className="flex-1 relative">
+          <div className="flex-1 relative">
             <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
             <div className="relative z-10">{children}</div>
             <WikiFooter />
-          </main>
+          </div>
         </SidebarInset>
       </div>
     </SidebarProvider>
