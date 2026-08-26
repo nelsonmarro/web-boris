@@ -14,6 +14,8 @@ Landing page + Wiki oficial de los universos narrativos del YouTuber **BorisaoBl
 make dev          # levanta Postgres (docker compose) + next dev
 npm run dev       # solo el dev server
 npm run build     # OBLIGATORIO tras cambios: valida MDX + tipos TS
+make start        # build + next start en :3131 (para demos; el dev server bloquea orígenes externos)
+make share        # build + next start + túnel público con cloudflared (mostrar el sitio sin hosting)
 npm run lint      # ESLint
 make db-up        # solo la base de datos
 make db-shell     # psql (user: root, db: webboris)
