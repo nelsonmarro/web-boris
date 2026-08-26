@@ -15,7 +15,7 @@ export function SidebarNavigation() {
         <SidebarGroupLabel className="text-primary font-bold tracking-wider text-[11px] uppercase mb-2 px-6">
           Sitio Principal
         </SidebarGroupLabel>
-        <SidebarMenu className="px-2">
+        <SidebarMenu className="px-2 group-data-[collapsible=icon]:px-0">
           <SidebarMenuItem>
             <SidebarMenuButton 
               tooltip="Inicio" 
@@ -54,7 +54,7 @@ export function SidebarNavigation() {
           <SidebarGroupLabel className="text-primary font-bold tracking-wider text-[11px] uppercase mb-2 px-6 group-data-[collapsible=icon]:hidden">
             {universe.title}
           </SidebarGroupLabel>
-          <SidebarMenu className="px-2">
+          <SidebarMenu className="px-2 group-data-[collapsible=icon]:px-0">
             {universe.items.map((item) => (
               <SidebarCollapsibleItem key={item.title} item={item} />
             ))}

@@ -42,24 +42,24 @@ export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
         <SidebarMenuButton 
           tooltip={item.title} 
           className={cn(
-            "min-h-[36px] h-auto py-2 hover:bg-white/5 transition-all group rounded-md mb-0.5 flex items-center px-4",
+            "min-h-[36px] h-auto py-2 hover:bg-white/5 transition-all group rounded-md mb-0.5 flex items-center px-4 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:mb-1",
             isActive && "bg-primary/10 text-primary hover:bg-primary/15"
           )}
           render={<Link href={item.url as React.ComponentProps<typeof Link>['href']} aria-label={`Ir a ${item.title}`} />}
         >
           {item.icon && (
             <item.icon className={cn(
-              "h-4 w-4 mr-3 shrink-0 transition-colors",
+              "h-4 w-4 mr-3 shrink-0 transition-colors group-data-[collapsible=icon]:mr-0 group-data-[collapsible=icon]:size-5",
               isActive ? "text-primary" : "text-primary/60 group-hover:text-primary"
             )} />
           )}
           <span className={cn(
-            "font-semibold text-[13.5px] transition-colors",
+            "font-semibold text-[13.5px] transition-colors group-data-[collapsible=icon]:hidden",
             isActive ? "text-primary" : "text-white/80 group-hover:text-white"
           )}>
             {item.title}
           </span>
-          {isActive && <div className="absolute left-0 w-1 h-4 bg-primary rounded-r-full shadow-[0_0_10px_rgba(255,115,0,0.5)]" />}
+          {isActive && <div className="absolute left-0 w-1 h-4 bg-primary rounded-r-full shadow-[0_0_10px_rgba(255,115,0,0.5)] group-data-[collapsible=icon]:hidden" />}
         </SidebarMenuButton>
       </SidebarMenuItem>
     );
@@ -75,12 +75,12 @@ export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
       <CollapsibleTrigger render={
         <SidebarMenuButton 
           tooltip={item.title}
-          className="min-h-[36px] h-auto py-2 hover:bg-white/5 transition-all rounded-md px-4 flex items-center group mb-0"
+          className="min-h-[36px] h-auto py-2 hover:bg-white/5 transition-all rounded-md px-4 flex items-center group mb-0 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:mb-1"
         />
       }>
-        {item.icon && <item.icon className="h-4 w-4 mr-3 text-primary/60 group-hover:text-primary shrink-0 transition-colors" />}
-        <span className="font-semibold text-[13.5px] text-white/80 group-hover:text-white transition-colors">{item.title}</span>
-        <ChevronRight className="ml-auto h-3 w-3 transition-transform duration-300 text-white/20 group-data-[state=open]/collapsible:rotate-90 group-data-[state=open]/collapsible:text-primary shrink-0" />
+        {item.icon && <item.icon className="h-4 w-4 mr-3 text-primary/60 group-hover:text-primary shrink-0 transition-colors group-data-[collapsible=icon]:mr-0 group-data-[collapsible=icon]:size-5" />}
+        <span className="font-semibold text-[13.5px] text-white/80 group-hover:text-white transition-colors group-data-[collapsible=icon]:hidden">{item.title}</span>
+        <ChevronRight className="ml-auto h-3 w-3 transition-transform duration-300 text-white/20 group-data-[state=open]/collapsible:rotate-90 group-data-[state=open]/collapsible:text-primary shrink-0 group-data-[collapsible=icon]:hidden" />
       </CollapsibleTrigger>
       <CollapsibleContent>
         <SidebarMenuSub className="ml-0 pl-0 border-none translate-x-0 space-y-0.5 mt-0.5 mb-1">

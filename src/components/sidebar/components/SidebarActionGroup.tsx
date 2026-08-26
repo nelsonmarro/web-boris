@@ -1,24 +1,24 @@
 'use client';
 
-import * as React from "react";
-import { ChevronRight } from "lucide-react";
-import Link from "next/link";
-import { SidebarFooter as BaseFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
+import * as React from 'react';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { SidebarFooter as BaseFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 
 export function SidebarActionGroup() {
   return (
-    <BaseFooter className="p-4 border-t border-white/5 relative z-10">
+    <BaseFooter className="relative z-10 border-t border-white/5 p-4 group-data-[collapsible=icon]:p-3">
       <SidebarMenu>
-         <SidebarMenuItem>
-           <SidebarMenuButton 
-              tooltip="Volver al Inicio"
-              className="h-10 hover:bg-white/5 text-white/60 hover:text-white transition-all rounded-lg group"
-              render={<Link href="/" className="flex items-center gap-3 px-4 w-full" />}
-           >
-                 <ChevronRight className="rotate-180 w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
-                 <span className="font-medium text-[13px] group-data-[collapsible=icon]:hidden">Volver a Inicio</span>
-           </SidebarMenuButton>
-         </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            tooltip="Volver al inicio"
+            className="group h-10 rounded-lg text-white/60 transition-all hover:bg-white/5 hover:text-white group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:p-0!"
+            render={<Link href="/" aria-label="Volver al inicio" className="flex w-full items-center gap-3 px-4 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center" />}
+          >
+            <ArrowLeft className="h-4 w-4 shrink-0 text-primary transition-transform group-hover:-translate-x-0.5 group-data-[collapsible=icon]:size-5" />
+            <span className="text-[13px] font-medium group-data-[collapsible=icon]:hidden">Volver al inicio</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
       </SidebarMenu>
     </BaseFooter>
   );
