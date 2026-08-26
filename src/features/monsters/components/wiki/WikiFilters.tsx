@@ -55,13 +55,16 @@ export function WikiFilters({
           </SelectTrigger>
           <SelectContent className="bg-[#061a2e] border-white/10 text-white min-w-[200px]">
             <SelectItem value="all">Todas las Categorías</SelectItem>
-            <SelectItem value="Especies">Especies</SelectItem>
-            <SelectItem value="Animales">Animales</SelectItem>
-            <SelectItem value="Humanos">Humanos</SelectItem>
-            <SelectItem value="Organizaciones">Organizaciones</SelectItem>
-            <SelectItem value="Colosos">Colosos</SelectItem>
-            <SelectItem value="Titanes">Titanes</SelectItem>
-            <SelectItem value="Medianos">Medianos</SelectItem>
+            <SelectItem value="Coloso">Colosos</SelectItem>
+            <SelectItem value="Titán">Titanes</SelectItem>
+            <SelectItem value="Animal">Animales</SelectItem>
+            <SelectItem value="Especie">Especies</SelectItem>
+            <SelectItem value="Humano">Humanos</SelectItem>
+            <SelectItem value="Organización">Organizaciones</SelectItem>
+            <SelectItem value="Vehículo">Vehículos</SelectItem>
+            <SelectItem value="Historia">Historia</SelectItem>
+            <SelectItem value="Libro">Libros</SelectItem>
+            <SelectItem value="Entidad">Entidades</SelectItem>
           </SelectContent>
         </Select>
       </div>

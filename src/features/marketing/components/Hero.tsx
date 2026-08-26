@@ -56,7 +56,7 @@ export default function Hero() {
         </div>
 
         <HeroVisual
-          imageSrc="/assets/Universo_Colosos/The_Bloop/bloop_(1).png"
+          imageSrc="/assets/Universo_Colosos/The_Bloop/The_Bloop_cuerpo_completo.webp"
           alt="Bloop Ojo Solo"
           badgeEmoji="🐋"
           badgeLabel="Último Avistamiento"

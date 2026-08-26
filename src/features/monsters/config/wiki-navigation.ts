@@ -53,6 +53,10 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
               { title: "El Gran Majá", url: "/wiki/el-gran-maja" },
               { title: "The Bloop", url: "/wiki/the-bloop" },
               { title: "Bogbo", url: "/wiki/bogbo" },
+              { title: "Slowdown Criyonte", url: "/wiki/slowdown-criyote" },
+              { title: "Vlad Julia", url: "/wiki/vlad-julia" },
+              { title: "Le'Mug", url: "/wiki/le-mug" },
+              { title: "Porcia la gris", url: "/wiki/porcia-la-gris" },
             ]
           },
           { 
@@ -74,6 +78,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
           { title: "Kaiserosteus loricatus", url: "/wiki/kaiserosteus-loricatus" },
           { title: "Garddiodon typus", url: "/wiki/garddiodon-typus" },
           { title: "Phiscanula arcticum", url: "/wiki/phiscanula-arcticum" },
+          { title: "Lampasiteras", url: "/wiki/lampasiteras" },
         ],
       },
       {
@@ -117,7 +122,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
     items: [
       {
         title: "Historia",
-        url: "/wiki/historia-galeon",
+        url: "/wiki/capitan-de-galeon",
         icon: Book,
       },
       {
@@ -127,7 +132,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
       },
       {
         title: "Piratas",
-        url: "/wiki/piratas",
+        url: "/wiki/piratas-galeon",
         icon: Skull,
       },
     ],
