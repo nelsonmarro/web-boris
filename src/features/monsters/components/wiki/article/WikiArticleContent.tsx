@@ -29,11 +29,11 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
   const headings = extractHeadings(content);
 
   return (
-    <div className="wiki-content px-4 md:px-12 py-8 relative z-10">
-      <div className="mx-auto max-w-[1180px] lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-x-10">
+    <div className="wiki-content relative z-10 py-8 lg:py-10">
+      <div className="wiki-container lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-x-10">
         {/* Description / Introduction Box */}
         {description && (
-          <div className="mb-6 p-4 bg-[#061a2e]/80 border-l-4 border-primary text-white/80 text-sm md:text-base font-medium rounded-r-lg lg:col-start-1">
+          <div className="mb-6 rounded-r-xl border-l-4 border-primary bg-[#061a2e]/80 p-5 text-base font-medium leading-relaxed text-white/80 lg:col-start-1">
             {description}
           </div>
         )}

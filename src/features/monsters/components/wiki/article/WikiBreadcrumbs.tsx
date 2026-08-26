@@ -1,5 +1,5 @@
-import { ChevronRight } from "lucide-react";
-import Link from "next/link";
+import { ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 
 interface WikiBreadcrumbsProps {
   universe: string;
@@ -8,14 +8,16 @@ interface WikiBreadcrumbsProps {
 
 export function WikiBreadcrumbs({ universe, category }: WikiBreadcrumbsProps) {
   return (
-    <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
-      <Link href="/wiki" className="hover:text-primary transition-colors">Explore</Link>
-      <ChevronRight className="h-3 w-3" />
-      <span className="hover:text-primary transition-colors cursor-pointer">{universe}</span>
+    <nav aria-label="Ruta" className="eyebrow flex items-center gap-2 text-white/45">
+      <Link href="/wiki" className="transition-colors hover:text-primary">
+        Wiki
+      </Link>
+      <ChevronRight className="h-3 w-3" aria-hidden />
+      <span className="text-white/60">{universe}</span>
       {category && (
         <>
-          <ChevronRight className="h-3 w-3" />
-          <span className="hover:text-primary transition-colors cursor-pointer">{category}</span>
+          <ChevronRight className="h-3 w-3" aria-hidden />
+          <span className="text-white/60">{category}</span>
         </>
       )}
     </nav>

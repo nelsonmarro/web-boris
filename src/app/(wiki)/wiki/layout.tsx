@@ -25,10 +25,10 @@ export default function WikiLayout({
             <div className="flex items-center gap-2">
               <SidebarTrigger className="-ml-1 text-primary hover:bg-primary/10 transition-all hover:scale-110 active:scale-95" />
               <div className="flex flex-col group-data-[collapsible=icon]:hidden">
-                <span className="text-[8px] font-bold uppercase tracking-wider text-white/30 leading-none">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-white/30 leading-none">
                   Terminal
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-primary italic leading-tight">
+                <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-primary italic leading-tight">
                   Acceso Lore
                 </span>
               </div>

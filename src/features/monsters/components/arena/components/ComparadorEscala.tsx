@@ -45,7 +45,7 @@ export function ComparadorEscala({ fighters }: ComparadorEscalaProps) {
         Todas las siluetas comparten la misma escala horizontal: <span className="font-mono text-white/80">1 m ≈ {pxPerMeter.toFixed(2)} px</span>. Las formas son genéricas por tipo (anguila, cetáceo, acorazado, pez); la longitud proviene del registro biométrico de cada artículo.
       </p>
 
-      <div className="overflow-x-auto rounded-3xl border border-white/10 bg-[#061a2e] p-4 md:p-6">
+      <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#061a2e] p-4 md:p-6">
         <svg viewBox={`0 0 ${VIEW_W} ${height}`} className="h-auto w-full min-w-[640px]" role="img" aria-label="Comparador de escala de colosos">
           {/* Ticks cada 100 m */}
           {Array.from({ length: Math.floor(maxLength / 100) + 1 }, (_, i) => i * 100).map((m) => (
@@ -90,7 +90,7 @@ export function ComparadorEscala({ fighters }: ComparadorEscalaProps) {
       <ul className="flex flex-wrap gap-2">
         {rows.map((r) => (
           <li key={r.slug}>
-            <Link href={`/wiki/${r.slug}`} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white/70 transition-colors hover:border-primary/40 hover:text-primary">
+            <Link href={`/wiki/${r.slug}`} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white/70 transition-colors hover:border-primary/40 hover:text-primary">
               {r.label}
             </Link>
           </li>

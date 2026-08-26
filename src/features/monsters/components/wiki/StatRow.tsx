@@ -24,7 +24,7 @@ export function StatRow({ label, value, display, tone = 'primary', className }: 
       aria-label={label}
     >
       <div className="flex items-baseline justify-between gap-3">
-        <ProgressPrimitive.Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">
+        <ProgressPrimitive.Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/45">
           {label}
         </ProgressPrimitive.Label>
         <span className="font-mono text-xs font-bold tabular-nums text-white/85">

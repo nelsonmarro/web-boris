@@ -104,7 +104,7 @@ export function WikiCommandPalette() {
       >
         <Search className="h-4 w-4 text-primary" />
         <span className="hidden text-xs font-medium sm:inline">Buscar archivo…</span>
-        <kbd className="hidden rounded-md border border-white/10 bg-black/30 px-1.5 py-0.5 font-mono text-[10px] font-bold text-white/50 lg:inline">
+        <kbd className="hidden rounded-md border border-white/10 bg-black/30 px-1.5 py-0.5 font-mono text-[11px] font-bold text-white/50 lg:inline">
           ⌘K
         </kbd>
       </button>
@@ -127,7 +127,7 @@ export function WikiCommandPalette() {
               aria-label="Buscar"
               className="h-14 w-full bg-transparent text-base text-white outline-none placeholder:text-white/40"
             />
-            <kbd className="hidden rounded-md border border-white/10 bg-black/30 px-1.5 py-0.5 font-mono text-[10px] font-bold text-white/40 sm:inline">
+            <kbd className="hidden rounded-md border border-white/10 bg-black/30 px-1.5 py-0.5 font-mono text-[11px] font-bold text-white/40 sm:inline">
               ESC
             </kbd>
           </div>
@@ -160,7 +160,7 @@ export function WikiCommandPalette() {
                     <span className={cn('block truncate text-sm font-bold uppercase italic', i === cursor ? 'text-primary' : 'text-white')}>
                       {entry.title}
                     </span>
-                    <span className="block truncate text-[10px] font-bold uppercase tracking-wider text-white/40">
+                    <span className="block truncate text-[11px] font-bold uppercase tracking-wider text-white/40">
                       {entry.universe}
                       {entry.category ? ` · ${entry.category}` : ''}
                     </span>

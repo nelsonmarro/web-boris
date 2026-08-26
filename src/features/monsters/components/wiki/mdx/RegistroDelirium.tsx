@@ -58,23 +58,23 @@ export function RegistroDelirium({
       )}
     >
       <header className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-primary/20 bg-primary/10 px-5 py-3 font-mono">
-        <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-primary">
+        <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.25em] text-primary">
           <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_10px_rgba(255,115,0,0.8)]" />
           DELIRIUM
         </span>
         {code && (
-          <span className="text-[10px] uppercase tracking-[0.2em] text-white/50">
+          <span className="text-[11px] uppercase tracking-[0.2em] text-white/50">
             EXP. {code}
           </span>
         )}
         {date && (
-          <span className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+          <span className="text-[11px] uppercase tracking-[0.2em] text-white/40">
             {date}
           </span>
         )}
         <span
           className={cn(
-            'ml-auto inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em]',
+            'ml-auto inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.15em]',
             config.badge,
           )}
         >

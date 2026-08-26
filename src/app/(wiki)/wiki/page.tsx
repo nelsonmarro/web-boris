@@ -40,7 +40,7 @@ export default async function WikiIndex() {
     candidates.length > 0 ? toSummary(candidates[isoWeek(new Date()) % candidates.length]) : null;
 
   return (
-    <div className="flex-1 container mx-auto px-4 lg:px-8 py-10 md:py-16 space-y-20">
+    <div className="wiki-container flex-1 space-y-16 py-10 lg:py-14">
       <WikiBanner
         label="Base de Datos DELIRIUM"
         title="Archivo Central"

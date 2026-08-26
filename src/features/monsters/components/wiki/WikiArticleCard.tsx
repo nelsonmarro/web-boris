@@ -24,7 +24,7 @@ export function WikiArticleCard({ slug, frontmatter, compact = false }: ArticleC
       href={`/wiki/${slug}`}
       className={cn(
         'group glass-liquid bg-[#061a2e] border-white/10 overflow-hidden flex flex-col transition-all hover:scale-[1.02] hover:border-primary/40 hover:shadow-[0_30px_60px_rgba(0,0,0,0.6)] border-refractive',
-        compact ? 'rounded-3xl' : 'rounded-[2.5rem]',
+        'rounded-2xl',
       )}
     >
       {/* Image Header */}
@@ -41,7 +41,7 @@ export function WikiArticleCard({ slug, frontmatter, compact = false }: ArticleC
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center space-y-2 opacity-20">
             <ImageOff className="h-10 w-10 text-white" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-white">Sin Imagen</span>
+            <span className="text-[11px] font-bold uppercase tracking-widest text-white">Sin Imagen</span>
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#061a2e] via-transparent to-transparent" />
@@ -52,7 +52,7 @@ export function WikiArticleCard({ slug, frontmatter, compact = false }: ArticleC
             {threat && (
               <span
                 className={cn(
-                  'inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.15em] backdrop-blur-md',
+                  'inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-black uppercase tracking-[0.15em] backdrop-blur-md',
                   THREAT_TONE_CLASSES[threat.tone].badge,
                 )}
               >
@@ -61,7 +61,7 @@ export function WikiArticleCard({ slug, frontmatter, compact = false }: ArticleC
               </span>
             )}
             {length !== undefined && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-black/40 px-2 py-0.5 font-mono text-[9px] font-bold text-white/80 backdrop-blur-md">
+              <span className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-black/40 px-2 py-0.5 font-mono text-[11px] font-bold text-white/80 backdrop-blur-md">
                 <Ruler className="h-3 w-3 text-primary" />
                 {length.toLocaleString('es-ES')} m
               </span>
@@ -70,15 +70,15 @@ export function WikiArticleCard({ slug, frontmatter, compact = false }: ArticleC
         )}
       </div>
 
-      <div className={cn('flex flex-col flex-1', compact ? 'p-5 gap-3' : 'p-8 gap-4')}>
+      <div className={cn('flex flex-col flex-1', compact ? 'p-5 gap-3' : 'p-6 gap-4')}>
         <div className="space-y-1">
-          <span className="text-[9px] font-bold text-primary uppercase tracking-wider">
+          <span className="eyebrow text-primary">
             {frontmatter.universe}
           </span>
           <h3
             className={cn(
               'font-bold text-white italic uppercase tracking-tight group-hover:text-primary transition-colors',
-              compact ? 'text-lg leading-tight' : 'text-2xl',
+              compact ? 'text-lg leading-tight' : 'text-xl md:text-2xl',
             )}
           >
             {frontmatter.title}
@@ -87,19 +87,19 @@ export function WikiArticleCard({ slug, frontmatter, compact = false }: ArticleC
 
         <p
           className={cn(
-            'text-white/90 text-sm font-medium leading-relaxed',
+            'text-white/75 text-sm leading-relaxed',
             compact ? 'line-clamp-2' : 'line-clamp-3',
           )}
         >
           {frontmatter.description || 'Sin descripción disponible.'}
         </p>
 
-        <div className={cn('mt-auto flex items-center justify-between border-t border-white/10', compact ? 'pt-4' : 'pt-6')}>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-white/70 group-hover:text-white transition-colors flex items-center gap-2">
+        <div className={cn('mt-auto flex items-center justify-between border-t border-white/10', compact ? 'pt-4' : 'pt-5')}>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-white/70 group-hover:text-white transition-colors flex items-center gap-2">
             Ver Detalles <ChevronRight className="h-3 w-3" />
           </span>
           {frontmatter.category && (
-            <span className="px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-[9px] font-bold text-primary uppercase">
+            <span className="px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-[11px] font-bold text-primary uppercase">
               {frontmatter.category}
             </span>
           )}

@@ -30,7 +30,7 @@ export function WikiQuote({ children, author, source }: WikiQuoteProps) {
                 </span>
               )}
               {source && (
-                <span className="text-white/30 text-[10px] italic">
+                <span className="text-white/30 text-[11px] italic">
                   [{source}]
                 </span>
               )}

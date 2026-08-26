@@ -75,7 +75,7 @@ export function WikiTOC({ headings, variant = 'inline', className }: WikiTOCProp
       >
         <div className="mb-3 flex items-center gap-2 border-b border-white/5 pb-3">
           <ListTree className="h-4 w-4 text-primary" />
-          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/50">
+          <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-white/50">
             Contenido
           </span>
         </div>
@@ -88,7 +88,7 @@ export function WikiTOC({ headings, variant = 'inline', className }: WikiTOCProp
     <nav
       aria-label="Contenido del artículo"
       className={cn(
-        'mb-8 mt-2 inline-block min-w-full overflow-hidden rounded-lg border border-white/10 bg-[#061a2e] shadow-2xl md:min-w-[320px]',
+        'mb-8 mt-2 inline-block min-w-full overflow-hidden rounded-2xl border border-white/10 bg-[#061a2e] shadow-2xl md:min-w-[320px]',
         className,
       )}
     >
@@ -101,7 +101,7 @@ export function WikiTOC({ headings, variant = 'inline', className }: WikiTOCProp
           type="button"
           onClick={() => setIsOpen((v) => !v)}
           aria-expanded={isOpen}
-          className="group flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-primary transition-colors hover:text-white"
+          className="group flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-primary transition-colors hover:text-white"
         >
           <span className="opacity-40 group-hover:opacity-100">[</span>
           {isOpen ? 'ocultar' : 'mostrar'}

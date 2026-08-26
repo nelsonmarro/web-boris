@@ -15,7 +15,7 @@ interface ArenaSimulatorProps {
 }
 
 const triggerClass =
-  'w-full h-14 bg-[#061a2e] border-white/10 rounded-2xl text-white font-bold focus:ring-primary/20';
+  'h-12 w-full rounded-xl border-white/15 bg-[#061a2e] px-4 text-sm font-semibold text-white focus-visible:ring-4 focus-visible:ring-primary/20';
 const contentClass = 'bg-[#061a2e] border-white/10 text-white min-w-[240px]';
 
 export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
@@ -32,7 +32,7 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
 
   if (!a || !b) {
     return (
-      <div className="glass-liquid rounded-[3rem] border-white/10 p-12 text-center text-white/60">
+      <div className="rounded-2xl border border-white/10 bg-[#061a2e] p-12 text-center text-white/60">
         Aún no hay combatientes con registro biométrico.
       </div>
     );
@@ -60,7 +60,7 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
       {/* Pickers */}
       <div className="grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-end">
         <label className="space-y-2">
-          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">Combatiente A</span>
+          <span className="eyebrow text-primary">Combatiente A</span>
           <Select value={slugA} onValueChange={(v) => v && setSlugA(v)} items={fighterItems}>
             <SelectTrigger className={triggerClass}><SelectValue placeholder="Elegir" /></SelectTrigger>
             <SelectContent className={contentClass}>
@@ -74,12 +74,12 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
           type="button"
           variant="outline"
           onClick={shuffle}
-          className="glass-liquid h-14 rounded-2xl border-white/10 px-6 text-[11px] font-bold uppercase tracking-wider text-white"
+          className="glass-liquid h-12 rounded-xl border-white/10 px-5 text-[11px] font-bold uppercase tracking-wider text-white"
         >
           <Shuffle className="mr-2 h-4 w-4 text-primary" /> Aleatorio
         </Button>
         <label className="space-y-2">
-          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-300">Combatiente B</span>
+          <span className="eyebrow text-cyan-300">Combatiente B</span>
           <Select value={slugB} onValueChange={(v) => v && setSlugB(v)} items={fighterItems}>
             <SelectTrigger className={triggerClass}><SelectValue placeholder="Elegir" /></SelectTrigger>
             <SelectContent className={contentClass}>
@@ -92,7 +92,7 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
       </div>
 
       {/* Probability bar */}
-      <div className="glass-liquid rounded-3xl border-white/10 p-6">
+      <div className="glass-liquid rounded-2xl border-white/10 p-6">
         <div className="mb-3 flex items-center justify-between font-mono text-xs font-bold uppercase tracking-widest">
           <span className="text-primary">{a.frontmatter.title} · {pctA}%</span>
           <span className="flex items-center gap-2 text-white/50"><Swords className="h-4 w-4" /> Probabilidad</span>
@@ -123,8 +123,8 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
       {/* Cards + radar */}
       <div className="grid gap-6 lg:grid-cols-[1fr_minmax(260px,320px)_1fr] lg:items-start">
         <FighterCard fighter={a} side="A" score={matchup.scoreA} winner={aWins && slugA !== slugB} />
-        <div className="order-first flex flex-col items-center gap-4 rounded-3xl border border-white/10 bg-[#061a2e] p-5 lg:order-none">
-          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">Perfil comparado</span>
+        <div className="order-first flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-[#061a2e] p-5 lg:order-none">
+          <span className="eyebrow text-white/40">Perfil comparado</span>
           <RadarChart
             labels={radarValues(a.frontmatter.stats).map((v) => v.label)}
             series={[
@@ -132,7 +132,7 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
               { name: b.frontmatter.title, color: '#67e8f9', values: radarValues(b.frontmatter.stats).map((v) => v.value) },
             ]}
           />
-          <div className="flex gap-4 text-[10px] font-bold uppercase tracking-wider">
+          <div className="flex gap-4 text-[11px] font-bold uppercase tracking-wider">
             <span className="flex items-center gap-1.5 text-primary"><span className="h-2 w-2 rounded-full bg-primary" />A</span>
             <span className="flex items-center gap-1.5 text-cyan-300"><span className="h-2 w-2 rounded-full bg-cyan-300" />B</span>
           </div>

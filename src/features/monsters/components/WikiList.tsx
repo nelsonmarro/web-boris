@@ -85,8 +85,8 @@ export function WikiList({ options }: WikiListProps) {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-10 border-t border-white/5">
-          <p className="text-xs font-bold uppercase tracking-wider text-white/30">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-8 border-t border-white/10">
+          <p className="eyebrow text-white/40">
             Mostrando página <span className="text-white">{page}</span> de{' '}
             <span className="text-white">{totalPages}</span>
           </p>
@@ -97,7 +97,7 @@ export function WikiList({ options }: WikiListProps) {
               size="sm"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1 || isFetching}
-              className="glass-liquid border-white/10 hover:bg-white/5 text-white h-11 px-6 rounded-xl"
+              className="h-10 rounded-xl border-white/15 bg-[#061a2e] px-5 text-white hover:bg-white/5"
             >
               <ChevronLeft className="w-4 h-4 mr-2" /> Anterior
             </Button>
@@ -112,7 +112,7 @@ export function WikiList({ options }: WikiListProps) {
                       onClick={() => setPage(p)}
                       aria-current={page === p ? 'page' : undefined}
                       className={cn(
-                        'w-10 h-10 rounded-lg text-xs font-bold transition-all',
+                        'h-10 w-10 rounded-xl text-xs font-bold transition-all',
                         page === p
                           ? 'bg-primary text-white shadow-[0_0_15px_rgba(255,115,0,0.4)]'
                           : 'text-white/40 hover:text-white hover:bg-white/5',
@@ -138,7 +138,7 @@ export function WikiList({ options }: WikiListProps) {
               size="sm"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages || isFetching}
-              className="glass-liquid border-white/10 hover:bg-white/5 text-white h-11 px-6 rounded-xl"
+              className="h-10 rounded-xl border-white/15 bg-[#061a2e] px-5 text-white hover:bg-white/5"
             >
               Siguiente <ChevronRight className="w-4 h-4 ml-2" />
             </Button>

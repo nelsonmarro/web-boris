@@ -20,7 +20,7 @@ export default function VersusArena({ fighters }: VersusArenaProps) {
         <div className="absolute bottom-[-10%] right-[-10%] h-[700px] w-[700px] rounded-full bg-primary/10 blur-[150px] mix-blend-screen" />
       </div>
 
-      <div className="container relative z-10 mx-auto flex flex-1 flex-col px-6 py-12 md:py-20">
+      <div className="wiki-container relative z-10 flex flex-1 flex-col py-10 lg:py-14">
         <ArenaHeader
           title="Versus Arena"
           subtitle="Arena de Combate v1.0"
@@ -38,11 +38,11 @@ export default function VersusArena({ fighters }: VersusArenaProps) {
         </WikiTabs>
 
         <footer className="mt-12 flex items-center justify-between border-t border-white/5 pt-8 opacity-40">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-white">
+          <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-white">
             <Info className="h-3 w-3" />
             Puntaje: 35% poder · 25% defensa · 15% hostilidad · 15% escala · 10% inteligencia
           </div>
-          <p className="text-[9px] font-bold uppercase tracking-wider text-white">Borisao Archive // {new Date().getFullYear()}</p>
+          <p className="text-[11px] font-bold uppercase tracking-wider text-white">Borisao Archive // {new Date().getFullYear()}</p>
         </footer>
       </div>
     </div>

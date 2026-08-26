@@ -14,7 +14,7 @@ export function SidebarBranding() {
         </div>
         <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
           <span className="truncate font-bold text-white text-base">Borisao Wiki</span>
-          <span className="truncate text-[10px] text-primary font-bold uppercase tracking-wider">Oficial Lore</span>
+          <span className="truncate text-[11px] text-primary font-bold uppercase tracking-wider">Oficial Lore</span>
         </div>
       </Link>
     </BaseHeader>

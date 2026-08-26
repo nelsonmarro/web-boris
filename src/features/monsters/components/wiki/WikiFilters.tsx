@@ -36,7 +36,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 const triggerClass =
-  'w-full sm:w-[200px] h-14 bg-[#061a2e] border-white/10 rounded-2xl text-white font-bold focus:ring-primary/20';
+  'h-12 w-full rounded-xl border-white/15 bg-[#061a2e] px-4 text-sm font-semibold text-white focus-visible:ring-4 focus-visible:ring-primary/20 sm:w-[210px]';
 const contentClass = 'bg-[#061a2e] border-white/10 text-white min-w-[200px]';
 
 export function WikiFilters({
