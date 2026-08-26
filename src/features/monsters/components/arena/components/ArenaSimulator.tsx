@@ -22,6 +22,11 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
   const [slugA, setSlugA] = React.useState(fighters[0]?.slug ?? '');
   const [slugB, setSlugB] = React.useState(fighters[1]?.slug ?? fighters[0]?.slug ?? '');
 
+  const fighterItems = React.useMemo(
+    () => Object.fromEntries(fighters.map((f) => [f.slug, f.frontmatter.title])),
+    [fighters],
+  );
+
   const a = fighters.find((f) => f.slug === slugA) ?? fighters[0];
   const b = fighters.find((f) => f.slug === slugB) ?? fighters[1] ?? fighters[0];
 
@@ -56,7 +61,7 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
       <div className="grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-end">
         <label className="space-y-2">
           <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">Combatiente A</span>
-          <Select value={slugA} onValueChange={(v) => v && setSlugA(v)}>
+          <Select value={slugA} onValueChange={(v) => v && setSlugA(v)} items={fighterItems}>
             <SelectTrigger className={triggerClass}><SelectValue placeholder="Elegir" /></SelectTrigger>
             <SelectContent className={contentClass}>
               {fighters.map((f) => (
@@ -75,7 +80,7 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
         </Button>
         <label className="space-y-2">
           <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-300">Combatiente B</span>
-          <Select value={slugB} onValueChange={(v) => v && setSlugB(v)}>
+          <Select value={slugB} onValueChange={(v) => v && setSlugB(v)} items={fighterItems}>
             <SelectTrigger className={triggerClass}><SelectValue placeholder="Elegir" /></SelectTrigger>
             <SelectContent className={contentClass}>
               {fighters.map((f) => (

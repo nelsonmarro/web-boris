@@ -57,7 +57,6 @@ export function WikiImage({
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover object-top absolute m-0 p-0 block w-full h-full transition-transform duration-[1.5s] group-hover:scale-110 !top-0 !left-0 !inset-0"
-          priority
         />
 
         {/* Hover Actions */}

@@ -91,6 +91,7 @@ const components = {
           src={props.src as string}
           alt={props.alt || ''}
           fill
+          sizes="(min-width: 1024px) 800px, 100vw"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
       )}

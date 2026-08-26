@@ -3,41 +3,43 @@
 import * as React from 'react';
 
 /**
- * Devuelve el id del heading activo según el scroll (IntersectionObserver).
- * `rootMargin` deja una banda superior bajo el header sticky (h-16).
+ * Id del heading activo según el scroll: el último cuyo borde superior ya pasó
+ * la línea `offset` (bajo el header sticky). Estable aunque ningún título esté en pantalla.
  */
-export function useActiveHeading(ids: string[], rootMargin = '-80px 0px -70% 0px') {
+export function useActiveHeading(ids: string[], offset = 96) {
   const [activeId, setActiveId] = React.useState<string | null>(ids[0] ?? null);
   const key = ids.join('|');
 
   React.useEffect(() => {
-    if (ids.length === 0 || typeof IntersectionObserver === 'undefined') return;
+    if (ids.length === 0) return;
+    let frame = 0;
 
-    const visible = new Set<string>();
-    const pick = () => {
-      const first = ids.find((id) => visible.has(id));
-      if (first) setActiveId(first);
+    const compute = () => {
+      frame = 0;
+      let current: string | null = ids[0] ?? null;
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        if (el.getBoundingClientRect().top <= offset) current = id;
+        else break;
+      }
+      setActiveId((prev) => (prev === current ? prev : current));
     };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) visible.add(entry.target.id);
-          else visible.delete(entry.target.id);
-        }
-        pick();
-      },
-      { rootMargin, threshold: 0 },
-    );
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(compute);
+    };
 
-    const elements = ids
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null);
-    elements.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
+    compute();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, rootMargin]);
+  }, [key, offset]);
 
   return activeId;
 }
