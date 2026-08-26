@@ -51,7 +51,7 @@ export function ComparadorEscala({ fighters }: ComparadorEscalaProps) {
           {Array.from({ length: Math.floor(maxLength / 100) + 1 }, (_, i) => i * 100).map((m) => (
             <g key={m}>
               <line x1={LABEL_W + m * pxPerMeter} y1={0} x2={LABEL_W + m * pxPerMeter} y2={height - 24} stroke="rgba(255,255,255,0.06)" strokeDasharray="3 5" />
-              <text x={LABEL_W + m * pxPerMeter} y={height - 8} textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize={10} fontFamily="monospace">
+              <text x={LABEL_W + m * pxPerMeter} y={height - 8} textAnchor={m === 0 ? 'start' : 'middle'} fill="rgba(255,255,255,0.4)" fontSize={10} fontFamily="monospace">
                 {m} m
               </text>
             </g>
