@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export function SidebarNavigation() {
   return (
-    <SidebarContent className="relative z-10 py-4 scrollbar-none">
+    <SidebarContent className="relative z-10 py-4 scrollbar-none group-data-[collapsible=icon]:overflow-y-auto group-data-[collapsible=icon]:overflow-x-hidden group-data-[collapsible=icon]:py-2 group-data-[collapsible=icon]:[mask-image:linear-gradient(to_bottom,transparent,black_16px,black_calc(100%-16px),transparent)]">
       {/* Global Navigation (Mobile Only) */}
       <SidebarGroup className="mb-6 md:hidden">
         <SidebarGroupLabel className="text-primary font-bold tracking-wider text-[11px] uppercase mb-2 px-6">
