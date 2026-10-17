@@ -14,7 +14,7 @@ const TILE_DEFS: Array<Omit<CategoryTile, 'count' | 'image'> & { category: strin
   { title: 'Medianos', slug: 'medianos', category: 'Mediano', description: 'Fauna anómala mayor al promedio natural.' },
   { title: 'Especies', slug: 'especies', category: 'Especie', description: 'Taxonomía de los géneros descubiertos.' },
   { title: 'Humanos', slug: 'humanos-colosos', category: 'Humano', description: 'Científicos, operativos y testigos.' },
-  { title: 'Organizaciones', slug: 'organizaciones', category: 'Organización', description: 'DELIRIUM, IPCARO y las Naciones Rebeldes.' },
+  { title: 'Organi\u00ADzaciones', slug: 'organizaciones', category: 'Organización', description: 'DELIRIUM, IPCARO y las Naciones Rebeldes.' },
 ];
 
 export default async function WikiIndex() {
@@ -29,19 +29,21 @@ export default async function WikiIndex() {
   const featured = pickFeatured(articles);
 
   return (
-    <div className="wiki-container flex-1 space-y-16 py-10 lg:py-14">
+    <div className="wiki-container flex-1 space-y-12 py-10 lg:space-y-16 lg:py-14">
       <WikiBanner
         label="Base de Datos DELIRIUM"
         title="Archivo Central"
         gradientTitle="Universos"
-        description="Bienvenido al repositorio oficial de lore. Aquí encontrarás información clasificada sobre las entidades colosales, eventos históricos y las organizaciones que luchan por el equilibrio de nuestro mundo."
+        description="El repositorio oficial de lore: criaturas, organizaciones, vehículos e historia de los universos de BorisaoBlois."
+        ctaHref="#explorar"
+        ctaLabel="Buscar en el archivo"
       />
-
-      {featured && <FeaturedCreature article={featured} />}
 
       <CategoryTiles tiles={tiles} />
 
       <WikiExplorerSection />
+
+      {featured && <FeaturedCreature article={featured} />}
     </div>
   );
 }
