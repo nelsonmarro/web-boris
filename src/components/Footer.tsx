@@ -57,11 +57,11 @@ export default function Footer() {
 
             {/* Quick Links */}
             <div>
-              <h4 className="text-white font-bold uppercase tracking-wider text-[10px] mb-6">Navegación</h4>
+              <p className="eyebrow mb-6 text-white/70">Navegación</p>
               <ul className="space-y-2">
                 {NAV_LINKS.map((link) => (
                   <li key={link.label}>
-                    <Link href={link.href} className="h-11 flex items-center text-white/50 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider">{link.label}</Link>
+                    <Link href={link.href} className="h-11 flex items-center text-white/60 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider">{link.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -69,11 +69,11 @@ export default function Footer() {
 
             {/* Universes */}
             <div>
-              <h4 className="text-white font-bold uppercase tracking-wider text-[10px] mb-6">Universos</h4>
+              <p className="eyebrow mb-6 text-white/70">Universos</p>
               <ul className="space-y-2">
                 {UNIVERSES.filter((u) => u.universeKey).map((u) => (
                   <li key={u.universeKey}>
-                    <Link href={{ pathname: "/wiki", query: { universe: u.universeKey }, hash: "explorar" }} className="h-11 flex items-center text-white/50 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider">{u.title}</Link>
+                    <Link href={{ pathname: "/wiki", query: { universe: u.universeKey }, hash: "explorar" }} className="h-11 flex items-center text-white/60 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider">{u.title}</Link>
                   </li>
                 ))}
               </ul>
@@ -81,7 +81,7 @@ export default function Footer() {
 
             {/* Support */}
             <div className="space-y-6">
-              <h4 className="text-white font-bold uppercase tracking-wider text-xs mb-6">Contacto Oficial</h4>
+              <p className="eyebrow mb-6 text-white/70">Contacto Oficial</p>
               <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-center gap-3 text-white/80 hover:text-primary transition-colors group">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
                   <Mail className="w-5 h-5 text-primary" />

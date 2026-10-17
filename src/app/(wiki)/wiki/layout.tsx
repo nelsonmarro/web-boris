@@ -6,7 +6,7 @@ import {
 import { AppSidebar } from '@/components/AppSidebar';
 import { NavLinks } from '@/components/navbar/components/NavLinks';
 import { NavActions } from '@/components/navbar/components/NavActions';
-import { WikiFooter } from '@/features/monsters/components/wiki/WikiFooter';
+import Footer from '@/components/Footer';
 import BubbleTrail from '@/components/ui/bubble-trail';
 import { WikiCommandPalette } from '@/features/monsters/components/wiki/WikiCommandPalette';
 
@@ -50,7 +50,7 @@ export default function WikiLayout({
           <div className="flex-1 relative">
             <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
             <div className="relative z-10">{children}</div>
-            <WikiFooter />
+            <Footer />
           </div>
         </SidebarInset>
       </div>
