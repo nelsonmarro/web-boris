@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useSearchParams } from 'next/navigation';
+import type { Route } from 'next';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { WikiFilters } from './wiki/WikiFilters';
@@ -15,43 +16,102 @@ interface WikiListProps {
   options: WikiFilterOptions;
 }
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 9;
+const SEARCH_DEBOUNCE_MS = 400;
 
 /** Acepta un valor de la URL solo si existe entre las opciones; evita filtros vacíos por typos. */
 function pickFilter(value: string | null, allowed: string[]): string {
   return value && allowed.includes(value) ? value : 'all';
 }
 
-export function WikiList({ options }: WikiListProps) {
-  // Las tarjetas de la landing enlazan a /wiki?universe=…; el filtro arranca desde la URL.
-  const searchParams = useSearchParams();
-  const initialSearch = searchParams.get('search') ?? '';
-  const [search, setSearch] = React.useState(initialSearch);
-  const [universe, setUniverse] = React.useState(() =>
-    pickFilter(searchParams.get('universe'), options.universes),
-  );
-  const [category, setCategory] = React.useState(() =>
-    pickFilter(searchParams.get('category'), options.categories),
-  );
-  const [page, setPage] = React.useState(1);
-  const [debouncedSearch, setDebouncedSearch] = React.useState(search);
+/** `?page=` válido es un entero ≥ 1; cualquier otra cosa es la página 1. */
+function parsePage(value: string | null): number {
+  const page = Math.floor(Number(value ?? '1'));
+  return Number.isFinite(page) && page >= 1 ? page : 1;
+}
 
+export function WikiList({ options }: WikiListProps) {
+  // La URL es la única fuente de verdad (?search=&universe=&category=&page=): las tarjetas de la
+  // landing, el hero y el footer enlazan a /wiki?…, y navegar dentro de /wiki actualiza la lista sin remontarla.
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const query = searchParams.toString();
+  const urlSearch = searchParams.get('search') ?? '';
+  const universe = pickFilter(searchParams.get('universe'), options.universes);
+  const category = pickFilter(searchParams.get('category'), options.categories);
+  const urlPage = parsePage(searchParams.get('page'));
+
+  // El texto del input vive en local (cada tecla) y llega a la URL con debounce.
+  const [search, setSearch] = React.useState(urlSearch);
+  const [debouncedSearch, setDebouncedSearch] = React.useState(urlSearch);
+
+  // Cada vez que la URL cambia, si su ?search= no es el que ya aplicamos (footer, hero, atrás/adelante),
+  // el input lo adopta. Se ajusta en el render (patrón de React para estado derivado) en lugar de en un
+  // efecto. Cuando el cambio es el eco de nuestra propia escritura, urlSearch === debouncedSearch y no se
+  // toca el input: lo que el usuario siga tecleando no se pisa.
+  const [syncedQuery, setSyncedQuery] = React.useState(query);
+  if (syncedQuery !== query) {
+    setSyncedQuery(query);
+    if (urlSearch !== debouncedSearch) {
+      setSearch(urlSearch);
+      setDebouncedSearch(urlSearch);
+    }
+  }
+
+  // Última query pedida al router. router.replace descarta la navegación pendiente anterior, así que
+  // cada escritura parte de la anterior (no de un searchParams aún sin confirmar) y no se pierden cambios.
+  const queryRef = React.useRef(query);
+  React.useEffect(() => {
+    queryRef.current = query;
+  }, [query]);
+
+  const replaceQuery = React.useCallback(
+    (patch: Record<string, string | null>) => {
+      const next = new URLSearchParams(queryRef.current);
+      for (const [key, value] of Object.entries(patch)) {
+        if (value === null || value === '' || value === 'all' || (key === 'page' && value === '1')) {
+          next.delete(key);
+        } else {
+          next.set(key, value);
+        }
+      }
+      const qs = next.toString();
+      queryRef.current = qs;
+      // Se conserva el hash (#explorar) para que sobreviva a los filtros; scroll: false evita que Next salte a él.
+      const url = (qs ? `${pathname}?${qs}` : pathname) + window.location.hash;
+      router.replace(url as Route, { scroll: false });
+    },
+    [router, pathname],
+  );
+
+  // Debounce del texto → URL (solo si difiere de lo último ENVIADO, no de lo ya confirmado: si una
+  // navegación sigue pendiente, compararla con la URL vieja dejaría que su eco pisara el input).
+  // La query usa debouncedSearch de inmediato, sin esperar a que el router confirme la navegación.
   React.useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
-      setPage(1);
-    }, 400);
+      const sent = new URLSearchParams(queryRef.current).get('search') ?? '';
+      if (search !== sent) replaceQuery({ search, page: null });
+    }, SEARCH_DEBOUNCE_MS);
     return () => clearTimeout(timer);
-  }, [search]);
+  }, [search, replaceQuery]);
 
-  const handleUniverseChange = (val: string | null) => {
-    setUniverse(val || 'all');
-    setPage(1);
-  };
+  // Una búsqueda nueva siempre vuelve a la página 1; mientras llega a la URL ya lo sabemos.
+  const page = debouncedSearch !== urlSearch ? 1 : urlPage;
 
-  const handleCategoryChange = (val: string | null) => {
-    setCategory(val || 'all');
-    setPage(1);
+  const handleUniverseChange = (value: string | null) =>
+    replaceQuery({ universe: value ?? 'all', page: null });
+
+  const handleCategoryChange = (value: string | null) =>
+    replaceQuery({ category: value ?? 'all', page: null });
+
+  const goToPage = (next: number) => {
+    replaceQuery({ page: String(next) });
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document
+      .getElementById('explorar')
+      ?.scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' });
   };
 
   const { data, isPending, isPlaceholderData, isFetching } = useQuery({
@@ -69,8 +129,8 @@ export function WikiList({ options }: WikiListProps) {
     <div className="space-y-10">
       <WikiFilters
         options={options}
+        search={search}
         onSearchChange={setSearch}
-        initialSearch={initialSearch}
         onUniverseChange={handleUniverseChange}
         onCategoryChange={handleCategoryChange}
         currentUniverse={universe}
@@ -109,7 +169,7 @@ export function WikiList({ options }: WikiListProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              onClick={() => goToPage(Math.max(1, page - 1))}
               disabled={page === 1 || isFetching}
               className="h-10 rounded-xl border-white/15 bg-[#061a2e] px-5 text-white hover:bg-white/5"
             >
@@ -123,7 +183,7 @@ export function WikiList({ options }: WikiListProps) {
                     <button
                       key={p}
                       type="button"
-                      onClick={() => setPage(p)}
+                      onClick={() => goToPage(p)}
                       aria-current={page === p ? 'page' : undefined}
                       className={cn(
                         'h-10 w-10 rounded-xl text-xs font-bold transition-all',
@@ -150,7 +210,7 @@ export function WikiList({ options }: WikiListProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              onClick={() => goToPage(Math.min(totalPages, page + 1))}
               disabled={page === totalPages || isFetching}
               className="h-10 rounded-xl border-white/15 bg-[#061a2e] px-5 text-white hover:bg-white/5"
             >

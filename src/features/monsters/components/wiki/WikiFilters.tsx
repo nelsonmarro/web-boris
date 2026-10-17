@@ -13,12 +13,13 @@ import type { WikiFilterOptions } from '@/features/monsters/actions/get-wiki-art
 
 interface WikiFiltersProps {
   options: WikiFilterOptions;
+  /** Texto del buscador (controlado). */
+  search: string;
   onSearchChange: (value: string) => void;
   onUniverseChange: (value: string | null) => void;
   onCategoryChange: (value: string | null) => void;
   currentUniverse: string;
   currentCategory: string;
-  initialSearch?: string;
 }
 
 /** Etiquetas en plural para mostrar; el `value` es el string exacto del frontmatter. */
@@ -36,18 +37,19 @@ const CATEGORY_LABELS: Record<string, string> = {
   Directorio: 'Directorios',
 };
 
+// `ui/select` fija la altura con `data-[size=default]:h-8`: hay que sobrescribir esa misma variante.
 const triggerClass =
-  'h-12 w-full rounded-xl border-white/15 bg-[#061a2e] px-4 text-sm font-semibold text-white focus-visible:ring-4 focus-visible:ring-primary/20 sm:w-[210px]';
+  'h-12 data-[size=default]:h-12 w-full rounded-xl border-white/15 bg-[#061a2e] px-4 text-sm font-semibold text-white focus-visible:ring-4 focus-visible:ring-primary/20 sm:w-[210px]';
 const contentClass = 'bg-[#061a2e] border-white/10 text-white min-w-[200px]';
 
 export function WikiFilters({
   options,
+  search,
   onSearchChange,
   onUniverseChange,
   onCategoryChange,
   currentUniverse,
   currentCategory,
-  initialSearch,
 }: WikiFiltersProps) {
   // Base UI muestra el valor crudo salvo que reciba el mapa `items` valor → etiqueta.
   const universeItems = React.useMemo(
@@ -65,12 +67,12 @@ export function WikiFilters({
   return (
     <div className="flex flex-col lg:flex-row gap-4 items-center w-full">
       <div className="flex-1 w-full lg:max-w-xl">
-        <WikiSearch onSearch={onSearchChange} defaultValue={initialSearch} placeholder="Filtrar por nombre..." />
+        <WikiSearch value={search} onSearch={onSearchChange} placeholder="Filtrar por nombre..." />
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
         <Select value={currentUniverse} onValueChange={onUniverseChange} items={universeItems}>
-          <SelectTrigger className={triggerClass}>
+          <SelectTrigger aria-label="Universo" className={triggerClass}>
             <SelectValue placeholder="Universo" />
           </SelectTrigger>
           <SelectContent className={contentClass}>
@@ -84,7 +86,7 @@ export function WikiFilters({
         </Select>
 
         <Select value={currentCategory} onValueChange={onCategoryChange} items={categoryItems}>
-          <SelectTrigger className={triggerClass}>
+          <SelectTrigger aria-label="Categoría" className={triggerClass}>
             <SelectValue placeholder="Categoría" />
           </SelectTrigger>
           <SelectContent className={contentClass}>

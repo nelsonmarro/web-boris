@@ -3,10 +3,11 @@
 import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronRight, ImageOff, Ruler } from 'lucide-react';
+import { ChevronRight, Ruler } from 'lucide-react';
 import { WikiFrontmatter } from '@/core/types/wiki';
 import { cn } from '@/utils/cn';
 import { getThreatLevel, THREAT_TONE_CLASSES } from '@/features/monsters/lib/stats';
+import { CategoryPlaceholder, isBrandPlaceholder } from './CategoryPlaceholder';
 
 interface ArticleCardProps {
   slug: string;
@@ -18,6 +19,9 @@ interface ArticleCardProps {
 export function WikiArticleCard({ slug, frontmatter, compact = false }: ArticleCardProps) {
   const threat = getThreatLevel(frontmatter.stats?.hostility);
   const length = frontmatter.stats?.length;
+  // El logo del canal no es una portada: esos artículos reciben el placeholder de su categoría.
+  const coverImage =
+    frontmatter.image && !isBrandPlaceholder(frontmatter.image) ? frontmatter.image : undefined;
 
   return (
     <Link
@@ -30,19 +34,16 @@ export function WikiArticleCard({ slug, frontmatter, compact = false }: ArticleC
       {/* Image Header */}
       <div className="relative w-full aspect-video bg-black/40 overflow-hidden">
         <div className="glass-reflection opacity-20" />
-        {frontmatter.image ? (
+        {coverImage ? (
           <Image
-            src={frontmatter.image}
-            alt={frontmatter.title}
+            src={coverImage}
+            alt=""
             fill
             sizes={compact ? '(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw' : '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw'}
             className="object-cover transition-transform duration-700 group-hover:scale-110"
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center space-y-2 opacity-20">
-            <ImageOff className="h-10 w-10 text-white" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-white">Sin Imagen</span>
-          </div>
+          <CategoryPlaceholder category={frontmatter.category} />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#061a2e] via-transparent to-transparent" />
 

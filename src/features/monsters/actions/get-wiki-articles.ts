@@ -39,7 +39,7 @@ const normalize = (value: string) =>
 
 export async function getWikiArticles({
   page = 1,
-  pageSize = 6,
+  pageSize = 9,
   search = '',
   universe = 'all',
   category = 'all',
