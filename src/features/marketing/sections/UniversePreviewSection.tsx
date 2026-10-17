@@ -17,10 +17,10 @@ export async function UniversePreviewSection() {
 
       <div className="container relative z-10 mx-auto px-6">
         <div className="mx-auto mb-20 max-w-3xl space-y-6 text-center">
-          <h2 className="text-4xl font-bold uppercase italic tracking-tight text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] md:text-5xl">
+          <h2 className="section-title drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] md:text-4xl lg:text-5xl">
             Explora los Universos
           </h2>
-          <p className="text-lg font-medium leading-relaxed text-white/70 drop-shadow-md">
+          <p className="text-base font-medium leading-relaxed text-white/70 drop-shadow-md md:text-lg">
             Cada universo tiene sus propias reglas, criaturas y misterios. Toca o pasa el cursor sobre una
             tarjeta para leer su sinopsis y entra a su archivo.
           </p>

@@ -18,7 +18,7 @@ export default function Footer() {
     <footer className="relative mt-20 pt-20 pb-10 overflow-hidden">
       {/* Liquid Glass Footer Container */}
       <div className="container mx-auto px-6 relative z-10">
-        <div className="glass-liquid rounded-[3rem] p-10 md:p-16 border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.3)] relative group">
+        <div className="glass-liquid rounded-3xl p-10 md:p-16 border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.3)] relative group">
           {/* Glass Layers */}
           <div className="glass-shine opacity-10" />
           <div className="glass-reflection" />
@@ -27,7 +27,7 @@ export default function Footer() {
             {/* Branding */}
             <div className="space-y-6 lg:col-span-1">
               <div className="flex items-center gap-3">
-                 <div className="relative w-11 h-11 overflow-hidden rounded-xl border border-white/20 bg-white/5 p-1 glass-liquid">
+                 <div className="relative w-11 h-11 shrink-0 aspect-square overflow-hidden rounded-xl border border-white/20 bg-white/5 p-1 glass-liquid">
                     <Image src="/assets/Branding/logo.webp" alt="Logo" width={44} height={44} className="rounded-lg object-cover" />
                  </div>
                  <span className="text-2xl font-bold tracking-tight text-white uppercase italic">Borisao<span className="text-primary">Blois</span></span>
@@ -41,14 +41,14 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Canal de YouTube de BorisaoBlois"
-                  className="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-all hover:scale-110 border border-white/10 shadow-[0_4px_15px_rgba(0,0,0,0.3)]"
+                  className="w-11 h-11 shrink-0 aspect-square rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-all hover:scale-110 border border-white/10 shadow-[0_4px_15px_rgba(0,0,0,0.3)]"
                 >
                   <YoutubeIcon className="w-5 h-5 text-white" />
                 </a>
                 <a
                   href={`mailto:${CONTACT_EMAIL}`}
                   aria-label="Escribir a BorisaoBlois"
-                  className="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-all hover:scale-110 border border-white/10 shadow-[0_4px_15px_rgba(0,0,0,0.3)]"
+                  className="w-11 h-11 shrink-0 aspect-square rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-all hover:scale-110 border border-white/10 shadow-[0_4px_15px_rgba(0,0,0,0.3)]"
                 >
                   <Mail className="w-5 h-5 text-white" />
                 </a>
@@ -83,13 +83,13 @@ export default function Footer() {
             <div className="space-y-6">
               <p className="eyebrow mb-6 text-white/70">Contacto Oficial</p>
               <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-center gap-3 text-white/80 hover:text-primary transition-colors group">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
+                <div className="w-10 h-10 shrink-0 aspect-square rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
                   <Mail className="w-5 h-5 text-primary" />
                 </div>
                 <span className="text-sm font-bold tracking-tight">{CONTACT_EMAIL}</span>
               </a>
               <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-white/80 hover:text-primary transition-colors group">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
+                <div className="w-10 h-10 shrink-0 aspect-square rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
                   <YoutubeIcon className="w-5 h-5 text-primary" />
                 </div>
                 <span className="text-sm font-bold tracking-tight">{YOUTUBE_HANDLE}</span>
