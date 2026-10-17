@@ -29,8 +29,8 @@ export function WikiImage({
   align = 'none',
 }: WikiImageProps) {
   const alignClasses = {
-    right: 'w-full mb-8 mt-0 lg:float-right lg:ml-8 lg:mb-6 lg:w-80 xl:w-96 lg:clear-right',
-    left: 'w-full mb-8 mt-0 lg:float-left lg:mr-8 lg:mb-6 lg:w-80 xl:w-96 lg:clear-left',
+    right: 'w-full mb-8 mt-0 @2xl:float-right @2xl:ml-8 @2xl:mb-6 @2xl:w-80 @3xl:w-96 @2xl:clear-right',
+    left: 'w-full mb-8 mt-0 @2xl:float-left @2xl:mr-8 @2xl:mb-6 @2xl:w-80 @3xl:w-96 @2xl:clear-left',
     center: 'mx-auto mb-12 mt-0 w-full max-w-4xl clear-both',
     none: 'w-full mb-8 mt-0',
   };
@@ -50,7 +50,7 @@ export function WikiImage({
           'relative block w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl transition-all duration-500 group-hover:border-primary/40 p-0 m-0 bg-transparent cursor-zoom-in',
           align === 'none' || align === 'center'
             ? 'aspect-video'
-            : 'aspect-[4/3] lg:aspect-[4/5]',
+            : 'aspect-[4/3] @2xl:aspect-[4/5]',
         )}
       >
         <Image

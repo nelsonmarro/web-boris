@@ -81,7 +81,7 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
         </div>
 
         {/* Main Content */}
-        <div className="min-w-0 lg:col-start-1 lg:max-w-[800px]">
+        <div className="@container min-w-0 lg:col-start-1 lg:max-w-[800px]">
           <MdxRenderer content={content} />
         </div>
 

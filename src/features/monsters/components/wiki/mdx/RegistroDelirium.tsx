@@ -84,9 +84,9 @@ export function RegistroDelirium({
       </header>
 
       <div className="px-5 py-5 md:px-6">
-        <h4 className="mb-3 text-xs font-black uppercase italic tracking-[0.2em] text-white/80">
+        <h3 className="mb-3 text-xs font-black uppercase italic tracking-[0.2em] text-white/80">
           {title}
-        </h4>
+        </h3>
         <div className="space-y-3 text-[15px] leading-relaxed text-white/80 [&_ul]:mb-0 [&_ul]:space-y-2 [&_ul]:pl-0 [&_li]:text-[15px] [&_li]:font-normal [&_div]:mb-0 [&_div]:text-[15px] [&_div]:font-normal">
           {children}
         </div>

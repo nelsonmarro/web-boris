@@ -13,7 +13,7 @@ export function InfoField({ label, value }: InfoFieldProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-baseline border-b border-white/5 last:border-0">
       <div className="sm:w-1/3 py-2 pr-2 sm:py-3 sm:pr-4">
-        <span className="text-xs font-bold text-white/40 uppercase tracking-widest">
+        <span className="text-xs font-bold text-white/60 uppercase tracking-widest">
           {label}
         </span>
       </div>
