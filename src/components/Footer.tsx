@@ -1,6 +1,20 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Globe, Share2, MessageCircle } from "lucide-react";
+import { Mail, Youtube } from "lucide-react";
+import { SOCIAL_LINKS, CONTACT_EMAIL } from "@/features/marketing/config/social";
+
+const NAV_LINKS = [
+  { label: "Inicio", href: "/" },
+  { label: "La Wiki", href: "/wiki" },
+  { label: "Universos", href: "/#universos" },
+  { label: "Versus Arena", href: "/wiki/arena" },
+] as const;
+
+const UNIVERSE_LINKS = [
+  { label: "Colosos", href: "/wiki?universe=Colosos#explorar" },
+  { label: "Capitán de Galeón", href: "/wiki?universe=Capitán de Galeón#explorar" },
+  { label: "Ellos Llegaron", href: "/wiki?universe=Ellos Llegaron#explorar" },
+] as const;
 
 export default function Footer() {
   return (
@@ -25,11 +39,22 @@ export default function Footer() {
                 Explora la inmensidad de mis universos narrativos. De los colosos abisales a las cronologías de guerra.
               </p>
               <div className="flex gap-4">
-                {[Globe, Share2, MessageCircle].map((Icon, i) => (
-                  <a key={i} href="#" className="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-all hover:scale-110 border border-white/10 shadow-[0_4px_15px_rgba(0,0,0,0.3)]">
-                    <Icon className="w-5 h-5 text-white" />
-                  </a>
-                ))}
+                <a
+                  href={SOCIAL_LINKS.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Canal de YouTube de BorisaoBlois"
+                  className="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-all hover:scale-110 border border-white/10 shadow-[0_4px_15px_rgba(0,0,0,0.3)]"
+                >
+                  <Youtube className="w-5 h-5 text-white" />
+                </a>
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  aria-label="Escribir a BorisaoBlois"
+                  className="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-all hover:scale-110 border border-white/10 shadow-[0_4px_15px_rgba(0,0,0,0.3)]"
+                >
+                  <Mail className="w-5 h-5 text-white" />
+                </a>
               </div>
             </div>
 
@@ -37,9 +62,9 @@ export default function Footer() {
             <div>
               <h4 className="text-white font-bold uppercase tracking-wider text-[10px] mb-6">Navegación</h4>
               <ul className="space-y-2">
-                {["Inicio", "La Wiki", "Universos", "Versus Arena"].map((link) => (
-                  <li key={link}>
-                    <Link href="#" className="h-11 flex items-center text-white/50 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider">{link}</Link>
+                {NAV_LINKS.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="h-11 flex items-center text-white/50 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider">{link.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -49,9 +74,9 @@ export default function Footer() {
             <div>
               <h4 className="text-white font-bold uppercase tracking-wider text-[10px] mb-6">Universos</h4>
               <ul className="space-y-2">
-                {["Colosos", "Capitán de Galeón", "Ellos Llegaron"].map((link) => (
-                  <li key={link}>
-                    <Link href="#" className="h-11 flex items-center text-white/50 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider">{link}</Link>
+                {UNIVERSE_LINKS.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="h-11 flex items-center text-white/50 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider">{link.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -60,27 +85,28 @@ export default function Footer() {
             {/* Support */}
             <div className="space-y-6">
               <h4 className="text-white font-bold uppercase tracking-wider text-xs mb-6">Contacto Oficial</h4>
-              <a href="mailto:borisaoblois343@gmail.com" className="flex items-center gap-3 text-white/80 hover:text-primary transition-colors group">
+              <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-center gap-3 text-white/80 hover:text-primary transition-colors group">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
                   <Mail className="w-5 h-5 text-primary" />
                 </div>
-                <span className="text-sm font-bold tracking-tight">borisaoblois343@gmail.com</span>
+                <span className="text-sm font-bold tracking-tight">{CONTACT_EMAIL}</span>
               </a>
-              <div className="pt-4">
-                 <p className="text-[10px] text-white/30 uppercase font-bold tracking-wider">Soporte Técnico</p>
-                 <p className="text-xs text-white/50 font-bold">nelsonmarro@dev.com</p>
-              </div>
+              <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-white/80 hover:text-primary transition-colors group">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
+                  <Youtube className="w-5 h-5 text-primary" />
+                </div>
+                <span className="text-sm font-bold tracking-tight">@BorisaoBlois</span>
+              </a>
             </div>
           </div>
 
           <div className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
              <p className="text-xs text-white/30 font-bold uppercase tracking-wider">
-               © 2026 BorisaoBlois. Todos los derechos reservados.
+               © {new Date().getFullYear()} BorisaoBlois. Todos los derechos reservados.
              </p>
-             <div className="flex gap-8">
-               <a href="#" className="text-[10px] text-white/20 hover:text-white transition-colors uppercase font-bold tracking-wider">Privacidad</a>
-               <a href="#" className="text-[10px] text-white/20 hover:text-white transition-colors uppercase font-bold tracking-wider">Términos</a>
-             </div>
+             <p className="text-[10px] text-white/20 uppercase font-bold tracking-wider">
+               Universos narrativos originales de BorisaoBlois
+             </p>
           </div>
         </div>
       </div>

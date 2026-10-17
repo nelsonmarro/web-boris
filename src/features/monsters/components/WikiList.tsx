@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { WikiFilters } from './wiki/WikiFilters';
@@ -16,10 +17,21 @@ interface WikiListProps {
 
 const PAGE_SIZE = 6;
 
+/** Acepta un valor de la URL solo si existe entre las opciones; evita filtros vacíos por typos. */
+function pickFilter(value: string | null, allowed: string[]): string {
+  return value && allowed.includes(value) ? value : 'all';
+}
+
 export function WikiList({ options }: WikiListProps) {
+  // Las tarjetas de la landing enlazan a /wiki?universe=…; el filtro arranca desde la URL.
+  const searchParams = useSearchParams();
   const [search, setSearch] = React.useState('');
-  const [universe, setUniverse] = React.useState('all');
-  const [category, setCategory] = React.useState('all');
+  const [universe, setUniverse] = React.useState(() =>
+    pickFilter(searchParams.get('universe'), options.universes),
+  );
+  const [category, setCategory] = React.useState(() =>
+    pickFilter(searchParams.get('category'), options.categories),
+  );
   const [page, setPage] = React.useState(1);
   const [debouncedSearch, setDebouncedSearch] = React.useState(search);
 

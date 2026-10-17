@@ -4,23 +4,24 @@ import { Play, Video } from 'lucide-react';
 import Link from 'next/link';
 import { YouTubeEmbed } from '@next/third-parties/google';
 
+/** Los tres videos que Boris indicó en "Requerimientos Pagina"; títulos tal como aparecen en YouTube. */
 const VIDEOS = [
   {
     id: 'hedUAqopPBg',
-    title: 'El Gran Majá vs The Bloop',
+    title: 'Colosos - The Bloop vs El Gran Majá - La Batalla',
     category: 'COLOSOS',
     priority: true,
   },
   {
-    id: 'VQRNN3YNRWk',
-    title: 'El Misterio de los Colosos',
-    category: 'COLOSOS',
+    id: 'XurjKHinBIY',
+    title: 'Extinción masiva',
+    category: 'SHORT · CGI',
     priority: false,
   },
   {
-    id: 'IFpO2DqWDXQ',
-    title: 'Ellos Llegaron: El Inicio',
-    category: 'ELLOS LLEGARON',
+    id: 'BP6fwpSuR7I',
+    title: 'El Blitz',
+    category: 'SHORT · SEGUNDA GUERRA MUNDIAL',
     priority: false,
   },
 ];
