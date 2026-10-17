@@ -3,6 +3,7 @@
 import { Play, Video } from 'lucide-react';
 import Link from 'next/link';
 import { YouTubeEmbed } from '@next/third-parties/google';
+import { SOCIAL_LINKS } from '@/features/marketing/config/social';
 
 /** Los tres videos que Boris indicó en "Requerimientos Pagina"; títulos tal como aparecen en YouTube. */
 const VIDEOS = [
@@ -41,7 +42,9 @@ export function FeaturedVideosSection() {
             </h2>
           </div>
           <Link
-            href="https://youtube.com/@BorisaoBlois"
+            href={SOCIAL_LINKS.youtube}
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-white/40 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center gap-2 mb-2 group"
           >
             CANAL DE BORISAOBLOIS{' '}

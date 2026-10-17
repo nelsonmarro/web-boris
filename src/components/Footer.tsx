@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Youtube } from "lucide-react";
+import { Mail } from "lucide-react";
+import { YoutubeIcon } from "@/features/marketing/components/icons/YoutubeIcon";
 import { SOCIAL_LINKS, CONTACT_EMAIL } from "@/features/marketing/config/social";
 
 const NAV_LINKS = [
@@ -46,7 +47,7 @@ export default function Footer() {
                   aria-label="Canal de YouTube de BorisaoBlois"
                   className="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-all hover:scale-110 border border-white/10 shadow-[0_4px_15px_rgba(0,0,0,0.3)]"
                 >
-                  <Youtube className="w-5 h-5 text-white" />
+                  <YoutubeIcon className="w-5 h-5 text-white" />
                 </a>
                 <a
                   href={`mailto:${CONTACT_EMAIL}`}
@@ -93,7 +94,7 @@ export default function Footer() {
               </a>
               <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-white/80 hover:text-primary transition-colors group">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
-                  <Youtube className="w-5 h-5 text-primary" />
+                  <YoutubeIcon className="w-5 h-5 text-primary" />
                 </div>
                 <span className="text-sm font-bold tracking-tight">@BorisaoBlois</span>
               </a>

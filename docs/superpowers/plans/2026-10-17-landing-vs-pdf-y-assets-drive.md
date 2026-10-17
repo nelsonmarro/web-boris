@@ -635,3 +635,29 @@ Expected: sin errores.
   - `fix(wiki): el explorador lee ?universe= y ?category= de la URL`
   - `feat(landing): universos y personajes con los textos del PDF, videos y redes reales, métricas calculadas` → resto.
 - [ ] **Step 4:** Actualizar memoria (`drive-web-boris.md`) si cambió algo del proceso.
+
+---
+
+### Task 7 (QA): Pruebas de UI con Chrome DevTools (obligatoria antes del commit final)
+
+**Files:** ninguno (solo lectura). Evidencia en `.superpowers/sdd/<plan>/qa/` (capturas + `qa-report.md`).
+
+**Interfaces:**
+- Consumes: servidor de producción local `npm run build && npx next start -p 3131` (el dev server bloquea orígenes externos y no refleja `@utility` nuevos). Herramientas MCP `chrome-devtools` (`new_page`, `navigate_page`, `take_screenshot`, `take_snapshot`, `list_console_messages`, `list_network_requests`, `resize_page`, `hover`, `click`, `press_key`, `evaluate_script`).
+- Produces: `qa-report.md` con veredicto PASS/FAIL por check y rutas de las capturas.
+
+Checklist (cada ítem = un check con captura o evidencia textual):
+
+- [ ] **Step 1: Arrancar producción local** — `npm run build` ya hecho por el orquestador; `npx next start -p 3131 &`; esperar a que responda `curl -sI http://localhost:3131 | head -1` = 200. Al terminar la QA: `kill $(lsof -t -i:3131)` (nunca `pkill -f`).
+- [ ] **Step 2: Landing a 1440×900** — `navigate_page http://localhost:3131`; captura de página completa; `list_console_messages` debe estar vacío de errores (warnings de hidratación cuentan como FAIL).
+- [ ] **Step 3: Sección Universos** — scroll a `#universos`: 4 tarjetas visibles en 2×2; `hover` sobre cada una y captura de la cara trasera: el texto completo de Boris cabe sin recorte (comprobar con `evaluate_script` que `scrollHeight <= clientHeight` del panel trasero); la cuarta dice "Próximamente" y no tiene enlace; `press_key Tab` hasta el enlace "Explorar lore" debe girar la tarjeta (focus-within).
+- [ ] **Step 4: Enlace de universo → filtro** — `click` en "Explorar lore" de Colosos: la URL contiene `universe=Colosos` y `#explorar`; el selector de universo muestra "Colosos" y todas las cards listadas son de ese universo (snapshot).
+- [ ] **Step 5: Personajes destacados** — scroll a `#personajes`: 3 tarjetas con imagen cargada (`list_network_requests` filtrando `/assets/` sin 404), eyebrow con "351 m", "675 m" y el de Phillip; `click` en "Abrir expediente" de The Bloop → `/wiki/the-bloop` carga.
+- [ ] **Step 6: Videos** — 3 embeds presentes; los IDs en el DOM son `hedUAqopPBg`, `XurjKHinBIY`, `BP6fwpSuR7I` (`evaluate_script` sobre los iframes/`lite-youtube`).
+- [ ] **Step 7: Sobre Boris + Footer** — no existe ningún `a[href="#"]` en la página (`evaluate_script: document.querySelectorAll('a[href="#"]').length === 0`); el botón de YouTube abre `youtube.com/@borisaoblois` en pestaña nueva (atributo `target`); el footer enlaza Inicio/La Wiki/Universos/Versus Arena a rutas reales.
+- [ ] **Step 8: Métricas** — los 4 números de la sección de stats coinciden con: nº de `.mdx` en `src/content`, nº de artículos con `stats:`, nº de imágenes en `public/assets`, 4 universos.
+- [ ] **Step 9: Móvil 390×844** — `resize_page 390 844`; capturas de hero, universos (1 columna, tarjeta legible), personajes (1 columna) y footer; sin scroll horizontal (`document.documentElement.scrollWidth <= innerWidth`).
+- [ ] **Step 10: Wiki con assets nuevos** — `/wiki/bogbo`, `/wiki/breegard`, `/wiki/aodos-ay01`, `/wiki/the-bloop` (galería), `/wiki/el-gran-maja` (Descubrimiento): capturas; todas las imágenes nuevas responden 200; ningún heading solapado con una imagen flotada.
+- [ ] **Step 11: Reporte** — escribir `qa-report.md` (tabla check → PASS/FAIL → evidencia) y parar el servidor.
+
+Criterio de salida: todos PASS. Un FAIL abre una ronda de corrección (fix round) antes del commit final.

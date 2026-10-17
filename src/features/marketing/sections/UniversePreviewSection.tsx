@@ -1,58 +1,38 @@
-'use client';
-
-import * as React from 'react';
 import { FlipCard } from '../components/FlipCard';
+import { UNIVERSES } from '../config/universes';
+import { getAllArticles } from '@/utils/mdx';
 
-const UNIVERSES = [
-  {
-    id: 'colosos',
-    title: 'Colosos',
-    image: '/assets/Universo_Colosos/The_Bloop/The_Bloop_fauces.png',
-    icon: '🦖',
-    count: '42 Entidades',
-    description: 'Bestias colosales que remecen el curso del ecosistema y la presencia humana.',
-    color: 'bg-primary/10 text-primary',
-  },
-  {
-    id: 'capitan-de-galeon',
-    title: 'Capitán de Galeón',
-    image: '/assets/Universo_Capitán_de_Galeón/Borisao/Borisao_2_F_(1).webp',
-    icon: '⚓',
-    count: '15 Personajes',
-    description: 'Batallas entre grandes navíos, capitanes excéntricos y piratas de otro mundo.',
-    color: 'bg-secondary/10 text-secondary',
-  },
-  {
-    id: 'ellos-llegaron',
-    title: 'Ellos Llegaron',
-    image: '/assets/Universo_Ellos_llegaron/El_Angel/ellosllegaron1.1.webp',
-    icon: '👽',
-    count: '28 Eventos',
-    description: 'La Tierra de los años 40 sacudida por un enemigo implacable venido de la nada.',
-    color: 'bg-accent/10 text-accent',
-  },
-];
+export async function UniversePreviewSection() {
+  const articles = await getAllArticles();
+  const countByUniverse = new Map<string, number>();
+  for (const article of articles) {
+    const key = article.frontmatter.universe;
+    countByUniverse.set(key, (countByUniverse.get(key) ?? 0) + 1);
+  }
 
-export function UniversePreviewSection() {
   return (
-    <section id="universos" className="py-24 bg-transparent relative">
-      <div className="absolute top-[20%] left-[-10%] w-[300px] h-[300px] bg-secondary/10 rounded-full blur-[80px] mix-blend-screen z-0 pointer-events-none" />
-      <div className="absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px] mix-blend-screen z-0 pointer-events-none" />
-      
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-20 space-y-6">
-          <h2 className="text-4xl md:text-5xl font-bold text-white uppercase italic tracking-tight drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+    <section id="universos" className="relative scroll-mt-24 overflow-hidden bg-transparent py-24">
+      <div className="pointer-events-none absolute left-[-10%] top-[20%] z-0 h-[300px] w-[300px] rounded-full bg-secondary/10 blur-[80px] mix-blend-screen" />
+      <div className="pointer-events-none absolute bottom-[10%] right-[-5%] z-0 h-[400px] w-[400px] rounded-full bg-primary/10 blur-[100px] mix-blend-screen" />
+
+      <div className="container relative z-10 mx-auto px-6">
+        <div className="mx-auto mb-20 max-w-3xl space-y-6 text-center">
+          <h2 className="text-4xl font-bold uppercase italic tracking-tight text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] md:text-5xl">
             Explora los Universos
           </h2>
-          <p className="text-lg text-white/70 font-medium leading-relaxed drop-shadow-md">
-            Cada universo contiene sus propias reglas, criaturas y misterios por descubrir. 
-            Elige tu destino y sumérgete en la historia.
+          <p className="text-lg font-medium leading-relaxed text-white/70 drop-shadow-md">
+            Cada universo tiene sus propias reglas, criaturas y misterios. Toca o pasa el cursor sobre una
+            tarjeta para leer su sinopsis y entra a su archivo.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 items-start justify-items-center">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2">
           {UNIVERSES.map((universe) => (
-            <FlipCard key={universe.id} universe={universe} />
+            <FlipCard
+              key={universe.id}
+              universe={universe}
+              count={universe.universeKey ? (countByUniverse.get(universe.universeKey) ?? 0) : 0}
+            />
           ))}
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { BookOpen, Users, Play, Globe } from 'lucide-react';
+import { BookOpen, Skull, ImageIcon, Globe } from 'lucide-react';
 import { getLoreStats } from '../actions/get-lore-stats';
 
 export async function LoreStatsSection() {
@@ -6,26 +6,26 @@ export async function LoreStatsSection() {
 
   const STATS = [
     {
-      label: 'Entradas de Lore',
-      value: `${statsData.loreEntries}+`,
+      label: 'Entradas de lore',
+      value: `${statsData.loreEntries}`,
       icon: BookOpen,
       color: 'text-primary',
     },
     {
-      label: 'Exploradores Activos',
-      value: statsData.explorers,
-      icon: Users,
+      label: 'Criaturas con ficha',
+      value: `${statsData.creaturesWithStats}`,
+      icon: Skull,
       color: 'text-blue-400',
     },
     {
-      label: 'Archivos Visuales',
-      value: `${statsData.visualFiles}+`,
-      icon: Play,
+      label: 'Archivos visuales',
+      value: `${statsData.visualFiles}`,
+      icon: ImageIcon,
       color: 'text-red-500',
     },
     {
-      label: 'Universos Paralelos',
-      value: statsData.universes.toString(),
+      label: 'Universos narrativos',
+      value: `${statsData.universes}`,
       icon: Globe,
       color: 'text-emerald-400',
     },
