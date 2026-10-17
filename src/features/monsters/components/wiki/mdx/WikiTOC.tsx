@@ -14,7 +14,7 @@ interface WikiTOCProps {
 }
 
 export function WikiTOC({ headings, variant = 'inline', className }: WikiTOCProps) {
-  const [isOpen, setIsOpen] = React.useState(true);
+  const [isOpen, setIsOpen] = React.useState(variant === 'rail');
   const activeId = useActiveHeading(headings.map((h) => h.id));
 
   if (headings.length === 0) return null;

@@ -4,6 +4,7 @@ import {
   InfoSection,
   InfoField,
 } from '@/features/monsters/components/wiki/mdx/WikiInfobox';
+import { WikiInfoboxCompact } from '@/features/monsters/components/wiki/mdx/WikiInfoboxCompact';
 import { InfoStats } from '@/features/monsters/components/wiki/mdx/InfoStats';
 import { WikiTOC } from '@/features/monsters/components/wiki/mdx/WikiTOC';
 import { WikiFrontmatter } from '@/core/types/wiki';
@@ -28,6 +29,25 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
   const showRail = hasInfobox || showStats;
   const headings = extractHeadings(content);
 
+  const infoboxFull = showRail ? (
+    <WikiInfobox
+      title={title}
+      image={image}
+      imageCaption={imageCaption}
+      className="w-full md:w-full md:float-none md:ml-0 mb-0 md:mb-0"
+    >
+      {hasInfobox &&
+        Object.entries(infobox).map(([sectionTitle, fields]) => (
+          <InfoSection key={sectionTitle} title={sectionTitle}>
+            {Object.entries(fields).map(([label, value]) => (
+              <InfoField key={label} label={label} value={value} />
+            ))}
+          </InfoSection>
+        ))}
+      {showStats && <InfoStats stats={frontmatter.stats} />}
+    </WikiInfobox>
+  ) : null;
+
   return (
     <div className="wiki-content relative z-10 py-8 lg:py-10">
       <div className="wiki-container lg:grid lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-x-10">
@@ -38,26 +58,16 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
           </div>
         )}
 
-        {/* Right rail: floats on md, becomes column 2 on lg */}
-        <aside className="md:float-right md:ml-8 md:w-[350px] mb-8 md:mb-4 clear-right lg:float-none lg:ml-0 lg:w-auto lg:col-start-2 lg:row-start-1 lg:row-span-3 lg:mb-0">
-          {showRail && (
-            <WikiInfobox
-              title={title}
-              image={image}
-              imageCaption={imageCaption}
-              className="w-full md:w-full md:float-none md:ml-0 mb-0 md:mb-0"
-            >
-              {hasInfobox &&
-                Object.entries(infobox).map(([sectionTitle, fields]) => (
-                  <InfoSection key={sectionTitle} title={sectionTitle}>
-                    {Object.entries(fields).map(([label, value]) => (
-                      <InfoField key={label} label={label} value={value} />
-                    ))}
-                  </InfoSection>
-                ))}
-              {showStats && <InfoStats stats={frontmatter.stats} />}
-            </WikiInfobox>
-          )}
+        {/* < md: ficha compacta tras la descripción */}
+        {infoboxFull && (
+          <div className="md:hidden">
+            <WikiInfoboxCompact frontmatter={frontmatter}>{infoboxFull}</WikiInfoboxCompact>
+          </div>
+        )}
+
+        {/* md: infobox flotante; lg: columna 2 */}
+        <aside className="hidden md:block md:float-right md:ml-8 md:w-[350px] md:mb-4 clear-right lg:float-none lg:ml-0 lg:w-auto lg:col-start-2 lg:row-start-1 lg:row-span-3 lg:mb-0">
+          {infoboxFull}
           {headings.length > 0 && (
             <div className="hidden lg:block lg:sticky lg:top-20 mt-6">
               <WikiTOC headings={headings} variant="rail" />
