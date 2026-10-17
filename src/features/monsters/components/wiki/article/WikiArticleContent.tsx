@@ -18,9 +18,9 @@ interface WikiArticleContentProps {
 
 /**
  * Shell de lectura:
- * - < lg: infobox flotante a la derecha (md) y TOC inline colapsable, como siempre.
+ * - < lg: ficha compacta tras la descripción, con la infobox completa plegada, y TOC inline colapsable.
+ *   Nada flota por debajo de lg: con la sidebar abierta la columna de contenido es demasiado estrecha.
  * - ≥ lg: grid de dos columnas — cuerpo ≤ 800 px + rail derecho con infobox y TOC sticky.
- * El rail es un único wrapper para que en md siga flotando y en lg ocupe la columna 2.
  */
 export function WikiArticleContent({ frontmatter, content }: WikiArticleContentProps) {
   const { title, description, image, imageCaption, infobox } = frontmatter;
@@ -34,7 +34,7 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
       title={title}
       image={image}
       imageCaption={imageCaption}
-      className="w-full md:w-full md:float-none md:ml-0 mb-0 md:mb-0"
+      className="w-full mb-0"
     >
       {hasInfobox &&
         Object.entries(infobox).map(([sectionTitle, fields]) => (
@@ -58,15 +58,15 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
           </div>
         )}
 
-        {/* < md: ficha compacta tras la descripción */}
+        {/* < lg: ficha compacta tras la descripción */}
         {infoboxFull && (
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <WikiInfoboxCompact frontmatter={frontmatter}>{infoboxFull}</WikiInfoboxCompact>
           </div>
         )}
 
-        {/* md: infobox flotante; lg: columna 2 */}
-        <aside className="hidden md:block md:float-right md:ml-8 md:w-[350px] md:mb-4 clear-right lg:float-none lg:ml-0 lg:w-auto lg:col-start-2 lg:row-start-1 lg:row-span-3 lg:mb-0">
+        {/* ≥ lg: rail en la columna 2 */}
+        <aside className="hidden lg:col-start-2 lg:row-start-1 lg:row-span-3 lg:block">
           {infoboxFull}
           {headings.length > 0 && (
             <div className="hidden lg:block lg:sticky lg:top-20 mt-6">

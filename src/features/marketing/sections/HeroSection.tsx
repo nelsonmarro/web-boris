@@ -19,15 +19,16 @@ export function HeroSection({ featured }: { featured: WikiArticleSummary | null 
           <BrandCapsule>Universos de BorisaoBlois</BrandCapsule>
 
           <h1 className="text-4xl font-bold leading-[1.02] tracking-tight text-white drop-shadow-[0_8px_30px_rgba(0,0,0,0.5)] sm:text-5xl md:text-7xl">
-            EXPLORA LA INMENSIDAD
+            EXPLORA LA INMENSIDAD{' '}
             <span className="block bg-gradient-to-r from-primary to-orange-400 bg-clip-text italic text-transparent drop-shadow-[0_8px_20px_rgba(255,115,0,0.4)]">
               DE MIS UNIVERSOS
             </span>
           </h1>
 
           <p className="max-w-lg text-base font-medium leading-relaxed text-white/70 drop-shadow-md md:text-lg">
-            Y sus historias: colosos abisales, capitanes del siglo XVIII y la guerra que detuvo al
-            mundo. Todo el lore oficial de BorisaoBlois en un solo archivo.
+            Y sus historias: colosos abisales, capitanes del siglo XVIII y una Segunda Guerra Mundial
+            interrumpida por un enemigo salido de la nada. Todo el lore oficial de BorisaoBlois en un
+            solo archivo.
           </p>
 
           <SearchBar />
@@ -48,7 +49,7 @@ export function HeroSection({ featured }: { featured: WikiArticleSummary | null 
 
         <HeroVisual
           imageSrc="/assets/Universo_Colosos/The_Bloop/The_Bloop_cuerpo_completo.webp"
-          alt="Estudio a lápiz de The Bloop Ojo Solo"
+          alt="Primer plano de la cabeza de The Bloop Ojo Solo"
           badge={
             featured
               ? {

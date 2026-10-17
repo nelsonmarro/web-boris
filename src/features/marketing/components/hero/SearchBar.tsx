@@ -18,7 +18,7 @@ export function SearchBar({ placeholder = '¿Qué criatura buscas?' }: { placeho
   return (
     <form role="search" onSubmit={submit} className="group relative max-w-lg">
       <label htmlFor="hero-search" className="sr-only">Buscar en la wiki</label>
-      <div className="glass-liquid flex items-center rounded-full border-white/10 bg-black/40 p-1 shadow-[0_15px_40px_rgba(0,0,0,0.5)] backdrop-blur-3xl transition-all group-focus-within:border-primary/40 group-focus-within:ring-4 group-focus-within:ring-primary/5">
+      <div className="glass-liquid flex items-center rounded-full border-white/10 bg-black/40 p-1 shadow-[0_15px_40px_rgba(0,0,0,0.5)] backdrop-blur-3xl transition-all group-focus-within:border-primary/40 group-focus-within:ring-4 group-focus-within:ring-primary/30">
         <Search className="ml-4 mr-2 h-5 w-5 shrink-0 text-white/30 transition-colors group-focus-within:text-primary" />
         <input
           id="hero-search"
@@ -26,7 +26,7 @@ export function SearchBar({ placeholder = '¿Qué criatura buscas?' }: { placeho
           placeholder={placeholder}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="h-12 min-w-0 flex-1 bg-transparent text-base font-bold tracking-tight text-white outline-none placeholder:text-white/30 [&::-webkit-search-cancel-button]:hidden"
+          className="h-12 min-w-0 flex-1 bg-transparent text-base font-bold tracking-tight text-white outline-none placeholder:text-white/50 [&::-webkit-search-cancel-button]:hidden"
         />
         {search && (
           <button

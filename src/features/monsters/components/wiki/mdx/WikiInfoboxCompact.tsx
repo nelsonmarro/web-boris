@@ -10,7 +10,7 @@ interface WikiInfoboxCompactProps {
   children: React.ReactNode;
 }
 
-/** Ficha resumida para < md: lo esencial arriba, la infobox completa plegada. */
+/** Ficha resumida para < lg: lo esencial arriba, la infobox completa plegada. */
 export function WikiInfoboxCompact({ frontmatter, children }: WikiInfoboxCompactProps) {
   const { title, image, category, universe, stats } = frontmatter;
   const threat = getThreatLevel(stats?.hostility);
@@ -40,15 +40,18 @@ export function WikiInfoboxCompact({ frontmatter, children }: WikiInfoboxCompact
         ) : null}
         <div className="min-w-0">
           <p className="eyebrow text-primary">{universe}{category ? ` · ${category}` : ''}</p>
-          <p className="mt-1 truncate text-lg font-black uppercase italic tracking-tight text-white">{title}</p>
+          <p className="mt-1 truncate pr-1 text-lg font-black uppercase italic tracking-tight text-white">{title}</p>
         </div>
       </div>
 
       {facts.length > 0 && (
         <dl className="grid grid-cols-2 gap-px border-t border-white/10 bg-white/5">
-          {facts.slice(0, 4).map((f) => (
-            <div key={f.label} className="bg-[#061a2e] px-4 py-3">
-              <dt className="text-[11px] font-bold uppercase tracking-widest text-white/40">{f.label}</dt>
+          {facts.slice(0, 4).map((f, i) => (
+            <div
+              key={f.label}
+              className={cn('bg-[#061a2e] px-4 py-3', facts.length % 2 === 1 && i === facts.length - 1 && 'col-span-2')}
+            >
+              <dt className="text-[11px] font-bold uppercase tracking-widest text-white/60">{f.label}</dt>
               <dd className="mt-1 text-sm font-semibold text-white/85">{f.value}</dd>
             </div>
           ))}
@@ -56,7 +59,7 @@ export function WikiInfoboxCompact({ frontmatter, children }: WikiInfoboxCompact
       )}
 
       <details className="group border-t border-white/10">
-        <summary className="flex h-11 cursor-pointer list-none items-center justify-between px-4 text-[11px] font-bold uppercase tracking-[0.2em] text-primary marker:hidden [&::-webkit-details-marker]:hidden">
+        <summary className="flex h-11 cursor-pointer list-none items-center justify-between px-4 text-[11px] font-bold uppercase tracking-[0.2em] text-primary focus-visible:-outline-offset-2 [&::-webkit-details-marker]:hidden">
           Ficha completa
           <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
         </summary>

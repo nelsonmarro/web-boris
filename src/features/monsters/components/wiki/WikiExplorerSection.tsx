@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
-import { WikiList } from '@/features/monsters/components/WikiList';
+import { WikiListFromUrl } from '@/features/monsters/components/WikiListFromUrl';
 import { SectionHeader } from '@/features/monsters/components/wiki/SectionHeader';
 import { getFilterOptions } from '@/features/monsters/actions/get-wiki-articles';
 
@@ -24,7 +24,7 @@ export async function WikiExplorerSection() {
             </div>
           }
         >
-          <WikiList options={options} />
+          <WikiListFromUrl options={options} />
         </Suspense>
       </div>
     </section>

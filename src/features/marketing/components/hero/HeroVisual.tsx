@@ -21,7 +21,8 @@ export function HeroVisual({ imageSrc, alt, badge }: HeroVisualProps) {
           fill
           sizes="(min-width: 1024px) 576px, 100vw"
           className="object-cover transition-transform duration-1000 group-hover/image:scale-110"
-          priority
+          fetchPriority="high"
+          loading="eager"
         />
 
         <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
