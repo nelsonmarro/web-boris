@@ -12,8 +12,8 @@ export function BrandCapsule({ children, className }: BrandCapsuleProps) {
       "inline-flex items-center gap-2.5 px-5 py-2 glass-liquid rounded-full border-white/10 shadow-[0_10px_20px_rgba(0,0,0,0.4)] bg-black/40",
       className
     )}>
-      <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse" />
-      <span className="text-white text-[10px] font-bold tracking-wider uppercase">
+      <Sparkles className="w-3.5 h-3.5 text-primary motion-safe:animate-pulse" />
+      <span className="text-white text-[11px] font-bold tracking-wider uppercase">
         {children}
       </span>
     </div>

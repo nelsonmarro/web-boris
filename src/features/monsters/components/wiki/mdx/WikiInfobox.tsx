@@ -13,7 +13,7 @@ export function InfoField({ label, value }: InfoFieldProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-baseline border-b border-white/5 last:border-0">
       <div className="sm:w-1/3 py-2 pr-2 sm:py-3 sm:pr-4">
-        <span className="text-xs font-bold text-white/40 uppercase tracking-widest">
+        <span className="text-xs font-bold text-white/60 uppercase tracking-widest">
           {label}
         </span>
       </div>
@@ -33,9 +33,9 @@ export function InfoSection({ title, children }: InfoSectionProps) {
   return (
     <div className="mb-4 last:mb-0">
       <div className="bg-primary/10 border-y border-primary/20 py-2 px-4 text-center">
-        <h4 className="text-xs font-bold text-primary uppercase tracking-[0.2em] italic">
+        <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] italic">
           {title}
-        </h4>
+        </p>
       </div>
       <div className="px-4">
         {children}
@@ -55,7 +55,7 @@ interface WikiInfoboxProps {
 export function WikiInfobox({ title, image, imageCaption, children, className }: WikiInfoboxProps) {
   return (
     <aside className={cn(
-      "w-full md:w-[350px] md:float-right md:ml-8 mb-8 md:mb-4 bg-[#061a2e] rounded-2xl border border-white/10 shadow-2xl overflow-hidden z-20",
+      "w-full mb-8 bg-[#061a2e] rounded-2xl border border-white/10 shadow-2xl overflow-hidden z-20",
       className
     )}>
       {/* Header */}
@@ -78,9 +78,9 @@ export function WikiInfobox({ title, image, imageCaption, children, className }:
               src={image} 
               alt={title} 
               fill 
-              sizes="(min-width: 768px) 350px, 100vw"
+              sizes="(min-width: 1024px) 340px, 100vw"
               className="object-cover transition-transform duration-700 group-hover/img:scale-105" 
-              priority
+              fetchPriority="high"
             />
             <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
                <div className="bg-primary/20 backdrop-blur-md p-2 rounded-full border border-primary/40 scale-75">

@@ -3,8 +3,7 @@ import { CategoryTiles, type CategoryTile } from '@/features/monsters/components
 import { FeaturedCreature } from '@/features/monsters/components/wiki/FeaturedCreature';
 import { WikiExplorerSection } from '@/features/monsters/components/wiki/WikiExplorerSection';
 import { getAllArticles } from '@/utils/mdx';
-import { toSummary } from '@/core/types/wiki';
-import { hasStats } from '@/features/monsters/lib/stats';
+import { pickFeatured } from '@/features/monsters/lib/featured';
 
 /** La criatura destacada rota por semana ISO sin necesidad de rebuild. */
 export const revalidate = 86400;
@@ -18,14 +17,6 @@ const TILE_DEFS: Array<Omit<CategoryTile, 'count' | 'image'> & { category: strin
   { title: 'Organizaciones', slug: 'organizaciones', category: 'Organización', description: 'DELIRIUM, IPCARO y las Naciones Rebeldes.' },
 ];
 
-function isoWeek(date: Date): number {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const day = d.getUTCDay() || 7;
-  d.setUTCDate(d.getUTCDate() + 4 - day);
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
-}
-
 export default async function WikiIndex() {
   const articles = await getAllArticles();
 
@@ -35,9 +26,7 @@ export default async function WikiIndex() {
     return { ...tile, count: matches.length, image: withImage?.frontmatter.image };
   });
 
-  const candidates = articles.filter((a) => hasStats(a.frontmatter));
-  const featured =
-    candidates.length > 0 ? toSummary(candidates[isoWeek(new Date()) % candidates.length]) : null;
+  const featured = pickFeatured(articles);
 
   return (
     <div className="wiki-container flex-1 space-y-16 py-10 lg:py-14">

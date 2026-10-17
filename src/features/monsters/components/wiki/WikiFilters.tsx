@@ -18,6 +18,7 @@ interface WikiFiltersProps {
   onCategoryChange: (value: string | null) => void;
   currentUniverse: string;
   currentCategory: string;
+  initialSearch?: string;
 }
 
 /** Etiquetas en plural para mostrar; el `value` es el string exacto del frontmatter. */
@@ -46,6 +47,7 @@ export function WikiFilters({
   onCategoryChange,
   currentUniverse,
   currentCategory,
+  initialSearch,
 }: WikiFiltersProps) {
   // Base UI muestra el valor crudo salvo que reciba el mapa `items` valor → etiqueta.
   const universeItems = React.useMemo(
@@ -63,7 +65,7 @@ export function WikiFilters({
   return (
     <div className="flex flex-col lg:flex-row gap-4 items-center w-full">
       <div className="flex-1 w-full lg:max-w-xl">
-        <WikiSearch onSearch={onSearchChange} placeholder="Filtrar por nombre..." />
+        <WikiSearch onSearch={onSearchChange} defaultValue={initialSearch} placeholder="Filtrar por nombre..." />
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">

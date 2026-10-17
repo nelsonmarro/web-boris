@@ -14,7 +14,7 @@ interface WikiTOCProps {
 }
 
 export function WikiTOC({ headings, variant = 'inline', className }: WikiTOCProps) {
-  const [isOpen, setIsOpen] = React.useState(true);
+  const [isOpen, setIsOpen] = React.useState(variant === 'rail');
   const activeId = useActiveHeading(headings.map((h) => h.id));
 
   if (headings.length === 0) return null;
@@ -95,7 +95,7 @@ export function WikiTOC({ headings, variant = 'inline', className }: WikiTOCProp
       <div className="flex items-center justify-between border-b border-white/5 bg-black/20 px-5 py-3">
         <div className="flex items-center gap-3">
           <ListTree className="h-4 w-4 text-primary" />
-          <h4 className="text-sm font-bold tracking-wide text-white">Contenido</h4>
+          <p className="text-sm font-bold tracking-wide text-white">Contenido</p>
         </div>
         <button
           type="button"
