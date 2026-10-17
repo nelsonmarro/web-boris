@@ -1,35 +1,36 @@
 'use client';
 
 import * as React from 'react';
-import { Trophy } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Trophy, Database } from 'lucide-react';
 
 interface ArenaHeaderProps {
   title: string;
   subtitle: string;
   description: string;
+  fighterCount: number;
 }
 
-export function ArenaHeader({ title, subtitle, description }: ArenaHeaderProps) {
+export function ArenaHeader({ title, subtitle, description, fighterCount }: ArenaHeaderProps) {
+  const [first, ...rest] = title.split(' ');
   return (
-    <header className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
+    <header className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
       <div className="space-y-4">
-         <div className="inline-flex items-center gap-2.5 px-4 py-1.5 glass-liquid rounded-full border-white/10 bg-white/5">
-            <Trophy className="w-3.5 h-3.5 text-primary" />
-            <span className="text-white text-[10px] font-bold tracking-wider uppercase">{subtitle}</span>
-         </div>
-         <h1 className="text-5xl md:text-7xl font-bold text-white italic tracking-tight uppercase leading-none">
-           {title.split(' ')[0]} <span className="text-primary">{title.split(' ').slice(1).join(' ')}</span>
-         </h1>
-         <p className="text-white/60 text-lg max-w-xl font-medium">
-           {description}
-         </p>
+        <div className="inline-flex items-center gap-2.5 rounded-full glass-liquid border-white/10 bg-white/5 px-4 py-1.5">
+          <Trophy className="h-3.5 w-3.5 text-primary" />
+          <span className="eyebrow text-white">{subtitle}</span>
+        </div>
+        <h1 className="page-title uppercase italic">
+          {first} <span className="text-primary">{rest.join(' ')}</span>
+        </h1>
+        <p className="max-w-xl text-base leading-relaxed text-white/60 md:text-lg">{description}</p>
       </div>
 
-      <div className="flex items-center gap-4">
-        <Button variant="outline" className="h-14 px-8 rounded-2xl glass-liquid border-white/10 text-white font-bold uppercase tracking-wider text-[11px] italic">
-           Reglas de la Arena
-        </Button>
+      <div className="flex items-center gap-3 rounded-2xl glass-liquid border-white/10 px-6 py-4">
+        <Database className="h-5 w-5 text-primary" />
+        <div className="flex flex-col">
+          <span className="eyebrow text-white/40">Combatientes</span>
+          <span className="font-mono text-2xl font-black text-white">{fighterCount}</span>
+        </div>
       </div>
     </header>
   );

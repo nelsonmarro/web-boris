@@ -3,24 +3,26 @@
 import { Play, Video } from 'lucide-react';
 import Link from 'next/link';
 import { YouTubeEmbed } from '@next/third-parties/google';
+import { SOCIAL_LINKS } from '@/features/marketing/config/social';
 
+/** Los tres videos que Boris indicó en "Requerimientos Pagina"; títulos tal como aparecen en YouTube. */
 const VIDEOS = [
   {
     id: 'hedUAqopPBg',
-    title: 'El Gran Majá vs The Bloop',
+    title: 'Colosos - The Bloop vs El Gran Majá - La Batalla',
     category: 'COLOSOS',
     priority: true,
   },
   {
-    id: 'VQRNN3YNRWk',
-    title: 'El Misterio de los Colosos',
-    category: 'COLOSOS',
+    id: 'XurjKHinBIY',
+    title: 'Extinción masiva',
+    category: 'SHORT · CGI',
     priority: false,
   },
   {
-    id: 'IFpO2DqWDXQ',
-    title: 'Ellos Llegaron: El Inicio',
-    category: 'ELLOS LLEGARON',
+    id: 'BP6fwpSuR7I',
+    title: 'El Blitz',
+    category: 'SHORT · SEGUNDA GUERRA MUNDIAL',
     priority: false,
   },
 ];
@@ -40,7 +42,9 @@ export function FeaturedVideosSection() {
             </h2>
           </div>
           <Link
-            href="https://youtube.com/@BorisaoBlois"
+            href={SOCIAL_LINKS.youtube}
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-white/40 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center gap-2 mb-2 group"
           >
             CANAL DE BORISAOBLOIS{' '}

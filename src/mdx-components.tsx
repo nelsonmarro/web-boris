@@ -9,6 +9,8 @@ import { WikiInfobox, InfoSection, InfoField } from '@/features/monsters/compone
 import { WikiQuote } from '@/features/monsters/components/wiki/mdx/WikiQuote';
 import { WikiGallery, WikiImage } from '@/features/monsters/components/wiki/mdx/WikiGallery';
 import { WikiTOC } from '@/features/monsters/components/wiki/mdx/WikiTOC';
+import { RegistroDelirium } from '@/features/monsters/components/wiki/mdx/RegistroDelirium';
+import { WikiTabs, WikiTab } from '@/features/monsters/components/wiki/mdx/WikiTabs';
 
 import { MDXComponents } from 'mdx/types';
 
@@ -24,6 +26,9 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
     WikiGallery,
     WikiImage,
     WikiTOC,
+    RegistroDelirium,
+    WikiTabs,
+    WikiTab,
     
     // Standard HTML overrides
     h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (

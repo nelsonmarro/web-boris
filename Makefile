@@ -1,11 +1,12 @@
 # BorisaoBlois Universos - Development Makefile
 
-.PHONY: help install dev build lint db-up db-down db-logs db-shell prisma-gen prisma-migrate prisma-studio clean
+.PHONY: help install dev build start share lint db-up db-down db-logs db-shell prisma-gen prisma-migrate prisma-studio clean
 
 # Variables
 DOCKER_COMPOSE = docker compose
 PRISMA = npx prisma
 NPM = npm
+PORT ?= 3131
 
 help: ## Muestra este mensaje de ayuda
 	@echo 'Uso: make [target]'
@@ -23,6 +24,13 @@ dev: ## Inicia la base de datos y el servidor de desarrollo de Next.js
 
 build: ## Compila la aplicación para producción
 	$(NPM) run build
+
+start: build ## Compila y sirve el build de producción (next start) en $(PORT)
+	npx next start -p $(PORT)
+
+share: build ## Compila, sirve con next start y abre un túnel público (requiere cloudflared)
+	@command -v cloudflared >/dev/null || { echo "Falta cloudflared: sudo pacman -S cloudflared"; exit 1; }
+	npx next start -p $(PORT) & PID=$$!; trap "kill $$PID 2>/dev/null" EXIT INT TERM; sleep 3; cloudflared tunnel --url http://localhost:$(PORT)
 
 lint: ## Ejecuta el linter (ESLint)
 	$(NPM) run lint

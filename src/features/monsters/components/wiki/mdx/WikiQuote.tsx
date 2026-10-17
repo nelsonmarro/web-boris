@@ -14,7 +14,6 @@ export function WikiQuote({ children, author, source }: WikiQuoteProps) {
       <div className="absolute left-9 top-0 bottom-0 w-[2px] bg-primary/20 rounded-full" />
 
       <Quote className="absolute top-0 left-0 w-8 h-8 text-primary opacity-40 -scale-x-100" />
-      <Quote className="absolute bottom-42 right-100 w-8 h-8 text-primary opacity-40 rotate-180" />
 
       <blockquote className="relative">
         <div className="text-lg md:text-xl font-medium text-white/90 leading-relaxed italic">
@@ -31,7 +30,7 @@ export function WikiQuote({ children, author, source }: WikiQuoteProps) {
                 </span>
               )}
               {source && (
-                <span className="text-white/30 text-[10px] italic">
+                <span className="text-white/30 text-[11px] italic">
                   [{source}]
                 </span>
               )}

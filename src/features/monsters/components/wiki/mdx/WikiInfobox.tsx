@@ -78,6 +78,7 @@ export function WikiInfobox({ title, image, imageCaption, children, className }:
               src={image} 
               alt={title} 
               fill 
+              sizes="(min-width: 768px) 350px, 100vw"
               className="object-cover transition-transform duration-700 group-hover/img:scale-105" 
               priority
             />
@@ -89,7 +90,7 @@ export function WikiInfobox({ title, image, imageCaption, children, className }:
           </a>
           {imageCaption && (
             <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm p-3 border-t border-white/5">
-              <div className="text-center text-[10px] font-bold text-white/60 uppercase tracking-widest italic leading-relaxed">
+              <div className="text-center text-[11px] font-bold text-white/60 uppercase tracking-widest italic leading-relaxed">
                 {imageCaption}
               </div>
             </div>

@@ -50,7 +50,7 @@ export function WikiArticleActions({ title }: WikiArticleActionsProps) {
     <div className="flex items-center gap-2">
       <button 
         onClick={handleShare}
-        className="px-4 py-2 flex items-center gap-2 rounded-md bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all font-bold text-xs uppercase tracking-wider" 
+        className="px-4 py-2 flex items-center gap-2 h-10 rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all font-bold text-xs uppercase tracking-wider" 
         title="Compartir"
       >
         {isCopying ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
@@ -58,14 +58,14 @@ export function WikiArticleActions({ title }: WikiArticleActionsProps) {
       </button>
       <button 
         onClick={handleHistory}
-        className="p-2 rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-all" 
+        className="p-2 rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition-all" 
         title="Historial"
       >
         <History className="w-5 h-5" />
       </button>
       <button 
         onClick={handlePrint}
-        className="p-2 rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-all" 
+        className="p-2 rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition-all" 
         title="Imprimir"
       >
         <Printer className="w-5 h-5" />

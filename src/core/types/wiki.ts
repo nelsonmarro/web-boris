@@ -28,3 +28,14 @@ export interface WikiArticle {
   frontmatter: WikiFrontmatter;
   content: string;
 }
+
+/** Versión ligera para listados, búsqueda y arena (sin `content`). */
+export interface WikiArticleSummary {
+  slug: string;
+  frontmatter: WikiFrontmatter;
+}
+
+export const toSummary = (article: WikiArticle): WikiArticleSummary => ({
+  slug: article.slug,
+  frontmatter: article.frontmatter,
+});

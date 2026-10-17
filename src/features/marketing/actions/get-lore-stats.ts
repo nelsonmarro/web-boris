@@ -1,41 +1,38 @@
+import { readdir } from 'node:fs/promises';
+import path from 'node:path';
 import { getAllArticles } from '@/utils/mdx';
+import { hasStats } from '@/features/monsters/lib/stats';
+import { UNIVERSES } from '../config/universes';
 
 export interface LoreStats {
+  /** Artículos MDX publicados. */
   loreEntries: number;
-  explorers: string;
+  /** Criaturas con ficha de stats (aparecen en Arena y hub). */
+  creaturesWithStats: number;
+  /** Imágenes físicas en public/assets. */
   visualFiles: number;
+  /** Universos narrativos de Boris (incluye los anunciados). */
   universes: number;
 }
 
-/**
- * Calculates real-time statistics based on the project's content.
- */
+const IMAGE_EXT = new Set(['.webp', '.png', '.jpg', '.jpeg', '.avif', '.gif']);
+
+async function countImages(dir: string): Promise<number> {
+  const entries = await readdir(dir, { withFileTypes: true, recursive: true });
+  return entries.filter((e) => e.isFile() && IMAGE_EXT.has(path.extname(e.name).toLowerCase())).length;
+}
+
+/** Métricas calculadas a partir del contenido real del proyecto. */
 export async function getLoreStats(): Promise<LoreStats> {
-  const articles = await getAllArticles();
-  
-  // 1. Lore Entries: Total number of MDX files
-  const loreEntries = articles.length;
-
-  // 2. Explorers: Fixed high-value representing Boris's community (approx 2.4M on YouTube)
-  const explorers = "2.4M";
-
-  // 3. Visual Files: Sum of featured images + images inside MDX + videos
-  // For now, we use a conservative calculation based on discovered content
-  // Every article has at least 1 main image.
-  const visualFiles = articles.reduce((acc, art) => {
-    // Count main image + potential MDX images (heuristic)
-    const mdxImages = (art.content.match(/!\[.*?\]\(.*?\)/g) || []).length;
-    return acc + 1 + mdxImages;
-  }, 0);
-
-  // 4. Universes: Unique universes found in frontmatter
-  const uniqueUniverses = new Set(articles.map(a => a.frontmatter.universe));
-  const universes = uniqueUniverses.size || 3; // Fallback to 3 main ones
+  const [articles, visualFiles] = await Promise.all([
+    getAllArticles(),
+    countImages(path.join(process.cwd(), 'public', 'assets')).catch(() => 0),
+  ]);
 
   return {
-    loreEntries,
-    explorers,
-    visualFiles: visualFiles + 15, // Adding a constant for the videos on the channel
-    universes,
+    loreEntries: articles.length,
+    creaturesWithStats: articles.filter((a) => hasStats(a.frontmatter)).length,
+    visualFiles,
+    universes: UNIVERSES.length,
   };
 }

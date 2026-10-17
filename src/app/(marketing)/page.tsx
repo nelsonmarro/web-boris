@@ -3,6 +3,7 @@ import Footer from '@/components/Footer';
 import { HeroSection } from '@/features/marketing/sections/HeroSection';
 import { LoreStatsSection } from '@/features/marketing/sections/LoreStatsSection';
 import { UniversePreviewSection } from '@/features/marketing/sections/UniversePreviewSection';
+import { FeaturedCharactersSection } from '@/features/marketing/sections/FeaturedCharactersSection';
 import { FeaturedVideosSection } from '@/features/marketing/sections/FeaturedVideosSection';
 import { AboutBorisSection } from '@/features/marketing/sections/AboutBorisSection';
 import { ContactSection } from '@/features/marketing/sections/ContactSection';
@@ -15,6 +16,7 @@ export default function Home() {
         <HeroSection />
         <LoreStatsSection />
         <UniversePreviewSection />
+        <FeaturedCharactersSection />
         <FeaturedVideosSection />
         <AboutBorisSection />
         <ContactSection />

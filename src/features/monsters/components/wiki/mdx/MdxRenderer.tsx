@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { MDXRemote } from 'next-mdx-remote-client/rsc';
 import Image from 'next/image';
+import { rehypeHeadingIds } from '@/utils/rehype-heading-ids';
 
 // Custom Components
 import { AbyssalAlert } from '@/features/monsters/components/wiki/mdx/AbyssalAlert';
@@ -17,6 +18,8 @@ import {
   WikiImage,
 } from '@/features/monsters/components/wiki/mdx/WikiGallery';
 import { WikiTOC } from '@/features/monsters/components/wiki/mdx/WikiTOC';
+import { RegistroDelirium } from '@/features/monsters/components/wiki/mdx/RegistroDelirium';
+import { WikiTabs, WikiTab } from '@/features/monsters/components/wiki/mdx/WikiTabs';
 
 const components = {
   AbyssalAlert,
@@ -29,6 +32,9 @@ const components = {
   WikiGallery,
   WikiImage,
   WikiTOC,
+  RegistroDelirium,
+  WikiTabs,
+  WikiTab,
 
   // Standard HTML overrides
   h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
@@ -39,7 +45,7 @@ const components = {
   ),
   h2: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h2
-      className="text-2xl font-black text-white italic tracking-widest uppercase mt-28 mb-10 pl-5 py-5 clear-both relative bg-gradient-to-r from-primary/20 via-primary/5 to-transparent border-t border-white/5 flex items-center group"
+      className="text-2xl font-black text-white italic tracking-widest uppercase mt-16 mb-8 pl-5 py-5 clear-both scroll-mt-24 relative bg-gradient-to-r from-primary/20 via-primary/5 to-transparent border-t border-white/5 flex items-center group"
       {...props}
     >
       <span className="relative z-10 drop-shadow-[0_2px_8px_rgba(255,115,0,0.6)] group-hover:text-primary transition-colors duration-300">
@@ -51,7 +57,7 @@ const components = {
   ),
   h3: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h3
-      className="text-xl md:text-2xl font-black text-primary italic uppercase tracking-wider mt-16 mb-6 pl-5 border-l-4 border-primary/50 flex items-center gap-3 clear-both"
+      className="text-xl md:text-2xl font-black text-primary italic uppercase tracking-wider mt-16 mb-6 pl-5 border-l-4 border-primary/50 flex items-center gap-3 clear-both scroll-mt-24"
       {...props}
     >
       <span className="w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_rgba(255,115,0,0.8)]" />
@@ -60,7 +66,7 @@ const components = {
   ),
   p: (props: React.HTMLAttributes<HTMLDivElement>) => (
     <div
-      className="text-lg text-white/90 leading-relaxed font-medium mb-6"
+      className="text-[17px] text-white/85 leading-[1.7] font-normal mb-6"
       {...props}
     />
   ),
@@ -68,7 +74,7 @@ const components = {
     <ul className="list-none space-y-4 mb-8 pl-4" {...props} />
   ),
   li: ({ children, ...props }: React.HTMLAttributes<HTMLLIElement>) => (
-    <li className="flex items-start gap-3 text-white/90 font-medium" {...props}>
+    <li className="flex items-start gap-3 text-[17px] leading-[1.7] text-white/85 font-normal" {...props}>
       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2.5 shrink-0 shadow-[0_0_8px_rgba(255,115,0,0.8)]" />
       <span>{children}</span>
     </li>
@@ -85,6 +91,7 @@ const components = {
           src={props.src as string}
           alt={props.alt || ''}
           fill
+          sizes="(min-width: 1024px) 800px, 100vw"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
       )}
@@ -105,7 +112,11 @@ interface MdxRendererProps {
 export function MdxRenderer({ content }: MdxRendererProps) {
   return (
     <div className="prose prose-invert prose-base max-w-none prose-p:leading-relaxed prose-headings:tracking-tight">
-      <MDXRemote source={content} components={components} />
+      <MDXRemote
+        source={content}
+        components={components}
+        options={{ mdxOptions: { rehypePlugins: [rehypeHeadingIds] } }}
+      />
     </div>
   );
 }

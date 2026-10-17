@@ -1,8 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { Input } from '@/components/ui/input';
 import { Search, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/utils/cn';
 
 interface WikiSearchProps {
@@ -12,50 +12,41 @@ interface WikiSearchProps {
   inputClassName?: string;
 }
 
-export function WikiSearch({ 
-  placeholder = "Buscar en el archivo...", 
-  onSearch, 
+export function WikiSearch({
+  placeholder = 'Buscar en el archivo…',
+  onSearch,
   className,
-  inputClassName 
+  inputClassName,
 }: WikiSearchProps) {
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVal = e.target.value;
-    setValue(newVal);
-    onSearch(newVal);
-  };
-
-  const handleClear = () => {
-    setValue("");
-    onSearch("");
+  const update = (next: string) => {
+    setValue(next);
+    onSearch(next);
   };
 
   return (
-    <div className={cn("relative group w-full", className)}>
-      <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60 group-focus-within:text-primary transition-all duration-500 group-focus-within:scale-110" />
+    <div className={cn('group relative w-full', className)}>
+      <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/50 transition-colors group-focus-within:text-primary" />
       <Input
+        type="search"
         value={value}
-        onChange={handleChange}
+        onChange={(e) => update(e.target.value)}
         placeholder={placeholder}
+        aria-label={placeholder}
         className={cn(
-          "h-16 pl-14 pr-12 bg-[#061a2e] border-white/20 rounded-[1.5rem] focus:border-primary/60 focus:ring-primary/20 transition-all font-bold text-white placeholder:text-white/60 text-lg shadow-[inset_0_2px_4px_rgba(255,255,255,0.05)] focus:shadow-[0_0_30px_rgba(255,115,0,0.15)]",
-          inputClassName
+          'h-12 rounded-xl border-white/15 bg-[#061a2e] pl-11 pr-11 text-base font-medium text-white shadow-none backdrop-blur-none placeholder:text-white/45 focus-visible:border-primary/60 focus-visible:bg-[#061a2e] focus-visible:ring-4 focus-visible:ring-primary/20 focus-visible:shadow-[0_0_30px_rgba(255,115,0,0.12)] [&::-webkit-search-cancel-button]:hidden',
+          inputClassName,
         )}
       />
-      
-      {/* Search Status Dot */}
-      <div className="absolute right-14 top-1/2 -translate-y-1/2 flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 group-focus-within:border-primary/40 transition-colors">
-         <div className={cn("w-1.5 h-1.5 rounded-full transition-colors", value ? "bg-primary animate-pulse" : "bg-white/60")} />
-         <span className="text-[8px] font-bold uppercase tracking-wider text-white/60">Sync</span>
-      </div>
-
       {value && (
         <button
-          onClick={handleClear}
-          className="absolute right-5 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors"
+          type="button"
+          onClick={() => update('')}
+          aria-label="Limpiar búsqueda"
+          className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md text-white/50 transition-colors hover:bg-white/10 hover:text-white"
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4" />
         </button>
       )}
     </div>

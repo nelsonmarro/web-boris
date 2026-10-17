@@ -7,21 +7,13 @@ interface WikiArticleHeaderProps {
   category?: string;
 }
 
-export function WikiArticleHeader({
-  title,
-  universe,
-  category,
-}: WikiArticleHeaderProps) {
+export function WikiArticleHeader({ title, universe, category }: WikiArticleHeaderProps) {
   return (
-    <header className="pt-10 pb-6 px-4 md:px-12 border-b border-white/10 relative z-20 print:hidden">
-      <div className="mx-auto flex flex-col gap-4">
+    <header className="relative z-20 border-b border-white/10 print:hidden">
+      <div className="wiki-container flex flex-col gap-5 pb-6 pt-8 lg:pt-10">
         <WikiBreadcrumbs universe={universe} category={category} />
-
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight leading-none">
-            {title}
-          </h1>
-
+        <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <h1 className="page-title">{title}</h1>
           <WikiArticleActions title={title} />
         </div>
       </div>

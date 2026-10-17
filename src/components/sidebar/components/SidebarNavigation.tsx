@@ -9,13 +9,13 @@ import Link from "next/link";
 
 export function SidebarNavigation() {
   return (
-    <SidebarContent className="relative z-10 py-4 scrollbar-none">
+    <SidebarContent className="relative z-10 py-4 scrollbar-none group-data-[collapsible=icon]:overflow-y-auto group-data-[collapsible=icon]:overflow-x-hidden group-data-[collapsible=icon]:py-2 group-data-[collapsible=icon]:[mask-image:linear-gradient(to_bottom,transparent,black_16px,black_calc(100%-16px),transparent)]">
       {/* Global Navigation (Mobile Only) */}
       <SidebarGroup className="mb-6 md:hidden">
-        <SidebarGroupLabel className="text-primary font-bold tracking-wider text-[10px] uppercase mb-2 px-6">
+        <SidebarGroupLabel className="text-primary font-bold tracking-wider text-[11px] uppercase mb-2 px-6">
           Sitio Principal
         </SidebarGroupLabel>
-        <SidebarMenu className="px-2">
+        <SidebarMenu className="px-2 group-data-[collapsible=icon]:px-0">
           <SidebarMenuItem>
             <SidebarMenuButton 
               tooltip="Inicio" 
@@ -51,10 +51,10 @@ export function SidebarNavigation() {
 
       {WIKI_NAVIGATION.map((universe) => (
         <SidebarGroup key={universe.title} className="mb-2">
-          <SidebarGroupLabel className="text-primary font-bold tracking-wider text-[10px] uppercase mb-2 px-6 group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel className="text-primary font-bold tracking-wider text-[11px] uppercase mb-2 px-6 group-data-[collapsible=icon]:hidden">
             {universe.title}
           </SidebarGroupLabel>
-          <SidebarMenu className="px-2">
+          <SidebarMenu className="px-2 group-data-[collapsible=icon]:px-0">
             {universe.items.map((item) => (
               <SidebarCollapsibleItem key={item.title} item={item} />
             ))}

@@ -1,9 +1,11 @@
-'use client';
-
-import * as React from 'react';
 import Image from 'next/image';
-import { Video, Camera, Send, MessageCircle, Sparkles } from 'lucide-react';
-import Link from 'next/link';
+import { Mail, Sparkles } from 'lucide-react';
+import { YoutubeIcon } from '@/features/marketing/components/icons/YoutubeIcon';
+import {
+  SOCIAL_LINKS,
+  YOUTUBE_HANDLE,
+  CONTACT_EMAIL,
+} from '@/features/marketing/config/social';
 
 export function AboutBorisSection() {
   return (
@@ -19,7 +21,7 @@ export function AboutBorisSection() {
             {/* Visual Column */}
             <div className="w-full lg:w-1/2 relative min-h-[300px] sm:min-h-[400px] lg:min-h-0 overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
               <Image
-                src="/assets/Branding/Logo2.png"
+                src="/assets/Branding/Logo2.webp"
                 alt="BorisaoBlois Creator"
                 fill
                 className="object-cover transition-transform duration-[2s] group-hover:scale-105"
@@ -57,44 +59,39 @@ export function AboutBorisSection() {
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <p className="text-[9px] font-bold text-white/30 uppercase tracking-wider">
-                    Comunidad
-                  </p>
-                  <p className="text-3xl font-bold text-white italic tracking-tight uppercase">
-                    +2M Exploradores
-                  </p>
+                  <p className="eyebrow text-white/30">Canal</p>
+                  <a
+                    href={SOCIAL_LINKS.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-2xl font-bold uppercase italic tracking-tight text-white transition-colors hover:text-primary md:text-3xl"
+                  >
+                    {YOUTUBE_HANDLE}
+                  </a>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-[9px] font-bold text-white/30 uppercase tracking-wider">
-                    Contenido
-                  </p>
-                  <p className="text-3xl font-bold text-white italic tracking-tight uppercase">
-                    Lore Original
-                  </p>
+                  <p className="eyebrow text-white/30">Contenido</p>
+                  <p className="text-2xl font-bold uppercase italic tracking-tight text-white md:text-3xl">Lore original</p>
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-4 pt-6">
-                <SocialLink
-                  icon={<Video className="w-5 h-5" />}
-                  href="#"
-                  color="hover:bg-red-600/20 hover:text-red-500"
-                />
-                <SocialLink
-                  icon={<Camera className="w-5 h-5" />}
-                  href="#"
-                  color="hover:bg-pink-600/20 hover:text-pink-500"
-                />
-                <SocialLink
-                  icon={<Send className="w-5 h-5" />}
-                  href="#"
-                  color="hover:bg-blue-400/20 hover:text-blue-400"
-                />
-                <SocialLink
-                  icon={<MessageCircle className="w-5 h-5" />}
-                  href="#"
-                  color="hover:bg-indigo-600/20 hover:text-indigo-400"
-                />
+                <a
+                  href={SOCIAL_LINKS.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="glass-liquid inline-flex h-14 items-center gap-3 rounded-2xl border border-white/10 px-6 text-[11px] font-bold uppercase tracking-wider text-white transition-all hover:scale-[1.03] hover:bg-red-600/20 hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <YoutubeIcon className="h-5 w-5" />
+                  Ver canal en YouTube
+                </a>
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="glass-liquid inline-flex h-14 items-center gap-3 rounded-2xl border border-white/10 px-6 text-[11px] font-bold uppercase tracking-wider text-white transition-all hover:scale-[1.03] hover:bg-primary/20 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <Mail className="h-5 w-5" />
+                  Escribir a Boris
+                </a>
               </div>
 
               {/* Boris Personal Signature Style Badge */}
@@ -108,25 +105,5 @@ export function AboutBorisSection() {
         </div>
       </div>
     </section>
-  );
-}
-
-function SocialLink({
-  icon,
-  href,
-  color,
-}: {
-  icon: React.ReactNode;
-  href: string;
-  color: string;
-}) {
-  return (
-    <Link
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      href={href as any}
-      className={`w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white transition-all duration-300 shadow-xl glass-liquid ${color} hover:scale-110 active:scale-95`}
-    >
-      {icon}
-    </Link>
   );
 }
