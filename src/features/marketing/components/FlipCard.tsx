@@ -19,28 +19,41 @@ export function FlipCard({ universe, count }: FlipCardProps) {
   const backId = useId();
   const backRef = useRef<HTMLDivElement>(null);
   const frontButtonRef = useRef<HTMLButtonElement>(null);
+  const titleId = useId();
+  const openedBy = useRef<'hover' | 'toggle' | null>(null);
 
   const label = universe.comingSoon
     ? 'Próximamente'
     : `${count} ${count === 1 ? 'artículo' : 'artículos'}`;
 
   const open = () => {
+    openedBy.current = 'toggle';
     setFlipped(true);
     requestAnimationFrame(() => backRef.current?.focus());
   };
   const close = () => {
+    openedBy.current = null;
     setFlipped(false);
     requestAnimationFrame(() => frontButtonRef.current?.focus());
   };
 
   return (
     <div
-      className="group h-[600px] md:h-[520px] w-full [perspective:2000px]"
+      className="group h-[600px] lg:h-[520px] w-full [perspective:2000px]"
       onPointerEnter={(e) => {
-        if (e.pointerType === 'mouse') setFlipped(true);
+        if (e.pointerType !== 'mouse') return;
+        openedBy.current = openedBy.current ?? 'hover';
+        setFlipped(true);
+        if (document.activeElement === frontButtonRef.current) {
+          requestAnimationFrame(() => backRef.current?.focus());
+        }
       }}
       onPointerLeave={(e) => {
-        if (e.pointerType === 'mouse') setFlipped(false);
+        if (e.pointerType !== 'mouse') return;
+        if (openedBy.current === 'hover' && !e.currentTarget.contains(document.activeElement)) {
+          openedBy.current = null;
+          setFlipped(false);
+        }
       }}
       onKeyDown={(e) => {
         if (e.key === 'Escape' && flipped) close();
@@ -96,13 +109,15 @@ export function FlipCard({ universe, count }: FlipCardProps) {
           id={backId}
           ref={backRef}
           tabIndex={-1}
+          role="region"
+          aria-labelledby={titleId}
           inert={!flipped}
           aria-hidden={!flipped}
           className={`${FACE} flex flex-col bg-[#061a2e] p-8 focus-visible:outline-none`}
           style={{ transform: 'rotateY(180deg) translateZ(1px)' }}
         >
           <span className="eyebrow text-primary">{universe.era}</span>
-          <h3 className="mt-2 text-2xl font-bold uppercase italic tracking-tight text-white">{universe.title}</h3>
+          <h3 id={titleId} className="mt-2 text-2xl font-bold uppercase italic tracking-tight text-white">{universe.title}</h3>
           <div className="mt-3 h-1 w-12 rounded-full bg-primary" />
           <p className="mt-5 min-h-0 flex-1 overflow-y-auto pr-1 text-[15px] leading-relaxed text-white/80">{universe.description}</p>
           <div className="mt-4 flex items-center justify-between pt-4">

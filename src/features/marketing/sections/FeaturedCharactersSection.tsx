@@ -23,7 +23,7 @@ export async function FeaturedCharactersSection() {
             Personajes <span className="text-primary">destacados</span>
           </h2>
           <p className="text-lg font-medium leading-relaxed text-white/70">
-            Los tres nombres que marcaron el primer contacto entre la humanidad y los colosos.
+            Tres expedientes para empezar a leer el archivo.
           </p>
         </div>
 
@@ -40,7 +40,7 @@ export async function FeaturedCharactersSection() {
                   {fm?.image ? (
                     <Image
                       src={fm.image}
-                      alt={def.name}
+                      alt=""
                       fill
                       className="object-cover transition-transform duration-1000 group-hover:scale-105"
                       sizes="(max-width: 768px) 100vw, 33vw"

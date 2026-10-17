@@ -2,7 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Mail } from "lucide-react";
 import { YoutubeIcon } from "@/features/marketing/components/icons/YoutubeIcon";
-import { SOCIAL_LINKS, CONTACT_EMAIL } from "@/features/marketing/config/social";
+import { SOCIAL_LINKS, CONTACT_EMAIL, YOUTUBE_HANDLE } from "@/features/marketing/config/social";
+import { UNIVERSES } from "@/features/marketing/config/universes";
 
 const NAV_LINKS = [
   { label: "Inicio", href: "/" },
@@ -11,11 +12,6 @@ const NAV_LINKS = [
   { label: "Versus Arena", href: "/wiki/arena" },
 ] as const;
 
-const UNIVERSE_LINKS = [
-  { label: "Colosos", href: "/wiki?universe=Colosos#explorar" },
-  { label: "Capitán de Galeón", href: "/wiki?universe=Capitán de Galeón#explorar" },
-  { label: "Ellos Llegaron", href: "/wiki?universe=Ellos Llegaron#explorar" },
-] as const;
 
 export default function Footer() {
   return (
@@ -75,9 +71,9 @@ export default function Footer() {
             <div>
               <h4 className="text-white font-bold uppercase tracking-wider text-[10px] mb-6">Universos</h4>
               <ul className="space-y-2">
-                {UNIVERSE_LINKS.map((link) => (
-                  <li key={link.label}>
-                    <Link href={link.href} className="h-11 flex items-center text-white/50 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider">{link.label}</Link>
+                {UNIVERSES.filter((u) => u.universeKey).map((u) => (
+                  <li key={u.universeKey}>
+                    <Link href={{ pathname: "/wiki", query: { universe: u.universeKey }, hash: "explorar" }} className="h-11 flex items-center text-white/50 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider">{u.title}</Link>
                   </li>
                 ))}
               </ul>
@@ -96,7 +92,7 @@ export default function Footer() {
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
                   <YoutubeIcon className="w-5 h-5 text-primary" />
                 </div>
-                <span className="text-sm font-bold tracking-tight">@BorisaoBlois</span>
+                <span className="text-sm font-bold tracking-tight">{YOUTUBE_HANDLE}</span>
               </a>
             </div>
           </div>
@@ -105,7 +101,7 @@ export default function Footer() {
              <p className="text-xs text-white/30 font-bold uppercase tracking-wider">
                © {new Date().getFullYear()} BorisaoBlois. Todos los derechos reservados.
              </p>
-             <p className="text-[10px] text-white/20 uppercase font-bold tracking-wider">
+             <p className="text-[11px] text-white/40 uppercase font-bold tracking-wider">
                Universos narrativos originales de BorisaoBlois
              </p>
           </div>
