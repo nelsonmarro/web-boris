@@ -29,14 +29,14 @@ export function WikiImage({
   align = 'none',
 }: WikiImageProps) {
   const alignClasses = {
-    right: 'float-right ml-8 mb-8 mt-0 w-72 md:w-96 clear-right',
-    left: 'float-left mr-8 mt-0 mb-8 w-72 md:w-96 clear-left',
+    right: 'w-full mb-8 mt-0 md:float-right md:ml-8 md:mb-6 md:w-80 lg:w-96 md:clear-right',
+    left: 'w-full mb-8 mt-0 md:float-left md:mr-8 md:mb-6 md:w-80 lg:w-96 md:clear-left',
     center: 'mx-auto mb-12 mt-0 w-full max-w-4xl clear-both',
     none: 'w-full mb-8 mt-0',
   };
 
   return (
-    <div
+    <figure
       className={cn(
         'group not-prose block relative m-0 p-0 border-0 bg-transparent',
         alignClasses[align],
@@ -48,7 +48,9 @@ export function WikiImage({
         rel="noopener noreferrer"
         className={cn(
           'relative block w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl transition-all duration-500 group-hover:border-primary/40 p-0 m-0 bg-transparent cursor-zoom-in',
-          align === 'none' ? 'aspect-video' : 'aspect-[4/5]',
+          align === 'none' || align === 'center'
+            ? 'aspect-video'
+            : 'aspect-[4/3] md:aspect-[4/5]',
         )}
       >
         <Image
@@ -68,13 +70,10 @@ export function WikiImage({
       </a>
 
       {caption && (
-        <div className="mt-4 px-4 text-center select-none">
-          <span className="text-[11px] font-black text-white/40 uppercase tracking-[0.2em] italic group-hover:text-primary transition-colors duration-300">
-            {caption}
-          </span>
-          <div className="mt-2 h-[1px] w-12 mx-auto bg-primary/20 group-hover:w-24 group-hover:bg-primary/50 transition-all duration-500" />
-        </div>
+        <figcaption className="mt-3 px-1 text-[12px] leading-snug text-white/55 md:text-[13px]">
+          {caption}
+        </figcaption>
       )}
-    </div>
+    </figure>
   );
 }
