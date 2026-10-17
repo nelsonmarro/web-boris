@@ -1,31 +1,70 @@
 'use client';
 
-import { Play, Video } from 'lucide-react';
+import { Video } from 'lucide-react';
 import Link from 'next/link';
 import { YouTubeEmbed } from '@next/third-parties/google';
+import { YoutubeIcon } from '@/features/marketing/components/icons/YoutubeIcon';
 import { SOCIAL_LINKS } from '@/features/marketing/config/social';
 
-/** Los tres videos que Boris indicó en "Requerimientos Pagina"; títulos tal como aparecen en YouTube. */
-const VIDEOS = [
+type Orientation = 'landscape' | 'short';
+
+interface FeaturedVideo {
+  id: string;
+  title: string;
+  category: string;
+  orientation: Orientation;
+}
+
+/**
+ * Los tres videos que Boris indicó en "Requerimientos Pagina"; títulos tal como aparecen en YouTube.
+ * La batalla es horizontal (16:9); "Extinción masiva" y "El Blitz" son YouTube Shorts (9:16).
+ */
+const VIDEOS: FeaturedVideo[] = [
   {
     id: 'hedUAqopPBg',
     title: 'Colosos - The Bloop vs El Gran Majá - La Batalla',
     category: 'COLOSOS',
-    priority: true,
+    orientation: 'landscape',
   },
   {
     id: 'XurjKHinBIY',
     title: 'Extinción masiva',
     category: 'SHORT · CGI',
-    priority: false,
+    orientation: 'short',
   },
   {
     id: 'BP6fwpSuR7I',
     title: 'El Blitz',
     category: 'SHORT · SEGUNDA GUERRA MUNDIAL',
-    priority: false,
+    orientation: 'short',
   },
 ];
+
+/*
+ * `<lite-youtube>` no tiene tamaño propio aquí: la regla global "YouTube Embed Fixes" de globals.css
+ * lo deja en `position: absolute; inset: 0; width/height: 100% !important`, así que rellena el marco
+ * `relative` que lo contiene. Por eso la proporción se decide solo en el marco (aspect-video / 9:16).
+ * La proporción 16:9 que lite-youtube dibuja con `::after { padding-bottom }` queda recortada por
+ * `contain: content` y no influye.
+ */
+const FRAME_BASE =
+  'relative w-full overflow-hidden rounded-2xl border border-white/15 bg-black shadow-[0_20px_40px_rgba(0,0,0,0.45)]';
+
+const FRAME_BY_ORIENTATION: Record<Orientation, string> = {
+  landscape: 'aspect-video',
+  short: 'aspect-[9/16]',
+};
+
+/** Móvil: la batalla ocupa las 2 columnas y cada short una. Escritorio: 2fr · 1fr · 1fr. */
+const ITEM_BY_ORIENTATION: Record<Orientation, string> = {
+  landscape: 'col-span-2 lg:col-span-1',
+  short: 'col-span-1 mx-auto w-full max-w-[280px]',
+};
+
+const TITLE_BY_ORIENTATION: Record<Orientation, string> = {
+  landscape: 'text-2xl md:text-4xl lg:text-3xl',
+  short: 'text-lg sm:text-xl',
+};
 
 export function FeaturedVideosSection() {
   return (
@@ -33,7 +72,7 @@ export function FeaturedVideosSection() {
       <div className="container mx-auto px-6 relative z-10">
         <header className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-bold uppercase tracking-wider">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[11px] font-bold uppercase tracking-wider">
               <Video className="w-3.5 h-3.5" />
               Archivo Multimedia
             </div>
@@ -45,38 +84,36 @@ export function FeaturedVideosSection() {
             href={SOCIAL_LINKS.youtube}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white/40 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center gap-2 mb-2 group"
+            className="inline-flex min-h-11 items-center gap-2 self-start rounded-xl text-[11px] font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:self-auto"
           >
-            CANAL DE BORISAOBLOIS{' '}
-            <Play className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            <YoutubeIcon className="w-4 h-4 shrink-0" />
+            <span>
+              Ver canal
+              <span className="sr-only"> de BorisaoBlois en YouTube (se abre en una pestaña nueva)</span>
+            </span>
           </Link>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 items-start gap-x-4 gap-y-10 md:gap-x-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)] lg:gap-8">
           {VIDEOS.map((video) => (
             <div
               key={video.id}
-              className={`group space-y-6 ${video.priority ? 'md:col-span-2' : 'md:col-span-1'}`}
+              className={`group space-y-4 ${ITEM_BY_ORIENTATION[video.orientation]}`}
             >
-              <div className="relative aspect-video rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] glass-liquid border-refractive">
-                <div className="glass-reflection opacity-30" />
-
-                <YouTubeEmbed videoid={video.id} params="controls=1&rel=0" />
-
-                {/* Hover Overlay - Only shows before interaction */}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none group-hover:bg-black/10 transition-colors z-0">
-                  <div className="w-20 h-20 rounded-full bg-primary/20 backdrop-blur-xl border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform shadow-[0_0_40px_rgba(255,115,0,0.3)]">
-                    <Play className="w-8 h-8 text-white fill-white ml-1" />
-                  </div>
-                </div>
+              <div className={`${FRAME_BASE} ${FRAME_BY_ORIENTATION[video.orientation]}`}>
+                <YouTubeEmbed
+                  videoid={video.id}
+                  playlabel={`Reproducir: ${video.title}`}
+                  params="controls=1&rel=0"
+                />
               </div>
 
-              <div className="space-y-2 px-4">
-                <span className="text-[10px] font-bold text-primary uppercase tracking-wider">
+              <div className="space-y-2 px-1">
+                <span className="block text-[11px] font-bold uppercase leading-snug tracking-wider text-primary">
                   {video.category}
                 </span>
                 <h3
-                  className={`font-bold text-white italic uppercase tracking-tight leading-tight group-hover:text-primary transition-colors ${video.priority ? 'text-2xl md:text-4xl' : 'text-xl md:text-2xl'}`}
+                  className={`font-bold text-white italic uppercase tracking-tight leading-tight group-hover:text-primary transition-colors ${TITLE_BY_ORIENTATION[video.orientation]}`}
                 >
                   {video.title}
                 </h3>
