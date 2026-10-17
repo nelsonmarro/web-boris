@@ -1,56 +1,57 @@
 import Image from 'next/image';
+import Link from 'next/link';
+import type { Route } from 'next';
+import { Fish } from 'lucide-react';
 
 interface HeroVisualProps {
   imageSrc: string;
   alt: string;
-  badgeEmoji: string;
-  badgeLabel: string;
-  badgeTitle: string;
+  badge: { href: Route; label: string; title: string; thumb?: string } | null;
 }
 
-export function HeroVisual({
-  imageSrc,
-  alt,
-  badgeEmoji,
-  badgeLabel,
-  badgeTitle,
-}: HeroVisualProps) {
+export function HeroVisual({ imageSrc, alt, badge }: HeroVisualProps) {
   return (
-    <div className="relative w-full max-w-lg lg:max-w-xl mx-auto lg:justify-self-end">
-      <div className="relative z-10 w-full aspect-[16/11] rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden border border-white/20 shadow-[0_40px_80px_rgba(0,0,0,0.7)] animate-float glass-liquid group/image">
+    <div className="relative mx-auto w-full max-w-lg lg:max-w-xl lg:justify-self-end">
+      <div className="glass-liquid group/image relative z-10 aspect-[16/11] w-full animate-float overflow-hidden rounded-3xl border border-white/20 shadow-[0_40px_80px_rgba(0,0,0,0.7)] motion-reduce:animate-none">
         <div className="glass-reflection opacity-30" />
 
         <Image
           src={imageSrc}
           alt={alt}
           fill
+          sizes="(min-width: 1024px) 576px, 100vw"
           className="object-cover transition-transform duration-1000 group-hover/image:scale-110"
           priority
         />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
       </div>
 
-      <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 lg:bottom-[20px] lg:left-[-8%] lg:translate-x-0 glass-liquid p-4 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] shadow-[0_30px_70px_rgba(0,0,0,0.8)] z-30 flex items-center gap-4 md:gap-6 border-white/20 backdrop-blur-3xl group transition-all hover:scale-105 border-refractive min-w-[240px] md:min-w-[320px]">
-        <div className="glass-reflection opacity-40" />
-
-        <div className="w-12 h-12 md:w-16 md:h-16 bg-white/5 backdrop-blur-3xl rounded-[1rem] md:rounded-[1.5rem] flex items-center justify-center border border-white/20 shadow-[0_10px_20px_rgba(0,0,0,0.3)] relative z-10 rotate-[-8deg] group-hover:rotate-0 transition-all duration-500 bg-gradient-to-br from-white/10 to-transparent">
-          <span className="text-3xl md:text-5xl drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] relative z-10">
-            {badgeEmoji}
+      {badge && (
+        <Link
+          href={badge.href}
+          className="glass-liquid group relative z-30 mt-4 flex min-w-[240px] items-center gap-4 rounded-2xl border-white/20 p-3 shadow-[0_30px_70px_rgba(0,0,0,0.8)] transition-all hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary md:min-w-[320px] md:gap-5 md:p-4 lg:absolute lg:-left-[8%] lg:bottom-5 lg:mt-0"
+        >
+          <span className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/20 bg-white/5">
+            {badge.thumb ? (
+              <Image src={badge.thumb} alt="" width={56} height={56} className="h-full w-full object-cover" />
+            ) : (
+              <Fish className="h-7 w-7 text-primary" aria-hidden="true" />
+            )}
           </span>
-        </div>
 
-        <div className="relative z-10 space-y-0.5 pr-2 md:pr-4">
-          <p className="text-[7px] md:text-[9px] text-primary font-bold tracking-wider uppercase drop-shadow-sm">
-            {badgeLabel}
-          </p>
-          <h3 className="text-lg md:text-3xl font-bold text-white italic uppercase tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] leading-none">
-            {badgeTitle}
-          </h3>
-        </div>
-      </div>
+          <span className="relative z-10 block space-y-1 pr-2 md:pr-4">
+            <span className="block text-[11px] font-bold uppercase tracking-wider text-primary">
+              {badge.label}
+            </span>
+            <span className="block text-lg font-bold uppercase italic leading-none tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] md:text-2xl">
+              {badge.title}
+            </span>
+          </span>
+        </Link>
+      )}
 
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/5 rounded-full blur-[100px] pointer-events-none mix-blend-screen" />
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-[100px] mix-blend-screen" />
     </div>
   );
 }

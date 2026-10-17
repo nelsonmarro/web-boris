@@ -25,7 +25,8 @@ function pickFilter(value: string | null, allowed: string[]): string {
 export function WikiList({ options }: WikiListProps) {
   // Las tarjetas de la landing enlazan a /wiki?universe=…; el filtro arranca desde la URL.
   const searchParams = useSearchParams();
-  const [search, setSearch] = React.useState('');
+  const initialSearch = searchParams.get('search') ?? '';
+  const [search, setSearch] = React.useState(initialSearch);
   const [universe, setUniverse] = React.useState(() =>
     pickFilter(searchParams.get('universe'), options.universes),
   );
@@ -69,6 +70,7 @@ export function WikiList({ options }: WikiListProps) {
       <WikiFilters
         options={options}
         onSearchChange={setSearch}
+        initialSearch={initialSearch}
         onUniverseChange={handleUniverseChange}
         onCategoryChange={handleCategoryChange}
         currentUniverse={universe}

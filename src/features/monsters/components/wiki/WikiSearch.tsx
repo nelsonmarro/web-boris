@@ -8,6 +8,7 @@ import { cn } from '@/utils/cn';
 interface WikiSearchProps {
   placeholder?: string;
   onSearch: (value: string) => void;
+  defaultValue?: string;
   className?: string;
   inputClassName?: string;
 }
@@ -15,10 +16,11 @@ interface WikiSearchProps {
 export function WikiSearch({
   placeholder = 'Buscar en el archivo…',
   onSearch,
+  defaultValue = '',
   className,
   inputClassName,
 }: WikiSearchProps) {
-  const [value, setValue] = React.useState('');
+  const [value, setValue] = React.useState(defaultValue);
 
   const update = (next: string) => {
     setValue(next);

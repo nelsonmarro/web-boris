@@ -1,72 +1,65 @@
-'use client';
-
-import * as React from 'react';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { Button } from '@/components/ui/button';
+import type { WikiArticleSummary } from '@/core/types/wiki';
 import { BrandCapsule } from '../components/hero/BrandCapsule';
 import { SearchBar } from '../components/hero/SearchBar';
 import { HeroVisual } from '../components/hero/HeroVisual';
 
-export function HeroSection() {
+export function HeroSection({ featured }: { featured: WikiArticleSummary | null }) {
   return (
-    <section className="relative min-h-[90vh] flex items-center pt-24 pb-16 md:pt-32 md:pb-24 lg:pt-28 lg:pb-20 overflow-hidden bg-transparent">
-      {/* Background Glows - NORMALIZED SCALE */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[5%] left-[5%] w-[700px] h-[700px] bg-primary/5 rounded-full blur-[150px] mix-blend-screen opacity-30" />
-        <div className="absolute bottom-[10%] right-[5%] w-[800px] h-[800px] bg-blue-600/5 rounded-full blur-[180px] mix-blend-screen opacity-20" />
+    <section className="relative flex min-h-[90vh] items-center overflow-hidden bg-transparent pt-28 pb-16 md:pt-32 md:pb-24 lg:pt-28 lg:pb-20">
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute left-[5%] top-[5%] h-[700px] w-[700px] rounded-full bg-primary/5 opacity-30 blur-[150px] mix-blend-screen" />
+        <div className="absolute bottom-[10%] right-[5%] h-[800px] w-[800px] rounded-full bg-blue-600/5 opacity-20 blur-[180px] mix-blend-screen" />
       </div>
 
-      <div className="container mx-auto px-6 max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-12 items-center relative z-10">
-        <div className="text-left space-y-8 order-2 lg:order-1">
-          <BrandCapsule>Iniciativa Archivo Abisal</BrandCapsule>
+      <div className="container relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2 lg:gap-12">
+        <div className="space-y-8 text-left">
+          <BrandCapsule>Universos de BorisaoBlois</BrandCapsule>
 
-          <div className="space-y-0">
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white leading-tight tracking-tight drop-shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
-              SUMÉRGETE
-            </h1>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400 leading-none tracking-tight italic drop-shadow-[0_8px_20px_rgba(255,115,0,0.4)]">
-              EN EL LORE
-            </h1>
-          </div>
+          <h1 className="text-4xl font-bold leading-[1.02] tracking-tight text-white drop-shadow-[0_8px_30px_rgba(0,0,0,0.5)] sm:text-5xl md:text-7xl">
+            EXPLORA LA INMENSIDAD
+            <span className="block bg-gradient-to-r from-primary to-orange-400 bg-clip-text italic text-transparent drop-shadow-[0_8px_20px_rgba(255,115,0,0.4)]">
+              DE MIS UNIVERSOS
+            </span>
+          </h1>
 
-          <p className="text-base md:text-lg text-white/70 max-w-lg font-medium leading-relaxed drop-shadow-md">
-            Descubre los secretos de las criaturas más colosales del océano y
-            las historias que desafían la realidad. &quot;Explora la inmensidad
-            de mis universos&quot;.
+          <p className="max-w-lg text-base font-medium leading-relaxed text-white/70 drop-shadow-md md:text-lg">
+            Y sus historias: colosos abisales, capitanes del siglo XVIII y la guerra que detuvo al
+            mundo. Todo el lore oficial de BorisaoBlois en un solo archivo.
           </p>
 
           <SearchBar />
 
-          <div className="flex flex-col sm:flex-row gap-4 pt-4 items-stretch sm:items-center">
+          <div className="flex flex-col items-stretch gap-4 pt-4 sm:flex-row sm:items-center">
             <Link href="/wiki" className="w-full sm:w-auto">
-              <Button
-                size="lg"
-                className="w-full h-14 px-10 text-[10px] font-bold tracking-wider shadow-[0_15px_30px_rgba(255,115,0,0.4)] bg-primary hover:scale-[1.05] transition-all rounded-full border-t border-white/20 uppercase italic"
-              >
-                ACCEDER A LA WIKI
+              <Button size="lg" className="h-14 w-full rounded-full border-t border-white/20 bg-primary px-10 text-[11px] font-bold uppercase italic tracking-wider shadow-[0_15px_30px_rgba(255,115,0,0.4)] transition-all hover:scale-[1.03]">
+                Acceder a la wiki
               </Button>
             </Link>
             <Link href="#universos" className="w-full sm:w-auto">
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full h-14 px-10 text-[10px] font-bold tracking-wider glass-liquid border-white/20 text-white rounded-full hover:bg-white/10 transition-all hover:border-white/40 shadow-[0_15px_25px_rgba(0,0,0,0.3)] uppercase italic"
-              >
-                VER UNIVERSOS
+              <Button size="lg" variant="outline" className="glass-liquid h-14 w-full rounded-full border-white/20 px-10 text-[11px] font-bold uppercase italic tracking-wider text-white shadow-[0_15px_25px_rgba(0,0,0,0.3)] transition-all hover:border-white/40 hover:bg-white/10">
+                Ver universos
               </Button>
             </Link>
           </div>
         </div>
 
-        <div className="order-1 lg:order-2">
-          <HeroVisual
-            imageSrc="/assets/Universo_Colosos/The_Bloop/The_Bloop_cuerpo_completo.webp"
-            alt="Bloop Ojo Solo"
-            badgeEmoji="🐋"
-            badgeLabel="Último Avistamiento"
-            badgeTitle="The Bloop"
-          />
-        </div>
+        <HeroVisual
+          imageSrc="/assets/Universo_Colosos/The_Bloop/The_Bloop_cuerpo_completo.webp"
+          alt="Estudio a lápiz de The Bloop Ojo Solo"
+          badge={
+            featured
+              ? {
+                  href: `/wiki/${featured.slug}` as Route,
+                  label: 'Expediente de la semana',
+                  title: featured.frontmatter.title,
+                  thumb: featured.frontmatter.image,
+                }
+              : null
+          }
+        />
       </div>
     </section>
   );
