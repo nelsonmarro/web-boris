@@ -18,7 +18,7 @@ export function LatestVideoTile({ video, className }: { video: LatestVideo; clas
         <YouTubeEmbed videoid={video.id} playlabel={`Reproducir: ${video.title}`} params="controls=1&rel=0" />
       </div>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        {video.published ? (
+        {video.published && !Number.isNaN(Date.parse(video.published)) ? (
           <time dateTime={video.published} className="eyebrow text-white/60">
             {dateFormat.format(new Date(video.published))}
           </time>
