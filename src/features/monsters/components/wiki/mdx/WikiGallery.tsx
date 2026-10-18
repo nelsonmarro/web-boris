@@ -21,6 +21,8 @@ interface WikiImageProps {
   alt: string;
   caption?: string;
   align?: 'left' | 'right' | 'center' | 'none';
+  /** `object-position` del recorte (p. ej. "50% 70%"); por defecto, arriba. */
+  position?: string;
 }
 
 export function WikiImage({
@@ -28,6 +30,7 @@ export function WikiImage({
   alt,
   caption,
   align = 'none',
+  position,
 }: WikiImageProps) {
   const alignClasses = {
     right: 'w-full mb-8 mt-0 @2xl:float-right @2xl:ml-8 @2xl:mb-6 @2xl:w-80 @3xl:w-96 @2xl:clear-right',
@@ -73,6 +76,7 @@ export function WikiImage({
           src={src}
           alt={alt}
           fill
+          style={position ? { objectPosition: position } : undefined}
           sizes={
             align === 'left' || align === 'right'
               ? '(min-width: 1280px) 384px, (min-width: 1024px) 320px, 100vw'
