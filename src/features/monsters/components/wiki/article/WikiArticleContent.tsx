@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { MdxRenderer } from '@/features/monsters/components/wiki/mdx/MdxRenderer';
 import {
   WikiInfobox,
@@ -10,7 +11,10 @@ import { Proximamente } from '@/features/monsters/components/wiki/mdx/Proximamen
 import { WikiTOC } from '@/features/monsters/components/wiki/mdx/WikiTOC';
 import { WikiFrontmatter } from '@/core/types/wiki';
 import { hasStats } from '@/features/monsters/lib/stats';
+import { isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { extractHeadings } from '@/utils/headings';
+
+const HERO_CATEGORIES = ['Humano', 'Animal', 'Coloso', 'Titán', 'Entidad'];
 
 interface WikiArticleContentProps {
   frontmatter: WikiFrontmatter;
@@ -31,6 +35,14 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
   const showStats = hasStats(frontmatter);
   const showRail = hasInfobox || showStats;
   const headings = extractHeadings(content);
+  // Retrato arriba: fichas sin rail cuya portada no se repite en el cuerpo del MDX.
+  const showHero =
+    !showRail &&
+    !!image &&
+    !isBrandPlaceholder(image) &&
+    !content.includes(image) &&
+    !!frontmatter.category &&
+    HERO_CATEGORIES.includes(frontmatter.category);
 
   const infoboxFull = showRail ? (
     <WikiInfobox
@@ -89,6 +101,27 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
 
             {/* Main Content */}
             <div className="@container min-w-0 @5xl/article:col-start-1 @5xl/article:max-w-[800px]">
+              {showHero && image && (
+                <figure className="mb-8 max-w-[800px]">
+                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/10 md:aspect-video">
+                    <Image
+                      src={image}
+                      alt={title}
+                      fill
+                      fetchPriority="high"
+                      loading="eager"
+                      sizes="(min-width: 1024px) 800px, 100vw"
+                      className="object-cover"
+                      style={{ objectPosition: frontmatter.imagePosition ?? '50% 30%' }}
+                    />
+                  </div>
+                  {imageCaption && (
+                    <figcaption className="mt-3 px-1 text-[12px] leading-snug text-white/60 md:text-[13px]">
+                      {imageCaption}
+                    </figcaption>
+                  )}
+                </figure>
+              )}
               <MdxRenderer content={content} />
               {/* Artículo sin lore canónico: lo conocido primero, luego el aviso */}
               {frontmatter.status === 'proximamente' && <Proximamente />}

@@ -4,6 +4,7 @@ import { WikiArticleHeader } from '@/features/monsters/components/wiki/article/W
 import { WikiArticleContent } from '@/features/monsters/components/wiki/article/WikiArticleContent';
 import { WikiArticleFooter } from '@/features/monsters/components/wiki/article/WikiArticleFooter';
 import type { Metadata } from 'next';
+import { hasStats } from '@/features/monsters/lib/stats';
 import { getRelatedArticles } from '@/features/monsters/lib/related';
 
 interface Props {
@@ -61,6 +62,7 @@ export default async function WikiArticlePage({ params }: Props) {
           universe={frontmatter.universe}
           category={frontmatter.category}
           status={frontmatter.status}
+          arenaSlug={hasStats(frontmatter) ? slug : undefined}
         />
 
         <WikiArticleContent frontmatter={frontmatter} content={content} />

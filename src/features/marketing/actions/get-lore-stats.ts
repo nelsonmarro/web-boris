@@ -33,7 +33,7 @@ export async function getLoreStats(): Promise<LoreStats> {
   ]);
 
   return {
-    loreEntries: articles.length,
+    loreEntries: articles.filter((a) => a.frontmatter.status !== 'proximamente').length,
     creaturesWithStats: articles.filter((a) => hasStats(a.frontmatter)).length,
     visualFiles,
     universes: UNIVERSES.length,

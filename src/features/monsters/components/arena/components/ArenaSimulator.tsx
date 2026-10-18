@@ -29,7 +29,10 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
   const paramA = searchParams.get('a');
   const paramB = searchParams.get('b');
   const slugA = paramA && slugs.has(paramA) ? paramA : (fighters[0]?.slug ?? '');
-  const slugB = paramB && slugs.has(paramB) ? paramB : (fighters[1]?.slug ?? fighters[0]?.slug ?? '');
+  const defaultB = paramB && slugs.has(paramB) ? paramB : (fighters[1]?.slug ?? fighters[0]?.slug ?? '');
+  // Con un solo parámetro (?a=bogbo) B puede coincidir con A: se toma el primer combatiente distinto.
+  const slugB =
+    defaultB === slugA ? (fighters.find((f) => f.slug !== slugA)?.slug ?? defaultB) : defaultB;
 
   /** Escribe el par en la URL con la History API nativa (Next 16 la sincroniza con useSearchParams) y conserva hash y otros params. */
   const writePair = React.useCallback(

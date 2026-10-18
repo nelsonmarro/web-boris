@@ -41,13 +41,15 @@ export function getRelatedArticles(
 ): WikiArticleSummary[] {
   const bySlug = new Map(all.map((article) => [article.slug, article]));
   const current = bySlug.get(slug);
-  const picked: WikiArticleSummary[] = [];
+  const candidates: WikiArticle[] = [];
   const seen = new Set<string>([slug]);
 
+  // Los directorios nunca son "relacionados": son índices, no fichas.
   const push = (article: WikiArticle | undefined) => {
-    if (!article || seen.has(article.slug) || picked.length >= max) return;
+    if (!article || seen.has(article.slug)) return;
     seen.add(article.slug);
-    picked.push(toSummary(article));
+    if (article.frontmatter.category === 'Directorio') return;
+    candidates.push(article);
   };
 
   for (const url of findNavSiblings(slug)) {
@@ -55,15 +57,17 @@ export function getRelatedArticles(
     if (siblingSlug) push(bySlug.get(siblingSlug));
   }
 
-  if (current && picked.length < max) {
+  if (current) {
     const { category, universe } = current.frontmatter;
     if (category) {
       all.filter((a) => a.frontmatter.category === category).forEach(push);
     }
-    if (picked.length < max) {
-      all.filter((a) => a.frontmatter.universe === universe).forEach(push);
-    }
+    all.filter((a) => a.frontmatter.universe === universe).forEach(push);
   }
 
-  return picked;
+  // Los "próximamente" van al final (orden estable), y solo entonces se corta a `max`.
+  const isStub = (a: WikiArticle) => a.frontmatter.status === 'proximamente';
+  return [...candidates.filter((a) => !isStub(a)), ...candidates.filter(isStub)]
+    .slice(0, max)
+    .map(toSummary);
 }

@@ -38,7 +38,8 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
         url: "#",
         icon: BookOpen,
         items: [
-          { title: "El Destello de los Colos...", url: "/wiki/libros-colosos" },
+          { title: "Libros del universo Colosos", url: "/wiki/libros-colosos" },
+          { title: "El Destello de los Colosos", url: "/wiki/el-destello-de-los-colosos" },
         ],
       },
       {
@@ -64,6 +65,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
             url: "/wiki/humanos-colosos",
             items: [
               { title: "Phillip Forte", url: "/wiki/phillip-forte" },
+              { title: "Cael Cortés", url: "/wiki/cael-cortes" },
             ]
           },
         ],
@@ -73,6 +75,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
         url: "#",
         icon: Microscope,
         items: [
+          { title: "Especies identificadas", url: "/wiki/especies" },
           { title: "Supperbial anguilla", url: "/wiki/supperbial-anguilla" },
           { title: "Labodotype macrostoma", url: "/wiki/labodotype-macrostoma" },
           { title: "Kaiserosteus loricatus", url: "/wiki/kaiserosteus-loricatus" },
@@ -86,6 +89,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
         url: "#",
         icon: Ghost,
         items: [
+          { title: "Categorías de monstruos", url: "/wiki/categorias-monstruos" },
           { title: "Colosos", url: "/wiki/colosos" },
           { title: "Titanes", url: "/wiki/titanes" },
           { title: "Medianos", url: "/wiki/medianos" },
@@ -96,6 +100,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
         url: "#",
         icon: CarFront,
         items: [
+          { title: "Vehículos y tecnología", url: "/wiki/vehiculos" },
           { title: "Aodos AY01", url: "/wiki/aodos-ay01" },
           { title: "Breegard", url: "/wiki/breegard" },
         ],
@@ -105,6 +110,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
         url: "#",
         icon: Shield,
         items: [
+          { title: "Todas las organizaciones", url: "/wiki/organizaciones" },
           { title: "IPCARO", url: "/wiki/ipcaro" },
           { title: "DELIRIUM", url: "/wiki/delirium" },
           { title: "Naciones Rebeldes", url: "/wiki/naciones-rebeldes" },

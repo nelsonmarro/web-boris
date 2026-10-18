@@ -8,6 +8,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Search, CornerDownLeft, ImageOff } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/utils/cn';
+import { compareDiscovery } from '@/features/monsters/lib/discovery-order';
+import { ProximamenteChip } from '@/features/monsters/components/wiki/mdx/Proximamente';
 import { getWikiIndex, type WikiIndexEntry } from '@/features/monsters/actions/get-wiki-articles';
 
 const normalize = (value: string) =>
@@ -17,7 +19,7 @@ const MAX_RESULTS = 10;
 
 function filterIndex(index: WikiIndexEntry[], query: string): WikiIndexEntry[] {
   const q = normalize(query.trim());
-  if (!q) return index.slice(0, MAX_RESULTS);
+  if (!q) return [...index].sort(compareDiscovery).slice(0, MAX_RESULTS);
   const scored = index
     .map((entry) => {
       const title = normalize(entry.title);
@@ -34,7 +36,7 @@ function filterIndex(index: WikiIndexEntry[], query: string): WikiIndexEntry[] {
       return { entry, score };
     })
     .filter((r) => r.score > 0)
-    .sort((a, b) => b.score - a.score || a.entry.title.localeCompare(b.entry.title, 'es'));
+    .sort((a, b) => b.score - a.score || compareDiscovery(a.entry, b.entry));
   return scored.slice(0, MAX_RESULTS).map((r) => r.entry);
 }
 
@@ -159,6 +161,9 @@ export function WikiCommandPalette() {
                   <span className="min-w-0 flex-1">
                     <span className={cn('block truncate font-display text-base font-bold uppercase italic', i === cursor ? 'text-primary' : 'text-white')}>
                       {entry.title}
+                      {entry.status === 'proximamente' && (
+                        <ProximamenteChip size="compact" className="ml-2 align-middle" />
+                      )}
                     </span>
                     <span className="block truncate text-[11px] font-bold uppercase tracking-wider text-white/40">
                       {entry.universe}
