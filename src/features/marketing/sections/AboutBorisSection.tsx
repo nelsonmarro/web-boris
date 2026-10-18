@@ -40,7 +40,7 @@ export function AboutBorisSection() {
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-3 text-primary">
                   <Sparkles className="w-5 h-5" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider">
+                  <span className="eyebrow">
                     El Arquitecto del Lore
                   </span>
                 </div>
@@ -62,7 +62,7 @@ export function AboutBorisSection() {
                     href={SOCIAL_LINKS.youtube}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-2xl font-bold uppercase italic tracking-tight text-white transition-colors hover:text-primary md:text-3xl"
+                    className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary block text-2xl font-bold uppercase italic tracking-tight text-white transition-colors hover:text-primary md:text-3xl"
                   >
                     {YOUTUBE_HANDLE}
                   </a>
@@ -78,14 +78,14 @@ export function AboutBorisSection() {
                   href={SOCIAL_LINKS.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="glass-liquid inline-flex h-14 items-center gap-3 rounded-2xl border border-white/10 px-6 text-[11px] font-bold uppercase tracking-wider text-white transition-all hover:scale-[1.03] hover:bg-red-600/20 hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  className="inline-flex h-14 items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-6 text-[11px] font-bold uppercase tracking-wider text-white transition-all hover:scale-[1.03] hover:bg-red-600/20 hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 >
                   <YoutubeIcon className="h-5 w-5" />
                   Ver canal en YouTube
                 </a>
                 <a
                   href={`mailto:${CONTACT_EMAIL}`}
-                  className="glass-liquid inline-flex h-14 items-center gap-3 rounded-2xl border border-white/10 px-6 text-[11px] font-bold uppercase tracking-wider text-white transition-all hover:scale-[1.03] hover:bg-primary/20 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  className="inline-flex h-14 items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-6 text-[11px] font-bold uppercase tracking-wider text-white transition-all hover:scale-[1.03] hover:bg-primary/20 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 >
                   <Mail className="h-5 w-5" />
                   Escribir a Boris

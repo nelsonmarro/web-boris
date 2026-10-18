@@ -11,7 +11,7 @@ export async function FeaturedCharactersSection() {
 
   return (
     <section id="personajes" className="relative scroll-mt-24 overflow-hidden py-24">
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-[140px]" />
+      <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-[140px]" />
 
       <div className="container relative z-10 mx-auto px-6">
         <div className="mx-auto mb-16 max-w-3xl space-y-4 text-center">
@@ -43,12 +43,13 @@ export async function FeaturedCharactersSection() {
                       alt=""
                       fill
                       className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                      style={{ objectPosition: fm.imagePosition ?? '50% 50%' }}
                       sizes="(max-width: 768px) 100vw, 33vw"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#0064A0_0%,#00203F_45%,#00122E_100%)]" />
+                    <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#0064A0_0%,#00203F_45%,#00122E_100%)]" />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#061a2e] via-transparent to-transparent" />
+                  <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#061a2e] via-transparent to-transparent" />
                 </div>
                 <div className="flex flex-1 flex-col p-6">
                   <span className="eyebrow text-primary">

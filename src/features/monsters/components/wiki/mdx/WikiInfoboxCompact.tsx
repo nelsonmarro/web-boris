@@ -10,7 +10,10 @@ interface WikiInfoboxCompactProps {
   children: React.ReactNode;
 }
 
-/** Ficha resumida para < lg: lo esencial arriba, la infobox completa plegada. */
+/**
+ * Ficha resumida para cuando el contenedor del artículo es más estrecho que el ancho de rail
+ * (< @5xl/article, 64rem): lo esencial arriba, la infobox completa plegada.
+ */
 export function WikiInfoboxCompact({ frontmatter, children }: WikiInfoboxCompactProps) {
   const { title, image, category, universe, stats } = frontmatter;
   const threat = getThreatLevel(stats?.hostility);

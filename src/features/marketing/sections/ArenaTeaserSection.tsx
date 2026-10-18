@@ -30,7 +30,7 @@ async function pickFighters(): Promise<[Fighter, Fighter] | null> {
 }
 
 function FighterColumn({ fighter, side }: { fighter: Fighter; side: 'A' | 'B' }) {
-  const { title, universe, image, stats } = fighter.frontmatter;
+  const { title, universe, image, imagePosition, stats } = fighter.frontmatter;
   const isA = side === 'A';
   const tone = isA ? 'primary' : 'cyan';
 
@@ -48,6 +48,7 @@ function FighterColumn({ fighter, side }: { fighter: Fighter; side: 'A' | 'B' })
             alt=""
             fill
             className="object-cover"
+            style={{ objectPosition: imagePosition ?? '50% 50%' }}
             sizes="(max-width: 768px) 100vw, 360px"
           />
         ) : (

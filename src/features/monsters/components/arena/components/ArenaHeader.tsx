@@ -28,7 +28,7 @@ export function ArenaHeader({ title, subtitle, description, fighterCount }: Aren
       <div className="flex items-center gap-3 rounded-2xl glass-liquid border-white/10 px-6 py-4">
         <Database className="h-5 w-5 text-primary" />
         <div className="flex flex-col">
-          <span className="eyebrow text-white/40">Combatientes</span>
+          <span className="eyebrow text-white/60">Combatientes</span>
           <span className="font-mono text-2xl font-black text-white">{fighterCount}</span>
         </div>
       </div>

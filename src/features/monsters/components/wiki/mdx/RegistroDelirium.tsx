@@ -63,12 +63,12 @@ export function RegistroDelirium({
           DELIRIUM
         </span>
         {code && (
-          <span className="text-[11px] uppercase tracking-[0.2em] text-white/50">
+          <span className="text-[11px] uppercase tracking-[0.2em] text-white/60">
             EXP. {code}
           </span>
         )}
         {date && (
-          <span className="text-[11px] uppercase tracking-[0.2em] text-white/40">
+          <span className="text-[11px] uppercase tracking-[0.2em] text-white/60">
             {date}
           </span>
         )}

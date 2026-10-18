@@ -9,14 +9,14 @@ interface WikiQuoteProps {
 
 export function WikiQuote({ children, author, source }: WikiQuoteProps) {
   return (
-    <div className="relative my-4 px-10 md:px-16 py-4 group">
+    <div className="relative my-4 py-4 pl-11 pr-2 @xl:px-16 group">
       {/* Decorative vertical line (classic wiki) */}
       <div className="absolute left-9 top-0 bottom-0 w-[2px] bg-primary/20 rounded-full" />
 
       <Quote className="absolute top-0 left-0 w-8 h-8 text-primary opacity-40 -scale-x-100" />
 
       <blockquote className="relative">
-        <div className="text-lg md:text-xl font-medium text-white/90 leading-relaxed italic">
+        <div className="text-lg @xl:text-xl font-medium text-white/90 leading-relaxed italic">
           {children}
         </div>
 

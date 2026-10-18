@@ -40,7 +40,7 @@ export function WikiSearch({
         placeholder={placeholder}
         aria-label={placeholder}
         className={cn(
-          'h-12 rounded-xl border-white/15 bg-[#061a2e] pl-11 pr-11 text-base font-medium text-white shadow-none backdrop-blur-none placeholder:text-white/45 focus-visible:border-primary/60 focus-visible:bg-[#061a2e] focus-visible:ring-4 focus-visible:ring-primary/20 focus-visible:shadow-[0_0_30px_rgba(255,115,0,0.12)] [&::-webkit-search-cancel-button]:hidden',
+          'h-12 rounded-xl border-white/15 bg-[#061a2e] pl-11 pr-11 text-base font-medium text-white shadow-none backdrop-blur-none placeholder:text-white/60 focus-visible:border-primary/60 focus-visible:bg-[#061a2e] focus-visible:ring-4 focus-visible:ring-primary/20 focus-visible:shadow-[0_0_30px_rgba(255,115,0,0.12)] [&::-webkit-search-cancel-button]:hidden',
           inputClassName,
         )}
       />

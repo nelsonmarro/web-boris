@@ -6,6 +6,8 @@ export const WikiFrontmatterSchema = z.object({
   universe: z.string(),
   image: z.url().or(z.string()).optional(), // Use z.url() if it's a full URL, otherwise string
   imageCaption: z.string().optional(),
+  /** Valor CSS de `object-position` para el recorte de portada (p. ej. "50% 20%"). */
+  imagePosition: z.string().optional(),
   category: z.string().optional(),
   description: z.string().optional(),
   infobox: z.record(z.string(), z.record(z.string(), z.string())).optional(), // E.g. { "Información Biológica": { "Especie": "Labodotype macrostoma" } }

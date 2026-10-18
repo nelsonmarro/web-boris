@@ -41,7 +41,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Canal de YouTube de BorisaoBlois"
-                  className="w-11 h-11 shrink-0 aspect-square rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-all hover:scale-110 border border-white/10 shadow-[0_4px_15px_rgba(0,0,0,0.3)]"
+                  className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary w-11 h-11 shrink-0 aspect-square rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-all hover:scale-110 border border-white/10 shadow-[0_4px_15px_rgba(0,0,0,0.3)]"
                 >
                   <YoutubeIcon className="w-5 h-5 text-white" />
                 </a>
@@ -86,9 +86,9 @@ export default function Footer() {
                 <div className="w-10 h-10 shrink-0 aspect-square rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
                   <Mail className="w-5 h-5 text-primary" />
                 </div>
-                <span className="min-w-0 text-sm font-bold tracking-tight [overflow-wrap:anywhere]">{CONTACT_EMAIL}</span>
+                <span className="min-w-0 break-words text-sm font-bold tracking-tight">{CONTACT_EMAIL.split("@")[0]}<wbr />@{CONTACT_EMAIL.split("@")[1]}</span>
               </a>
-              <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer" className="flex min-w-0 items-center gap-3 text-white/80 hover:text-primary transition-colors group">
+              <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary flex min-w-0 items-center gap-3 text-white/80 hover:text-primary transition-colors group">
                 <div className="w-10 h-10 shrink-0 aspect-square rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
                   <YoutubeIcon className="w-5 h-5 text-primary" />
                 </div>

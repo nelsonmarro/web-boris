@@ -1,8 +1,10 @@
 'use client';
 
 import * as React from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Swords, Scale, Crosshair, Shuffle } from 'lucide-react';
+import { Swords, Scale, Crosshair, Shuffle, Share2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArticleStatCard } from '@/features/monsters/components/article/components/ArticleStatCard';
@@ -19,8 +21,29 @@ const triggerClass =
 const contentClass = 'bg-[#061a2e] border-white/10 text-white min-w-[240px]';
 
 export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
-  const [slugA, setSlugA] = React.useState(fighters[0]?.slug ?? '');
-  const [slugB, setSlugB] = React.useState(fighters[1]?.slug ?? fighters[0]?.slug ?? '');
+  // La URL es la fuente de verdad (?a=<slug>&b=<slug>): un enfrentamiento se comparte copiando el enlace.
+  // Valores ausentes o inválidos caen en los dos primeros combatientes.
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const slugs = React.useMemo(() => new Set(fighters.map((f) => f.slug)), [fighters]);
+  const paramA = searchParams.get('a');
+  const paramB = searchParams.get('b');
+  const slugA = paramA && slugs.has(paramA) ? paramA : (fighters[0]?.slug ?? '');
+  const slugB = paramB && slugs.has(paramB) ? paramB : (fighters[1]?.slug ?? fighters[0]?.slug ?? '');
+
+  /** Escribe el par en la URL con la History API nativa (Next 16 la sincroniza con useSearchParams) y conserva hash y otros params. */
+  const writePair = React.useCallback(
+    (nextA: string, nextB: string) => {
+      const next = new URLSearchParams(window.location.search);
+      next.set('a', nextA);
+      next.set('b', nextB);
+      window.history.replaceState(null, '', `${pathname}?${next.toString()}${window.location.hash}`);
+      const titleA = fighters.find((f) => f.slug === nextA)?.frontmatter.title;
+      const titleB = fighters.find((f) => f.slug === nextB)?.frontmatter.title;
+      if (titleA && titleB) document.title = `${titleA} vs ${titleB} | Versus Arena`;
+    },
+    [pathname, fighters],
+  );
 
   const fighterItems = React.useMemo(
     () => Object.fromEntries(fighters.map((f) => [f.slug, f.frontmatter.title])),
@@ -51,8 +74,31 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
     const pool = fighters.map((f) => f.slug);
     const first = pool[Math.floor(Math.random() * pool.length)];
     const rest = pool.filter((s) => s !== first);
-    setSlugA(first);
-    setSlugB(rest[Math.floor(Math.random() * rest.length)]);
+    writePair(first, rest[Math.floor(Math.random() * rest.length)]);
+  };
+
+  const shareMatchup = async () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('a', a.slug);
+    url.searchParams.set('b', b.slug);
+    const shareUrl = url.toString();
+    const title = `${a.frontmatter.title} vs ${b.frontmatter.title} | Versus Arena`;
+
+    if (typeof navigator.share === 'function') {
+      try {
+        await navigator.share({ title, url: shareUrl });
+        return;
+      } catch (err) {
+        if ((err as Error).name === 'AbortError') return;
+        // Cualquier otro fallo del share nativo cae al portapapeles.
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success('Enlace del enfrentamiento copiado');
+    } catch {
+      toast.error('No se pudo copiar el enlace');
+    }
   };
 
   return (
@@ -61,7 +107,7 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
       <div className="grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-end">
         <label className="space-y-2">
           <span className="eyebrow text-primary">Combatiente A</span>
-          <Select value={slugA} onValueChange={(v) => v && setSlugA(v)} items={fighterItems}>
+          <Select value={slugA} onValueChange={(v) => v && writePair(v, slugB)} items={fighterItems}>
             <SelectTrigger className={triggerClass}><SelectValue placeholder="Elegir" /></SelectTrigger>
             <SelectContent className={contentClass}>
               {fighters.map((f) => (
@@ -70,17 +116,26 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
             </SelectContent>
           </Select>
         </label>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={shuffle}
-          className="glass-liquid h-12 rounded-xl border-white/10 px-5 text-[11px] font-bold uppercase tracking-wider text-white"
-        >
-          <Shuffle className="mr-2 h-4 w-4 text-primary" /> Aleatorio
-        </Button>
+        <div className="order-last flex flex-col gap-2 sm:flex-row md:order-none md:flex-col lg:flex-row">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={shuffle}
+            className="glass-liquid h-12 flex-1 shrink-0 whitespace-nowrap rounded-xl border-white/10 px-5 text-[11px] font-bold uppercase tracking-wider text-white lg:flex-none"
+          >
+            <Shuffle className="mr-2 h-4 w-4 text-primary" /> Aleatorio
+          </Button>
+          <Button
+            type="button"
+            onClick={shareMatchup}
+            className="h-12 w-auto flex-1 shrink-0 whitespace-nowrap rounded-xl bg-primary px-5 text-[11px] font-bold uppercase tracking-wider text-[#00122E] hover:bg-primary/90 lg:flex-none"
+          >
+            <Share2 className="mr-2 h-4 w-4" /> Compartir<span className="lg:sr-only">&nbsp;enfrentamiento</span>
+          </Button>
+        </div>
         <label className="space-y-2">
           <span className="eyebrow text-cyan-300">Combatiente B</span>
-          <Select value={slugB} onValueChange={(v) => v && setSlugB(v)} items={fighterItems}>
+          <Select value={slugB} onValueChange={(v) => v && writePair(slugA, v)} items={fighterItems}>
             <SelectTrigger className={triggerClass}><SelectValue placeholder="Elegir" /></SelectTrigger>
             <SelectContent className={contentClass}>
               {fighters.map((f) => (
@@ -93,10 +148,10 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
 
       {/* Probability bar */}
       <div className="glass-liquid rounded-2xl border-white/10 p-6">
-        <div className="mb-3 flex items-center justify-between font-mono text-xs font-bold uppercase tracking-widest">
-          <span className="text-primary">{a.frontmatter.title} · {pctA}%</span>
-          <span className="flex items-center gap-2 text-white/50"><Swords className="h-4 w-4" /> Probabilidad</span>
-          <span className="text-cyan-300">{100 - pctA}% · {b.frontmatter.title}</span>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 font-mono text-xs font-bold uppercase tracking-widest">
+          <span className="min-w-0 break-words text-primary">{a.frontmatter.title} · {pctA}%</span>
+          <span className="flex items-center gap-2 text-white/60"><Swords className="h-4 w-4" /> Probabilidad</span>
+          <span className="min-w-0 break-words text-cyan-300">{100 - pctA}% · {b.frontmatter.title}</span>
         </div>
         <div className="relative h-3 overflow-hidden rounded-full bg-cyan-400/30">
           <motion.div
@@ -124,7 +179,7 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
       <div className="grid gap-6 lg:grid-cols-[1fr_minmax(260px,320px)_1fr] lg:items-start">
         <FighterCard fighter={a} side="A" score={matchup.scoreA} winner={aWins && slugA !== slugB} />
         <div className="order-first flex flex-col items-center gap-4 rounded-2xl border border-white/10 bg-[#061a2e] p-5 lg:order-none">
-          <span className="eyebrow text-white/40">Perfil comparado</span>
+          <span className="eyebrow text-white/60">Perfil comparado</span>
           <RadarChart
             labels={radarValues(a.frontmatter.stats).map((v) => v.label)}
             series={[

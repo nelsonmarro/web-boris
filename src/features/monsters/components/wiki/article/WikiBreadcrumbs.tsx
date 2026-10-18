@@ -8,7 +8,7 @@ interface WikiBreadcrumbsProps {
 
 export function WikiBreadcrumbs({ universe, category }: WikiBreadcrumbsProps) {
   return (
-    <nav aria-label="Ruta" className="eyebrow flex items-center gap-2 text-white/45">
+    <nav aria-label="Ruta" className="eyebrow flex items-center gap-2 text-white/60">
       <Link href="/wiki" className="transition-colors hover:text-primary">
         Wiki
       </Link>
