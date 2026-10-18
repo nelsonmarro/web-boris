@@ -3,8 +3,9 @@
 import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ImageOff, Ruler } from 'lucide-react';
+import { Ruler } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { StatRow } from '@/features/monsters/components/wiki/StatRow';
 import { getThreatLevel, scaleTen, THREAT_TONE_CLASSES } from '@/features/monsters/lib/stats';
 import type { Fighter } from '@/features/monsters/lib/arena';
@@ -32,12 +33,10 @@ export function FighterCard({ fighter, side, score, winner }: FighterCardProps) 
       )}
     >
       <div className="relative aspect-[16/10] w-full bg-black/40">
-        {fm.image ? (
+        {fm.image && !isBrandPlaceholder(fm.image) ? (
           <Image src={fm.image} alt={fm.title} fill sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover" style={{ objectPosition: fm.imagePosition ?? '50% 50%' }} />
         ) : (
-          <div className="flex h-full w-full items-center justify-center opacity-20">
-            <ImageOff className="h-10 w-10 text-white" />
-          </div>
+          <CategoryPlaceholder category={fm.category} />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#061a2e] via-[#061a2e]/30 to-transparent" />
         <div className="absolute left-4 top-4">

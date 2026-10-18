@@ -60,6 +60,7 @@ export default async function WikiArticlePage({ params }: Props) {
           title={frontmatter.title}
           universe={frontmatter.universe}
           category={frontmatter.category}
+          status={frontmatter.status}
         />
 
         <WikiArticleContent frontmatter={frontmatter} content={content} />

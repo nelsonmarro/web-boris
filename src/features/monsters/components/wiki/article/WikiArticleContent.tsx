@@ -6,6 +6,7 @@ import {
 } from '@/features/monsters/components/wiki/mdx/WikiInfobox';
 import { WikiInfoboxCompact } from '@/features/monsters/components/wiki/mdx/WikiInfoboxCompact';
 import { InfoStats } from '@/features/monsters/components/wiki/mdx/InfoStats';
+import { Proximamente } from '@/features/monsters/components/wiki/mdx/Proximamente';
 import { WikiTOC } from '@/features/monsters/components/wiki/mdx/WikiTOC';
 import { WikiFrontmatter } from '@/core/types/wiki';
 import { hasStats } from '@/features/monsters/lib/stats';
@@ -36,6 +37,7 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
       title={title}
       image={image}
       imageCaption={imageCaption}
+      category={frontmatter.category}
       className="w-full mb-0"
     >
       {hasInfobox &&
@@ -60,6 +62,12 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
             {description && (
               <div className="mb-6 rounded-r-xl border-l-4 border-primary bg-[#061a2e]/80 p-5 text-base font-medium leading-relaxed text-white/80 @5xl/article:col-start-1">
                 {description}
+              </div>
+            )}
+
+            {frontmatter.status === 'proximamente' && (
+              <div className="@5xl/article:col-start-1">
+                <Proximamente />
               </div>
             )}
 

@@ -18,6 +18,7 @@ import {
   WikiImage,
 } from '@/features/monsters/components/wiki/mdx/WikiGallery';
 import { WikiTOC } from '@/features/monsters/components/wiki/mdx/WikiTOC';
+import { Proximamente } from '@/features/monsters/components/wiki/mdx/Proximamente';
 import { RegistroDelirium } from '@/features/monsters/components/wiki/mdx/RegistroDelirium';
 import { WikiTabs, WikiTab } from '@/features/monsters/components/wiki/mdx/WikiTabs';
 
@@ -33,6 +34,7 @@ const components = {
   WikiImage,
   WikiTOC,
   RegistroDelirium,
+  Proximamente,
   WikiTabs,
   WikiTab,
 

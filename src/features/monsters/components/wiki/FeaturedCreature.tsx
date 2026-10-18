@@ -4,6 +4,7 @@ import { ChevronRight, Ruler } from 'lucide-react';
 import type { WikiArticleSummary } from '@/core/types/wiki';
 import { StatRow } from '@/features/monsters/components/wiki/StatRow';
 import { getThreatLevel, THREAT_TONE_CLASSES, scaleTen } from '@/features/monsters/lib/stats';
+import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { cn } from '@/utils/cn';
 import { SectionHeader } from '@/features/monsters/components/wiki/SectionHeader';
 
@@ -22,7 +23,7 @@ export function FeaturedCreature({ article }: { article: WikiArticleSummary }) {
 
       <article className="relative grid overflow-hidden rounded-3xl glass-liquid bg-[#061a2e] border-white/10 border-refractive shadow-[0_40px_80px_rgba(0,0,0,0.6)] lg:grid-cols-[1.2fr_1fr]">
         <div className="relative min-h-[280px] lg:min-h-[420px]">
-          {fm.image ? (
+          {fm.image && !isBrandPlaceholder(fm.image) ? (
             <Image
               src={fm.image}
               alt={fm.title}
@@ -32,7 +33,7 @@ export function FeaturedCreature({ article }: { article: WikiArticleSummary }) {
               style={{ objectPosition: fm.imagePosition ?? '50% 50%' }}
             />
           ) : (
-            <div className="absolute inset-0 bg-[#00203F]" />
+            <CategoryPlaceholder category={fm.category} />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-[#061a2e] via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-[#061a2e]" />
           {fm.imageCaption && (
