@@ -39,7 +39,10 @@ Cuentas, login, panel de administración, CMS real, comentarios, histórico de e
 
 ```
 src/core/content/                    ← punto de cambio para el CMS
-  types.ts            NewsEntry, PollDef, ContentRepository
+  schemas.ts          Zod de novedades y duelos (puro)
+  readers.ts          lectura de novedades/encuestas del disco (puro; lo usa check:content)
+  validate.ts         referencias cruzadas: slugs y enlaces (puro)
+  types.ts            ContentRepository
   file-repository.ts  implementación sobre archivos (reusa utils/mdx.ts)
   index.ts            getContentRepository(): hoy devuelve la de archivos
 
@@ -51,9 +54,11 @@ src/content/
 src/features/community/
   lib/poll-schedule.ts   encuesta vigente (curada o automática), id estable
   lib/poll-results.ts    recuento → porcentajes
+  lib/youtube-feed.ts    parseo del feed Atom de YouTube
   lib/voter.ts           id anónimo, HMAC de voterKey e ipHash
   actions/cast-vote.ts   server action de escritura
-  data/videos.ts         RSS del canal + respaldo estático
+  data/latest-video.ts   RSS del canal + respaldo (lista movida a marketing/config/videos.ts)
+  server/poll-state.ts   encuesta vigente + lectura de votos (Prisma)
   components/            CrystalTile, CreatureOfWeekTile, LatestVideoTile, PollTile, NewsTile
 
 src/app/(marketing)/comunidad/page.tsx      página (usa navbar y fondo de la landing)
@@ -63,7 +68,7 @@ src/app/api/comunidad/encuesta/route.ts     GET del estado de la encuesta (no ca
 ### Reglas de dependencia
 
 1. La UI no lee archivos ni Prisma: usa `getContentRepository()` (contenido) y la action / el route handler (votos).
-2. `lib/poll-schedule.ts`, `lib/poll-results.ts` y los esquemas Zod son **funciones puras con imports relativos** (sin alias `@/`) para poder probarlas con `node:test` sin bundler.
+2. `src/core/content/{schemas,readers,validate}.ts` y `src/features/community/lib/*.ts` son **módulos puros con imports relativos con extensión `.ts`** (sin alias `@/`) para poder probarlas con `node:test` sin bundler.
 3. Solo `cast-vote.ts`, el route handler y `voter.ts` tocan cookies, cabeceras o Prisma.
 
 ### `ContentRepository`
@@ -189,7 +194,7 @@ Entre 768 y 1024 px: 2 columnas (criatura | encuesta, vídeo | novedades).
 
 ### `CrystalTile`
 
-Props: `eyebrow`, `title`, `icon?`, `href?` (toda la tile enlazable si se da), `className?`, `children`. Piel actual (contrato de estilo de la wiki): superficie sólida `#061a2e` bajo el texto, `border-white/10`, `rounded-3xl`, brillo de vidrio solo en el borde superior (gradiente blanco/10 → transparente), foco visible con anillo `primary`. #11 cambia solo este componente.
+Props: `eyebrow`, `title`, `icon?`, `className?`, `children` (sin `href`: ninguna tile es un enlace completo; los enlaces van dentro). Piel actual (contrato de estilo de la wiki): superficie sólida `#061a2e` bajo el texto, `border-white/10`, `rounded-3xl`, brillo de vidrio solo en el borde superior (gradiente blanco/10 → transparente), foco visible con anillo `primary`. #11 cambia solo este componente.
 
 ### Tiles
 
@@ -210,6 +215,8 @@ Props: `eyebrow`, `title`, `icon?`, `href?` (toda la tile enlazable si se da), `
 ## 9. Configuración
 
 - Nueva variable `VOTE_SECRET` (≥ 32 caracteres aleatorios) en `.env.example` y en el CI con valor ficticio.
+- Opcional `YOUTUBE_FEED_URL` (solo QA): otra URL de feed; una inválida fuerza el vídeo de respaldo.
+- `docker-compose.yml`: puerto publicado configurable con `DB_PORT` (por defecto 5432).
 - Producción (VPS): `DATABASE_URL` hacia Postgres del VPS y `VOTE_SECRET`; el proxy inverso debe pasar `X-Forwarded-For`. Se concreta en el plan de despliegue en Hostinger.
 
 ## 10. Privacidad y seguridad
