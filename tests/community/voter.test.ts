@@ -17,10 +17,11 @@ test('el hash de IP cambia por encuesta y nunca contiene la IP', () => {
   assert.notEqual(voterKeyFor(SECRET, 'abc'), voterKeyFor(SECRET, 'abd'));
 });
 
-test('clientIp: primer X-Forwarded-For, luego X-Real-IP, luego "desconocida"', () => {
+test('clientIp: X-Real-IP, luego el último salto de X-Forwarded-For, luego "desconocida"', () => {
   const headers = (h: Record<string, string>) => (name: string) => h[name] ?? null;
-  assert.equal(clientIp(headers({ 'x-forwarded-for': ' 203.0.113.7 , 10.0.0.1' })), '203.0.113.7');
-  assert.equal(clientIp(headers({ 'x-real-ip': '198.51.100.2' })), '198.51.100.2');
+  assert.equal(clientIp(headers({ 'x-real-ip': '198.51.100.2', 'x-forwarded-for': '6.6.6.6, 203.0.113.7' })), '198.51.100.2');
+  assert.equal(clientIp(headers({ 'x-forwarded-for': ' 6.6.6.6 , 203.0.113.7 ' })), '203.0.113.7');
+  assert.equal(clientIp(headers({ 'x-forwarded-for': '203.0.113.7, ' })), '203.0.113.7');
   assert.equal(clientIp(headers({})), 'desconocida');
 });
 

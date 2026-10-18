@@ -15,10 +15,19 @@ export const voterKeyFor = (secret: string, voterId: string): string => hmac(sec
 
 export const ipHashFor = (secret: string, ip: string, pollId: string): string => hmac(secret, `${ip}|${pollId}`);
 
-/** IP del cliente detrás del proxy inverso. Nunca se guarda en claro. */
+/**
+ * IP del cliente detrás del proxy inverso. Nunca se guarda en claro.
+ * El proxy inverso debe fijar X-Real-IP; ver spec §9. Sin él se usa el último salto de X-Forwarded-For.
+ */
 export function clientIp(get: (name: string) => string | null): string {
-  const forwarded = get('x-forwarded-for')?.split(',')[0]?.trim();
-  return forwarded || get('x-real-ip')?.trim() || 'desconocida';
+  const real = get('x-real-ip')?.trim();
+  if (real) return real;
+  const last = get('x-forwarded-for')
+    ?.split(',')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .at(-1);
+  return last || 'desconocida';
 }
 
 /** Secreto de votación (≥ 32 caracteres) o `null` si la votación no está configurada. */
