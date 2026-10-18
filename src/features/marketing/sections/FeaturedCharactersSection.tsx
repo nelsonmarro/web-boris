@@ -55,7 +55,7 @@ export async function FeaturedCharactersSection() {
                   <span className="eyebrow text-primary">
                     {fm?.category ?? 'Expediente'} · {figure}
                   </span>
-                  <h3 className="mt-2 text-2xl font-bold uppercase italic tracking-tight text-white">{def.name}</h3>
+                  <h3 className="mt-2 text-3xl font-bold uppercase italic tracking-tight text-white">{def.name}</h3>
                   <p className="mt-4 text-[15px] leading-relaxed text-white/80">{def.description}</p>
                   <Link
                     href={`/wiki/${def.slug}`}

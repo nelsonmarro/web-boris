@@ -62,14 +62,14 @@ export function AboutBorisSection() {
                     href={SOCIAL_LINKS.youtube}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary block text-2xl font-bold uppercase italic tracking-tight text-white transition-colors hover:text-primary md:text-3xl"
+                    className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary block font-display text-3xl font-bold uppercase italic tracking-tight text-white transition-colors hover:text-primary md:text-4xl"
                   >
                     {YOUTUBE_HANDLE}
                   </a>
                 </div>
                 <div className="space-y-2">
                   <p className="eyebrow text-white/60">Contenido</p>
-                  <p className="text-2xl font-bold uppercase italic tracking-tight text-white md:text-3xl">Lore original</p>
+                  <p className="font-display text-3xl font-bold uppercase italic tracking-tight text-white md:text-4xl">Lore original</p>
                 </div>
               </div>
 

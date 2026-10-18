@@ -39,7 +39,7 @@ const components = {
   // Standard HTML overrides
   h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h1
-      className="text-4xl md:text-5xl font-bold text-white italic tracking-tight uppercase mt-12 mb-6"
+      className="text-3xl md:text-4xl break-words font-bold text-white italic tracking-tight uppercase mt-12 mb-6"
       {...props}
     />
   ),

@@ -56,7 +56,7 @@ function FighterColumn({ fighter, side }: { fighter: Fighter; side: 'A' | 'B' })
         )}
       </div>
       <span className={cn('eyebrow mt-5', isA ? 'text-primary' : 'text-cyan-300')}>Universo {universe}</span>
-      <h3 className="mt-1 text-2xl font-black uppercase italic tracking-tight text-white">{title}</h3>
+      <h3 className="mt-1 text-3xl font-black uppercase italic tracking-tight text-white">{title}</h3>
       <div className="mt-3">
         {stats.power !== undefined && (
           <StatRow label="Poder" value={stats.power} display={`${stats.power}`} tone={tone} />

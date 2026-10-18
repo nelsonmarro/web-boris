@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Geist_Mono } from 'next/font/google';
+import { Inter, Geist_Mono, Unbounded, Barlow_Condensed } from 'next/font/google';
 import './globals.css';
 
 const inter = Inter({
@@ -11,6 +11,20 @@ const inter = Inter({
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
+});
+
+const unbounded = Unbounded({
+  subsets: ['latin'],
+  variable: '--font-unbounded',
+  display: 'swap',
+});
+
+const barlow = Barlow_Condensed({
+  subsets: ['latin'],
+  weight: ['700', '800', '900'],
+  style: ['normal', 'italic'],
+  variable: '--font-barlow',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -33,7 +47,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${inter.variable} ${geistMono.variable} dark h-full antialiased`}
+      className={`${inter.variable} ${geistMono.variable} ${unbounded.variable} ${barlow.variable} dark h-full antialiased`}
     >
       <body className="min-h-full flex flex-col relative">
         <TooltipProvider>

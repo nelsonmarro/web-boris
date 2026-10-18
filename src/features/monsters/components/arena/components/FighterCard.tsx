@@ -46,7 +46,7 @@ export function FighterCard({ fighter, side, score, winner }: FighterCardProps) 
           </div>
         </div>
         <div className="absolute bottom-4 left-4 right-4">
-          <Link href={`/wiki/${slug}`} className="block text-2xl font-black uppercase italic leading-none text-white transition-colors hover:text-primary">
+          <Link href={`/wiki/${slug}`} className="block font-display text-3xl font-black uppercase italic leading-none text-white transition-colors hover:text-primary">
             {fm.title}
           </Link>
           <div className="mt-2 flex flex-wrap items-center gap-2">
