@@ -134,7 +134,7 @@ export function ContactSection() {
 
                 <Button
                   type="submit"
-                  className="w-full h-16 rounded-2xl bg-gradient-to-r from-primary to-orange-600 text-white font-bold uppercase tracking-wider shadow-[0_10px_30px_rgba(255,115,0,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                  className="w-full h-16 rounded-2xl bg-gradient-to-r from-primary to-orange-600 text-[#00122E] font-bold uppercase tracking-wider shadow-[0_10px_30px_rgba(255,115,0,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
                 >
                   <Send className="w-5 h-5" />
                   Enviar a Boris
@@ -143,7 +143,7 @@ export function ContactSection() {
             </Form>
 
             <p className="mt-10 text-center text-[11px] text-white/60 uppercase font-bold tracking-wider relative z-10">
-              O si prefieres, envíame un correo directamente a <a href="mailto:borisaoblois343@gmail.com" className="text-primary hover:underline">borisaoblois343@gmail.com</a>
+              O si prefieres, envíame un correo directamente a <a href="mailto:borisaoblois343@gmail.com" className="text-primary underline underline-offset-2 hover:text-orange-300">borisaoblois343@gmail.com</a>
             </p>
           </div>
         </div>
