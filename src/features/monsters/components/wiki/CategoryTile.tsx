@@ -18,7 +18,7 @@ export interface CategoryTileData {
 }
 
 /** Categoría de la wiki en el mosaico de la portada. */
-export function CategoryTile({ tile, className }: { tile: CategoryTileData; className?: string }) {
+export function CategoryTile({ tile, className, compact }: { tile: CategoryTileData; className?: string; compact?: boolean }) {
   return (
     <CrystalTile
       variant="media"
@@ -31,12 +31,17 @@ export function CategoryTile({ tile, className }: { tile: CategoryTileData; clas
       title={tile.title}
       titleSize="compact"
       titleClassName="break-words hyphens-auto"
-      className={cn('min-h-[160px] sm:min-h-[200px]', className)}
+      className={cn('min-h-[160px] sm:min-h-[200px]', compact && 'xl:min-h-[150px] xl:p-5', className)}
     >
       {tile.comingSoon ? (
         <ProximamenteChip className="self-start" />
       ) : tile.description ? (
-        <p className="line-clamp-2 text-[13px] leading-snug text-white/70 sm:text-sm">{tile.description}</p>
+        <p
+          className={cn(
+            'line-clamp-2 text-[13px] leading-snug text-white/70 sm:text-sm',
+            compact && 'xl:line-clamp-3 xl:text-[12px]',
+          )}
+        >{tile.description}</p>
       ) : null}
     </CrystalTile>
   );

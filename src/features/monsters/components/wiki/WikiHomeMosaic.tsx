@@ -20,7 +20,7 @@ const CATEGORY_DEFS: Array<Omit<CategoryTileData, 'count' | 'image' | 'imagePosi
   { title: 'Medianos', slug: 'medianos', category: 'Mediano', comingSoon: true },
   { title: 'Especies', slug: 'especies', category: 'Especie', description: 'Especies identificadas del universo Colosos.' },
   { title: 'Humanos', slug: 'humanos-colosos', category: 'Humano', description: 'Phillip Forte y los demás personajes humanos del universo Colosos.' },
-  { title: 'Organi­zaciones', slug: 'organizaciones', category: 'Organización', description: 'DELIRIUM, IPCARO y las Naciones Rebeldes.' },
+  { title: 'Organi\u00ADzaciones', slug: 'organizaciones', category: 'Organización', description: 'DELIRIUM, IPCARO y las Naciones Rebeldes.' },
 ];
 
 function coverFor(articles: WikiArticle[], category: string): Pick<CategoryTileData, 'image' | 'imagePosition'> {
@@ -77,12 +77,12 @@ export async function WikiHomeMosaic() {
       <CreatureOfWeekTile
         variant="media"
         creature={pickFeatured(articles)}
-        className="min-h-[260px] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:min-h-0"
+        className="min-h-[260px] md:col-span-2 lg:col-span-1 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:min-h-0"
       />
 
-      <div className="grid grid-cols-2 gap-4 md:col-span-2 lg:col-span-3 lg:row-start-3 lg:grid-cols-3 lg:gap-5">
+      <div className="grid grid-cols-2 gap-4 md:col-span-2 lg:col-span-3 lg:row-start-3 lg:grid-cols-3 lg:gap-5 xl:grid-cols-6">
         {tiles.map((tile) => (
-          <CategoryTile key={tile.slug} tile={tile} />
+          <CategoryTile key={tile.slug} tile={tile} compact />
         ))}
       </div>
 
