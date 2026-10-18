@@ -91,7 +91,7 @@ export function WikiImage({
       )}
 
       {caption && (
-        <figcaption className="mt-3 px-1 text-[12px] leading-snug text-white/55 md:text-[13px]">
+        <figcaption className="mt-3 px-1 text-[12px] leading-snug text-white/60 md:text-[13px]">
           {caption}
         </figcaption>
       )}

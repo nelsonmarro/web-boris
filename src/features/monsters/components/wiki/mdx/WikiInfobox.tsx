@@ -69,7 +69,7 @@ export function WikiInfobox({ title, image, imageCaption, category, children, cl
 
       {/* Image - Filling the rectangle edge-to-edge */}
       {(!image || isBrandPlaceholder(image)) ? (
-        <div className="relative aspect-[4/5] w-full border-b border-white/10 bg-black/40">
+        <div className="relative aspect-video w-full border-b border-white/10 bg-black/40">
           <CategoryPlaceholder category={category} />
         </div>
       ) : (
