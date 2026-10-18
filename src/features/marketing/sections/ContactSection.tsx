@@ -70,7 +70,7 @@ export function ContactSection() {
                             <Input 
                               placeholder="Tu nombre" 
                               {...field} 
-                              className="h-14 pl-12 bg-black/20 border-white/10 focus:border-primary/50 focus:bg-black/30 transition-all rounded-xl text-white font-bold"
+                              className="h-14 pl-12 bg-black/20 border-white/10 focus-visible:border-primary/60 focus-visible:bg-black/30 transition-all rounded-xl text-white font-bold"
                             />
                           </ContactField>
                         </FormControl>
@@ -87,7 +87,7 @@ export function ContactSection() {
                             <Input 
                               placeholder="tucorreo@ejemplo.com" 
                               {...field} 
-                              className="h-14 pl-12 bg-black/20 border-white/10 focus:border-primary/50 focus:bg-black/30 transition-all rounded-xl text-white font-bold"
+                              className="h-14 pl-12 bg-black/20 border-white/10 focus-visible:border-primary/60 focus-visible:bg-black/30 transition-all rounded-xl text-white font-bold"
                             />
                           </ContactField>
                         </FormControl>
@@ -106,7 +106,7 @@ export function ContactSection() {
                           <Input 
                             placeholder="Idea para un video, colaboración..." 
                             {...field} 
-                            className="h-14 pl-12 bg-black/20 border-white/10 focus:border-primary/50 focus:bg-black/30 transition-all rounded-xl text-white font-bold"
+                            className="h-14 pl-12 bg-black/20 border-white/10 focus-visible:border-primary/60 focus-visible:bg-black/30 transition-all rounded-xl text-white font-bold"
                           />
                         </ContactField>
                       </FormControl>
@@ -123,7 +123,7 @@ export function ContactSection() {
                         <ContactTextAreaField label="Mensaje" icon={MessageSquare} error={fieldState.error?.message}>
                           <Textarea
                             placeholder="Escribe tu mensaje aquí..."
-                            className="min-h-[180px] pl-12 pt-6 bg-black/20 border-white/10 focus:border-primary/50 focus:bg-black/30 transition-all rounded-xl text-white font-medium resize-none"
+                            className="min-h-[180px] pl-12 pt-6 bg-black/20 border-white/10 focus-visible:border-primary/60 focus-visible:bg-black/30 transition-all rounded-xl text-white font-medium resize-none"
                             {...field}
                           />
                         </ContactTextAreaField>

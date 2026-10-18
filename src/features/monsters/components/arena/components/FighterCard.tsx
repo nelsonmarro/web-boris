@@ -44,7 +44,7 @@ export function FighterCard({ fighter, side, score, winner }: FighterCardProps) 
           Combatiente {side}
         </div>
         {winner && (
-          <div className="absolute right-4 top-4 rounded-full bg-primary px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-[0_0_20px_rgba(255,115,0,0.6)]">
+          <div className="absolute right-4 top-4 rounded-full bg-primary px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-[#00122E] shadow-[0_0_20px_rgba(255,115,0,0.6)]">
             Favorito
           </div>
         )}
