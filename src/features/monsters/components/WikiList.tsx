@@ -1,8 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import type { Route } from 'next';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { WikiFilters } from './wiki/WikiFilters';
@@ -33,7 +32,6 @@ function parsePage(value: string | null): number {
 export function WikiList({ options }: WikiListProps) {
   // La URL es la única fuente de verdad (?search=&universe=&category=&page=): las tarjetas de la
   // landing, el hero y el footer enlazan a /wiki?…, y navegar dentro de /wiki actualiza la lista sin remontarla.
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const query = searchParams.toString();
@@ -59,8 +57,8 @@ export function WikiList({ options }: WikiListProps) {
     }
   }
 
-  // Última query pedida al router. router.replace descarta la navegación pendiente anterior, así que
-  // cada escritura parte de la anterior (no de un searchParams aún sin confirmar) y no se pierden cambios.
+  // Última query escrita en la URL. Cada escritura parte de la anterior (no de un searchParams que
+  // React aún no ha re-renderizado), así que escrituras seguidas no pierden cambios.
   const queryRef = React.useRef(query);
   React.useEffect(() => {
     queryRef.current = query;
@@ -78,11 +76,12 @@ export function WikiList({ options }: WikiListProps) {
       }
       const qs = next.toString();
       queryRef.current = qs;
-      // Se conserva el hash (#explorar) para que sobreviva a los filtros; scroll: false evita que Next salte a él.
+      // History API nativa: Next 16 sincroniza useSearchParams/usePathname con replaceState sin pedir un
+      // payload RSC al servidor (los filtros responden al instante). Se conserva el hash (#explorar).
       const url = (qs ? `${pathname}?${qs}` : pathname) + window.location.hash;
-      router.replace(url as Route, { scroll: false });
+      window.history.replaceState(null, '', url);
     },
-    [router, pathname],
+    [pathname],
   );
 
   // Debounce del texto → URL (solo si difiere de lo último ENVIADO, no de lo ya confirmado: si una
@@ -124,6 +123,13 @@ export function WikiList({ options }: WikiListProps) {
 
   const articles = data?.articles ?? [];
   const totalPages = data?.totalPages ?? 1;
+
+  // ?page= fuera de rango (enlace viejo, filtros que reducen resultados): vuelve a la página 1 en la URL.
+  // Solo con datos reales de esta query, no con el placeholder de la anterior.
+  const resolvedTotalPages = !isPlaceholderData && data ? data.totalPages : null;
+  React.useEffect(() => {
+    if (resolvedTotalPages !== null && page > resolvedTotalPages) replaceQuery({ page: null });
+  }, [resolvedTotalPages, page, replaceQuery]);
 
   return (
     <div className="space-y-10">

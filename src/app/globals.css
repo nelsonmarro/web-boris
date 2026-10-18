@@ -269,6 +269,7 @@
     transform: translateZ(-1px);
   }
 
+  /* FeaturedVideosSection depende de esta regla para los Shorts 9:16 (el marco define la proporción). */
   /* YouTube Embed Fixes */
   lite-youtube {
     display: block !important;

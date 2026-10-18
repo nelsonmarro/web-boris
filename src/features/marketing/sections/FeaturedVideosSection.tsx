@@ -72,7 +72,7 @@ export function FeaturedVideosSection() {
       <div className="container mx-auto px-6 relative z-10">
         <header className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 text-[11px] font-bold uppercase tracking-wider">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-[11px] font-bold uppercase tracking-wider">
               <Video className="w-3.5 h-3.5" />
               Archivo Multimedia
             </div>

@@ -82,17 +82,17 @@ export default function Footer() {
             {/* Support */}
             <div className="space-y-6">
               <p className="eyebrow mb-6 text-white/70">Contacto Oficial</p>
-              <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-center gap-3 text-white/80 hover:text-primary transition-colors group">
+              <a href={`mailto:${CONTACT_EMAIL}`} className="flex min-w-0 items-center gap-3 text-white/80 hover:text-primary transition-colors group">
                 <div className="w-10 h-10 shrink-0 aspect-square rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
                   <Mail className="w-5 h-5 text-primary" />
                 </div>
-                <span className="text-sm font-bold tracking-tight">{CONTACT_EMAIL}</span>
+                <span className="min-w-0 text-sm font-bold tracking-tight [overflow-wrap:anywhere]">{CONTACT_EMAIL}</span>
               </a>
-              <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-white/80 hover:text-primary transition-colors group">
+              <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer" className="flex min-w-0 items-center gap-3 text-white/80 hover:text-primary transition-colors group">
                 <div className="w-10 h-10 shrink-0 aspect-square rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
                   <YoutubeIcon className="w-5 h-5 text-primary" />
                 </div>
-                <span className="text-sm font-bold tracking-tight">{YOUTUBE_HANDLE}</span>
+                <span className="min-w-0 text-sm font-bold tracking-tight [overflow-wrap:anywhere]">{YOUTUBE_HANDLE}</span>
               </a>
             </div>
           </div>
