@@ -3,8 +3,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { getContentRepository } from '@/core/content';
 import { pickFeatured } from '@/features/monsters/lib/featured';
-import { hasStats } from '@/features/monsters/lib/stats';
-import { getCurrentPoll } from '@/features/community/lib/poll-schedule';
+import { getWeeklyPoll } from '@/features/community/data/weekly-poll';
 import { getLatestVideo } from '@/features/community/data/latest-video';
 import { CreatureOfWeekTile } from '@/features/community/components/CreatureOfWeekTile';
 import { LatestVideoTile } from '@/features/community/components/LatestVideoTile';
@@ -24,14 +23,13 @@ export const metadata: Metadata = {
 
 export default async function ComunidadPage() {
   const repo = getContentRepository();
-  const [articles, curated, news, video] = await Promise.all([
+  const [articles, weekly, news, video] = await Promise.all([
     repo.getArticles(),
-    repo.getCuratedPolls(),
+    getWeeklyPoll(),
     repo.getNews(5),
     getLatestVideo(),
   ]);
-  const fighters = articles.filter((a) => hasStats(a.frontmatter));
-  const poll = getCurrentPoll(curated, fighters.map((a) => a.slug));
+  const { poll, fighters } = weekly;
   const fighterCards: Record<string, PollFighter> = Object.fromEntries(
     fighters.map((a) => [
       a.slug,

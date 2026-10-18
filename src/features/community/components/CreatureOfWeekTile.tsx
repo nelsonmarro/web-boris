@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import type { Route } from 'next';
 import { Sparkles } from 'lucide-react';
 import type { WikiArticleSummary } from '@/core/types/wiki';
 import { getThreatLevel, THREAT_TONE_CLASSES } from '@/features/monsters/lib/stats';
@@ -7,11 +8,53 @@ import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/com
 import { cn } from '@/utils/cn';
 import { CrystalTile } from '@/components/crystal';
 
-export function CreatureOfWeekTile({ creature, className }: { creature: WikiArticleSummary | null; className?: string }) {
+export function CreatureOfWeekTile({
+  creature,
+  className,
+  variant = 'card',
+}: {
+  creature: WikiArticleSummary | null;
+  className?: string;
+  variant?: 'card' | 'media';
+}) {
   if (!creature) return null;
   const { title, image, imagePosition, category, universe, description, stats } = creature.frontmatter;
   const threat = getThreatLevel(stats?.hostility);
   const cover = image && !isBrandPlaceholder(image) ? image : undefined;
+
+  if (variant === 'media') {
+    return (
+      <CrystalTile
+        variant="media"
+        href={`/wiki/${creature.slug}` as Route}
+        image={cover}
+        imagePosition={imagePosition}
+        category={category}
+        priority
+        sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+        eyebrow="Criatura de la semana"
+        title={title}
+        icon={Sparkles}
+        className={className}
+      >
+        {threat && (
+          <span
+            className={cn(
+              'inline-flex items-center gap-1.5 self-start rounded-full border px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.15em]',
+              THREAT_TONE_CLASSES[threat.tone].badge,
+            )}
+          >
+            <span className={cn('h-1.5 w-1.5 rounded-full', THREAT_TONE_CLASSES[threat.tone].dot)} aria-hidden="true" />
+            Amenaza {threat.label}
+          </span>
+        )}
+        <p className="eyebrow mt-3 text-white/60">
+          {universe}
+          {category ? ` · ${category}` : ''}
+        </p>
+      </CrystalTile>
+    );
+  }
 
   return (
     <CrystalTile eyebrow="Criatura de la semana" title={title} icon={Sparkles} className={className}>
