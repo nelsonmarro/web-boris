@@ -31,6 +31,15 @@ test('extrae los vídeos en el orden del feed e ignora la cabecera del canal', (
   ]);
 });
 
+test('fecha inválida o ausente → el vídeo se conserva sin published', () => {
+  const xml = `<entry><yt:videoId>aaaaaaaaaaa</yt:videoId><title>A</title><published>no-es-fecha</published></entry>
+<entry><yt:videoId>bbbbbbbbbbb</yt:videoId><title>B</title></entry>`;
+  assert.deepEqual(parseYoutubeFeed(xml), [
+    { id: 'aaaaaaaaaaa', title: 'A' },
+    { id: 'bbbbbbbbbbb', title: 'B' },
+  ]);
+});
+
 test('feed vacío o basura → lista vacía', () => {
   assert.deepEqual(parseYoutubeFeed(''), []);
   assert.deepEqual(parseYoutubeFeed('<html>error</html>'), []);

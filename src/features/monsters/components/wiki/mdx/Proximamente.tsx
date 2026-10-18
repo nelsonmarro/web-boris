@@ -25,13 +25,16 @@ export function Proximamente({ titulo = 'Expediente en preparación', children }
   );
 }
 
-/** Chip compacto "Próximamente" para cabeceras y tarjetas. */
-export function ProximamenteChip({ className = '' }: { className?: string }) {
+/** Chip compacto "Próximamente" para cabeceras y tarjetas. `compact` para tiles estrechas. */
+export function ProximamenteChip({ className = '', size = 'default' }: { className?: string; size?: 'default' | 'compact' }) {
+  const compact = size === 'compact';
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[11px] font-black uppercase tracking-[0.15em] text-primary ${className}`}
+      className={`inline-flex items-center rounded-full border border-primary/30 bg-primary/10 py-0.5 text-[11px] font-black uppercase text-primary ${
+        compact ? 'px-1.5 tracking-[0.03em]' : 'gap-1.5 px-2.5 tracking-[0.15em]'
+      } ${className}`}
     >
-      <Hourglass className="h-3 w-3" aria-hidden="true" />
+      {!compact && <Hourglass className="h-3 w-3" aria-hidden="true" />}
       Próximamente
     </span>
   );

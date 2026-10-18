@@ -6,7 +6,7 @@ import { Clapperboard } from 'lucide-react';
 import { YoutubeIcon } from '@/features/marketing/components/icons/YoutubeIcon';
 import { SOCIAL_LINKS } from '@/features/marketing/config/social';
 import type { LatestVideo } from '../data/latest-video';
-import { CrystalTile } from './CrystalTile';
+import { CrystalTile } from '@/components/crystal';
 
 const dateFormat = new Intl.DateTimeFormat('es', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 
@@ -18,7 +18,7 @@ export function LatestVideoTile({ video, className }: { video: LatestVideo; clas
         <YouTubeEmbed videoid={video.id} playlabel={`Reproducir: ${video.title}`} params="controls=1&rel=0" />
       </div>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        {video.published ? (
+        {video.published && !Number.isNaN(Date.parse(video.published)) ? (
           <time dateTime={video.published} className="eyebrow text-white/60">
             {dateFormat.format(new Date(video.published))}
           </time>

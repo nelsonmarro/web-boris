@@ -3,7 +3,7 @@ import type { Route } from 'next';
 import { ArrowUpRight, Newspaper } from 'lucide-react';
 import type { NewsEntry } from '@/core/content';
 import { Proximamente } from '@/features/monsters/components/wiki/mdx/Proximamente';
-import { CrystalTile } from './CrystalTile';
+import { CrystalTile } from '@/components/crystal';
 
 const dateFormat = new Intl.DateTimeFormat('es', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 

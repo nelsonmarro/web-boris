@@ -11,7 +11,7 @@ import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/com
 import { castVote, type CastVoteError } from '../actions/cast-vote';
 import type { PollDef } from '../lib/poll-schedule';
 import type { PollState } from '../types';
-import { CrystalTile } from './CrystalTile';
+import { CrystalTile } from '@/components/crystal';
 
 export interface PollFighter {
   slug: string;

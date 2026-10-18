@@ -28,13 +28,12 @@ export function WikiArticleCard({ slug, frontmatter, compact = false }: ArticleC
     <Link
       href={`/wiki/${slug}`}
       className={cn(
-        'group glass-liquid bg-[#061a2e] border-white/10 overflow-hidden flex flex-col transition-all hover:scale-[1.02] hover:border-primary/40 hover:shadow-[0_30px_60px_rgba(0,0,0,0.6)] border-refractive',
+        'group crystal-surface overflow-hidden flex flex-col transition-[translate,border-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-[0_24px_60px_rgba(0,0,0,0.55)] hover:[--crystal-line:rgba(255,180,120,0.85)] focus-visible:border-primary/50 motion-reduce:hover:translate-y-0',
         'rounded-2xl',
       )}
     >
       {/* Image Header */}
       <div className="relative w-full aspect-video bg-black/40 overflow-hidden">
-        <div className="glass-reflection opacity-20" />
         {coverImage ? (
           <Image
             src={coverImage}

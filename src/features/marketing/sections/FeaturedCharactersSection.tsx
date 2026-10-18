@@ -35,7 +35,7 @@ export async function FeaturedCharactersSection() {
             return (
               <article
                 key={def.slug}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#061a2e] shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
+                className="group crystal-surface flex flex-col overflow-hidden rounded-2xl"
               >
                 <div className="relative aspect-[4/5] w-full overflow-hidden">
                   {fm?.image && !isBrandPlaceholder(fm.image) ? (

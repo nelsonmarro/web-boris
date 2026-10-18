@@ -12,7 +12,7 @@ interface FlipCardProps {
 }
 
 const FACE =
-  'absolute inset-0 h-full w-full backface-hidden overflow-hidden rounded-3xl border border-white/15 shadow-[0_30px_60px_rgba(0,0,0,0.5)]';
+  'absolute inset-0 h-full w-full backface-hidden overflow-hidden rounded-3xl crystal-surface';
 
 export function FlipCard({ universe, count }: FlipCardProps) {
   const [flipped, setFlipped] = useState(false);
@@ -82,7 +82,7 @@ export function FlipCard({ universe, count }: FlipCardProps) {
       >
         {/* Cara frontal: portada */}
         <div
-          className={`${FACE} glass-liquid`}
+          className={FACE}
           style={{ transform: 'translateZ(1px)' }}
           inert={flipped}
           aria-hidden={flipped}
@@ -97,7 +97,6 @@ export function FlipCard({ universe, count }: FlipCardProps) {
           >
             <span className="sr-only">Ver sinopsis de {universe.title}</span>
           </button>
-          <div className="glass-reflection opacity-40" />
           {universe.image ? (
             <Image
               src={universe.image}
@@ -132,7 +131,7 @@ export function FlipCard({ universe, count }: FlipCardProps) {
           aria-labelledby={titleId}
           inert={!flipped}
           aria-hidden={!flipped}
-          className={`${FACE} flex flex-col bg-[#061a2e] p-8 focus-visible:outline-none`}
+          className={`${FACE} flex flex-col p-8 focus-visible:outline-none`}
           style={{ transform: 'rotateY(180deg) translateZ(1px)' }}
         >
           <span className="eyebrow text-primary">{universe.era}</span>

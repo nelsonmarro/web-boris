@@ -2,7 +2,8 @@
 export interface FeedVideo {
   id: string;
   title: string;
-  published: string;
+  /** Omitido si el feed trae una fecha inválida. */
+  published?: string;
 }
 
 const ENTITIES: Record<string, string> = {
@@ -24,8 +25,9 @@ export function parseYoutubeFeed(xml: string): FeedVideo[] {
     const id = entry.match(/<yt:videoId>([^<]+)<\/yt:videoId>/)?.[1]?.trim();
     const title = entry.match(/<title>([^<]*)<\/title>/)?.[1]?.trim();
     const published = entry.match(/<published>([^<]+)<\/published>/)?.[1]?.trim();
-    if (id && /^[\w-]{11}$/.test(id) && title && published) {
-      videos.push({ id, title: decode(title), published });
+    if (id && /^[\w-]{11}$/.test(id) && title) {
+      const valid = published && !Number.isNaN(Date.parse(published));
+      videos.push(valid ? { id, title: decode(title), published } : { id, title: decode(title) });
     }
   }
   return videos;

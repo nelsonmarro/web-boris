@@ -1,17 +1,13 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
-import { getContentRepository } from '@/core/content';
-import { hasStats } from '@/features/monsters/lib/stats';
-import { getCurrentPoll, type PollDef } from '../lib/poll-schedule';
+import type { PollDef } from '../lib/poll-schedule';
+import { getWeeklyPoll } from '../data/weekly-poll';
 import { computeTally } from '../lib/poll-results';
 import type { PollState } from '../types';
 
 /** Encuesta vigente calculada en el servidor (curada o automática). El cliente nunca la decide. */
 export async function getActivePoll(date: Date = new Date()): Promise<PollDef | null> {
-  const repo = getContentRepository();
-  const [curated, articles] = await Promise.all([repo.getCuratedPolls(), repo.getArticles()]);
-  const fighters = articles.filter((a) => hasStats(a.frontmatter)).map((a) => a.slug);
-  return getCurrentPoll(curated, fighters, date);
+  return (await getWeeklyPoll(date)).poll;
 }
 
 /** Recuento de la encuesta y voto propio. Lanza si la base de datos falla: decide el llamador. */

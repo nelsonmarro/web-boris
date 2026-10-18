@@ -28,7 +28,7 @@ export function AboutBorisSection() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[150px] mix-blend-screen pointer-events-none" />
 
       <div className="container mx-auto px-6">
-        <div className="rounded-3xl border border-white/10 bg-[#061a2e] shadow-[0_40px_100px_rgba(0,0,0,0.6)] overflow-hidden relative">
+        <div className="crystal-surface rounded-3xl overflow-hidden relative">
           <div className="flex flex-col lg:flex-row items-stretch">
             {/* Brand mark column */}
             <div className="w-full lg:w-1/2 relative min-h-[260px] sm:min-h-[360px] lg:min-h-0 overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10 bg-[radial-gradient(ellipse_at_top,#0064A0_0%,#00203F_55%,#00122E_100%)]">
