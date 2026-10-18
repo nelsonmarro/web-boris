@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { name: "Inicio", href: "/" },
   { name: "Wiki", href: "/wiki" },
   { name: "Universos", href: "/#universos" },
+  { name: "Comunidad", href: "/comunidad" },
   { name: "Contacto", href: "/#contacto" },
 ];
 
