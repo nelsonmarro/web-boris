@@ -5,7 +5,7 @@ import type { WikiArticleSummary } from '@/core/types/wiki';
 import { getThreatLevel, THREAT_TONE_CLASSES } from '@/features/monsters/lib/stats';
 import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { cn } from '@/utils/cn';
-import { CrystalTile } from './CrystalTile';
+import { CrystalTile } from '@/components/crystal';
 
 export function CreatureOfWeekTile({ creature, className }: { creature: WikiArticleSummary | null; className?: string }) {
   if (!creature) return null;

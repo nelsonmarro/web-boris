@@ -6,7 +6,7 @@ import { Clapperboard } from 'lucide-react';
 import { YoutubeIcon } from '@/features/marketing/components/icons/YoutubeIcon';
 import { SOCIAL_LINKS } from '@/features/marketing/config/social';
 import type { LatestVideo } from '../data/latest-video';
-import { CrystalTile } from './CrystalTile';
+import { CrystalTile } from '@/components/crystal';
 
 const dateFormat = new Intl.DateTimeFormat('es', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 
