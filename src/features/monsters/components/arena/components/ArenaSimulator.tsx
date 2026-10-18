@@ -38,8 +38,11 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
       next.set('a', nextA);
       next.set('b', nextB);
       window.history.replaceState(null, '', `${pathname}?${next.toString()}${window.location.hash}`);
+      const titleA = fighters.find((f) => f.slug === nextA)?.frontmatter.title;
+      const titleB = fighters.find((f) => f.slug === nextB)?.frontmatter.title;
+      if (titleA && titleB) document.title = `${titleA} vs ${titleB} | Versus Arena`;
     },
-    [pathname],
+    [pathname, fighters],
   );
 
   const fighterItems = React.useMemo(
@@ -118,16 +121,16 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
             type="button"
             variant="outline"
             onClick={shuffle}
-            className="glass-liquid h-12 flex-1 rounded-xl border-white/10 px-5 text-[11px] font-bold uppercase tracking-wider text-white"
+            className="glass-liquid h-12 flex-1 shrink-0 whitespace-nowrap rounded-xl border-white/10 px-5 text-[11px] font-bold uppercase tracking-wider text-white lg:flex-none"
           >
             <Shuffle className="mr-2 h-4 w-4 text-primary" /> Aleatorio
           </Button>
           <Button
             type="button"
             onClick={shareMatchup}
-            className="h-12 flex-1 rounded-xl bg-primary px-5 text-[11px] font-bold uppercase tracking-wider text-[#00122E] hover:bg-primary/90"
+            className="h-12 w-auto flex-1 shrink-0 whitespace-nowrap rounded-xl bg-primary px-5 text-[11px] font-bold uppercase tracking-wider text-[#00122E] hover:bg-primary/90 lg:flex-none"
           >
-            <Share2 className="mr-2 h-4 w-4" /> Compartir enfrentamiento
+            <Share2 className="mr-2 h-4 w-4" /> Compartir<span className="lg:sr-only">&nbsp;enfrentamiento</span>
           </Button>
         </div>
         <label className="space-y-2">

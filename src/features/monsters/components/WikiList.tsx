@@ -195,7 +195,7 @@ export function WikiList({ options }: WikiListProps) {
                         'h-10 w-10 rounded-xl text-xs font-bold transition-all',
                         page === p
                           ? 'bg-primary text-[#00122E] shadow-[0_0_15px_rgba(255,115,0,0.4)]'
-                          : 'text-white/40 hover:text-white hover:bg-white/5',
+                          : 'text-white/60 hover:text-white hover:bg-white/5',
                       )}
                     >
                       {p}

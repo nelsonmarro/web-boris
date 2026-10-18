@@ -74,6 +74,7 @@ for (const file of mdxFiles) {
 const navSrc = readFileSync(NAV_FILE, 'utf8');
 const navSlugs = new Set<string>();
 for (const m of navSrc.matchAll(/url:\s*["']\/wiki\/([^"'#?]+)["']/g)) navSlugs.add(m[1]);
+if (navSlugs.size === 0) problems['Navegación sin artículo'].push('no se encontraron entradas de navegación — ¿cambió el formato de wiki-navigation.ts?');
 for (const slug of [...navSlugs].sort()) {
   // Válido si hay MDX o una ruta estática propia (p. ej. /wiki/arena → app/(wiki)/wiki/arena/page.tsx).
   const hasStaticRoute = existsSync(path.join(WIKI_APP_DIR, slug, 'page.tsx'));

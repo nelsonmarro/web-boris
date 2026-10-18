@@ -86,7 +86,7 @@ export default function Footer() {
                 <div className="w-10 h-10 shrink-0 aspect-square rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">
                   <Mail className="w-5 h-5 text-primary" />
                 </div>
-                <span className="min-w-0 text-sm font-bold tracking-tight [overflow-wrap:anywhere]">{CONTACT_EMAIL}</span>
+                <span className="min-w-0 break-words text-sm font-bold tracking-tight">{CONTACT_EMAIL.split("@")[0]}<wbr />@{CONTACT_EMAIL.split("@")[1]}</span>
               </a>
               <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary flex min-w-0 items-center gap-3 text-white/80 hover:text-primary transition-colors group">
                 <div className="w-10 h-10 shrink-0 aspect-square rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20">

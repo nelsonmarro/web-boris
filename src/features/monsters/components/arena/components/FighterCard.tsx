@@ -33,26 +33,28 @@ export function FighterCard({ fighter, side, score, winner }: FighterCardProps) 
     >
       <div className="relative aspect-[16/10] w-full bg-black/40">
         {fm.image ? (
-          <Image src={fm.image} alt={fm.title} fill sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover" />
+          <Image src={fm.image} alt={fm.title} fill sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover" style={{ objectPosition: fm.imagePosition ?? '50% 50%' }} />
         ) : (
           <div className="flex h-full w-full items-center justify-center opacity-20">
             <ImageOff className="h-10 w-10 text-white" />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#061a2e] via-[#061a2e]/30 to-transparent" />
-        <div className={cn('absolute left-4 top-4 rounded-full border border-white/10 bg-black/50 px-3 py-1 font-mono text-[11px] font-black uppercase tracking-[0.12em] backdrop-blur-md', accent)}>
-          Combatiente {side}
-        </div>
-        {winner && (
-          <div className="absolute right-4 top-4 rounded-full bg-primary px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-[#00122E] shadow-[0_0_20px_rgba(255,115,0,0.6)]">
-            Favorito
+        <div className="absolute left-4 top-4">
+          <div className={cn('rounded-full border border-white/10 bg-black/50 px-3 py-1 font-mono text-[11px] font-black uppercase tracking-[0.12em] backdrop-blur-md', accent)}>
+            Combatiente {side}
           </div>
-        )}
+        </div>
         <div className="absolute bottom-4 left-4 right-4">
           <Link href={`/wiki/${slug}`} className="block text-2xl font-black uppercase italic leading-none text-white transition-colors hover:text-primary">
             {fm.title}
           </Link>
           <div className="mt-2 flex flex-wrap items-center gap-2">
+            {winner && (
+              <span className="rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-black uppercase tracking-[0.15em] text-[#00122E] shadow-[0_0_20px_rgba(255,115,0,0.6)]">
+                Favorito
+              </span>
+            )}
             {threat && (
               <span className={cn('inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-black uppercase tracking-[0.15em]', THREAT_TONE_CLASSES[threat.tone].badge)}>
                 <span className={cn('h-1.5 w-1.5 rounded-full', THREAT_TONE_CLASSES[threat.tone].dot)} />
@@ -71,7 +73,7 @@ export function FighterCard({ fighter, side, score, winner }: FighterCardProps) 
 
       <div className="flex flex-1 flex-col gap-1 p-5">
         <div className="mb-2 flex items-baseline justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-white/40">Índice de combate</span>
+          <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-white/60">Índice de combate</span>
           <span className={cn('font-mono text-2xl font-black tabular-nums', accent)}>{Math.round(score)}</span>
         </div>
         {stats.power !== undefined && <StatRow label="Poder" value={stats.power} display={`${stats.power}`} tone={side === 'A' ? 'primary' : 'cyan'} />}

@@ -26,7 +26,7 @@ export function WikiArticleFooter({ related = [] }: WikiArticleFooterProps) {
             <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5">
               <div className="h-2 w-2 animate-pulse rounded-full bg-primary" />
             </div>
-            <span className="eyebrow text-white/45">Archivo desclasificado · Iniciativa Abisal</span>
+            <span className="eyebrow text-white/60">Archivo desclasificado · Iniciativa Abisal</span>
           </div>
           <span className="eyebrow italic text-primary drop-shadow-[0_0_10px_rgba(255,115,0,0.3)]">Borisao Archives</span>
         </div>
