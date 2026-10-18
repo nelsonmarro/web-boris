@@ -44,7 +44,7 @@ export function ContactSection() {
         <div className="max-w-5xl mx-auto">
           
           <header className="text-center mb-16 space-y-4">
-             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider mb-4">
+             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 eyebrow text-primary mb-4">
                 <Sparkles className="w-3 h-3" />
                 Línea de Enlace Directa
              </div>
@@ -56,9 +56,7 @@ export function ContactSection() {
              </p>
           </header>
 
-          <div className="glass-liquid p-8 md:p-16 rounded-[3rem] border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative group">
-            <div className="glass-reflection" />
-            
+          <div className="p-8 md:p-16 rounded-3xl border border-white/10 bg-[#061a2e] shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative group">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -72,7 +70,7 @@ export function ContactSection() {
                             <Input 
                               placeholder="Tu nombre" 
                               {...field} 
-                              className="h-14 pl-12 bg-white/5 border-white/10 focus:border-primary/50 focus:bg-white/10 transition-all rounded-2xl text-white font-bold"
+                              className="h-14 pl-12 bg-black/20 border-white/10 focus:border-primary/50 focus:bg-black/30 transition-all rounded-xl text-white font-bold"
                             />
                           </ContactField>
                         </FormControl>
@@ -89,7 +87,7 @@ export function ContactSection() {
                             <Input 
                               placeholder="tucorreo@ejemplo.com" 
                               {...field} 
-                              className="h-14 pl-12 bg-white/5 border-white/10 focus:border-primary/50 focus:bg-white/10 transition-all rounded-2xl text-white font-bold"
+                              className="h-14 pl-12 bg-black/20 border-white/10 focus:border-primary/50 focus:bg-black/30 transition-all rounded-xl text-white font-bold"
                             />
                           </ContactField>
                         </FormControl>
@@ -108,7 +106,7 @@ export function ContactSection() {
                           <Input 
                             placeholder="Idea para un video, colaboración..." 
                             {...field} 
-                            className="h-14 pl-12 bg-white/5 border-white/10 focus:border-primary/50 focus:bg-white/10 transition-all rounded-2xl text-white font-bold"
+                            className="h-14 pl-12 bg-black/20 border-white/10 focus:border-primary/50 focus:bg-black/30 transition-all rounded-xl text-white font-bold"
                           />
                         </ContactField>
                       </FormControl>
@@ -125,7 +123,7 @@ export function ContactSection() {
                         <ContactTextAreaField label="Mensaje" icon={MessageSquare} error={fieldState.error?.message}>
                           <Textarea
                             placeholder="Escribe tu mensaje aquí..."
-                            className="min-h-[180px] pl-12 pt-6 bg-white/5 border-white/10 focus:border-primary/50 focus:bg-white/10 transition-all rounded-[2rem] text-white font-medium resize-none"
+                            className="min-h-[180px] pl-12 pt-6 bg-black/20 border-white/10 focus:border-primary/50 focus:bg-black/30 transition-all rounded-xl text-white font-medium resize-none"
                             {...field}
                           />
                         </ContactTextAreaField>
@@ -136,7 +134,7 @@ export function ContactSection() {
 
                 <Button
                   type="submit"
-                  className="w-full h-16 rounded-2xl bg-gradient-to-r from-primary to-orange-600 text-white font-bold uppercase tracking-wider shadow-[0_10px_30px_rgba(255,115,0,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                  className="w-full h-16 rounded-2xl bg-gradient-to-r from-primary to-orange-600 text-[#00122E] font-bold uppercase tracking-wider shadow-[0_10px_30px_rgba(255,115,0,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
                 >
                   <Send className="w-5 h-5" />
                   Enviar a Boris
@@ -144,8 +142,8 @@ export function ContactSection() {
               </form>
             </Form>
 
-            <p className="mt-10 text-center text-[10px] text-white/30 uppercase font-bold tracking-wider relative z-10">
-              O si prefieres, envíame un correo directamente a <a href="mailto:borisaoblois343@gmail.com" className="text-primary hover:underline">borisaoblois343@gmail.com</a>
+            <p className="mt-10 text-center text-[11px] text-white/60 uppercase font-bold tracking-wider relative z-10">
+              O si prefieres, envíame un correo directamente a <a href="mailto:borisaoblois343@gmail.com" className="text-primary underline underline-offset-2 hover:text-orange-300">borisaoblois343@gmail.com</a>
             </p>
           </div>
         </div>

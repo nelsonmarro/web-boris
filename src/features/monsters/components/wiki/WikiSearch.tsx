@@ -6,34 +6,37 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/utils/cn';
 
 interface WikiSearchProps {
-  placeholder?: string;
+  /** Texto actual (controlado por el padre). */
+  value: string;
   onSearch: (value: string) => void;
-  defaultValue?: string;
+  placeholder?: string;
   className?: string;
   inputClassName?: string;
 }
 
 export function WikiSearch({
-  placeholder = 'Buscar en el archivo…',
+  value,
   onSearch,
-  defaultValue = '',
+  placeholder = 'Buscar en el archivo…',
   className,
   inputClassName,
 }: WikiSearchProps) {
-  const [value, setValue] = React.useState(defaultValue);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const update = (next: string) => {
-    setValue(next);
-    onSearch(next);
+  const clear = () => {
+    onSearch('');
+    // El botón desaparece al vaciar: devolvemos el foco al campo para no perderlo.
+    inputRef.current?.focus();
   };
 
   return (
     <div className={cn('group relative w-full', className)}>
       <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/50 transition-colors group-focus-within:text-primary" />
       <Input
+        ref={inputRef}
         type="search"
         value={value}
-        onChange={(e) => update(e.target.value)}
+        onChange={(e) => onSearch(e.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
         className={cn(
@@ -44,7 +47,7 @@ export function WikiSearch({
       {value && (
         <button
           type="button"
-          onClick={() => update('')}
+          onClick={clear}
           aria-label="Limpiar búsqueda"
           className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md text-white/50 transition-colors hover:bg-white/10 hover:text-white"
         >

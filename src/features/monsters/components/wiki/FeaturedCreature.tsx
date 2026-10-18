@@ -27,7 +27,6 @@ export function FeaturedCreature({ article }: { article: WikiArticleSummary }) {
               src={fm.image}
               alt={fm.title}
               fill
-              priority
               sizes="(min-width: 1024px) 55vw, 100vw"
               className="object-cover"
             />

@@ -14,9 +14,7 @@ export function AboutBorisSection() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[150px] mix-blend-screen pointer-events-none" />
 
       <div className="container mx-auto px-6">
-        <div className="glass-liquid rounded-[4rem] border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.6)] overflow-hidden relative group">
-          <div className="glass-reflection opacity-30" />
-
+        <div className="rounded-3xl border border-white/10 bg-[#061a2e] shadow-[0_40px_100px_rgba(0,0,0,0.6)] overflow-hidden relative group">
           <div className="flex flex-col lg:flex-row items-stretch">
             {/* Visual Column */}
             <div className="w-full lg:w-1/2 relative min-h-[300px] sm:min-h-[400px] lg:min-h-0 overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
@@ -31,7 +29,7 @@ export function AboutBorisSection() {
               {/* Floating Tag */}
               <div className="absolute top-10 left-10 inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 backdrop-blur-3xl border border-white/20 shadow-2xl">
                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-[10px] font-bold text-white uppercase tracking-wider">
+                <span className="eyebrow text-white">
                   Señal de Origen
                 </span>
               </div>
@@ -59,7 +57,7 @@ export function AboutBorisSection() {
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <p className="eyebrow text-white/30">Canal</p>
+                  <p className="eyebrow text-white/60">Canal</p>
                   <a
                     href={SOCIAL_LINKS.youtube}
                     target="_blank"
@@ -70,7 +68,7 @@ export function AboutBorisSection() {
                   </a>
                 </div>
                 <div className="space-y-2">
-                  <p className="eyebrow text-white/30">Contenido</p>
+                  <p className="eyebrow text-white/60">Contenido</p>
                   <p className="text-2xl font-bold uppercase italic tracking-tight text-white md:text-3xl">Lore original</p>
                 </div>
               </div>
@@ -92,13 +90,6 @@ export function AboutBorisSection() {
                   <Mail className="h-5 w-5" />
                   Escribir a Boris
                 </a>
-              </div>
-
-              {/* Boris Personal Signature Style Badge */}
-              <div className="pt-8 border-t border-white/5 opacity-40">
-                <p className="text-[8px] font-bold uppercase tracking-wider text-white">
-                  Documentación Autorizada // Código 343-B
-                </p>
               </div>
             </div>
           </div>

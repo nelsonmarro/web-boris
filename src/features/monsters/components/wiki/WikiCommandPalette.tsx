@@ -99,11 +99,11 @@ export function WikiCommandPalette() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label="Buscar en la wiki (⌘K)"
         className="group flex h-10 items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 text-white/60 transition-all hover:border-primary/40 hover:bg-white/10 hover:text-white"
       >
-        <Search className="h-4 w-4 text-primary" />
-        <span className="hidden text-xs font-medium sm:inline">Buscar archivo…</span>
+        <Search className="h-4 w-4 text-primary" aria-hidden="true" />
+        <span className="sr-only sm:hidden">Buscar en la wiki</span>
+        <span className="hidden text-xs font-medium sm:inline">Buscar en la wiki</span>
         <kbd className="hidden rounded-md border border-white/10 bg-black/30 px-1.5 py-0.5 font-mono text-[11px] font-bold text-white/50 lg:inline">
           ⌘K
         </kbd>

@@ -4,6 +4,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
+import { NavLogo } from '@/components/navbar/components/NavLogo';
 import { NavLinks } from '@/components/navbar/components/NavLinks';
 import { NavActions } from '@/components/navbar/components/NavActions';
 import Footer from '@/components/Footer';
@@ -21,29 +22,24 @@ export default function WikiLayout({
       <div className="flex min-h-screen w-full bg-[#0a2339] relative z-0">
         <AppSidebar />
         <SidebarInset className="flex flex-col min-w-0 bg-transparent overflow-x-clip">
-          <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-2 bg-[#061a2e] border-b border-white/5 px-6 shadow-sm">
+          <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-2 bg-[#061a2e] border-b border-white/5 px-4 sm:px-6 shadow-sm">
             <div className="flex items-center gap-2">
               <SidebarTrigger className="-ml-1 text-primary hover:bg-primary/10 transition-all hover:scale-110 active:scale-95" />
-              <div className="flex flex-col group-data-[collapsible=icon]:hidden">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-white/30 leading-none">
-                  Terminal
-                </span>
-                <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-primary italic leading-tight">
-                  Acceso Lore
-                </span>
-              </div>
+              <NavLogo size="sm" />
             </div>
 
-            <div className="h-6 w-[1px] bg-white/10 mx-6 hidden md:block" />
+            <div className="h-6 w-[1px] bg-white/10 mx-6 hidden 2xl:block" />
 
-            <div className="flex-1 flex justify-end md:justify-start">
-              <div className="hidden md:flex items-center gap-1">
+            <div className="flex-1 flex items-center justify-end 2xl:justify-start">
+              <div className="hidden 2xl:flex items-center gap-1">
                 <NavLinks />
+              </div>
+              <div className="hidden lg:flex items-center">
                 <NavActions />
               </div>
             </div>
 
-          <div className="flex items-center gap-4 pl-4 md:ml-4 md:border-l md:border-white/10 md:pl-6">
+          <div className="flex items-center gap-4 pl-2 lg:ml-4 lg:border-l lg:border-white/10 lg:pl-6">
             <WikiCommandPalette />
           </div>
         </header>

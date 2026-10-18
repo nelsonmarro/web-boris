@@ -3,7 +3,7 @@ import { pickFeatured } from '@/features/monsters/lib/featured';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { HeroSection } from '@/features/marketing/sections/HeroSection';
-import { LoreStatsSection } from '@/features/marketing/sections/LoreStatsSection';
+import { ArenaTeaserSection } from '@/features/marketing/sections/ArenaTeaserSection';
 import { UniversePreviewSection } from '@/features/marketing/sections/UniversePreviewSection';
 import { FeaturedCharactersSection } from '@/features/marketing/sections/FeaturedCharactersSection';
 import { FeaturedVideosSection } from '@/features/marketing/sections/FeaturedVideosSection';
@@ -21,7 +21,7 @@ export default async function Home() {
       <Navbar />
       <main className="flex-1 flex flex-col relative z-10">
         <HeroSection featured={featured} />
-        <LoreStatsSection />
+        <ArenaTeaserSection />
         <UniversePreviewSection />
         <FeaturedCharactersSection />
         <FeaturedVideosSection />

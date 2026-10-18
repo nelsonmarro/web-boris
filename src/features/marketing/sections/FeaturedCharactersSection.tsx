@@ -15,14 +15,14 @@ export async function FeaturedCharactersSection() {
 
       <div className="container relative z-10 mx-auto px-6">
         <div className="mx-auto mb-16 max-w-3xl space-y-4 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-primary">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 eyebrow text-primary">
             <FolderOpen className="h-3.5 w-3.5" />
             Expedientes abiertos
           </div>
-          <h2 className="text-4xl font-bold uppercase italic tracking-tight text-white md:text-5xl">
+          <h2 className="section-title md:text-4xl lg:text-5xl">
             Personajes <span className="text-primary">destacados</span>
           </h2>
-          <p className="text-lg font-medium leading-relaxed text-white/70">
+          <p className="text-base font-medium leading-relaxed text-white/70 md:text-lg">
             Tres expedientes para empezar a leer el archivo.
           </p>
         </div>
