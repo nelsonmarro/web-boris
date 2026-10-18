@@ -1,6 +1,6 @@
 # Hub de la comunidad (`/comunidad`) — diseño
 
-**Issue:** #10 · **Fecha:** 2026-10-18 · **Estado:** aprobado en conversación (secciones 1–3), pendiente de revisión del documento.
+**Issue:** #10 · **Fecha:** 2026-10-18 · **Estado:** aprobado (conversación y documento).
 
 ## 1. Objetivo
 
@@ -69,7 +69,7 @@ src/app/api/comunidad/encuesta/route.ts     GET del estado de la encuesta (no ca
 
 1. La UI no lee archivos ni Prisma: usa `getContentRepository()` (contenido) y la action / el route handler (votos).
 2. `src/core/content/{schemas,readers,validate}.ts` y `src/features/community/lib/*.ts` son **módulos puros con imports relativos con extensión `.ts`** (sin alias `@/`) para poder probarlas con `node:test` sin bundler.
-3. Solo `cast-vote.ts`, el route handler y `voter.ts` tocan cookies, cabeceras o Prisma.
+3. Solo `cast-vote.ts`, el route handler y `server/poll-state.ts` tocan cookies, cabeceras o Prisma (`voter.ts` es puro).
 
 ### `ContentRepository`
 
@@ -146,7 +146,7 @@ model PollVote {
 }
 ```
 
-`User` gana la relación inversa `pollVotes PollVote[]`. Migración nueva con `prisma migrate dev`; no toca tablas existentes.
+`User` gana la relación inversa `pollVotes PollVote[]`. Primera migración del proyecto (`hub_comunidad`): crea las tablas de Auth.js y `PollVote`. Producción: `prisma migrate deploy` sobre base vacía; una base creada con `db push` requiere `prisma migrate reset`.
 
 ## 7. Flujos
 
@@ -199,7 +199,7 @@ Props: `eyebrow`, `title`, `icon?`, `className?`, `children` (sin `href`: ningun
 ### Tiles
 
 - **Criatura de la semana:** `pickFeatured()`; portada (o `CategoryPlaceholder`), nombre, chip de amenaza (`getThreatLevel`), enlace "Ver ficha".
-- **Último vídeo:** el primero del RSS `https://www.youtube.com/feeds/videos.xml?channel_id=UChE8ki_10uZSZN0YTBi8_RA` (fetch con `revalidate: 3600`, timeout corto, parseo mínimo de `yt:videoId`, `title`, `published`). Si falla → primer vídeo de la lista estática (movida de `FeaturedVideosSection` a `data/videos.ts`, que la landing también usa). Reproductor `<lite-youtube>` y enlace "Ver más en YouTube".
+- **Último vídeo:** el primero del RSS `https://www.youtube.com/feeds/videos.xml?channel_id=UChE8ki_10uZSZN0YTBi8_RA` (fetch con `revalidate: 3600`, timeout corto, parseo mínimo de `yt:videoId`, `title`, `published`). Si falla → primer vídeo de la lista estática (movida de `FeaturedVideosSection` a `src/features/marketing/config/videos.ts`, que la landing también usa). Reproductor `<lite-youtube>` y enlace "Ver más en YouTube".
 - **¿Quién gana?** (isla cliente): pide el estado al montar.
   - Antes de votar: dos retratos con "VS" y dos botones con el nombre (`aria-pressed`).
   - Tras votar o si ya votó: barras con porcentaje y total en una región `aria-live="polite"`; la opción propia marcada.
@@ -210,7 +210,7 @@ Props: `eyebrow`, `title`, `icon?`, `className?`, `children` (sin `href`: ningun
 
 ### Navegación y metadatos
 
-"Comunidad" en la navbar (entre Universos y Contacto), menú móvil y footer. `generateMetadata` con título "Comunidad" y descripción; OG vía `metadataBase` existente.
+"Comunidad" en la navbar (entre Universos y Contacto), menú móvil y footer. `metadata` con título "Comunidad" y descripción; OG vía `metadataBase` existente.
 
 ## 9. Configuración
 
@@ -241,6 +241,7 @@ Props: `eyebrow`, `title`, `icon?`, `className?`, `children` (sin `href`: ningun
 
 - **CMS:** implementar `CmsContentRepository` (novedades, encuestas, artículos) y elegirla en `getContentRepository()`. La UI y los votos no cambian.
 - **Cuentas:** con sesión, `castVote` rellena `userId` y aplica `@@unique([pollId, userId])`; los votos anónimos siguen siendo válidos. Un futuro "espacio personal" puede listar `user.pollVotes`.
+- **Artículos:** hoy ~10 llamadores leen `@/utils/mdx` directamente; pasarlos a `getContentRepository()` (añadiendo `getArticle(slug)`) es un cambio de acceso a datos, no de UI.
 - **Histórico:** los votos ya quedan guardados por `pollId`; "resultado de la semana pasada" es una consulta más.
 
 ## 13. Seguimiento en GitHub

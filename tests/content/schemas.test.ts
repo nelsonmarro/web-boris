@@ -46,5 +46,6 @@ test('rechaza enlaces http y resúmenes largos', () => {
   assert.equal(NewsEntrySchema.safeParse({ ...base, resumen: 'x'.repeat(161) }).success, false);
   assert.equal(NewsEntrySchema.safeParse(base).success, true);
   assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: '//evil.com' }).success, false);
+  assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: '/\\evil.com' }).success, false);
   assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: 'https://www.youtube.com/watch?v=vRVFd7LfTTs' }).success, true);
 });

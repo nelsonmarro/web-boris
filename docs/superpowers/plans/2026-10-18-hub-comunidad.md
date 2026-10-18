@@ -1900,6 +1900,6 @@ npm run build && npx next start -p 3131   # en segundo plano
 
 - [ ] **Step 5: PR, CI y merge** — `git push -u origin feat/hub-comunidad`, `gh pr create` (resumen, verificación, `Refs #10`, atribución), esperar CI verde (`gh pr checks --watch`), `gh pr merge --squash --delete-branch`, `git checkout main && git pull`, `npm run build` en main.
 
-- [ ] **Step 6: Issues** — reescribir #10 como épica del hub con checklist: (1) repositorio + formatos + `check:content` ✅, (2) `PollVote` + action + route ✅, (3) tiles + página + navegación ✅, (4) tests + CI ✅, (5) despliegue en el VPS (Postgres, `VOTE_SECRET`, `X-Forwarded-For` en el proxy) → enlazar al issue del plan de Hostinger. Dejar #10 abierto hasta el despliegue.
+- [ ] **Step 6: Issues** — reescribir #10 como épica del hub con checklist: (1) repositorio + formatos + `check:content` ✅, (2) `PollVote` + action + route ✅, (3) tiles + página + navegación ✅, (4) tests + CI ✅, (5) despliegue en el VPS (Postgres, `VOTE_SECRET`, proxy que fije `X-Real-IP` (nginx: `proxy_set_header X-Real-IP $remote_addr;`; detrás de Cloudflare: `real_ip_header CF-Connecting-IP` + `set_real_ip_from`)) → enlazar al issue del plan de Hostinger. Dejar #10 abierto hasta el despliegue.
 
 - [ ] **Step 7: Parar el entorno de QA** — `kill $(lsof -t -i:3131)`; `docker compose -p webboris-hub down` (conserva el volumen; `down -v` solo si se quiere borrar los votos de prueba).

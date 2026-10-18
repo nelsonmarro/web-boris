@@ -17,12 +17,14 @@ npm run build     # OBLIGATORIO tras cambios: valida MDX + tipos TS
 make start        # build + next start en :3131 (para demos; el dev server bloquea orígenes externos)
 make share        # build + next start + túnel público con cloudflared (mostrar el sitio sin hosting)
 npm run lint      # ESLint
+npm test          # tests unitarios (node:test) de la lógica pura
+npm run check:content  # valida MDX, navegación, assets, novedades y encuestas
 make db-up        # solo la base de datos
 make db-shell     # psql (user: root, db: webboris)
 npx prisma generate / migrate dev / studio
 ```
 
-No hay suite de tests. La validación es `npm run build` (parsea todos los MDX vía `generateStaticParams` y chequea tipos).
+Validación: `npm run lint`, `npm test` (node:test sobre `tests/**/*.test.ts`), `npm run check:content` y `npm run build` (parsea todos los MDX y chequea tipos). El CI ejecuta los cuatro.
 
 ## Stack
 
@@ -55,10 +57,11 @@ Frontmatter (ver `WikiFrontmatterSchema`): `title` y `universe` obligatorios; op
 
 ### Otras piezas
 
-- `src/features/` — módulos por dominio (`monsters` es el de la wiki; también `marketing`, `auth`, `payments`).
+- `src/features/` — módulos por dominio (`monsters` es el de la wiki; también `marketing`, `auth`, `payments`, `community` (hub /comunidad)).
 - `src/features/monsters/actions/get-wiki-articles.ts` — server action de listado con búsqueda/filtros/paginación (filtra en memoria sobre los MDX).
 - `src/core/` — server actions globales, config de Auth.js, tipos.
 - `src/lib/prisma.ts` — cliente Prisma (instanciar siempre con el driver adapter).
+- Base de datos y migraciones: migraciones en `prisma/migrations` (la primera, `hub_comunidad`, crea también las tablas de Auth.js). Producción: `npx prisma migrate deploy` sobre una base vacía; una base local creada antes con `db push` necesita `npx prisma migrate reset` (borra datos). `VOTE_SECRET` (≥ 32 caracteres) habilita la votación de /comunidad; `DB_PORT` cambia el puerto publicado por docker compose.
 - Material fuente del lore en `docs/` (`Frases y descripciones.docx`, `Requerimientos Pagina.pdf`, `HANDOVER.md`, `CLAUDE_HANDOVER.md`).
 
 ## Estándares de diseño ("ley Abisal")

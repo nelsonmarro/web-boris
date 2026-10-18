@@ -38,7 +38,7 @@ const IsoDate = z.preprocess(
 
 const NewsLink = z
   .string()
-  .refine((v) => v.startsWith('https://') || (v.startsWith('/') && !v.startsWith('//')), {
+  .refine((v) => v.startsWith('https://') || (v.startsWith('/') && !v.startsWith('//') && !v.startsWith('/\\')), {
     message: 'el enlace debe ser interno (/…) o https://',
   });
 

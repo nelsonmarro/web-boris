@@ -67,7 +67,7 @@ export function PollTile({
   className?: string;
 }) {
   const queryClient = useQueryClient();
-  const { data: state, isError } = useQuery({ queryKey: QUERY_KEY, queryFn: fetchPollState, staleTime: 30_000 });
+  const { data: state, isError } = useQuery({ queryKey: QUERY_KEY, queryFn: fetchPollState, staleTime: 30_000, retry: 1 });
   const [message, setMessage] = React.useState<string | null>(null);
 
   const vote = useMutation({

@@ -14,6 +14,7 @@ import {
   voteSecret,
   voterKeyFor,
 } from '../lib/voter';
+import type { PollDef } from '../lib/poll-schedule';
 import type { PollState } from '../types';
 
 const VoteInput = z.object({
@@ -32,30 +33,31 @@ export async function castVote(input: { pollId: string; option: string }): Promi
   if (!parsed.success) return { ok: false, error: 'invalido' };
   const { pollId, option } = parsed.data;
 
-  const poll = await getActivePoll();
-  if (!poll || poll.id !== pollId) return { ok: false, error: 'cerrada' };
-  if (option !== poll.a && option !== poll.b) return { ok: false, error: 'opcion' };
-
-  const secret = voteSecret();
-  if (!secret) return { ok: false, error: 'no-disponible', state: { status: 'unavailable', poll } };
-
-  const cookieStore = await cookies();
-  let voterId = cookieStore.get(VOTER_COOKIE)?.value;
-  if (!voterId) {
-    voterId = randomUUID();
-    cookieStore.set(VOTER_COOKIE, voterId, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: VOTER_COOKIE_MAX_AGE,
-      path: '/',
-    });
-  }
-  const voterKey = voterKeyFor(secret, voterId);
-  const requestHeaders = await headers();
-  const ipHash = ipHashFor(secret, clientIp((name) => requestHeaders.get(name)), poll.id);
-
+  let poll: PollDef | null = null;
   try {
+    poll = await getActivePoll();
+    if (!poll || poll.id !== pollId) return { ok: false, error: 'cerrada' };
+    if (option !== poll.a && option !== poll.b) return { ok: false, error: 'opcion' };
+
+    const secret = voteSecret();
+    if (!secret) return { ok: false, error: 'no-disponible', state: { status: 'unavailable', poll } };
+
+    const cookieStore = await cookies();
+    let voterId = cookieStore.get(VOTER_COOKIE)?.value;
+    if (!voterId) {
+      voterId = randomUUID();
+      cookieStore.set(VOTER_COOKIE, voterId, {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: VOTER_COOKIE_MAX_AGE,
+        path: '/',
+      });
+    }
+    const voterKey = voterKeyFor(secret, voterId);
+    const requestHeaders = await headers();
+    const ipHash = ipHashFor(secret, clientIp((name) => requestHeaders.get(name)), poll.id);
+
     const already = await prisma.pollVote.findUnique({
       where: { pollId_voterKey: { pollId: poll.id, voterKey } },
       select: { id: true },
@@ -74,6 +76,8 @@ export async function castVote(input: { pollId: string; option: string }): Promi
     return { ok: true, state: await loadOpenState(poll, voterKey) };
   } catch (error) {
     console.error('[comunidad] voto no registrado:', error);
-    return { ok: false, error: 'no-disponible', state: { status: 'unavailable', poll } };
+    return poll
+      ? { ok: false, error: 'no-disponible', state: { status: 'unavailable', poll } }
+      : { ok: false, error: 'no-disponible' };
   }
 }
