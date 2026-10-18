@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, FolderOpen } from 'lucide-react';
 import { FEATURED_CHARACTERS } from '../config/featured-characters';
+import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { getArticleBySlug } from '@/utils/mdx';
 
 export async function FeaturedCharactersSection() {
@@ -37,7 +38,7 @@ export async function FeaturedCharactersSection() {
                 className="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#061a2e] shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
               >
                 <div className="relative aspect-[4/5] w-full overflow-hidden">
-                  {fm?.image ? (
+                  {fm?.image && !isBrandPlaceholder(fm.image) ? (
                     <Image
                       src={fm.image}
                       alt=""
@@ -47,7 +48,7 @@ export async function FeaturedCharactersSection() {
                       sizes="(max-width: 768px) 100vw, 33vw"
                     />
                   ) : (
-                    <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#0064A0_0%,#00203F_45%,#00122E_100%)]" />
+                    <CategoryPlaceholder category={fm?.category} />
                   )}
                   <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#061a2e] via-transparent to-transparent" />
                 </div>

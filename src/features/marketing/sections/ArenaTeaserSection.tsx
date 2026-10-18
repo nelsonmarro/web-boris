@@ -6,6 +6,7 @@ import { getAllArticles, getArticleBySlug } from '@/utils/mdx';
 import { hasStats, scaleTen } from '@/features/monsters/lib/stats';
 import { computeMatchup, scoreFighter, type Fighter } from '@/features/monsters/lib/arena';
 import { StatRow } from '@/features/monsters/components/wiki/StatRow';
+import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { cn } from '@/utils/cn';
 import { getLoreStats } from '../actions/get-lore-stats';
 
@@ -42,7 +43,7 @@ function FighterColumn({ fighter, side }: { fighter: Fighter; side: 'A' | 'B' })
           isA ? 'border-primary/40' : 'border-cyan-400/40',
         )}
       >
-        {image ? (
+        {image && !isBrandPlaceholder(image) ? (
           <Image
             src={image}
             alt=""
@@ -52,7 +53,7 @@ function FighterColumn({ fighter, side }: { fighter: Fighter; side: 'A' | 'B' })
             sizes="(max-width: 768px) 100vw, 360px"
           />
         ) : (
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#0064A0_0%,#00203F_45%,#00122E_100%)]" />
+          <CategoryPlaceholder category={fighter.frontmatter.category} />
         )}
       </div>
       <span className={cn('eyebrow mt-5', isA ? 'text-primary' : 'text-cyan-300')}>Universo {universe}</span>

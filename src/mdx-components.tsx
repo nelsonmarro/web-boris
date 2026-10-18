@@ -9,6 +9,7 @@ import { WikiInfobox, InfoSection, InfoField } from '@/features/monsters/compone
 import { WikiQuote } from '@/features/monsters/components/wiki/mdx/WikiQuote';
 import { WikiGallery, WikiImage } from '@/features/monsters/components/wiki/mdx/WikiGallery';
 import { WikiTOC } from '@/features/monsters/components/wiki/mdx/WikiTOC';
+import { Proximamente } from '@/features/monsters/components/wiki/mdx/Proximamente';
 import { RegistroDelirium } from '@/features/monsters/components/wiki/mdx/RegistroDelirium';
 import { WikiTabs, WikiTab } from '@/features/monsters/components/wiki/mdx/WikiTabs';
 
@@ -27,6 +28,7 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
     WikiImage,
     WikiTOC,
     RegistroDelirium,
+    Proximamente,
     WikiTabs,
     WikiTab,
     

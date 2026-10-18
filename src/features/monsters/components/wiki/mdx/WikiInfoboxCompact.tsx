@@ -3,6 +3,7 @@ import { ChevronDown } from 'lucide-react';
 import type { WikiFrontmatter } from '@/core/types/wiki';
 import { getThreatLevel, THREAT_TONE_CLASSES } from '@/features/monsters/lib/stats';
 import { cn } from '@/utils/cn';
+import { CategoryPlaceholder, isBrandPlaceholder } from '../CategoryPlaceholder';
 
 interface WikiInfoboxCompactProps {
   frontmatter: WikiFrontmatter;
@@ -36,11 +37,13 @@ export function WikiInfoboxCompact({ frontmatter, children }: WikiInfoboxCompact
   return (
     <section aria-label={`Ficha de ${title}`} className="mb-8 overflow-hidden rounded-2xl border border-white/10 bg-[#061a2e] shadow-2xl">
       <div className="flex items-center gap-4 p-4">
-        {image ? (
-          <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-white/10">
-            <Image src={image} alt="" fill sizes="96px" className="object-cover" />
-          </div>
-        ) : null}
+        <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-white/10">
+          {image && !isBrandPlaceholder(image) ? (
+            <Image src={image} alt="" fill sizes="96px" className="object-cover" style={{ objectPosition: frontmatter.imagePosition ?? '50% 50%' }} />
+          ) : (
+            <CategoryPlaceholder category={category} className="gap-1 [&_span]:hidden [&_svg]:h-7 [&_svg]:w-7" />
+          )}
+        </div>
         <div className="min-w-0">
           <p className="eyebrow text-primary">{universe}{category ? ` · ${category}` : ''}</p>
           <p className="mt-1 line-clamp-2 break-words pr-1 font-display text-xl font-black uppercase italic tracking-tight text-white">{title}</p>

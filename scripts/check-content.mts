@@ -7,6 +7,8 @@
  *  2. Algún `url: "/wiki/<slug>"` de wiki-navigation.ts no tiene su .mdx ni ruta estática.
  *  3. Algún `universeKey` de universes.ts no tiene al menos un artículo.
  *  4. Alguna ruta /assets/... referenciada en MDX o universes.ts no existe en public/.
+ *  5. Algún MDX usa el logo (Branding/) o el esquema del sitio (Esquemas/) como imagen:
+ *     no representan lore; sin arte concreto se omite la portada (placeholder por categoría).
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
@@ -25,7 +27,10 @@ const problems: Record<string, string[]> = {
   'Navegación sin artículo': [],
   'Universo sin artículos': [],
   'Assets inexistentes': [],
+  'Imagen que no es lore': [],
 };
+
+const NON_LORE_ASSETS = ['/assets/Branding/', '/assets/Universo_Colosos/Esquemas/'];
 
 const mdxFiles = readdirSync(CONTENT_DIR).filter((f) => f.endsWith('.mdx')).sort();
 const slugs = new Set(mdxFiles.map((f) => f.replace(/\.mdx$/, '')));
@@ -67,6 +72,7 @@ for (const file of mdxFiles) {
   }
   for (const asset of extractAssets(raw)) {
     if (!assetExists(asset)) problems['Assets inexistentes'].push(`${file}: ${asset}`);
+    if (NON_LORE_ASSETS.some((prefix) => asset.startsWith(prefix))) problems['Imagen que no es lore'].push(`${file}: ${asset}`);
   }
 }
 

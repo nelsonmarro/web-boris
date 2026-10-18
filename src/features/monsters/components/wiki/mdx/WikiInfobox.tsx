@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Image from 'next/image';
 import { cn } from '@/utils/cn';
+import { CategoryPlaceholder, isBrandPlaceholder } from '../CategoryPlaceholder';
 
 interface InfoFieldProps {
   label: string;
@@ -48,11 +49,12 @@ interface WikiInfoboxProps {
   title: string;
   image?: string;
   imageCaption?: string;
+  category?: string;
   children: React.ReactNode;
   className?: string;
 }
 
-export function WikiInfobox({ title, image, imageCaption, children, className }: WikiInfoboxProps) {
+export function WikiInfobox({ title, image, imageCaption, category, children, className }: WikiInfoboxProps) {
   return (
     <aside className={cn(
       "w-full mb-8 bg-[#061a2e] rounded-2xl border border-white/10 shadow-2xl overflow-hidden z-20",
@@ -66,7 +68,11 @@ export function WikiInfobox({ title, image, imageCaption, children, className }:
       </div>
 
       {/* Image - Filling the rectangle edge-to-edge */}
-      {image && (
+      {(!image || isBrandPlaceholder(image)) ? (
+        <div className="relative aspect-video w-full border-b border-white/10 bg-black/40">
+          <CategoryPlaceholder category={category} />
+        </div>
+      ) : (
         <div className="relative border-b border-white/10 bg-black/40 group/img">
           <a 
             href={image} 

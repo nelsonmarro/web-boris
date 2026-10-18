@@ -9,6 +9,8 @@ export const WikiFrontmatterSchema = z.object({
   /** Valor CSS de `object-position` para el recorte de portada (p. ej. "50% 20%"). */
   imagePosition: z.string().optional(),
   category: z.string().optional(),
+  /** `proximamente`: artículo sin lore canónico aún (chip + bloque en la ficha). */
+  status: z.enum(['proximamente']).optional(),
   description: z.string().optional(),
   infobox: z.record(z.string(), z.record(z.string(), z.string())).optional(), // E.g. { "Información Biológica": { "Especie": "Labodotype macrostoma" } }
   stats: z.object({

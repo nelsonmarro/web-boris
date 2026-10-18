@@ -7,6 +7,7 @@ import { ChevronRight, Ruler } from 'lucide-react';
 import { WikiFrontmatter } from '@/core/types/wiki';
 import { cn } from '@/utils/cn';
 import { getThreatLevel, THREAT_TONE_CLASSES } from '@/features/monsters/lib/stats';
+import { ProximamenteChip } from './mdx/Proximamente';
 import { CategoryPlaceholder, isBrandPlaceholder } from './CategoryPlaceholder';
 
 interface ArticleCardProps {
@@ -49,7 +50,11 @@ export function WikiArticleCard({ slug, frontmatter, compact = false }: ArticleC
         <div className="absolute inset-0 bg-gradient-to-t from-[#061a2e] via-transparent to-transparent" />
 
         {/* Threat / size signals (only when stats exist) */}
-        {(threat || length !== undefined) && (
+        {frontmatter.status === 'proximamente' ? (
+          <div className="absolute left-3 top-3">
+            <ProximamenteChip className="backdrop-blur-md" />
+          </div>
+        ) : (threat || length !== undefined) && (
           <div className="absolute left-3 top-3 flex flex-wrap items-center gap-1.5">
             {threat && (
               <span
