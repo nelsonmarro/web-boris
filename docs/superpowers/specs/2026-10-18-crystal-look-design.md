@@ -40,7 +40,7 @@ Props: `eyebrow`, `title`, `icon?` (LucideIcon), `variant?: 'default' | 'media' 
 
 - **Base (todas):** `rounded-3xl`, `border-white/10`, sombra profunda, **hilo de brillo superior** (1 px, gradiente blanco/30 → transparente). Sin `backdrop-filter`.
 - **`default`:** superficie sólida `#061a2e`.
-- **`media`:** la imagen (`next/image`, `fill`, `object-cover`, `objectPosition`) llena la tile de borde a borde; un degradado inferior hacia `#061a2e` (≥ 55 % opaco donde está el texto) garantiza contraste; sin imagen o con imagen de marca → `CategoryPlaceholder`.
+- **`media`:** la imagen (`next/image`, `fill`, `object-cover`, `objectPosition`) llena la tile de borde a borde; el bloque de texto lleva su propio fondo `#061a2e` (≥ 92 % opaco bajo cada letra, para que el naranja del eyebrow supere 4,5:1 incluso sobre portadas claras) que se desvanece solo por encima del texto; sin imagen o con imagen de marca → `CategoryPlaceholder`.
 - **`hero`:** `default` + resplandor radial tenue (cian arriba a la derecha, naranja abajo a la izquierda).
 - **Estado de selección "consola"** (solo si `href`): hover y `focus-visible` → borde `primary/50`, `-translate-y-0.5`, el hilo superior pasa a tono naranja claro; foco con `ring-2 ring-primary`. `motion-reduce:` sin traslación ni transiciones.
 - **Semántica:** con `href` el contenedor es un `<Link>` (sin enlaces anidados dentro); sin `href`, un `<section>`. El título usa `h2`/`h3` según `headingLevel`.
