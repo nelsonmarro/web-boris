@@ -24,7 +24,7 @@ export function ArenaTile({ a, b, probA, className }: ArenaTileProps) {
       icon={Swords}
       className={className}
     >
-      <p className="flex flex-wrap items-baseline justify-between gap-2 font-display text-base font-black uppercase italic leading-tight text-white">
+      <p className="flex flex-wrap items-baseline gap-x-2 font-display text-base font-black uppercase italic leading-tight text-white">
         <span>{a.frontmatter.title}</span>
         <span className="text-primary">vs</span>
         <span>{b.frontmatter.title}</span>

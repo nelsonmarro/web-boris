@@ -31,7 +31,7 @@ export function CreatureOfWeekTile({
         imagePosition={imagePosition}
         category={category}
         priority
-        sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+        sizes="(min-width: 1024px) 25vw, 100vw"
         eyebrow="Criatura de la semana"
         title={title}
         icon={Sparkles}
