@@ -102,6 +102,10 @@
   --input: oklch(0.35 0.15 250);
   --ring: oklch(0.55 0.22 250);
   --radius: 1rem;
+  /* Menú lateral de la wiki: superficie sólida (el panel móvil era transparente). */
+  --sidebar: #061a2e;
+  --sidebar-foreground: oklch(0.98 0.01 240);
+  --sidebar-border: rgb(255 255 255 / 0.08);
 }
 
 @layer base {
