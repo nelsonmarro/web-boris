@@ -165,7 +165,7 @@ type PollState =
 1. Zod: `pollId` y `option` strings acotados.
 2. Recalcula la encuesta vigente; si `pollId` no coincide → `{ error: 'cerrada' }`; si `option ∉ {a, b}` → `{ error: 'opcion' }`.
 3. Cookie `wb_voter`: si no existe se crea un id aleatorio (`crypto.randomUUID()`), httpOnly, `SameSite=Lax`, `Secure` en producción, `Max-Age` 1 año, `Path=/`.
-4. IP: primer valor de `x-forwarded-for`, si no `x-real-ip`, si no `"desconocida"`. Nunca se guarda en claro.
+4. IP: `x-real-ip` (lo fija el proxy inverso con la IP real, pisando lo que mande el cliente); si no, el **último** valor de `x-forwarded-for` (el que añadió el proxy más cercano; los anteriores los controla el cliente); si no, `"desconocida"`. Nunca se guarda en claro.
 5. Límite: si ya hay ≥ 5 votos con ese `ipHash` en ese `pollId` → `{ error: 'limite' }` (devuelve también el estado).
 6. Inserta. Si choca con `@@unique([pollId, voterKey])` (P2002) → no es error: devuelve el estado con `myOption`.
 7. Devuelve el `PollState` actualizado.
@@ -217,7 +217,7 @@ Props: `eyebrow`, `title`, `icon?`, `className?`, `children` (sin `href`: ningun
 - Nueva variable `VOTE_SECRET` (≥ 32 caracteres aleatorios) en `.env.example` y en el CI con valor ficticio.
 - Opcional `YOUTUBE_FEED_URL` (solo QA): otra URL de feed; una inválida fuerza el vídeo de respaldo.
 - `docker-compose.yml`: puerto publicado configurable con `DB_PORT` (por defecto 5432).
-- Producción (VPS): `DATABASE_URL` hacia Postgres del VPS y `VOTE_SECRET`; el proxy inverso debe pasar `X-Forwarded-For`. Se concreta en el plan de despliegue en Hostinger.
+- Producción (VPS): `DATABASE_URL` hacia Postgres del VPS y `VOTE_SECRET`. **Supuesto de confianza:** el proxy inverso debe fijar `X-Real-IP` a la IP del cliente (nginx: `proxy_set_header X-Real-IP $remote_addr;`; detrás de Cloudflare, `real_ip_header CF-Connecting-IP` con los rangos de Cloudflare como `set_real_ip_from`). Sin eso, el límite por red se puede esquivar falsificando cabeceras. Se concreta en el plan de despliegue en Hostinger.
 
 ## 10. Privacidad y seguridad
 
