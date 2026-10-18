@@ -45,7 +45,7 @@ const TITLE_SIZE = {
 
 /** Estado de selección "consola" para tiles enlazables. */
 const INTERACTIVE =
-  'motion-reduce:transition-none transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-[0_24px_60px_rgba(0,0,0,0.55)] hover:[--crystal-line:rgba(255,180,120,0.85)] focus-visible:-translate-y-0.5 focus-visible:border-primary/50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:[--crystal-line:rgba(255,180,120,0.85)] motion-reduce:hover:translate-y-0 motion-reduce:focus-visible:translate-y-0';
+  'motion-reduce:transition-none transition-[translate,border-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-[0_24px_60px_rgba(0,0,0,0.55)] hover:[--crystal-line:rgba(255,180,120,0.85)] focus-visible:-translate-y-0.5 focus-visible:border-primary/50 focus-visible:shadow-[0_24px_60px_rgba(0,0,0,0.55)] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:[--crystal-line:rgba(255,180,120,0.85)] motion-reduce:hover:translate-y-0 motion-reduce:focus-visible:translate-y-0';
 
 /**
  * Tile del material "cristal sutil" (#11): superficie sólida, hilo de brillo superior y sombra profunda.

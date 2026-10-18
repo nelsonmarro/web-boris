@@ -39,7 +39,7 @@ export async function HomeMosaic() {
   const hasPoll = weekly.poll !== null;
 
   return (
-    <section className="container mx-auto px-6 pb-12 pt-28 md:pt-32 short-screen:pt-24">
+    <section className="container mx-auto px-6 pb-12 pt-28 md:pt-32 short-screen:pt-28">
       <Mosaic fitViewport className="md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr] lg:grid-rows-[1fr_1fr_auto]">
         <CrystalTile
           variant="hero"
@@ -54,7 +54,7 @@ export async function HomeMosaic() {
           }
           className="md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-2 lg:row-start-1 short-screen:p-5"
         >
-          <p className="max-w-lg text-base short-screen:hidden leading-relaxed text-white/70">
+          <p className="max-w-lg text-base leading-relaxed text-white/70">
             Y sus historias: colosos abisales, capitanes del siglo XVIII y una Segunda Guerra Mundial interrumpida
             por un enemigo salido de la nada. Todo el lore oficial de BorisaoBlois en un solo archivo.
           </p>

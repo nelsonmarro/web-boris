@@ -73,7 +73,7 @@ export async function WikiHomeMosaic() {
         }
         className="md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-2 lg:row-start-1 short-screen:p-5"
       >
-        <p className="max-w-xl text-base short-screen:hidden leading-relaxed text-white/75">
+        <p className="max-w-xl text-base leading-relaxed text-white/75">
           El repositorio oficial de lore: criaturas, organizaciones, vehículos e historia de los universos de BorisaoBlois.
         </p>
         <div className="mt-6">
