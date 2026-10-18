@@ -26,20 +26,20 @@ export function CategoryTile({ tile, className, compact }: { tile: CategoryTileD
       image={tile.image}
       imagePosition={tile.imagePosition}
       category={tile.category}
-      sizes="(min-width: 1024px) 25vw, 50vw"
+      sizes="(min-width: 1280px) 12vw, (min-width: 1024px) 22vw, 50vw"
       eyebrow={tile.count > 0 ? `${tile.count} registro${tile.count === 1 ? '' : 's'}` : 'Sin registros'}
       title={tile.title}
       titleSize="compact"
       titleClassName="break-words hyphens-auto"
-      className={cn('min-h-[160px] sm:min-h-[200px]', compact && 'xl:min-h-[150px] xl:p-5', className)}
+      className={cn('min-h-[160px] sm:min-h-[200px]', compact && '@4xl:min-h-[150px] @4xl:[--tile-p:0.75rem] @4xl:short-screen:[--tile-p:0.75rem]', className)}
     >
       {tile.comingSoon ? (
-        <ProximamenteChip className="self-start" />
+        <ProximamenteChip size="compact" className="self-start" />
       ) : tile.description ? (
         <p
           className={cn(
-            'line-clamp-2 text-[13px] leading-snug text-white/70 sm:text-sm',
-            compact && 'xl:line-clamp-3 xl:text-[12px]',
+            'text-[13px] leading-snug text-white/70 sm:text-sm',
+            compact && '@4xl:text-[12px]',
           )}
         >{tile.description}</p>
       ) : null}

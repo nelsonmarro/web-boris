@@ -39,7 +39,7 @@ export async function HomeMosaic() {
   const hasPoll = weekly.poll !== null;
 
   return (
-    <section className="container mx-auto px-6 pb-12 pt-28 md:pt-32">
+    <section className="container mx-auto px-6 pb-12 pt-28 md:pt-32 short-screen:pt-24">
       <Mosaic fitViewport className="md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr] lg:grid-rows-[1fr_1fr_auto]">
         <CrystalTile
           variant="hero"
@@ -52,19 +52,19 @@ export async function HomeMosaic() {
               Explora la inmensidad <span className="block italic text-primary">de mis universos</span>
             </>
           }
-          className="md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-2 lg:row-start-1"
+          className="md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-2 lg:row-start-1 short-screen:p-5"
         >
-          <p className="max-w-lg text-base leading-relaxed text-white/70">
+          <p className="max-w-lg text-base short-screen:hidden leading-relaxed text-white/70">
             Y sus historias: colosos abisales, capitanes del siglo XVIII y una Segunda Guerra Mundial interrumpida
             por un enemigo salido de la nada. Todo el lore oficial de BorisaoBlois en un solo archivo.
           </p>
-          <div className="mt-6">
+          <div className="mt-6 short-screen:mt-4">
             <SearchBar />
           </div>
           <div className="mt-auto flex flex-wrap items-center gap-x-6 gap-y-3 pt-6">
             <Link
               href="/wiki"
-              className="inline-flex h-12 items-center rounded-xl bg-primary px-6 text-[11px] font-bold uppercase tracking-wider text-[#00122E] transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white motion-reduce:hover:scale-100"
+              className="inline-flex h-12 items-center rounded-xl bg-primary px-6 text-[11px] font-bold uppercase tracking-wider text-[#00122E] transition-transform hover:scale-[1.03] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-white motion-reduce:hover:scale-100"
             >
               Acceder a la wiki
             </Link>
@@ -94,13 +94,12 @@ export async function HomeMosaic() {
         <LatestVideoTeaserTile video={video} className="min-h-[220px] lg:col-start-2 lg:row-start-2 lg:min-h-0" />
 
         <div className="grid grid-cols-2 gap-4 md:col-span-2 lg:col-span-3 lg:row-start-3 lg:grid-cols-4 lg:gap-5">
-          {UNIVERSES.map((universe, i) => (
+          {UNIVERSES.map((universe) => (
             <UniverseTile
               key={universe.id}
               universe={universe}
               count={universe.universeKey ? (countByUniverse.get(universe.universeKey) ?? 0) : 0}
-              priority={i === 0}
-              className="min-h-[150px]"
+              className="min-h-[150px] short-screen:min-h-[120px]"
             />
           ))}
         </div>

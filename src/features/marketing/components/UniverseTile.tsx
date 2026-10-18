@@ -31,7 +31,7 @@ export function UniverseTile({ universe, count, priority = false, className }: U
       className={className}
     >
       {universe.comingSoon ? (
-        <ProximamenteChip className="self-start" />
+        <ProximamenteChip size="compact" className="self-start" />
       ) : (
         <span className="text-[11px] font-bold uppercase tracking-wider text-white/70">
           {count} {count === 1 ? 'artículo' : 'artículos'}

@@ -23,10 +23,16 @@ const CATEGORY_DEFS: Array<Omit<CategoryTileData, 'count' | 'image' | 'imagePosi
   { title: 'Organi\u00ADzaciones', slug: 'organizaciones', category: 'Organización', description: 'DELIRIUM, IPCARO y las Naciones Rebeldes.' },
 ];
 
-function coverFor(articles: WikiArticle[], category: string): Pick<CategoryTileData, 'image' | 'imagePosition'> {
-  const withImage = articles.find(
+/** Portada de la categoría; evita la criatura de la semana (ya tiene su tile) salvo que sea la única con portada. */
+function coverFor(
+  articles: WikiArticle[],
+  category: string,
+  featuredSlug?: string,
+): Pick<CategoryTileData, 'image' | 'imagePosition'> {
+  const covered = articles.filter(
     (a) => a.frontmatter.category === category && a.frontmatter.image && !isBrandPlaceholder(a.frontmatter.image),
   );
+  const withImage = covered.find((a) => a.slug !== featuredSlug) ?? covered[0];
   return withImage ? { image: withImage.frontmatter.image, imagePosition: withImage.frontmatter.imagePosition } : {};
 }
 
@@ -43,10 +49,11 @@ export async function WikiHomeMosaic() {
     getFeaturedMatchup(),
   ]);
 
+  const featured = pickFeatured(articles);
   const tiles: CategoryTileData[] = CATEGORY_DEFS.map((def) => ({
     ...def,
     count: articles.filter((a) => a.frontmatter.category === def.category).length,
-    ...coverFor(articles, def.category),
+    ...coverFor(articles, def.category, featured?.slug),
   }));
   const names = Object.fromEntries(weekly.fighters.map((a) => [a.slug, a.frontmatter.title]));
   const hasPoll = weekly.poll !== null;
@@ -64,9 +71,9 @@ export async function WikiHomeMosaic() {
             Archivo Central <span className="block italic text-primary">de Universos</span>
           </>
         }
-        className="md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-2 lg:row-start-1"
+        className="md:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-span-2 lg:row-start-1 short-screen:p-5"
       >
-        <p className="max-w-xl text-base leading-relaxed text-white/75">
+        <p className="max-w-xl text-base short-screen:hidden leading-relaxed text-white/75">
           El repositorio oficial de lore: criaturas, organizaciones, vehículos e historia de los universos de BorisaoBlois.
         </p>
         <div className="mt-6">
@@ -76,14 +83,16 @@ export async function WikiHomeMosaic() {
 
       <CreatureOfWeekTile
         variant="media"
-        creature={pickFeatured(articles)}
+        creature={featured}
         className="min-h-[260px] md:col-span-2 lg:col-span-1 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:min-h-0"
       />
 
-      <div className="grid grid-cols-2 gap-4 md:col-span-2 lg:col-span-3 lg:row-start-3 lg:grid-cols-3 lg:gap-5 xl:grid-cols-6">
-        {tiles.map((tile) => (
-          <CategoryTile key={tile.slug} tile={tile} compact />
-        ))}
+      <div className="@container md:col-span-2 lg:col-span-3 lg:row-start-3">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-5 @4xl:grid-cols-6">
+          {tiles.map((tile) => (
+            <CategoryTile key={tile.slug} tile={tile} compact />
+          ))}
+        </div>
       </div>
 
       {featuredMatchup && (
