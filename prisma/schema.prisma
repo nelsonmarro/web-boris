@@ -41,6 +41,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  pollVotes     PollVote[]
 }
 
 model VerificationToken {
@@ -49,4 +50,22 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+/// Voto anónimo de la encuesta semanal de /comunidad. La encuesta vive en el contenido (no en la base);
+/// `pollId` es "<semana ISO>-<a>-vs-<b>". `userId` queda vacío hasta que existan cuentas.
+model PollVote {
+  id        String   @id @default(cuid())
+  pollId    String
+  option    String
+  voterKey  String
+  ipHash    String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+
+  @@unique([pollId, voterKey])
+  @@unique([pollId, userId])
+  @@index([pollId, option])
+  @@index([pollId, ipHash])
 }
