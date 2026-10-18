@@ -1,6 +1,6 @@
 # Rediseño "crystal look" — diseño
 
-**Issue:** #11 · **Fecha:** 2026-10-18 · **Estado:** aprobado en conversación (alcance, material, landing, wiki y enfoque elegidos con el companion visual); pendiente de revisión del documento.
+**Issue:** #11 · **Fecha:** 2026-10-18 · **Estado:** aprobado (conversación con el companion visual y documento). Plan: `docs/superpowers/plans/2026-10-18-crystal-look.md`.
 
 ## 1. Objetivo
 
@@ -55,7 +55,7 @@ Contenedor `<div>` de rejilla con `gap` uniforme (`gap-4 lg:gap-5`) y la opción
 
 ### Adopción del material
 
-Pasan a renderizar su contenedor con `CrystalTile` (o, si son tarjetas compuestas, adoptan sus mismas clases a través de una utilidad compartida `crystal-surface` definida en `globals.css` con `@utility`):
+Pasan a renderizar su contenedor con `CrystalTile` (o, si son tarjetas compuestas, adoptan sus mismas clases a través de las clases compartidas `crystal-surface` / `crystal-glow`, definidas en `globals.css` dentro de `@layer components` para que cualquier utilidad —p. ej. los bordes de color de la Arena— las sobrescriba):
 `WikiArticleCard`, tarjetas de `FeaturedCharactersSection`, `FlipCard` (cara delantera y trasera), `AboutBorisSection`, `ContactSection` (panel del formulario), `FighterCard` de la Arena y las tiles de `/comunidad`.
 No cambian: navbar, footer, botones (`.glass-liquid` y primario plano se quedan), artículos.
 
@@ -85,12 +85,12 @@ Escritorio (`lg`, 3 columnas `2fr 1fr 1fr`):
 | Versus Arena | **`ArenaTile`** (nuevo): duelo canónico El Gran Majá vs The Bloop, barra de probabilidad y "Abrir la Arena →" (`href="/wiki/arena?a=el-gran-maja&b=the-bloop"`) | lógica actual de `ArenaTeaserSection` (`pickFighters`, `computeMatchup`) movida a `ArenaTile` |
 | Universos ×4 | **`UniverseTile`** (nuevo, `variant="media"`): era, título, portada; enlaza a `/wiki?universe=<key>#explorar`; los `comingSoon` sin portada muestran el chip Próximamente | `UNIVERSES` |
 
-Tablet (`md`, 2 columnas): hero a lo ancho; criatura | encuesta; vídeo | Arena; universos 2 × 2.
+Tablet (`md`, 2 columnas): hero a lo ancho; criatura | encuesta; Arena | vídeo; universos 2 × 2.
 Móvil (1 columna): hero, criatura, encuesta, Arena, vídeo, universos 2 × 2. Sin `fitViewport`.
 
 ### Debajo del mosaico (mismo orden y contenido, nuevo material)
 
-`FeaturedVideosSection` (los 3 vídeos del PDF), `UniversePreviewSection` (sinopsis en tarjetas que giran, `id="universos"`), `FeaturedCharactersSection`, `AboutBorisSection`, `ContactSection`.
+`UniversePreviewSection` (sinopsis en tarjetas que giran, `id="universos"`), `FeaturedCharactersSection`, `FeaturedVideosSection` (los 3 vídeos del PDF), `AboutBorisSection`, `ContactSection`.
 
 ### Retirado
 
@@ -113,7 +113,7 @@ El menú lateral no cambia. En el área de contenido:
         ↓ WikiExplorerSection (sin cambios, id="explorar")
 ```
 
-- **Tile del archivo** (`variant="hero"`): eyebrow "Base de datos DELIRIUM", h1 "Archivo Central · Universos", la descripción actual, `SearchBar` (lleva a `/wiki?search=…#explorar`).
+- **Tile del archivo** (`variant="hero"`): eyebrow "Base de datos DELIRIUM", h1 "Archivo Central de Universos", la descripción actual, `SearchBar` (lleva a `/wiki?search=…#explorar`).
 - **Criatura, Arena, ¿Quién gana?:** las mismas tiles de la landing.
 - **`CategoryTile` ×6** (`variant="media"`, `headingLevel={2}`): portada real de la categoría, número de artículos y descripción **solo canon o factual**:
 
@@ -142,6 +142,8 @@ src/features/monsters/components/arena/ArenaTile.tsx
 src/features/monsters/components/wiki/CategoryTile.tsx
 src/features/marketing/components/UniverseTile.tsx
 src/features/marketing/sections/HomeMosaic.tsx     (compone la primera pantalla de la landing)
+src/features/community/data/weekly-poll.ts         (encuesta de la semana + luchadores, sin base de datos)
+src/features/monsters/data/featured-matchup.ts     (duelo canónico de la Arena, sale de ArenaTeaserSection)
 src/features/monsters/components/wiki/WikiHomeMosaic.tsx
 ```
 
