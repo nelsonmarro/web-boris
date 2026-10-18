@@ -33,12 +33,12 @@ export type CuratedPoll = z.infer<typeof CuratedPollSchema>;
 /** gray-matter convierte `fecha: 2026-10-18` en Date: se normaliza a `YYYY-MM-DD`. */
 const IsoDate = z.preprocess(
   (v) => (v instanceof Date ? v.toISOString().slice(0, 10) : v),
-  z.string().date(),
+  z.iso.date(),
 );
 
 const NewsLink = z
   .string()
-  .refine((v) => v.startsWith('/') || v.startsWith('https://'), {
+  .refine((v) => v.startsWith('https://') || (v.startsWith('/') && !v.startsWith('//')), {
     message: 'el enlace debe ser interno (/…) o https://',
   });
 
