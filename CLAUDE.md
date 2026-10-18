@@ -41,11 +41,13 @@ El contenido NO está en la base de datos: son archivos MDX planos.
 1. `src/content/*.mdx` — un archivo por artículo; el nombre del archivo es el slug de la URL (`/wiki/<slug>`).
 2. `src/utils/mdx.ts` — `getArticleBySlug` / `getAllArticles` leen el archivo, parsean frontmatter con `gray-matter` y lo validan con `WikiFrontmatterSchema` (Zod) de `src/core/types/wiki.ts`. Si el frontmatter no pasa el schema, el artículo devuelve `null` (404 silencioso) — revisar la consola del server.
 3. `src/app/(wiki)/wiki/[slug]/page.tsx` — renderiza vía `WikiArticleHeader` / `WikiArticleContent` / `WikiArticleFooter` (en `src/features/monsters/components/wiki/article/`).
-4. `MdxRenderer.tsx` (`src/features/monsters/components/wiki/mdx/`) — registro de componentes disponibles dentro de los MDX: `WikiImage`, `WikiGallery`, `WikiQuote`, `WikiInfobox`, `InfoField`, `WikiTOC`, `AbyssalAlert`, `AbyssalTable`. Un componente usado en un MDX pero no registrado ahí rompe el render.
+4. `MdxRenderer.tsx` (`src/features/monsters/components/wiki/mdx/`) — registro de componentes disponibles dentro de los MDX: `WikiImage`, `WikiGallery`, `WikiQuote`, `WikiInfobox`, `InfoField`, `WikiTOC`, `AbyssalAlert`, `AbyssalTable`, `RegistroDelirium`, `Proximamente`. Un componente usado en un MDX pero no registrado ahí (y en `src/mdx-components.tsx`) rompe el render.
 
 **La navegación del sidebar es manual**: `src/features/monsters/config/wiki-navigation.ts`. Al crear un artículo nuevo hay que añadir su entrada ahí; al añadir una entrada, debe existir el `.mdx` correspondiente o el link da 404.
 
-**Artículo de referencia**: `src/content/the-bloop.mdx` es el estándar de oro — frontmatter completo (infobox con secciones, description, imageCaption), secciones `##` (Características / Alimentación / Personalidad / Referencias), `WikiImage` con `align` alternado, `WikiQuote` con autor y fuente. Los artículos nuevos deben seguir ese formato.
+**Artículo de referencia**: `src/content/the-bloop.mdx` es el estándar de oro — frontmatter completo (infobox con secciones, description, imageCaption), secciones `##` (Características / Alimentación / Personalidad / Referencias), `WikiImage` con `align` alternado. Los artículos nuevos deben seguir ese formato.
+
+**Solo canon, nada inventado**: el texto, los pies de foto y las citas (`WikiQuote`) deben salir de `docs/Frases y descripciones.docx` o `docs/Requerimientos Pagina.pdf`. Si un apartado no tiene información, va `<Proximamente />`; si el artículo entero no la tiene, `status: proximamente` en el frontmatter (chip + bloque automáticos). Una imagen solo se usa si muestra lo que dice el apartado; si no hay imagen concreta, `<WikiImage alt="…" caption="…" />` sin `src` (marcador "Imagen pendiente") o portada omitida (placeholder por categoría). Nunca el logo ni el esquema del sitio como portada.
 
 Frontmatter (ver `WikiFrontmatterSchema`): `title` y `universe` obligatorios; opcionales `image`, `imageCaption`, `category`, `description`, `infobox` (récord de secciones → pares clave/valor) y `stats` (length, weight, intelligence 1-10, hostility 1-10, power/defense 0-100, biteType, specialAbilities).
 
