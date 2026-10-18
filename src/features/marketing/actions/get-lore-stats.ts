@@ -26,7 +26,10 @@ async function countImages(dir: string): Promise<number> {
 export async function getLoreStats(): Promise<LoreStats> {
   const [articles, visualFiles] = await Promise.all([
     getAllArticles(),
-    countImages(path.join(process.cwd(), 'public', 'assets')).catch(() => 0),
+    countImages(path.join(process.cwd(), 'public', 'assets')).catch((e) => {
+      console.warn('[getLoreStats] no se pudieron contar imágenes:', e);
+      return 0;
+    }),
   ]);
 
   return {

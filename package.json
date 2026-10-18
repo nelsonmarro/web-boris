@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:content": "node --experimental-strip-types --no-warnings scripts/check-content.mts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
