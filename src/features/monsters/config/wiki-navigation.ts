@@ -152,4 +152,14 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
       },
     ],
   },
+  {
+    title: "LA HECATOMBE DEL LAPEÓN",
+    items: [
+      {
+        title: "Historia",
+        url: "/wiki/la-hecatombe-del-lapeon",
+        icon: Book,
+      },
+    ],
+  },
 ];
