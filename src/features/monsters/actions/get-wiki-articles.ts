@@ -1,6 +1,7 @@
 'use server';
 
 import { getAllArticles } from '@/utils/mdx';
+import { compareDiscovery } from '@/features/monsters/lib/discovery-order';
 import { toSummary, type WikiArticleSummary } from '@/core/types/wiki';
 
 export interface GetWikiArticlesParams {
@@ -29,6 +30,9 @@ export interface WikiIndexEntry {
   category?: string;
   description?: string;
   image?: string;
+  status?: string;
+  stats?: unknown;
+  infobox?: Record<string, unknown>;
 }
 
 const normalize = (value: string) =>
@@ -64,6 +68,8 @@ export async function getWikiArticles({
     articles = articles.filter((a) => a.frontmatter.category === category);
   }
 
+  articles = [...articles].sort((a, b) => compareDiscovery(a.frontmatter, b.frontmatter));
+
   const total = articles.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const skip = (page - 1) * pageSize;
@@ -98,5 +104,8 @@ export async function getWikiIndex(): Promise<WikiIndexEntry[]> {
     category: frontmatter.category,
     description: frontmatter.description,
     image: frontmatter.image,
+    status: frontmatter.status,
+    stats: frontmatter.stats,
+    infobox: frontmatter.infobox,
   }));
 }
