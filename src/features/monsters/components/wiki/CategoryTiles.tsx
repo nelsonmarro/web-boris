@@ -34,7 +34,7 @@ function TileCard({ tile }: { tile: CategoryTile }) {
       </div>
 
       <div className="relative z-10 space-y-1">
-        <h3 className="break-words hyphens-auto text-base font-black uppercase italic leading-none text-white transition-colors group-hover:text-primary sm:text-xl md:text-2xl">
+        <h3 className="break-words hyphens-auto text-lg font-black uppercase italic leading-none text-white transition-colors group-hover:text-primary sm:text-2xl md:text-3xl">
           {tile.title}
         </h3>
         <p className="hidden text-sm leading-snug text-white/60 sm:block">{tile.description}</p>

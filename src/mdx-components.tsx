@@ -32,7 +32,7 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
     
     // Standard HTML overrides
     h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
-      <h1 className="text-4xl md:text-5xl font-bold text-white italic tracking-tight uppercase mt-12 mb-6" {...props} />
+      <h1 className="text-3xl md:text-4xl break-words font-bold text-white italic tracking-tight uppercase mt-12 mb-6" {...props} />
     ),
     h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
       <h2 className="text-2xl md:text-3xl font-bold text-white italic tracking-tight uppercase mt-10 mb-4 border-l-4 border-primary pl-4" {...props} />

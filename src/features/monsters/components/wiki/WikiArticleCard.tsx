@@ -80,7 +80,7 @@ export function WikiArticleCard({ slug, frontmatter, compact = false }: ArticleC
           <h3
             className={cn(
               'font-bold text-white italic uppercase tracking-tight group-hover:text-primary transition-colors',
-              compact ? 'text-lg leading-tight' : 'text-xl md:text-2xl',
+              compact ? 'text-xl leading-tight' : 'text-2xl md:text-3xl',
             )}
           >
             {frontmatter.title}

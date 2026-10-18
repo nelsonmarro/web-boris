@@ -58,7 +58,7 @@ export function FeaturedCreature({ article }: { article: WikiArticleSummary }) {
                 </span>
               )}
             </div>
-            <h3 className="text-3xl font-black uppercase italic leading-none tracking-tight text-white md:text-4xl lg:text-5xl">
+            <h3 className="text-4xl font-black uppercase italic leading-none tracking-tight text-white md:text-5xl lg:text-6xl">
               {fm.title}
             </h3>
             {fm.description && (

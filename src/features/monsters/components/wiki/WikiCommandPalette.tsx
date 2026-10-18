@@ -157,7 +157,7 @@ export function WikiCommandPalette() {
                     )}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className={cn('block truncate text-sm font-bold uppercase italic', i === cursor ? 'text-primary' : 'text-white')}>
+                    <span className={cn('block truncate font-display text-base font-bold uppercase italic', i === cursor ? 'text-primary' : 'text-white')}>
                       {entry.title}
                     </span>
                     <span className="block truncate text-[11px] font-bold uppercase tracking-wider text-white/40">

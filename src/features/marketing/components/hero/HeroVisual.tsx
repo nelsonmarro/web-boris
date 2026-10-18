@@ -45,7 +45,7 @@ export function HeroVisual({ imageSrc, alt, badge }: HeroVisualProps) {
             <span className="block text-[11px] font-bold uppercase tracking-wider text-primary">
               {badge.label}
             </span>
-            <span className="block text-lg font-bold uppercase italic leading-none tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] md:text-2xl">
+            <span className="block font-display text-xl font-bold uppercase italic leading-none tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] md:text-3xl">
               {badge.title}
             </span>
           </span>

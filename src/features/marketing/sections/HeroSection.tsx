@@ -18,7 +18,7 @@ export function HeroSection({ featured }: { featured: WikiArticleSummary | null 
         <div className="space-y-8 text-left">
           <BrandCapsule>Universos de BorisaoBlois</BrandCapsule>
 
-          <h1 className="text-4xl font-bold leading-[1.02] tracking-tight text-white drop-shadow-[0_8px_30px_rgba(0,0,0,0.5)] sm:text-5xl md:text-7xl">
+          <h1 className="text-[1.75rem] font-bold leading-[1.1] tracking-tight text-white drop-shadow-[0_8px_30px_rgba(0,0,0,0.5)] min-[400px]:text-3xl sm:text-4xl md:text-5xl xl:text-6xl">
             EXPLORA LA INMENSIDAD{' '}
             <span className="block bg-gradient-to-r from-primary to-orange-400 bg-clip-text italic text-transparent drop-shadow-[0_8px_20px_rgba(255,115,0,0.4)]">
               DE MIS UNIVERSOS

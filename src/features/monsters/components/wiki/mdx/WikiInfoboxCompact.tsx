@@ -43,7 +43,7 @@ export function WikiInfoboxCompact({ frontmatter, children }: WikiInfoboxCompact
         ) : null}
         <div className="min-w-0">
           <p className="eyebrow text-primary">{universe}{category ? ` · ${category}` : ''}</p>
-          <p className="mt-1 truncate pr-1 text-lg font-black uppercase italic tracking-tight text-white">{title}</p>
+          <p className="mt-1 line-clamp-2 break-words pr-1 font-display text-xl font-black uppercase italic tracking-tight text-white">{title}</p>
         </div>
       </div>
 
