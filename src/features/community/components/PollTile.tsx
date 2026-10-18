@@ -101,6 +101,7 @@ export function PollTile({
         <Portrait fighter={sides[1]} />
       </div>
 
+      <div aria-live="polite">
       {showResults && open ? (
         <div className="mt-5">
           <ul className="space-y-3" aria-label="Resultados de la encuesta">
@@ -147,9 +148,8 @@ export function PollTile({
         </div>
       )}
 
-      <p aria-live="polite" className="mt-3 min-h-5 text-sm text-white/70">
-        {status}
-      </p>
+      <p className="mt-3 min-h-5 text-sm text-white/70">{status}</p>
+      </div>
 
       <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-3">
         <Link
