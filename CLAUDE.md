@@ -49,6 +49,8 @@ El contenido NO está en la base de datos: son archivos MDX planos.
 
 **Solo canon, nada inventado**: el texto, los pies de foto y las citas (`WikiQuote`) deben salir de `docs/Frases y descripciones.docx` o `docs/Requerimientos Pagina.pdf`. Si un apartado no tiene información, va `<Proximamente />`; si el artículo entero no la tiene, `status: proximamente` en el frontmatter (chip + bloque automáticos). Una imagen solo se usa si muestra lo que dice el apartado; si no hay imagen concreta, `<WikiImage alt="…" caption="…" />` sin `src` (marcador "Imagen pendiente") o portada omitida (placeholder por categoría). Nunca el logo ni el esquema del sitio como portada.
 
+**Contenido del hub `/comunidad`**: `src/content/novedades/<fecha>-<slug>.md` (frontmatter `fecha`, `titulo`, `resumen` ≤ 160, `enlace` interno o https; sin cuerpo) y `src/content/encuestas.json` (duelos curados `{ semana: "YYYY-Www", a, b, pregunta? }` entre criaturas con `stats`; las semanas sin duelo rotan solas). Se leen siempre vía `getContentRepository()` (`src/core/content/`), el punto de cambio para un futuro CMS. `check:content` valida ambos.
+
 Frontmatter (ver `WikiFrontmatterSchema`): `title` y `universe` obligatorios; opcionales `image`, `imageCaption`, `category`, `description`, `infobox` (récord de secciones → pares clave/valor) y `stats` (length, weight, intelligence 1-10, hostility 1-10, power/defense 0-100, biteType, specialAbilities).
 
 ### Otras piezas
