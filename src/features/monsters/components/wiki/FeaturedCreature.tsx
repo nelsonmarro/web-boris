@@ -29,6 +29,7 @@ export function FeaturedCreature({ article }: { article: WikiArticleSummary }) {
               fill
               sizes="(min-width: 1024px) 55vw, 100vw"
               className="object-cover"
+              style={{ objectPosition: fm.imagePosition ?? '50% 50%' }}
             />
           ) : (
             <div className="absolute inset-0 bg-[#00203F]" />
@@ -84,7 +85,7 @@ export function FeaturedCreature({ article }: { article: WikiArticleSummary }) {
 
           <Link
             href={`/wiki/${slug}`}
-            className="mt-auto inline-flex h-12 w-fit items-center gap-2 rounded-xl bg-primary px-6 text-xs font-black uppercase tracking-widest text-white shadow-[0_0_25px_rgba(255,115,0,0.4)] transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,115,0,0.6)]"
+            className="mt-auto inline-flex h-12 w-fit items-center gap-2 rounded-xl bg-primary px-6 text-xs font-black uppercase tracking-widest text-[#00122E] shadow-[0_0_25px_rgba(255,115,0,0.4)] transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,115,0,0.6)]"
           >
             Abrir expediente <ChevronRight className="h-4 w-4" />
           </Link>

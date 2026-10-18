@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Hourglass, RotateCcw } from 'lucide-react';
@@ -21,6 +21,24 @@ export function FlipCard({ universe, count }: FlipCardProps) {
   const frontButtonRef = useRef<HTMLButtonElement>(null);
   const titleId = useId();
   const openedBy = useRef<'hover' | 'toggle' | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const pointerInside = useRef(false);
+
+  // Escape cierra la tarjeta también cuando se abrió con hover (el foco no está dentro).
+  useEffect(() => {
+    if (!flipped) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      const root = rootRef.current;
+      const focusInside = !!root && root.contains(document.activeElement);
+      if (!pointerInside.current && !focusInside) return;
+      openedBy.current = null;
+      setFlipped(false);
+      if (focusInside) requestAnimationFrame(() => frontButtonRef.current?.focus());
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [flipped]);
 
   const label = universe.comingSoon
     ? 'Próximamente'
@@ -39,9 +57,11 @@ export function FlipCard({ universe, count }: FlipCardProps) {
 
   return (
     <div
+      ref={rootRef}
       className="group h-[600px] lg:h-[520px] w-full [perspective:2000px]"
       onPointerEnter={(e) => {
         if (e.pointerType !== 'mouse') return;
+        pointerInside.current = true;
         openedBy.current = openedBy.current ?? 'hover';
         setFlipped(true);
         if (document.activeElement === frontButtonRef.current) {
@@ -50,13 +70,11 @@ export function FlipCard({ universe, count }: FlipCardProps) {
       }}
       onPointerLeave={(e) => {
         if (e.pointerType !== 'mouse') return;
+        pointerInside.current = false;
         if (openedBy.current === 'hover' && !e.currentTarget.contains(document.activeElement)) {
           openedBy.current = null;
           setFlipped(false);
         }
-      }}
-      onKeyDown={(e) => {
-        if (e.key === 'Escape' && flipped) close();
       }}
     >
       <div
@@ -86,6 +104,7 @@ export function FlipCard({ universe, count }: FlipCardProps) {
               alt=""
               fill
               className="object-cover transition-transform duration-1000 group-hover:scale-110"
+              style={{ objectPosition: universe.imagePosition ?? '50% 50%' }}
               sizes="(max-width: 768px) 100vw, 50vw"
             />
           ) : (
