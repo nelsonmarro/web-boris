@@ -32,6 +32,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   Organización: 'Organizaciones',
   Vehículo: 'Vehículos',
   Libro: 'Libros',
+  Historia: 'Historias',
   Entidad: 'Entidades',
   Categoría: 'Categorías',
   Directorio: 'Directorios',

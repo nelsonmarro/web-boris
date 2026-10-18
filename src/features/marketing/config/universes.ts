@@ -8,7 +8,7 @@ export interface UniverseDef {
   id: string;
   /** Nombre visible. */
   title: string;
-  /** Valor EXACTO de `universe:` en el frontmatter; undefined si aún no hay artículos. */
+  /** Valor EXACTO de `universe:` en el frontmatter; undefined si aún no hay artículos. Habilita el enlace "Explorar lore" a la wiki, también en universos `comingSoon`. */
   universeKey?: string;
   /** Eyebrow corto con la época o el escenario. */
   era: string;
@@ -18,7 +18,7 @@ export interface UniverseDef {
   image?: string;
   /** `object-position` CSS de la portada (punto focal del recorte). */
   imagePosition?: string;
-  /** Universo anunciado sin arte ni artículos todavía. */
+  /** Universo anunciado sin arte todavía: la portada muestra "Próximamente" y fondo sin imagen. Si además tiene `universeKey` (artículo marcado `status: proximamente`), enlaza a la wiki; si no, la tarjeta no enlaza a nada. */
   comingSoon?: boolean;
 }
 
@@ -56,6 +56,7 @@ export const UNIVERSES: readonly UniverseDef[] = [
   {
     id: 'hecatombe-del-lapeon',
     title: 'La Hecatombe del Lapeón',
+    universeKey: 'La Hecatombe del Lapeón',
     era: 'Vía Láctea',
     comingSoon: true,
     description:
