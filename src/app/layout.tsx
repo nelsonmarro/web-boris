@@ -14,7 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("http://localhost:3000"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3131",
+  ),
   title: "Universos de BorisaoBlois",
   description: "Explora la inmensidad de mis universos y sus historias",
 };
