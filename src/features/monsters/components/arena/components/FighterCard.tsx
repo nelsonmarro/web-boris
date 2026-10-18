@@ -27,7 +27,7 @@ export function FighterCard({ fighter, side, score, winner }: FighterCardProps) 
   return (
     <article
       className={cn(
-        'relative flex flex-col overflow-hidden rounded-2xl border bg-[#061a2e] shadow-2xl transition-all duration-500',
+        'crystal-surface relative flex flex-col overflow-hidden rounded-2xl transition-all duration-500',
         winner ? ring : 'border-white/10',
         winner && 'shadow-[0_0_50px_rgba(255,115,0,0.15)]',
       )}

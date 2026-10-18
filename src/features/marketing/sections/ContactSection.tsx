@@ -56,7 +56,7 @@ export function ContactSection() {
              </p>
           </header>
 
-          <div className="p-8 md:p-16 rounded-3xl border border-white/10 bg-[#061a2e] shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative group">
+          <div className="crystal-surface p-8 md:p-16 rounded-3xl relative group">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
