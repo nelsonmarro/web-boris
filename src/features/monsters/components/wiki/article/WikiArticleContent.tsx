@@ -65,12 +65,6 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
               </div>
             )}
 
-            {frontmatter.status === 'proximamente' && (
-              <div className="@5xl/article:col-start-1">
-                <Proximamente />
-              </div>
-            )}
-
             {/* Contenedor < @5xl: ficha compacta tras la descripción */}
             {infoboxFull && (
               <div className="@5xl/article:hidden">
@@ -96,6 +90,8 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
             {/* Main Content */}
             <div className="@container min-w-0 @5xl/article:col-start-1 @5xl/article:max-w-[800px]">
               <MdxRenderer content={content} />
+              {/* Artículo sin lore canónico: lo conocido primero, luego el aviso */}
+              {frontmatter.status === 'proximamente' && <Proximamente />}
             </div>
 
             {/* Clearfix to ensure container wraps floated elements */}
