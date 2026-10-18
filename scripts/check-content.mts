@@ -9,11 +9,15 @@
  *  4. Alguna ruta /assets/... referenciada en MDX o universes.ts no existe en public/.
  *  5. Algún MDX usa el logo (Branding/) o el esquema del sitio (Esquemas/) como imagen:
  *     no representan lore; sin arte concreto se omite la portada (placeholder por categoría).
+ *  6. Las novedades (src/content/novedades/*.md) o los duelos (src/content/encuestas.json) no cumplen su esquema,
+ *     un duelo usa una criatura inexistente o sin stats, o una novedad enlaza a una ruta interna inexistente.
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { WikiFrontmatterSchema } from '../src/core/types/wiki.ts';
+import { readCuratedPolls, readNews } from '../src/core/content/readers.ts';
+import { crossCheckNews, crossCheckPolls } from '../src/core/content/validate.ts';
 
 const ROOT = process.cwd();
 const CONTENT_DIR = path.join(ROOT, 'src', 'content');
@@ -28,6 +32,7 @@ const problems: Record<string, string[]> = {
   'Universo sin artículos': [],
   'Assets inexistentes': [],
   'Imagen que no es lore': [],
+  'Comunidad (novedades / encuestas)': [],
 };
 
 const NON_LORE_ASSETS = ['/assets/Branding/', '/assets/Universo_Colosos/Esquemas/'];
@@ -35,6 +40,7 @@ const NON_LORE_ASSETS = ['/assets/Branding/', '/assets/Universo_Colosos/Esquemas
 const mdxFiles = readdirSync(CONTENT_DIR).filter((f) => f.endsWith('.mdx')).sort();
 const slugs = new Set(mdxFiles.map((f) => f.replace(/\.mdx$/, '')));
 const universesWithArticles = new Set<string>();
+const fighterSlugs = new Set<string>();
 
 /** Extrae rutas /assets/... de un texto (MDX o TS). */
 function extractAssets(text: string): string[] {
@@ -69,6 +75,8 @@ for (const file of mdxFiles) {
     }
   } else {
     universesWithArticles.add(parsed.data.universe);
+    const stats = parsed.data.stats;
+    if (stats && Object.keys(stats).length > 0) fighterSlugs.add(file.replace(/\.mdx$/, ''));
   }
   for (const asset of extractAssets(raw)) {
     if (!assetExists(asset)) problems['Assets inexistentes'].push(`${file}: ${asset}`);
@@ -97,6 +105,16 @@ for (const m of uniSrc.matchAll(/universeKey:\s*['"]([^'"]+)['"]/g)) {
 for (const asset of extractAssets(uniSrc)) {
   if (!assetExists(asset)) problems['Assets inexistentes'].push(`universes.ts: ${asset}`);
 }
+
+// 6: hub /comunidad
+const news = readNews(path.join(CONTENT_DIR, 'novedades'));
+const polls = readCuratedPolls(path.join(CONTENT_DIR, 'encuestas.json'));
+problems['Comunidad (novedades / encuestas)'].push(
+  ...news.errors,
+  ...polls.errors,
+  ...crossCheckNews(news.items, slugs),
+  ...crossCheckPolls(polls.items, slugs, fighterSlugs),
+);
 
 // Reporte
 console.log(

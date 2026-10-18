@@ -9,4 +9,7 @@ export const SOCIAL_LINKS = {
 
 export const YOUTUBE_HANDLE = '@BorisaoBlois';
 
+/** Id del canal: lo necesita el feed RSS público de YouTube (último vídeo del hub /comunidad). */
+export const YOUTUBE_CHANNEL_ID = 'UChE8ki_10uZSZN0YTBi8_RA';
+
 export const CONTACT_EMAIL = 'borisaoblois343@gmail.com';

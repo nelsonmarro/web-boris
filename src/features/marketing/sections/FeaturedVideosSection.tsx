@@ -5,40 +5,7 @@ import Link from 'next/link';
 import { YouTubeEmbed } from '@next/third-parties/google';
 import { YoutubeIcon } from '@/features/marketing/components/icons/YoutubeIcon';
 import { SOCIAL_LINKS } from '@/features/marketing/config/social';
-
-type Orientation = 'landscape' | 'short';
-
-interface FeaturedVideo {
-  id: string;
-  title: string;
-  category: string;
-  orientation: Orientation;
-}
-
-/**
- * Los tres videos que Boris indicó en "Requerimientos Pagina"; títulos tal como aparecen en YouTube.
- * La batalla es horizontal (16:9); "Extinción masiva" y "El Blitz" son YouTube Shorts (9:16).
- */
-const VIDEOS: FeaturedVideo[] = [
-  {
-    id: 'hedUAqopPBg',
-    title: 'Colosos - The Bloop vs El Gran Majá - La Batalla',
-    category: 'COLOSOS',
-    orientation: 'landscape',
-  },
-  {
-    id: 'XurjKHinBIY',
-    title: 'Extinción masiva',
-    category: 'SHORT · CGI',
-    orientation: 'short',
-  },
-  {
-    id: 'BP6fwpSuR7I',
-    title: 'El Blitz',
-    category: 'SHORT · SEGUNDA GUERRA MUNDIAL',
-    orientation: 'short',
-  },
-];
+import { FEATURED_VIDEOS, type VideoOrientation } from '@/features/marketing/config/videos';
 
 /*
  * `<lite-youtube>` no tiene tamaño propio aquí: la regla global "YouTube Embed Fixes" de globals.css
@@ -50,18 +17,18 @@ const VIDEOS: FeaturedVideo[] = [
 const FRAME_BASE =
   'relative w-full overflow-hidden rounded-2xl border border-white/15 bg-black shadow-[0_20px_40px_rgba(0,0,0,0.45)]';
 
-const FRAME_BY_ORIENTATION: Record<Orientation, string> = {
+const FRAME_BY_ORIENTATION: Record<VideoOrientation, string> = {
   landscape: 'aspect-video',
   short: 'aspect-[9/16]',
 };
 
 /** Móvil: la batalla ocupa las 2 columnas y cada short una. Escritorio: 2fr · 1fr · 1fr. */
-const ITEM_BY_ORIENTATION: Record<Orientation, string> = {
+const ITEM_BY_ORIENTATION: Record<VideoOrientation, string> = {
   landscape: 'col-span-2 lg:col-span-1',
   short: 'col-span-1 mx-auto w-full max-w-[280px]',
 };
 
-const TITLE_BY_ORIENTATION: Record<Orientation, string> = {
+const TITLE_BY_ORIENTATION: Record<VideoOrientation, string> = {
   landscape: 'text-2xl md:text-4xl lg:text-3xl',
   short: 'text-lg sm:text-xl',
 };
@@ -95,7 +62,7 @@ export function FeaturedVideosSection() {
         </header>
 
         <div className="mx-auto grid max-w-6xl grid-cols-2 items-start gap-x-4 gap-y-10 md:gap-x-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)] lg:gap-8">
-          {VIDEOS.map((video) => (
+          {FEATURED_VIDEOS.map((video) => (
             <div
               key={video.id}
               className={`group space-y-4 ${ITEM_BY_ORIENTATION[video.orientation]}`}
