@@ -1,19 +1,8 @@
 import { ContentCard, Section } from '@/components/content';
 import { getLatestVideo } from '@/features/community/data/latest-video';
+import { cn } from '@/utils/cn';
 import { SOCIAL_LINKS } from '../config/social';
 import { FEATURED_VIDEOS } from '../config/videos';
-
-/** Siglas que se conservan en mayúsculas al pasar la categoría a "sentence case". */
-const ACRONYMS = new Set(['CGI']);
-
-/** "SHORT · SEGUNDA GUERRA MUNDIAL" → "Short · segunda guerra mundial". */
-function sentenceCase(text: string): string {
-  const lowered = text
-    .split(' ')
-    .map((word) => (ACRONYMS.has(word) ? word : word.toLowerCase()))
-    .join(' ');
-  return lowered.charAt(0).toUpperCase() + lowered.slice(1);
-}
 
 interface VideoCard {
   id: string;
@@ -26,16 +15,19 @@ export async function FeaturedVideosSection() {
   const latest = await getLatestVideo();
 
   const cards: VideoCard[] = [];
+  // «Último vídeo» solo si viene del feed; el respaldo es uno de la lista de Boris y lleva su propia etiqueta.
   if (latest.source === 'rss') cards.push({ id: latest.id, title: latest.title, meta: 'Último vídeo' });
   for (const video of FEATURED_VIDEOS) {
     if (cards.some((c) => c.id === video.id)) continue;
-    cards.push({ id: video.id, title: video.title, meta: sentenceCase(video.category) });
+    cards.push({ id: video.id, title: video.title, meta: video.label });
   }
+  const shown = cards.slice(0, 4);
 
   return (
     <Section id="videos" title="Vídeos" action={{ href: SOCIAL_LINKS.youtube, label: 'Ver canal', external: true }} className="scroll-mt-24">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
-        {cards.slice(0, 4).map((video) => (
+      {/* 3 tarjetas ocupan 3 columnas en escritorio (sin hueco huérfano); 4, cuatro. */}
+      <div className={cn('grid grid-cols-2 gap-3 lg:gap-4', shown.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4')}>
+        {shown.map((video) => (
           <ContentCard
             key={video.id}
             external
@@ -43,7 +35,7 @@ export async function FeaturedVideosSection() {
             image={`https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`}
             title={video.title}
             meta={video.meta}
-            sizes="(min-width: 1024px) 25vw, 50vw"
+            sizes={shown.length === 3 ? '(min-width: 1024px) 33vw, 50vw' : '(min-width: 1024px) 25vw, 50vw'}
           />
         ))}
       </div>
