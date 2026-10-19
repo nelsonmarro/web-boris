@@ -2,14 +2,17 @@
  * Calendario de la encuesta "¿Quién gana?". Puro (lo prueban los tests con node:test):
  * solo imports relativos con extensión .ts.
  */
-import type { CuratedPoll } from '../../../core/content/schemas.ts';
+import type { CuratedPoll, PollTipo } from '../../../core/content/schemas.ts';
 
 export const DEFAULT_QUESTION = '¿Quién gana?';
+export const DEFAULT_QUESTION_DESCLASIFICAR = '¿Qué expediente quieres que Boris desclasifique primero?';
 
 export interface PollDef {
   /** `<semana>-<a>-vs-<b>`: estable toda la semana; los votos se cuentan por este id. */
   id: string;
   week: string;
+  /** `duelo` (Arena) o `desclasificar` (expedientes sellados). La rotación automática solo genera duelos. */
+  tipo: PollTipo;
   a: string;
   b: string;
   question: string;
@@ -43,7 +46,7 @@ export function pollIdFor(week: string, a: string, b: string): string {
 }
 
 /**
- * Encuesta vigente: el duelo curado de la semana si existe; si no, un emparejamiento
+ * Encuesta vigente: la encuesta curada de la semana si existe (duelo o desclasificar); si no, un emparejamiento
  * determinista entre luchadores (artículos con stats). `null` con menos de dos luchadores.
  */
 export function getCurrentPoll(
@@ -54,7 +57,15 @@ export function getCurrentPoll(
   const week = isoWeekKey(date);
   const pick = curated.find((p) => p.semana === week);
   if (pick) {
-    return { id: pollIdFor(week, pick.a, pick.b), week, a: pick.a, b: pick.b, question: pick.pregunta ?? DEFAULT_QUESTION };
+    const fallback = pick.tipo === 'desclasificar' ? DEFAULT_QUESTION_DESCLASIFICAR : DEFAULT_QUESTION;
+    return {
+      id: pollIdFor(week, pick.a, pick.b),
+      week,
+      tipo: pick.tipo,
+      a: pick.a,
+      b: pick.b,
+      question: pick.pregunta ?? fallback,
+    };
   }
 
   const fighters = [...new Set(fighterSlugs)].sort();
@@ -66,5 +77,5 @@ export function getCurrentPoll(
   const j = (i + 1 + (w % (n - 1))) % n; // desplazamiento en [1, n-1] → nunca i = j
   const a = fighters[i];
   const b = fighters[j];
-  return { id: pollIdFor(week, a, b), week, a, b, question: DEFAULT_QUESTION };
+  return { id: pollIdFor(week, a, b), week, tipo: 'duelo', a, b, question: DEFAULT_QUESTION };
 }

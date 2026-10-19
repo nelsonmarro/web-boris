@@ -4,20 +4,58 @@ import { crossCheckEntities, crossCheckNews, crossCheckPolls } from '../../src/c
 
 const ARTICLES = new Set(['the-bloop', 'el-gran-maja', 'la-hecatombe-del-lapeon']);
 const FIGHTERS = new Set(['the-bloop', 'el-gran-maja']);
+const SEALED = new Set(['cael-cortes', 'aodos-ay01']);
 
 test('duelos: slug inexistente o sin stats', () => {
   const errors = crossCheckPolls(
     [
-      { semana: '2026-W42', a: 'the-bloop', b: 'el-gran-maja' },
-      { semana: '2026-W43', a: 'the-bloop', b: 'no-existe' },
-      { semana: '2026-W44', a: 'la-hecatombe-del-lapeon', b: 'the-bloop' },
+      { semana: '2026-W42', tipo: 'duelo', a: 'the-bloop', b: 'el-gran-maja' },
+      { semana: '2026-W43', tipo: 'duelo', a: 'the-bloop', b: 'no-existe' },
+      { semana: '2026-W44', tipo: 'duelo', a: 'la-hecatombe-del-lapeon', b: 'the-bloop' },
     ],
     ARTICLES,
     FIGHTERS,
+    SEALED,
   );
   assert.equal(errors.length, 2);
   assert.match(errors[0], /no-existe.*no existe/);
   assert.match(errors[1], /la-hecatombe-del-lapeon.*no tiene stats/);
+});
+
+test('desclasificar: a y b deben ser artículos sellados (status: proximamente); no piden stats', () => {
+  const ARTICLES_WITH_SEALED = new Set([...ARTICLES, ...SEALED]);
+  assert.deepEqual(
+    crossCheckPolls(
+      [{ semana: '2026-W45', tipo: 'desclasificar', a: 'cael-cortes', b: 'aodos-ay01' }],
+      ARTICLES_WITH_SEALED,
+      FIGHTERS,
+      SEALED,
+    ),
+    [],
+  );
+  const errors = crossCheckPolls(
+    [
+      { semana: '2026-W45', tipo: 'desclasificar', a: 'cael-cortes', b: 'the-bloop' },
+      { semana: '2026-W46', tipo: 'desclasificar', a: 'no-existe', b: 'aodos-ay01' },
+    ],
+    ARTICLES_WITH_SEALED,
+    FIGHTERS,
+    SEALED,
+  );
+  assert.equal(errors.length, 2);
+  assert.match(errors[0], /2026-W45.*the-bloop.*sellado/);
+  assert.match(errors[1], /2026-W46.*no-existe.*no existe/);
+});
+
+test('duelo: un artículo sellado sin stats sigue dando error', () => {
+  const errors = crossCheckPolls(
+    [{ semana: '2026-W45', tipo: 'duelo', a: 'cael-cortes', b: 'the-bloop' }],
+    new Set([...ARTICLES, ...SEALED]),
+    FIGHTERS,
+    SEALED,
+  );
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /cael-cortes.*no tiene stats/);
 });
 
 test('novedades: enlaces internos rotos; externos e internos válidos pasan', () => {

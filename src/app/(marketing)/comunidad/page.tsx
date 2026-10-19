@@ -32,8 +32,10 @@ export default async function ComunidadPage() {
     getLatestVideo(),
   ]);
   const { poll, fighters } = weekly;
+  // Los luchadores (con stats) y, en una votación «desclasificar», las dos fichas selladas, que no tienen stats.
+  const pollSides = poll ? articles.filter((a) => a.slug === poll.a || a.slug === poll.b) : [];
   const fighterCards: Record<string, PollFighter> = Object.fromEntries(
-    fighters.map((a) => [
+    [...fighters, ...pollSides].map((a) => [
       a.slug,
       {
         slug: a.slug,

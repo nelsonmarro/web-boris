@@ -9,9 +9,13 @@ export const WEEK_KEY_REGEX = /^\d{4}-W(0[1-9]|[1-4]\d|5[0-3])$/;
 
 const Slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, { message: 'slug inválido' });
 
+/** `duelo`: luchadores con stats (la Arena); `desclasificar`: expedientes sellados que la comunidad quiere ver primero. */
+export const POLL_TIPOS = ['duelo', 'desclasificar'] as const;
+
 export const CuratedPollSchema = z
   .object({
     semana: z.string().regex(WEEK_KEY_REGEX, { message: 'semana ISO inválida (YYYY-Www)' }),
+    tipo: z.enum(POLL_TIPOS).default('duelo'),
     a: Slug,
     b: Slug,
     pregunta: z.string().min(3).max(80).optional(),
@@ -29,6 +33,7 @@ export const CuratedPollsSchema = z.array(CuratedPollSchema).superRefine((polls,
 });
 
 export type CuratedPoll = z.infer<typeof CuratedPollSchema>;
+export type PollTipo = CuratedPoll['tipo'];
 
 /** gray-matter convierte `fecha: 2026-10-18` en Date: se normaliza a `YYYY-MM-DD`. */
 const IsoDate = z.preprocess(

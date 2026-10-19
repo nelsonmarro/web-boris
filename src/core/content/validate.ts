@@ -5,16 +5,25 @@ import type { CuratedPoll, NewsEntry } from './schemas.ts';
 /** Rutas propias (no MDX) a las que puede enlazar una novedad. */
 const STATIC_ROUTES = new Set(['/', '/wiki', '/wiki/arena', '/comunidad']);
 
+/**
+ * `duelo`: a y b deben existir y tener stats (la Arena). `desclasificar`: a y b deben existir y estar
+ * sellados (`status: proximamente`); no piden stats.
+ */
 export function crossCheckPolls(
   polls: readonly CuratedPoll[],
   articleSlugs: ReadonlySet<string>,
   fighterSlugs: ReadonlySet<string>,
+  sealedSlugs: ReadonlySet<string>,
 ): string[] {
   const errors: string[] = [];
   for (const p of polls) {
     for (const slug of [p.a, p.b]) {
       if (!articleSlugs.has(slug)) errors.push(`encuestas.json ${p.semana}: "${slug}" no existe en src/content`);
-      else if (!fighterSlugs.has(slug)) errors.push(`encuestas.json ${p.semana}: "${slug}" no tiene stats`);
+      else if (p.tipo === 'desclasificar') {
+        if (!sealedSlugs.has(slug)) {
+          errors.push(`encuestas.json ${p.semana}: "${slug}" no es un expediente sellado (status: proximamente)`);
+        }
+      } else if (!fighterSlugs.has(slug)) errors.push(`encuestas.json ${p.semana}: "${slug}" no tiene stats`);
     }
   }
   return errors;

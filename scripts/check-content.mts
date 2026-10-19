@@ -9,8 +9,9 @@
  *  4. Alguna ruta /assets/... referenciada en MDX o universes.ts no existe en public/.
  *  5. Algún MDX usa el logo (Branding/) o el esquema del sitio (Esquemas/) como imagen:
  *     no representan lore; sin arte concreto se omite la portada (placeholder por categoría).
- *  6. Las novedades (src/content/novedades/*.md) o los duelos (src/content/encuestas.json) no cumplen su esquema,
- *     un duelo usa una criatura inexistente o sin stats, o una novedad enlaza a una ruta interna inexistente.
+ *  6. Las novedades (src/content/novedades/*.md) o las encuestas (src/content/encuestas.json) no cumplen su esquema,
+ *     un duelo usa una criatura inexistente o sin stats, una encuesta `desclasificar` usa una ficha que no está
+ *     sellada (`status: proximamente`), o una novedad enlaza a una ruta interna inexistente.
  *  7. Los apodos (`aliases`) se repiten entre fichas o coinciden con el título de otra, o un `related` apunta a sí
  *     misma o a una ficha inexistente.
  */
@@ -44,6 +45,7 @@ const mdxFiles = readdirSync(CONTENT_DIR).filter((f) => f.endsWith('.mdx')).sort
 const slugs = new Set(mdxFiles.map((f) => f.replace(/\.mdx$/, '')));
 const universesWithArticles = new Set<string>();
 const fighterSlugs = new Set<string>();
+const sealedSlugs = new Set<string>();
 const entityItems: { slug: string; title: string; aliases?: string[]; related?: string[] }[] = [];
 
 /** Extrae rutas /assets/... de un texto (MDX o TS). */
@@ -81,6 +83,7 @@ for (const file of mdxFiles) {
     universesWithArticles.add(parsed.data.universe);
     const stats = parsed.data.stats;
     if (stats && Object.keys(stats).length > 0) fighterSlugs.add(file.replace(/\.mdx$/, ''));
+    if (parsed.data.status === 'proximamente') sealedSlugs.add(file.replace(/\.mdx$/, ''));
     entityItems.push({
       slug: file.replace(/\.mdx$/, ''),
       title: parsed.data.title,
@@ -123,7 +126,7 @@ problems['Comunidad (novedades / encuestas)'].push(
   ...news.errors,
   ...polls.errors,
   ...crossCheckNews(news.items, slugs),
-  ...crossCheckPolls(polls.items, slugs, fighterSlugs),
+  ...crossCheckPolls(polls.items, slugs, fighterSlugs, sealedSlugs),
 );
 
 // 7: apodos y related

@@ -5,11 +5,13 @@ import {
   InfoField,
 } from '@/features/monsters/components/wiki/mdx/WikiInfobox';
 import { InfoStats } from '@/features/monsters/components/wiki/mdx/InfoStats';
-import { Proximamente } from '@/features/monsters/components/wiki/mdx/Proximamente';
+import { ArchivoMeter } from '@/features/monsters/components/wiki/article/ArchivoMeter';
+import { ExpedienteSellado } from '@/features/monsters/components/wiki/article/ExpedienteSellado';
 import { WikiTOC } from '@/features/monsters/components/wiki/mdx/WikiTOC';
 import { WikiArticleDisclosures } from '@/features/monsters/components/wiki/article/WikiArticleDisclosures';
 import { WikiFrontmatter } from '@/core/types/wiki';
 import type { EntityIndex } from '@/core/search/entity-index';
+import { sectionCompleteness } from '@/core/search/section-completeness';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { extractHeadings } from '@/utils/headings';
 
@@ -36,6 +38,9 @@ export function WikiArticleContent({ frontmatter, content, slug, entityIndex }: 
   const showStats = hasStats(frontmatter);
   const showRail = hasInfobox || showStats;
   const headings = extractHeadings(content);
+  const sealed = frontmatter.status === 'proximamente';
+  // El medidor es solo para las fichas abiertas con apartados pendientes; las selladas llevan el expediente.
+  const completeness = sealed ? null : sectionCompleteness(content);
 
   // La portada va arriba (cabecera): la infobox no la repite.
   const infoboxFull = showRail ? (
@@ -77,9 +82,10 @@ export function WikiArticleContent({ frontmatter, content, slug, entityIndex }: 
 
             {/* Main Content */}
             <div data-article-body className="@container min-w-0 @5xl/article:col-start-1 @5xl/article:max-w-[800px]">
+              {completeness && <ArchivoMeter {...completeness} />}
               <MdxRenderer content={content} entityIndex={entityIndex} slug={slug} />
-              {/* Artículo sin lore canónico: lo conocido primero, luego el aviso */}
-              {frontmatter.status === 'proximamente' && <Proximamente />}
+              {/* Artículo sin lore canónico: lo conocido primero, luego el expediente sellado */}
+              {sealed && <ExpedienteSellado slug={slug} />}
             </div>
 
             {/* Clearfix to ensure container wraps floated elements */}

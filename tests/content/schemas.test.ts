@@ -10,6 +10,19 @@ test('acepta duelos curados válidos', () => {
   assert.equal(r.success, true);
 });
 
+test('tipo: por defecto es "duelo"; acepta "desclasificar" y rechaza otros valores', () => {
+  const [duelo] = CuratedPollsSchema.parse([{ semana: '2026-W42', a: 'vlad-julia', b: 'el-gran-maja' }]);
+  assert.equal(duelo.tipo, 'duelo');
+  const [desclasificar] = CuratedPollsSchema.parse([
+    { semana: '2026-W45', tipo: 'desclasificar', a: 'cael-cortes', b: 'aodos-ay01' },
+  ]);
+  assert.equal(desclasificar.tipo, 'desclasificar');
+  assert.equal(
+    CuratedPollsSchema.safeParse([{ semana: '2026-W45', tipo: 'otro', a: 'cael-cortes', b: 'aodos-ay01' }]).success,
+    false,
+  );
+});
+
 test('rechaza semanas repetidas', () => {
   const r = CuratedPollsSchema.safeParse([
     { semana: '2026-W42', a: 'vlad-julia', b: 'el-gran-maja' },

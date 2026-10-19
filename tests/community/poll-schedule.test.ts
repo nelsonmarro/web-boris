@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   DEFAULT_QUESTION,
+  DEFAULT_QUESTION_DESCLASIFICAR,
   getCurrentPoll,
   isoWeekKey,
   pollIdFor,
@@ -27,17 +28,38 @@ test('weeksSinceEpoch es igual toda la semana y suma 1 el lunes', () => {
 
 test('el duelo curado de la semana gana a la rotación automática', () => {
   const poll = getCurrentPoll(
-    [{ semana: '2026-W42', a: 'vlad-julia', b: 'el-gran-maja', pregunta: '¿Quién resiste?' }],
+    [{ semana: '2026-W42', tipo: 'duelo', a: 'vlad-julia', b: 'el-gran-maja', pregunta: '¿Quién resiste?' }],
     FIGHTERS,
     new Date('2026-10-14T09:00:00Z'),
   );
   assert.deepEqual(poll, {
     id: '2026-W42-vlad-julia-vs-el-gran-maja',
     week: '2026-W42',
+    tipo: 'duelo',
     a: 'vlad-julia',
     b: 'el-gran-maja',
     question: '¿Quién resiste?',
   });
+});
+
+test('una encuesta curada "desclasificar" propaga su tipo, con su pregunta por defecto o la curada', () => {
+  const poll = getCurrentPoll(
+    [{ semana: '2026-W45', tipo: 'desclasificar', a: 'cael-cortes', b: 'aodos-ay01' }],
+    FIGHTERS,
+    new Date('2026-11-04T09:00:00Z'),
+  );
+  assert.ok(poll);
+  assert.equal(poll.tipo, 'desclasificar');
+  assert.equal(poll.id, '2026-W45-cael-cortes-vs-aodos-ay01');
+  assert.equal(poll.question, DEFAULT_QUESTION_DESCLASIFICAR);
+  assert.equal(DEFAULT_QUESTION_DESCLASIFICAR, '¿Qué expediente quieres que Boris desclasifique primero?');
+
+  const curada = getCurrentPoll(
+    [{ semana: '2026-W45', tipo: 'desclasificar', a: 'cael-cortes', b: 'aodos-ay01', pregunta: '¿Cuál se abre antes?' }],
+    FIGHTERS,
+    new Date('2026-11-04T09:00:00Z'),
+  );
+  assert.equal(curada?.question, '¿Cuál se abre antes?');
 });
 
 test('sin duelo curado: emparejamiento automático estable y nunca contra sí mismo', () => {
@@ -48,6 +70,7 @@ test('sin duelo curado: emparejamiento automático estable y nunca contra sí mi
       const monday = getCurrentPoll([], fighters, date);
       const sunday = getCurrentPoll([], fighters, new Date(date.getTime() + 6 * 86_400_000 + 3_600_000));
       assert.ok(monday);
+      assert.equal(monday.tipo, 'duelo'); // la rotación automática siempre genera duelos
       assert.notEqual(monday.a, monday.b);
       assert.deepEqual(monday, sunday);
       assert.equal(monday.question, DEFAULT_QUESTION);
