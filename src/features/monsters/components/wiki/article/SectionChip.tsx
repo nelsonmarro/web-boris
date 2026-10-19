@@ -41,7 +41,7 @@ export function SectionChip({ headings }: SectionChipProps) {
 
   const [visible, setVisible] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  // Apartado elegido en la hoja: el salto espera a que termine de cerrarse (ver `handleAnimationEnd`).
+  // Apartado elegido en la hoja: el salto espera a que termine de cerrarse (ver `handleCloseAutoFocus`).
   const pendingId = React.useRef<string | null>(null);
 
   React.useEffect(() => {
@@ -102,20 +102,29 @@ export function SectionChip({ headings }: SectionChipProps) {
   };
 
   /**
-   * vaul avisa 500 ms después de cerrar. Se salta entonces y no al elegir: en Safari, al cerrar, vaul devuelve el
-   * scroll a donde estaba (`window.scrollTo` en un rAF) y pisaría un salto inmediato.
+   * Salto al apartado elegido. Radix dispara `onCloseAutoFocus` al desmontar el contenido, es decir, cuando la
+   * animación de salida ya terminó y, en Safari, vaul ya devolvió el scroll a donde estaba (`window.scrollTo` en un
+   * rAF): un salto inmediato al elegir quedaría pisado. Sin apartado elegido (la hoja se cerró con Esc, arrastrando
+   * o tocando fuera) no se hace nada y Radix devuelve el foco al chip.
    */
-  const handleAnimationEnd = (isOpen: boolean) => {
-    if (isOpen) return;
+  const handleCloseAutoFocus = (event: Event) => {
     const id = pendingId.current;
     pendingId.current = null;
     if (!id) return;
+    const heading = document.getElementById(id);
+    if (!heading) return;
+    // El foco va al encabezado (no al chip): el siguiente Tab continúa por el contenido de ese apartado.
+    event.preventDefault();
+    heading.setAttribute('tabindex', '-1');
+    heading.focus({ preventScroll: true });
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    document.getElementById(id)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    heading.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    // `history.state` se conserva tal cual: el router de Next 16 guarda ahí su árbol.
+    window.history.replaceState(window.history.state, '', `#${id}`);
   };
 
   return (
-    <Drawer open={open} onOpenChange={handleOpenChange} onAnimationEnd={handleAnimationEnd}>
+    <Drawer open={open} onOpenChange={handleOpenChange}>
       {/* Con la hoja abierta el disparador se queda aunque el scroll lo oculte: Radix le devuelve el foco al cerrar. */}
       {(visible || open) && (
         <DrawerTrigger asChild>
@@ -133,7 +142,7 @@ export function SectionChip({ headings }: SectionChipProps) {
         </DrawerTrigger>
       )}
 
-      <DrawerContent className="border-white/15 bg-[#061a2e] text-white">
+      <DrawerContent className="border-white/15 bg-[#061a2e] text-white" onCloseAutoFocus={handleCloseAutoFocus}>
         <DrawerHeader className="pb-2">
           <DrawerTitle className="text-base font-bold text-white">Contenido</DrawerTitle>
           <DrawerDescription className="sr-only">Elige un apartado para ir a él.</DrawerDescription>
@@ -147,7 +156,7 @@ export function SectionChip({ headings }: SectionChipProps) {
               const active = index === activeIndex;
               return (
                 <li key={h.id}>
-                  {/* DrawerClose cierra por la vía interna de vaul (restaura el body y avisa `onAnimationEnd`). */}
+                  {/* DrawerClose cierra por la vía interna de vaul (restaura el body y desmonta con la animación). */}
                   <DrawerClose asChild>
                     <button
                       type="button"

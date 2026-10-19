@@ -56,7 +56,7 @@ const components = {
   ),
   h2: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
     <h2
-      className="text-2xl font-black text-white italic tracking-widest uppercase mt-16 mb-8 pl-5 py-5 clear-both scroll-mt-24 relative bg-gradient-to-r from-primary/20 via-primary/5 to-transparent border-t border-white/5 flex items-center group"
+      className="text-2xl font-black text-white italic tracking-widest uppercase mt-16 mb-8 pl-5 py-5 clear-both scroll-mt-24 relative bg-gradient-to-r from-primary/20 via-primary/5 to-transparent border-t border-white/5 flex items-center group focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
       {...props}
     >
       <span className="relative z-10 drop-shadow-[0_2px_8px_rgba(255,115,0,0.6)] group-hover:text-primary transition-colors duration-300">

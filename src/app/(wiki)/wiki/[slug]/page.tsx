@@ -67,7 +67,6 @@ export default async function WikiArticlePage({ params }: Props) {
     <div className="w-full min-h-screen bg-[#0a2339]">
       <article className="w-full">
         <ArticleProgress />
-        <SectionChip headings={extractHeadings(content)} />
         <WikiArticleHeader
           title={frontmatter.title}
           universe={frontmatter.universe}
@@ -91,6 +90,9 @@ export default async function WikiArticlePage({ params }: Props) {
             entityIndex={entityIndex}
           />
         </ArticleImagesProvider>
+
+        {/* Después del cuerpo y antes del pie: el orden de tabulación sigue el de lectura. Es `fixed`, no ocupa lugar. */}
+        <SectionChip headings={extractHeadings(content)} />
 
         <WikiArticleFooter related={related} />
       </article>
