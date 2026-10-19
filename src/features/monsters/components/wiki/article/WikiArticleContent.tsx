@@ -9,12 +9,17 @@ import { Proximamente } from '@/features/monsters/components/wiki/mdx/Proximamen
 import { WikiTOC } from '@/features/monsters/components/wiki/mdx/WikiTOC';
 import { WikiArticleDisclosures } from '@/features/monsters/components/wiki/article/WikiArticleDisclosures';
 import { WikiFrontmatter } from '@/core/types/wiki';
+import type { EntityIndex } from '@/core/search/entity-index';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { extractHeadings } from '@/utils/headings';
 
 interface WikiArticleContentProps {
   frontmatter: WikiFrontmatter;
   content: string;
+  /** Slug de la ficha: evita que el texto se enlace a sí mismo. */
+  slug: string;
+  /** Índice de entidades para los enlaces automáticos a la 1.ª mención. */
+  entityIndex?: EntityIndex;
 }
 
 /**
@@ -25,7 +30,7 @@ interface WikiArticleContentProps {
  *   a la vez, y el cuerpo en una sola columna. Nada flota.
  * - contenedor ≥ 64rem (@5xl): grid de dos columnas — cuerpo ≤ 800 px + rail derecho con infobox y TOC sticky.
  */
-export function WikiArticleContent({ frontmatter, content }: WikiArticleContentProps) {
+export function WikiArticleContent({ frontmatter, content, slug, entityIndex }: WikiArticleContentProps) {
   const { title, infobox } = frontmatter;
   const hasInfobox = !!infobox && Object.keys(infobox).length > 0;
   const showStats = hasStats(frontmatter);
@@ -71,8 +76,8 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
             </aside>
 
             {/* Main Content */}
-            <div className="@container min-w-0 @5xl/article:col-start-1 @5xl/article:max-w-[800px]">
-              <MdxRenderer content={content} />
+            <div data-article-body className="@container min-w-0 @5xl/article:col-start-1 @5xl/article:max-w-[800px]">
+              <MdxRenderer content={content} entityIndex={entityIndex} slug={slug} />
               {/* Artículo sin lore canónico: lo conocido primero, luego el aviso */}
               {frontmatter.status === 'proximamente' && <Proximamente />}
             </div>

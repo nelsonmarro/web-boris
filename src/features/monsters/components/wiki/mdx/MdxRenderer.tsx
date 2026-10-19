@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { MDXRemote } from 'next-mdx-remote-client/rsc';
 import Image from 'next/image';
+import Link from 'next/link';
+import type { Route } from 'next';
 import { rehypeHeadingIds } from '@/utils/rehype-heading-ids';
+import { remarkEntityLinks } from '@/utils/remark-entity-links';
+import { cn } from '@/utils/cn';
+import type { EntityIndex } from '@/core/search/entity-index';
 
 // Custom Components
 import { AbyssalAlert } from '@/features/monsters/components/wiki/mdx/AbyssalAlert';
@@ -21,6 +26,10 @@ import { WikiTOC } from '@/features/monsters/components/wiki/mdx/WikiTOC';
 import { Proximamente } from '@/features/monsters/components/wiki/mdx/Proximamente';
 import { RegistroDelirium } from '@/features/monsters/components/wiki/mdx/RegistroDelirium';
 import { WikiTabs, WikiTab } from '@/features/monsters/components/wiki/mdx/WikiTabs';
+
+/** Estilo de enlace de prosa (spec #55 §1): blanco, subrayado `primary/50`, hover naranja, foco visible. */
+const LINK_CLASS =
+  'font-semibold text-white underline decoration-primary/50 underline-offset-4 transition-colors hover:text-primary hover:decoration-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary rounded-sm';
 
 const components = {
   AbyssalAlert,
@@ -105,19 +114,62 @@ const components = {
     </a>
   ),
   hr: () => <hr className="my-12 border-white/5" />,
+  // Enlaces internos con next/link (los automáticos de `remarkEntityLinks` y los escritos a mano);
+  // anclas y mailto:/tel: como <a> normal; solo los http(s) abren pestaña nueva.
+  a: ({
+    href = '',
+    children,
+    ...props
+  }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { 'data-entity-pending'?: string }) => {
+    const pending = props['data-entity-pending'] === 'true';
+    if (href.startsWith('/')) {
+      return (
+        <Link
+          href={href as Route}
+          {...props}
+          className={cn(LINK_CLASS, pending && 'decoration-dashed')}
+        >
+          {children}
+          {pending && <span className="sr-only"> (próximamente)</span>}
+        </Link>
+      );
+    }
+    if (/^https?:\/\//i.test(href)) {
+      return (
+        <a href={href} target="_blank" rel="noopener noreferrer" {...props} className={LINK_CLASS}>
+          {children}
+        </a>
+      );
+    }
+    // `#ancla`, `mailto:`, `tel:`…: se quedan en la misma pestaña.
+    return (
+      <a href={href} {...props} className={LINK_CLASS}>
+        {children}
+      </a>
+    );
+  },
 };
 
 interface MdxRendererProps {
   content: string;
+  /** Con índice, la 1.ª mención de cada entidad en la prosa se enlaza a su ficha (spec Ola B §5). */
+  entityIndex?: EntityIndex;
+  /** Slug de la ficha que se renderiza: nunca se enlaza a sí misma. */
+  slug?: string;
 }
 
-export function MdxRenderer({ content }: MdxRendererProps) {
+export function MdxRenderer({ content, entityIndex, slug }: MdxRendererProps) {
   return (
     <div className="prose prose-invert prose-base max-w-none prose-p:leading-relaxed prose-headings:tracking-tight">
       <MDXRemote
         source={content}
         components={components}
-        options={{ mdxOptions: { rehypePlugins: [rehypeHeadingIds] } }}
+        options={{
+          mdxOptions: {
+            rehypePlugins: [rehypeHeadingIds],
+            remarkPlugins: entityIndex ? [[remarkEntityLinks, { index: entityIndex, self: slug }]] : [],
+          },
+        }}
       />
     </div>
   );

@@ -1,5 +1,8 @@
 import { WIKI_NAVIGATION, type NavItem } from '@/features/monsters/config/wiki-navigation';
 import { toSummary, type WikiArticle, type WikiArticleSummary } from '@/core/types/wiki';
+import { buildEntityIndex } from '@/core/search/entity-index';
+import { buildMentionGraph, type MentionGraph } from '@/core/search/mention-graph';
+import { rankRelated } from '@/core/search/related-rank';
 
 export type { WikiArticleSummary };
 
@@ -30,9 +33,13 @@ function findNavSiblings(slug: string): string[] {
   return [];
 }
 
+/** El grafo solo depende de la lista de artículos: en producción es el mismo array memoizado, así que se calcula una vez. */
+const graphCache = new WeakMap<readonly WikiArticle[], MentionGraph>();
+
 /**
- * Artículos relacionados: hermanos en el sidebar → misma categoría → mismo universo.
- * Patrón "navbox" de Wookieepedia/Wikipedia, calculado desde la navegación manual.
+ * Artículos relacionados (spec Ola B §7): `related` del frontmatter → menciones mutuas →
+ * salientes → entrantes → hermanos del menú → misma categoría → mismo universo.
+ * El orden vive en `rankRelated` (puro); aquí solo se le dan los datos reales.
  */
 export function getRelatedArticles(
   slug: string,
@@ -41,33 +48,33 @@ export function getRelatedArticles(
 ): WikiArticleSummary[] {
   const bySlug = new Map(all.map((article) => [article.slug, article]));
   const current = bySlug.get(slug);
-  const candidates: WikiArticle[] = [];
-  const seen = new Set<string>([slug]);
+  if (!current) return [];
 
-  // Los directorios nunca son "relacionados": son índices, no fichas.
-  const push = (article: WikiArticle | undefined) => {
-    if (!article || seen.has(article.slug)) return;
-    seen.add(article.slug);
-    if (article.frontmatter.category === 'Directorio') return;
-    candidates.push(article);
-  };
-
-  for (const url of findNavSiblings(slug)) {
-    const siblingSlug = slugFromUrl(url);
-    if (siblingSlug) push(bySlug.get(siblingSlug));
+  let graph = graphCache.get(all);
+  if (!graph) {
+    graph = buildMentionGraph(all, buildEntityIndex(all));
+    graphCache.set(all, graph);
   }
 
-  if (current) {
-    const { category, universe } = current.frontmatter;
-    if (category) {
-      all.filter((a) => a.frontmatter.category === category).forEach(push);
-    }
-    all.filter((a) => a.frontmatter.universe === universe).forEach(push);
-  }
+  const { category, universe } = current.frontmatter;
+  const slugs = rankRelated({
+    slug,
+    curated: current.frontmatter.related,
+    graph,
+    siblings: findNavSiblings(slug)
+      .map(slugFromUrl)
+      .filter((s): s is string => !!s),
+    sameCategory: category
+      ? all.filter((a) => a.frontmatter.category === category).map((a) => a.slug)
+      : [],
+    sameUniverse: all.filter((a) => a.frontmatter.universe === universe).map((a) => a.slug),
+    isDirectory: (s) => bySlug.get(s)?.frontmatter.category === 'Directorio',
+    isStub: (s) => bySlug.get(s)?.frontmatter.status === 'proximamente',
+    max,
+  });
 
-  // Los "próximamente" van al final (orden estable), y solo entonces se corta a `max`.
-  const isStub = (a: WikiArticle) => a.frontmatter.status === 'proximamente';
-  return [...candidates.filter((a) => !isStub(a)), ...candidates.filter(isStub)]
-    .slice(0, max)
+  return slugs
+    .map((s) => bySlug.get(s))
+    .filter((a): a is WikiArticle => !!a)
     .map(toSummary);
 }

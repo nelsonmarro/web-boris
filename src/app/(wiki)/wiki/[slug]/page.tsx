@@ -6,6 +6,7 @@ import { WikiArticleFooter } from '@/features/monsters/components/wiki/article/W
 import type { Metadata } from 'next';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { getRelatedArticles } from '@/features/monsters/lib/related';
+import { getEntityIndex } from '@/core/content/entities';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -53,6 +54,7 @@ export default async function WikiArticlePage({ params }: Props) {
 
   const { frontmatter, content } = article;
   const related = getRelatedArticles(slug, await getAllArticles());
+  const entityIndex = await getEntityIndex();
   // La portada sube a la cabecera; si el MDX ya la usa en el cuerpo, la cabecera no la repite.
   const imageInBody = !!frontmatter.image && content.includes(frontmatter.image);
   const withStats = hasStats(frontmatter);
@@ -75,7 +77,12 @@ export default async function WikiArticlePage({ params }: Props) {
           imageInBody={imageInBody}
         />
 
-        <WikiArticleContent frontmatter={frontmatter} content={content} />
+        <WikiArticleContent
+          frontmatter={frontmatter}
+          content={content}
+          slug={slug}
+          entityIndex={entityIndex}
+        />
 
         <WikiArticleFooter related={related} />
       </article>
