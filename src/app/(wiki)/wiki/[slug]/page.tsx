@@ -11,6 +11,14 @@ import { extractHeadings } from '@/utils/headings';
 import { ArticleProgress } from '@/features/monsters/components/wiki/article/ArticleProgress';
 import { SectionChip } from '@/features/monsters/components/wiki/article/SectionChip';
 import { ArticleImagesProvider } from '@/features/monsters/components/wiki/mdx/ArticleImages';
+import { MarkSeen } from '@/features/monsters/components/wiki/article/MarkSeen';
+import { EntityPreview } from '@/features/monsters/components/wiki/article/EntityPreview';
+import { ApareceEn } from '@/features/monsters/components/wiki/article/ApareceEn';
+import { ArticleNeighbors } from '@/features/monsters/components/wiki/article/ArticleNeighbors';
+import { getVideosForSlug } from '@/features/community/data/channel-videos';
+
+// ISR: la encuesta de la semana (expediente sellado) y los vídeos del canal ("Aparece en") cambian con el tiempo.
+export const revalidate = 3600;
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -59,6 +67,7 @@ export default async function WikiArticlePage({ params }: Props) {
   const { frontmatter, content } = article;
   const related = getRelatedArticles(slug, await getAllArticles(), 4, await getMentionGraph());
   const entityIndex = await getEntityIndex();
+  const videos = await getVideosForSlug(slug);
   // La portada sube a la cabecera; si el MDX ya la usa en el cuerpo, la cabecera no la repite.
   const imageInBody = !!frontmatter.image && content.includes(frontmatter.image);
   const withStats = hasStats(frontmatter);
@@ -67,6 +76,7 @@ export default async function WikiArticlePage({ params }: Props) {
     <div className="w-full min-h-screen bg-[#0a2339]">
       <article className="w-full">
         <ArticleProgress />
+        <MarkSeen slug={slug} />
         <WikiArticleHeader
           title={frontmatter.title}
           universe={frontmatter.universe}
@@ -93,6 +103,10 @@ export default async function WikiArticlePage({ params }: Props) {
 
         {/* Después del cuerpo y antes del pie: el orden de tabulación sigue el de lectura. Es `fixed`, no ocupa lugar. */}
         <SectionChip headings={extractHeadings(content)} />
+        <EntityPreview />
+
+        <ApareceEn videos={videos} />
+        <ArticleNeighbors slug={slug} />
 
         <WikiArticleFooter related={related} />
       </article>
