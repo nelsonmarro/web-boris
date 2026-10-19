@@ -52,34 +52,6 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  --animate-bounce-slow: bounce-slow 4s ease-in-out infinite;
-  --animate-bubble: bubble 8s infinite linear;
-
-  @keyframes bounce-slow {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-  @keyframes bubble {
-    0% {
-      transform: translateY(120vh) scale(0.5);
-      opacity: 0;
-    }
-    20% {
-      opacity: 0.8;
-    }
-    80% {
-      opacity: 0.8;
-    }
-    100% {
-      transform: translateY(-20vh) scale(1.5);
-      opacity: 0;
-    }
-  }
 }
 
 :root {
@@ -368,16 +340,4 @@
     box-shadow: 0 20px 50px rgb(0 0 0 / 0.45);
   }
 
-  .crystal-glow {
-    --crystal-line: rgb(255 255 255 / 0.3);
-    background:
-      linear-gradient(90deg, transparent, var(--crystal-line), transparent) top / 100% 1px no-repeat,
-      radial-gradient(60% 70% at 90% 0%, rgb(0 140 220 / 0.22), transparent 70%),
-      radial-gradient(50% 60% at 0% 100%, rgb(255 115 0 / 0.12), transparent 70%),
-      #061a2e;
-    border-width: 1px;
-    border-style: solid;
-    border-color: rgb(255 255 255 / 0.1);
-    box-shadow: 0 20px 50px rgb(0 0 0 / 0.45);
-  }
 }
