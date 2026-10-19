@@ -23,7 +23,7 @@ export function crossCheckReservedSlugs(slugs: Iterable<string>): string[] {
  * `duelo`: a y b deben existir y tener stats (la Arena). `desclasificar`: a y b deben existir y, mientras la
  * votación es de una semana estrictamente futura respecto a `now`, estar sellados (`status: proximamente`). En la
  * semana actual y las pasadas basta con que existan: que Boris desclasifique una ficha es justo el resultado esperado.
- * La semana es la ISO de `poll-schedule` (`YYYY-Www`, que se ordena como texto).
+ * La semana es la ISO de `iso-week` (`YYYY-Www`, que se ordena como texto).
  */
 export function crossCheckPolls(
   polls: readonly CuratedPoll[],

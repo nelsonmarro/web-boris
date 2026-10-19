@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getWeeklyPoll } from '@/features/community/data/weekly-poll';
 
 const LINK =
-  'inline-flex min-h-11 items-center rounded-sm text-sm font-bold text-primary transition-colors hover:text-orange-300 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none';
+  'inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm font-bold text-primary transition-colors hover:text-orange-300 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none';
 
 /** Franja de una línea hacia /comunidad y la Arena (spec #55 §3.4). Los nombres del duelo salen de los artículos con stats; una votación «desclasificar» no nombra a nadie. */
 export async function CommunityStrip() {

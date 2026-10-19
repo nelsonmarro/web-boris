@@ -6,7 +6,7 @@ import { createJSONStorage, persist, type StateStorage } from 'zustand/middlewar
 export const REGISTRO_STORAGE_KEY = 'wb-registro';
 
 interface RegistroState {
-  /** slug → fecha ISO de la primera apertura. Las fichas selladas también se marcan; solo no suman. */
+  /** slug → fecha ISO de la primera apertura. Las selladas no se marcan desde la ficha; si hubiera alguna guardada, `progress()` la ignora. */
   seen: Record<string, string>;
   markSeen: (slug: string) => void;
 }
