@@ -1,5 +1,7 @@
 # UX fan · Ola B (descubrimiento) — diseño
 
+> **Actualización 2026-10-18 (tras #55):** el rediseño minimalista (PR #56) cambió la base. Prevalece el anexo `docs/superpowers/plans/2026-10-18-ux-fan-ola-b-ajustes.md`. Puntos clave: sin carrusel de relacionados (máximo 4); el buscador de `/wiki` sigue filtrando el catálogo con el nuevo motor y no abre la paleta; el chip de apartado se ancla a la fila de desplegables de la ficha; reglas visuales de #55 §1.
+
 **Issue:** #50 (épica #52). **Auditoría:** `docs/audits/2026-10-18-experiencia-fan/README.md`, hallazgos #2, #3, #4, #11 y #12.
 **Objetivo:** que ningún clic del fan termine en un callejón sin salida. Debe poder saltar de un nombre a su ficha, encontrar a su personaje como lo escriba y moverse por un artículo largo y por sus imágenes sin perderse ni salir del sitio.
 **Rama:** `feat/ux-fan-ola-b`. La Ola C (#51) tendrá su propio spec después de esta.
