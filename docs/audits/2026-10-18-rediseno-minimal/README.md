@@ -19,3 +19,9 @@ Build de producción (`next start -p 3131`), Chrome DevTools, 2026-10-18.
 - **Cover de la ficha:** como máximo 380 px de alto en escritorio.
 - **Catálogo:** excluye también las páginas de categoría, para que "Todo" sea igual a la suma de las pestañas.
 - **`FactsLine`:** etiqueta a `white/60`, porque con `white/45` quedaba en 4.48:1.
+
+**Después de la revisión final** (`643c7a0..9a4e0a7`):
+- **Hero a 1024 px con la criatura de la semana siguiente (El Gran Majá, boceto blanco):** se forzó la imagen en el DOM y todo el texto se lee (`despues-landing-1024-maja.webp`). El velo pasa a depender del breakpoint: 0.92 hasta el 82 % en `lg` y hasta el 60 % desde `xl`.
+- **Pestañas:** siguen al filtro activo. `?universe=Ellos Llegaron` muestra Todo · 2 = Personajes · 1 + Historia · 1, sobre 2 tarjetas; las pestañas a 0 aparecen atenuadas.
+- **Impresión:** la cabecera de la ficha (título, entradilla y portada) se imprime; solo se ocultan las migas y las acciones.
+- **Lighthouse:** 100/100/100 de nuevo en `/` y `/wiki` (escritorio) y en El Gran Majá y `/comunidad` (móvil).
