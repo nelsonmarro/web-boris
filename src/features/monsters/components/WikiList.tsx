@@ -128,6 +128,14 @@ export function WikiList({ options }: WikiListProps) {
     searchInputRef.current?.focus();
   };
 
+  /** Pone la búsqueda al instante (sin esperar al debounce): lo usa «¿Quisiste decir…?». */
+  const applySearch = (value: string) => {
+    setSearch(value);
+    setDebouncedSearch(value);
+    replaceQuery({ search: value, page: null });
+    searchInputRef.current?.focus();
+  };
+
   const goToPage = (next: number) => {
     replaceQuery({ page: String(next) });
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -201,7 +209,13 @@ export function WikiList({ options }: WikiListProps) {
             ))}
           </div>
         ) : (
-          <WikiEmptyState onClear={clearFilters} />
+          <WikiEmptyState
+            query={debouncedSearch.trim()}
+            suggestion={data?.suggestion}
+            popular={data?.popular}
+            onClear={clearFilters}
+            onSearch={applySearch}
+          />
         )}
       </div>
 

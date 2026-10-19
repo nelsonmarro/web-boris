@@ -8,7 +8,7 @@ import { NavLogo } from '@/components/navbar/components/NavLogo';
 import { NavLinks } from '@/components/navbar/components/NavLinks';
 import { NavActions } from '@/components/navbar/components/NavActions';
 import Footer from '@/components/Footer';
-import { WikiCommandPalette } from '@/features/monsters/components/wiki/WikiCommandPalette';
+import { SearchTrigger } from '@/components/search/SearchTrigger';
 
 export default function WikiLayout({
   children,
@@ -41,7 +41,8 @@ export default function WikiLayout({
             </div>
 
           <div className="flex items-center gap-4 pl-2 lg:ml-4 lg:border-l lg:border-white/10 lg:pl-6">
-            <WikiCommandPalette />
+            <SearchTrigger variant="pill" className="hidden md:inline-flex" />
+            <SearchTrigger variant="icon" className="md:hidden" />
           </div>
         </header>
           <div className="flex-1 relative">

@@ -5,6 +5,7 @@ import { cn } from '@/utils/cn';
 import { NavLogo } from './navbar/components/NavLogo';
 import { NavLinks } from './navbar/components/NavLinks';
 import { NavActions } from './navbar/components/NavActions';
+import { SearchTrigger } from './search/SearchTrigger';
 import { Menu } from 'lucide-react';
 import {
   Sheet,
@@ -65,10 +66,14 @@ export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
         >
           <NavLinks />
           <NavActions />
+          {/* Búsqueda global: píldora desde lg; entre md y lg, solo la lupa (no cabe más). */}
+          <SearchTrigger variant="pill" className="ml-2 hidden lg:inline-flex" />
+          <SearchTrigger variant="icon" className="lg:hidden" />
         </div>
 
         {/* Mobile Menu */}
         <div className="md:hidden flex items-center gap-2 relative z-10">
+          <SearchTrigger variant="icon" />
           <Sheet>
             <SheetTrigger
               render={

@@ -36,6 +36,7 @@ export const metadata: Metadata = {
 };
 
 import { Providers } from './providers';
+import { SearchPalette } from '@/components/search/SearchPalette';
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -51,7 +52,11 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col relative">
         <TooltipProvider>
-          <Providers>{children}</Providers>
+          <Providers>
+            {children}
+            {/* Una sola paleta de búsqueda para todo el sitio; necesita el QueryClient de Providers. */}
+            <SearchPalette />
+          </Providers>
         </TooltipProvider>
         <Toaster position="bottom-right" richColors />
       </body>

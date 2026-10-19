@@ -1,9 +1,12 @@
 'use server';
 
 import { getAllArticles } from '@/utils/mdx';
+import { getEntityIndex } from '@/core/content/entities';
 import { compareDiscovery } from '@/features/monsters/lib/discovery-order';
-import { toSummary, type WikiArticleSummary } from '@/core/types/wiki';
+import { toSummary, type WikiArticle, type WikiArticleSummary } from '@/core/types/wiki';
 import { catalogFilter, tipoCounts } from '@/core/search/catalog';
+import type { EntityEntry } from '@/core/search/entity-index';
+import { search as searchEntities, suggest } from '@/core/search/search';
 import { isTipoId, type TipoId } from '@/core/search/tipos';
 
 export interface GetWikiArticlesParams {
@@ -27,6 +30,10 @@ export interface GetWikiArticlesResult {
   totalPages: number;
   /** Números de las pestañas con la búsqueda y el universo activos, sin aplicar `tipo` (cada pestaña cuenta lo que mostraría). */
   counts: WikiTabCounts;
+  /** Solo si no hay resultados: el «¿Quisiste decir…?» del motor de búsqueda (`null` si nada se parece). */
+  suggestion?: { slug: string; title: string } | null;
+  /** Solo si no hay resultados: las 6 fichas más completas del catálogo. */
+  popular?: WikiArticleSummary[];
 }
 
 export interface WikiFilterOptions {
@@ -37,23 +44,14 @@ export interface WikiFilterOptions {
   total: number;
 }
 
-export interface WikiIndexEntry {
-  slug: string;
-  title: string;
-  universe: string;
-  category?: string;
-  description?: string;
-  image?: string;
-  status?: string;
-  stats?: unknown;
-  infobox?: Record<string, unknown>;
-}
+/** Entrada del índice de la paleta (⌘K): la del índice de entidades, con `aliases` y `richness` (sin `stats` ni `infobox`). */
+export type WikiIndexEntry = EntityEntry;
 
-const normalize = (value: string) =>
-  value
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase();
+/** Ficha de cada hit, en el orden de los hits (los slugs sin ficha se descartan). */
+function articlesOf(hits: readonly { entry: { slug: string } }[], all: readonly WikiArticle[]): WikiArticle[] {
+  const bySlug = new Map(all.map((a) => [a.slug, a]));
+  return hits.flatMap((hit) => bySlug.get(hit.entry.slug) ?? []);
+}
 
 export async function getWikiArticles({
   page = 1,
@@ -62,17 +60,13 @@ export async function getWikiArticles({
   universe = 'all',
   tipo,
 }: GetWikiArticlesParams): Promise<GetWikiArticlesResult> {
-  let articles = await getAllArticles();
+  const [all, { entries }] = await Promise.all([getAllArticles(), getEntityIndex()]);
+  const query = search.trim();
 
-  if (search) {
-    const q = normalize(search);
-    articles = articles.filter(({ frontmatter: fm }) =>
-      normalize(fm.title).includes(q) ||
-      normalize(fm.universe).includes(q) ||
-      (fm.category ? normalize(fm.category).includes(q) : false) ||
-      (fm.description ? normalize(fm.description).includes(q) : false),
-    );
-  }
+  // Con búsqueda manda el motor del archivo (palabras en cualquier orden, apodos, erratas) y su ranking;
+  // sin ella, el orden de descubrimiento. Los filtros se aplican después, sobre ese orden.
+  let articles = query ? articlesOf(searchEntities(query, entries), all) : all;
+  const matchedCatalog = query ? catalogFilter(articles, {}).length > 0 : true;
 
   // Excluye siempre los directorios y filtra por universo; los números de las pestañas se calculan sobre
   // este conjunto (búsqueda + universo), antes de aplicar `tipo` (lógica pura en core/search/catalog).
@@ -83,18 +77,26 @@ export async function getWikiArticles({
 
   articles = catalogFilter(scoped, { tipo: tipo && isTipoId(tipo) ? tipo : undefined });
 
-  articles = [...articles].sort((a, b) => compareDiscovery(a.frontmatter, b.frontmatter));
+  if (!query) articles = [...articles].sort((a, b) => compareDiscovery(a.frontmatter, b.frontmatter));
 
   const total = articles.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const skip = (page - 1) * pageSize;
 
-  return {
+  const result: GetWikiArticlesResult = {
     articles: articles.slice(skip, skip + pageSize).map(toSummary),
     total,
     totalPages,
     counts,
   };
+
+  if (total === 0) {
+    // «¿Quisiste decir…?» solo si la búsqueda no encontró nada en el catálogo (si encontró y los filtros
+    // lo ocultan, sugerir otra cosa no ayuda). Los populares: las fichas más completas, sin directorios.
+    result.suggestion = query && !matchedCatalog ? suggest(query, entries) : null;
+    result.popular = catalogFilter(articlesOf(searchEntities('', entries), all), {}).slice(0, 6).map(toSummary);
+  }
+  return result;
 }
 
 /** Universos del catálogo, pestañas por tipo con su número y total de fichas (para los filtros). */
@@ -107,18 +109,7 @@ export async function getFilterOptions(): Promise<WikiFilterOptions> {
   return { universes, tipos: tipoCounts(articles), total: catalog.length };
 }
 
-/** Índice ligero para la paleta de búsqueda (⌘K). */
+/** Índice ligero para la paleta de búsqueda global: las entradas del índice de entidades (~11 KB en JSON). */
 export async function getWikiIndex(): Promise<WikiIndexEntry[]> {
-  const articles = await getAllArticles();
-  return articles.map(({ slug, frontmatter }) => ({
-    slug,
-    title: frontmatter.title,
-    universe: frontmatter.universe,
-    category: frontmatter.category,
-    description: frontmatter.description,
-    image: frontmatter.image,
-    status: frontmatter.status,
-    stats: frontmatter.stats,
-    infobox: frontmatter.infobox,
-  }));
+  return (await getEntityIndex()).entries;
 }
