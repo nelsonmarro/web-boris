@@ -5,13 +5,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Swords } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { castVote, type CastVoteError } from '../actions/cast-vote';
 import type { PollDef } from '../lib/poll-schedule';
 import type { PollState } from '../types';
-import { CrystalTile } from '@/components/crystal';
 
 export interface PollFighter {
   slug: string;
@@ -46,7 +44,7 @@ function Portrait({ fighter }: { fighter: PollFighter }) {
           src={cover}
           alt=""
           fill
-          sizes="(min-width: 1024px) 160px, 40vw"
+          sizes="(min-width: 768px) 300px, 40vw"
           className="object-cover"
           style={{ objectPosition: fighter.imagePosition ?? '50% 50%' }}
         />
@@ -90,10 +88,15 @@ export function PollTile({
   const sides = [poll.a, poll.b].map((slug) => fighters[slug] ?? { slug, title: slug });
   const showResults = !!open?.myOption;
   const status = message ?? (unavailable ? ERROR_COPY['no-disponible'] : '');
+  const headingId = React.useId();
 
   return (
-    <CrystalTile eyebrow="Encuesta semanal" title={poll.question} icon={Swords} className={className}>
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+    <section aria-labelledby={headingId} className={cn('crystal-surface flex flex-col rounded-2xl p-6 md:p-8', className)}>
+      <h2 id={headingId} className="section-title text-white">
+        {poll.question}
+      </h2>
+
+      <div className="mt-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <Portrait fighter={sides[0]} />
         <span className="font-display text-2xl font-black italic text-primary" aria-hidden>
           VS
@@ -160,6 +163,6 @@ export function PollTile({
         </Link>
         <span className="text-[13px] text-white/60">Tu voto es anónimo</span>
       </div>
-    </CrystalTile>
+    </section>
   );
 }
