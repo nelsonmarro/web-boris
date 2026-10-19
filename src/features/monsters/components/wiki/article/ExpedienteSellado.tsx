@@ -2,9 +2,11 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { getWeeklyPoll } from '@/features/community/data/weekly-poll';
 import { SOCIAL_LINKS } from '@/features/marketing/config/social';
+import { REGISTRO_ROUTE } from '@/features/monsters/config/wiki-routes';
 
+// `gap-1.5`: en un contenedor flex el espacio del texto antes de «›» se pierde; el hueco lo da el `gap` (como en `REGISTRO_TEXT_LINK`).
 const LINK =
-  'inline-flex min-h-11 items-center rounded-sm text-sm font-bold text-primary transition-colors hover:text-orange-300 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none';
+  'inline-flex min-h-11 items-center gap-1.5 rounded-sm text-sm font-bold text-primary transition-colors hover:text-orange-300 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none';
 
 /** ¿La encuesta de esta semana pide desclasificar esta ficha? Si el contenido falla, la ficha sigue sin ese enlace. */
 async function isInWeeklyDeclassifyPoll(slug: string): Promise<boolean> {
@@ -45,19 +47,22 @@ export async function ExpedienteSellado({ slug }: { slug: string }) {
             {inPoll && (
               <li>
                 <Link href="/comunidad#encuesta" className={LINK}>
-                  Pide que se desclasifique <span aria-hidden="true">›</span>
+                  Pide que se desclasifique
+                  <span aria-hidden="true">›</span>
                 </Link>
               </li>
             )}
             <li>
               <a href={SOCIAL_LINKS.youtube} target="_blank" rel="noopener noreferrer" className={LINK}>
-                Sigue el canal <span aria-hidden="true">›</span>
-                <span className="sr-only"> (se abre en una pestaña nueva)</span>
+                Sigue el canal
+                <span aria-hidden="true">›</span>
+                <span className="sr-only"> (se abre en YouTube)</span>
               </a>
             </li>
             <li>
-              <Link href={'/wiki/registro' as Route} className={LINK}>
-                Ver el registro <span aria-hidden="true">›</span>
+              <Link href={REGISTRO_ROUTE as Route} className={LINK}>
+                Ver el registro
+                <span aria-hidden="true">›</span>
               </Link>
             </li>
           </ul>

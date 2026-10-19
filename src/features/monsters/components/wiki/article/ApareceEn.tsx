@@ -25,7 +25,7 @@ export function ApareceEn({ videos }: ApareceEnProps) {
                 external
                 title={video.title}
                 image={`https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`}
-                lines={1}
+                titleLines={3}
                 sizes="(min-width: 768px) 280px, 50vw"
               />
             ))}

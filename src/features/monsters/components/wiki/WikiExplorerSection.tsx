@@ -28,8 +28,7 @@ function WikiListFallback() {
 
 /** Portada de la wiki (spec #55 §4): cabecera, buscador, pestañas por tipo y catálogo. */
 export async function WikiExplorerSection() {
-  const options = await getFilterOptions();
-  const { entries } = await getEntityIndex();
+  const [options, { entries }] = await Promise.all([getFilterOptions(), getEntityIndex()]);
 
   return (
     <div className="space-y-8">

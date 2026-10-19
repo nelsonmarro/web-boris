@@ -68,7 +68,6 @@ export function SidebarNavigation() {
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip="Registro del archivo"
-              isActive={registroActive}
               className={cn(ARCHIVO_ITEM, registroActive && "bg-primary/10 text-primary hover:bg-primary/15")}
               render={<Link href={REGISTRO_ROUTE} aria-label="Registro del archivo" aria-current={registroActive ? "page" : undefined} />}
             >
@@ -82,6 +81,7 @@ export function SidebarNavigation() {
               )}>
                 Registro del archivo
               </span>
+              {registroActive && <div className="absolute left-0 w-1 h-4 bg-primary rounded-r-full shadow-[0_0_10px_rgba(255,115,0,0.5)] group-data-[collapsible=icon]:hidden" />}
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
