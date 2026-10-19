@@ -69,3 +69,22 @@ test('el enlace manual cuenta aunque aparezca después del texto plano', () => {
   ] });
   assert.equal(tree.children[0].children[0].type, 'text');
 });
+
+test('HTML escrito a mano en el MDX: ni <a>, ni <code>, ni <pre>, ni h1-h6 se enlazan', () => {
+  for (const name of ['a', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']) {
+    const tree = run({ type: 'root', children: [
+      p({ type: 'mdxJsxTextElement', name, attributes: [], children: [text('IPCARO')] }),
+    ] });
+    assert.equal(tree.children[0].children[0].children[0].type, 'text', `<${name}> no debe contener enlaces`);
+  }
+});
+
+test('un <a> escrito a mano con texto «IPCARO» no se enlaza, pero la prosa vecina sí', () => {
+  const tree = run({ type: 'root', children: [
+    p({ type: 'mdxJsxTextElement', name: 'a', attributes: [], children: [text('IPCARO')] }, text(' y DELIRIUM.')),
+  ] });
+  const kids = tree.children[0].children;
+  assert.equal(kids[0].children[0].type, 'text');
+  const links = kids.filter((k: { type: string }) => k.type === 'link');
+  assert.deepEqual(links.map((l: { url: string }) => l.url), ['/wiki/delirium']);
+});
