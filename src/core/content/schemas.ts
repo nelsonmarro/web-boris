@@ -1,5 +1,5 @@
 /**
- * Esquemas del contenido del hub /comunidad (novedades y duelos curados).
+ * Esquemas del contenido del hub /comunidad (novedades y duelos curados) y de las relaciones vídeo ↔ ficha (`videos.json`).
  * Puro: solo imports relativos con extensión .ts (lo usan check:content y los tests con node:test).
  */
 import { z } from 'zod';
@@ -56,3 +56,34 @@ export const NewsEntrySchema = z.object({
 
 /** `id` = nombre del archivo sin extensión. */
 export type NewsEntry = z.infer<typeof NewsEntrySchema> & { id: string };
+
+/** Id de un vídeo de YouTube: 11 caracteres. */
+export const YOUTUBE_ID_REGEX = /^[A-Za-z0-9_-]{11}$/;
+
+/**
+ * Relaciones manuales vídeo ↔ ficha («Aparece en»). Solo hechos: el vídeo nombra o muestra a esas fichas.
+ * Las que salen del título del vídeo se calculan solas (`linkVideos`) y no hay que repetirlas aquí.
+ */
+export const VideoLinkSchema = z.object({
+  id: z.string().regex(YOUTUBE_ID_REGEX, { message: 'id de YouTube inválido (11 caracteres [A-Za-z0-9_-])' }),
+  fichas: z
+    .array(Slug)
+    .min(1, { message: 'indica al menos una ficha' })
+    .superRefine((fichas, ctx) => {
+      const seen = new Set<string>();
+      fichas.forEach((slug, i) => {
+        if (seen.has(slug)) ctx.addIssue({ code: 'custom', message: `ficha repetida: ${slug}`, path: [i] });
+        seen.add(slug);
+      });
+    }),
+});
+
+export const VideoLinksSchema = z.array(VideoLinkSchema).superRefine((links, ctx) => {
+  const seen = new Set<string>();
+  links.forEach((l, i) => {
+    if (seen.has(l.id)) ctx.addIssue({ code: 'custom', message: `vídeo repetido: ${l.id}`, path: [i, 'id'] });
+    seen.add(l.id);
+  });
+});
+
+export type VideoLink = z.infer<typeof VideoLinkSchema>;

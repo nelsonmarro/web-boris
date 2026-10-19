@@ -14,13 +14,20 @@
  *     sellada (`status: proximamente`), o una novedad enlaza a una ruta interna inexistente.
  *  7. Los apodos (`aliases`) se repiten entre fichas o coinciden con el título de otra, o un `related` apunta a sí
  *     misma o a una ficha inexistente.
+ *  8. `videos.json` (relaciones vídeo ↔ ficha de «Aparece en») no cumple su esquema (id de YouTube de 11 caracteres,
+ *     fichas sin repetir, vídeo sin repetir) o nombra una ficha que no existe en src/content.
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { WikiFrontmatterSchema } from '../src/core/types/wiki.ts';
-import { readCuratedPolls, readNews } from '../src/core/content/readers.ts';
-import { crossCheckEntities, crossCheckNews, crossCheckPolls } from '../src/core/content/validate.ts';
+import { readCuratedPolls, readNews, readVideoLinks } from '../src/core/content/readers.ts';
+import {
+  crossCheckEntities,
+  crossCheckNews,
+  crossCheckPolls,
+  crossCheckVideoLinks,
+} from '../src/core/content/validate.ts';
 
 const ROOT = process.cwd();
 const CONTENT_DIR = path.join(ROOT, 'src', 'content');
@@ -37,6 +44,7 @@ const problems: Record<string, string[]> = {
   'Imagen que no es lore': [],
   'Comunidad (novedades / encuestas)': [],
   'Apodos y relacionados': [],
+  'Vídeos ↔ fichas (videos.json)': [],
 };
 
 const NON_LORE_ASSETS = ['/assets/Branding/', '/assets/Universo_Colosos/Esquemas/'];
@@ -131,6 +139,10 @@ problems['Comunidad (novedades / encuestas)'].push(
 
 // 7: apodos y related
 problems['Apodos y relacionados'].push(...crossCheckEntities(entityItems));
+
+// 8: vídeos ↔ fichas
+const videoLinks = readVideoLinks(path.join(CONTENT_DIR, 'videos.json'));
+problems['Vídeos ↔ fichas (videos.json)'].push(...videoLinks.errors, ...crossCheckVideoLinks(videoLinks.items, slugs));
 
 // Reporte
 console.log(

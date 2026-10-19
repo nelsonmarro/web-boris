@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { readCuratedPolls, readNews } from '../../src/core/content/readers.ts';
+import { readCuratedPolls, readNews, readVideoLinks } from '../../src/core/content/readers.ts';
 
 function tmpDir(): string {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'wb-content-'));
@@ -40,4 +40,23 @@ test('lee encuestas.json y reporta JSON o esquema inválidos', () => {
   const r = readCuratedPolls(invalid);
   assert.equal(r.items.length, 0);
   assert.ok(r.errors.length >= 1);
+});
+
+test('lee videos.json y reporta archivo ausente, JSON roto o esquema inválido', () => {
+  const dir = tmpDir();
+  assert.deepEqual(readVideoLinks(path.join(dir, 'no-existe.json')), { items: [], errors: [] });
+
+  const ok = path.join(dir, 'ok.json');
+  fs.writeFileSync(ok, JSON.stringify([{ id: 'hedUAqopPBg', fichas: ['the-bloop', 'el-gran-maja'] }]));
+  assert.deepEqual(readVideoLinks(ok).items, [{ id: 'hedUAqopPBg', fichas: ['the-bloop', 'el-gran-maja'] }]);
+
+  const broken = path.join(dir, 'broken.json');
+  fs.writeFileSync(broken, '[{');
+  assert.match(readVideoLinks(broken).errors[0], /^broken\.json: JSON inválido/);
+
+  const invalid = path.join(dir, 'invalid.json');
+  fs.writeFileSync(invalid, JSON.stringify([{ id: 'corto', fichas: ['the-bloop'] }]));
+  const r = readVideoLinks(invalid);
+  assert.equal(r.items.length, 0);
+  assert.match(r.errors[0], /^invalid\.json: 0\.id/);
 });

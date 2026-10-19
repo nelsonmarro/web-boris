@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { crossCheckEntities, crossCheckNews, crossCheckPolls } from '../../src/core/content/validate.ts';
+import { crossCheckEntities, crossCheckNews, crossCheckPolls, crossCheckVideoLinks } from '../../src/core/content/validate.ts';
 
 const ARTICLES = new Set(['the-bloop', 'el-gran-maja', 'la-hecatombe-del-lapeon']);
 const FIGHTERS = new Set(['the-bloop', 'el-gran-maja']);
@@ -109,4 +109,24 @@ test('crossCheckEntities: related con el mismo slug repetido', () => {
 
 test('crossCheckEntities: contenido válido no da errores', () => {
   assert.deepEqual(crossCheckEntities([{ slug: 'a', title: 'Alfa', aliases: ['La Bestia'] }, { slug: 'b', title: 'Beta', related: ['a'] }]), []);
+});
+
+test('crossCheckVideoLinks: cada slug de fichas debe existir en src/content', () => {
+  assert.deepEqual(
+    crossCheckVideoLinks([{ id: 'hedUAqopPBg', fichas: ['the-bloop', 'el-gran-maja'] }], ARTICLES),
+    [],
+  );
+  assert.deepEqual(
+    crossCheckVideoLinks(
+      [
+        { id: 'hedUAqopPBg', fichas: ['the-bloop', 'no-existe'] },
+        { id: 'XurjKHinBIY', fichas: ['tampoco'] },
+      ],
+      ARTICLES,
+    ),
+    [
+      'videos.json hedUAqopPBg: "no-existe" no existe en src/content',
+      'videos.json XurjKHinBIY: "tampoco" no existe en src/content',
+    ],
+  );
 });

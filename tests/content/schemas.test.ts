@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { CuratedPollsSchema, NewsEntrySchema } from '../../src/core/content/schemas.ts';
+import { CuratedPollsSchema, NewsEntrySchema, VideoLinksSchema } from '../../src/core/content/schemas.ts';
 
 test('acepta duelos curados válidos', () => {
   const r = CuratedPollsSchema.safeParse([
@@ -61,4 +61,30 @@ test('rechaza enlaces http y resúmenes largos', () => {
   assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: '//evil.com' }).success, false);
   assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: '/\\evil.com' }).success, false);
   assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: 'https://www.youtube.com/watch?v=vRVFd7LfTTs' }).success, true);
+});
+
+test('videos.json: acepta un vídeo con sus fichas', () => {
+  const r = VideoLinksSchema.safeParse([{ id: 'hedUAqopPBg', fichas: ['the-bloop', 'el-gran-maja'] }]);
+  assert.equal(r.success, true);
+});
+
+test('videos.json: el id debe tener 11 caracteres de YouTube [A-Za-z0-9_-]', () => {
+  for (const id of ['corto', 'hedUAqopPBgX', 'hedUAqop BG', 'hedUAqop.BG', '']) {
+    assert.equal(VideoLinksSchema.safeParse([{ id, fichas: ['the-bloop'] }]).success, false, id);
+  }
+  assert.equal(VideoLinksSchema.safeParse([{ id: 'a_b-C1234ZZ', fichas: ['the-bloop'] }]).success, true);
+});
+
+test('videos.json: fichas no vacías, con slugs válidos y sin repetir', () => {
+  assert.equal(VideoLinksSchema.safeParse([{ id: 'hedUAqopPBg', fichas: [] }]).success, false);
+  assert.equal(VideoLinksSchema.safeParse([{ id: 'hedUAqopPBg', fichas: ['The Bloop'] }]).success, false);
+  assert.equal(VideoLinksSchema.safeParse([{ id: 'hedUAqopPBg', fichas: ['the-bloop', 'the-bloop'] }]).success, false);
+});
+
+test('videos.json: rechaza el mismo vídeo dos veces', () => {
+  const r = VideoLinksSchema.safeParse([
+    { id: 'hedUAqopPBg', fichas: ['the-bloop'] },
+    { id: 'hedUAqopPBg', fichas: ['el-gran-maja'] },
+  ]);
+  assert.equal(r.success, false);
 });

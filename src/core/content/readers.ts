@@ -1,11 +1,18 @@
 /**
- * Lectura de novedades y duelos curados desde el disco. Puro (lo usan check:content,
+ * Lectura de novedades, duelos curados y relaciones vídeo ↔ ficha desde el disco. Puro (lo usan check:content,
  * el repositorio de archivos y los tests): solo imports relativos con extensión .ts.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
-import { CuratedPollsSchema, NewsEntrySchema, type CuratedPoll, type NewsEntry } from './schemas.ts';
+import {
+  CuratedPollsSchema,
+  NewsEntrySchema,
+  VideoLinksSchema,
+  type CuratedPoll,
+  type NewsEntry,
+  type VideoLink,
+} from './schemas.ts';
 
 export interface ReadResult<T> {
   items: T[];
@@ -41,6 +48,25 @@ export function readCuratedPolls(file: string): ReadResult<CuratedPoll> {
     return { items: [], errors: [`${name}: JSON inválido — ${(error as Error).message}`] };
   }
   const parsed = CuratedPollsSchema.safeParse(json);
+  if (!parsed.success) {
+    return {
+      items: [],
+      errors: parsed.error.issues.map((i) => `${name}: ${i.path.join('.') || '(raíz)'} — ${i.message}`),
+    };
+  }
+  return { items: parsed.data, errors: [] };
+}
+
+export function readVideoLinks(file: string): ReadResult<VideoLink> {
+  if (!fs.existsSync(file)) return { items: [], errors: [] };
+  const name = path.basename(file);
+  let json: unknown;
+  try {
+    json = JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch (error) {
+    return { items: [], errors: [`${name}: JSON inválido — ${(error as Error).message}`] };
+  }
+  const parsed = VideoLinksSchema.safeParse(json);
   if (!parsed.success) {
     return {
       items: [],

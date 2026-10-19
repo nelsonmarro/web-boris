@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { getAllArticles } from '@/utils/mdx';
-import { readCuratedPolls, readNews } from './readers';
+import { readCuratedPolls, readNews, readVideoLinks } from './readers';
 import type { ContentRepository } from './types';
 
 const CONTENT_DIR = path.join(process.cwd(), 'src/content');
@@ -22,6 +22,12 @@ export const fileContentRepository: ContentRepository = {
   async getCuratedPolls() {
     const { items, errors } = readCuratedPolls(path.join(CONTENT_DIR, 'encuestas.json'));
     logErrors('encuestas', errors);
+    return items;
+  },
+
+  async getVideoLinks() {
+    const { items, errors } = readVideoLinks(path.join(CONTENT_DIR, 'videos.json'));
+    logErrors('videos', errors);
     return items;
   },
 };

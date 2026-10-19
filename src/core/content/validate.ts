@@ -1,6 +1,6 @@
 /** Referencias cruzadas del contenido del hub contra los artículos. Puro. */
 import { normalize } from '../search/entity-index.ts';
-import type { CuratedPoll, NewsEntry } from './schemas.ts';
+import type { CuratedPoll, NewsEntry, VideoLink } from './schemas.ts';
 
 /** Rutas propias (no MDX) a las que puede enlazar una novedad. */
 const STATIC_ROUTES = new Set(['/', '/wiki', '/wiki/arena', '/comunidad']);
@@ -37,6 +37,17 @@ export function crossCheckNews(news: readonly NewsEntry[], articleSlugs: Readonl
     const article = pathOnly.match(/^\/wiki\/([^/]+)$/)?.[1];
     const ok = STATIC_ROUTES.has(pathOnly) || (article !== undefined && articleSlugs.has(article));
     if (!ok) errors.push(`novedades/${n.id}.md: enlace interno inexistente ${n.enlace}`);
+  }
+  return errors;
+}
+
+/** `videos.json`: cada ficha de cada vídeo debe existir en src/content. (El formato del id ya lo valida el esquema.) */
+export function crossCheckVideoLinks(links: readonly VideoLink[], articleSlugs: ReadonlySet<string>): string[] {
+  const errors: string[] = [];
+  for (const l of links) {
+    for (const slug of l.fichas) {
+      if (!articleSlugs.has(slug)) errors.push(`videos.json ${l.id}: "${slug}" no existe en src/content`);
+    }
   }
   return errors;
 }
