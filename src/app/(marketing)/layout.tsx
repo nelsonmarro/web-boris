@@ -1,5 +1,3 @@
-import BubbleTrail from '@/components/ui/bubble-trail';
-
 export default function MarketingLayout({
   children,
 }: {
@@ -18,7 +16,6 @@ export default function MarketingLayout({
       {/* Submarine Atmospheric Layers */}
       <div className="caustics-layer" />
       <div className="abyssal-vignette" />
-      <BubbleTrail />
       
       {children}
     </div>

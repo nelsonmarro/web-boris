@@ -8,7 +8,6 @@ import { NavLogo } from '@/components/navbar/components/NavLogo';
 import { NavLinks } from '@/components/navbar/components/NavLinks';
 import { NavActions } from '@/components/navbar/components/NavActions';
 import Footer from '@/components/Footer';
-import BubbleTrail from '@/components/ui/bubble-trail';
 import { WikiCommandPalette } from '@/features/monsters/components/wiki/WikiCommandPalette';
 
 export default function WikiLayout({
@@ -18,7 +17,6 @@ export default function WikiLayout({
 }) {
   return (
     <SidebarProvider>
-      <BubbleTrail />
       <div className="flex min-h-screen w-full bg-[#0a2339] relative z-0">
         <AppSidebar />
         <SidebarInset className="flex flex-col min-w-0 bg-transparent overflow-x-clip">
