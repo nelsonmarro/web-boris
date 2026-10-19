@@ -49,7 +49,8 @@ export function WikiArticleDisclosures({ ficha, headings }: WikiArticleDisclosur
   );
 
   return (
-    <div className="mb-6">
+    // `data-article-disclosures`: ancla de `SectionChip` (aparece cuando esta fila sale de la ventana por arriba).
+    <div data-article-disclosures className="mb-6">
       <div className="flex flex-wrap gap-2">
         {ficha && trigger('ficha', fichaId, 'Ficha completa')}
         {hasToc && trigger('toc', tocId, 'Contenido')}
