@@ -63,7 +63,7 @@ export function WikiArticleHeader({
       <div className="wiki-container pb-8">
         {cover && (
           <figure className="mt-6">
-            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/10 md:aspect-[21/9]">
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/10 md:aspect-[21/9] md:max-h-[380px]">
               <Image
                 src={cover}
                 alt={title}

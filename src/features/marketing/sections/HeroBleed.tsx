@@ -45,7 +45,11 @@ export async function HeroBleed() {
             style={{ objectPosition: fm?.imagePosition ?? '50% 50%' }}
           />
         )}
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,18,46,0.7)_0,rgba(0,18,46,0.7)_90px,rgba(0,18,46,0.88)_170px,rgba(0,18,46,0.88)_380px,#00122E_78%)]" />
+        {/* Móvil: el texto ocupa todo el ancho → velo vertical (≥ 0.85 bajo el texto naranja). */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,18,46,0.7)_0,rgba(0,18,46,0.7)_90px,rgba(0,18,46,0.88)_170px,rgba(0,18,46,0.88)_380px,#00122E_78%)] lg:hidden" />
+        {/* Escritorio: el texto vive en el 60 % izquierdo → velo horizontal; la criatura se ve en el tercio derecho. */}
+        <div className="absolute inset-0 hidden bg-[linear-gradient(to_right,rgba(0,18,46,0.94)_0%,rgba(0,18,46,0.92)_60%,rgba(0,18,46,0.45)_85%,rgba(0,18,46,0.25)_100%)] lg:block" />
+        <div className="absolute inset-x-0 bottom-0 hidden h-1/2 bg-[linear-gradient(to_top,#00122E_0%,rgba(0,18,46,0.8)_45%,transparent_100%)] lg:block" />
       </div>
 
       <div className="container mx-auto px-6 pb-10 pt-32 md:pt-40 short-screen:pt-28">
