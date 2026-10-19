@@ -3,8 +3,11 @@ import { TIPOS, tipoOf, type TipoId } from './tipos.ts';
 
 type Item = { frontmatter: { category?: string; universe: string } };
 
-/** Páginas índice (directorios y páginas de categoría): viven en el menú lateral, no en el catálogo. */
-const isHub = (i: Item) => i.frontmatter.category === 'Directorio' || i.frontmatter.category === 'Categoría';
+/** Categorías de las páginas índice (directorios y páginas de categoría). */
+export const isIndexCategory = (category?: string) => category === 'Directorio' || category === 'Categoría';
+
+/** Páginas índice: viven en el menú lateral, no en el catálogo. */
+const isHub = (i: Item) => isIndexCategory(i.frontmatter.category);
 
 export function catalogFilter<T extends Item>(items: readonly T[], f: { tipo?: TipoId; universe?: string }): T[] {
   return items.filter(

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { catalogFilter, tipoCounts } from '../../src/core/search/catalog.ts';
+import { catalogFilter, isIndexCategory, tipoCounts } from '../../src/core/search/catalog.ts';
 
 const a = (slug: string, category: string, universe = 'Colosos') => ({ slug, frontmatter: { category, universe } });
 const ITEMS = [
@@ -28,4 +28,11 @@ test('tipoCounts: solo grupos con contenido, en orden, sin directorios', () => {
     { id: 'personajes', label: 'Personajes', count: 1 },
     { id: 'historia', label: 'Historia', count: 1 },
   ]);
+});
+
+test('isIndexCategory: solo Directorio y Categoría', () => {
+  assert.equal(isIndexCategory('Directorio'), true);
+  assert.equal(isIndexCategory('Categoría'), true);
+  assert.equal(isIndexCategory('Coloso'), false);
+  assert.equal(isIndexCategory(undefined), false);
 });

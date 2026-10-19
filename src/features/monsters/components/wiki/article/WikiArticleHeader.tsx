@@ -3,8 +3,9 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { Swords } from 'lucide-react';
 import { FactsLine } from '@/components/content';
+import { isIndexCategory } from '@/core/search/catalog';
 import type { WikiFrontmatter } from '@/core/types/wiki';
-import { getThreatLevel, hasStats, type ThreatTone } from '@/features/monsters/lib/stats';
+import { getThreatLevel, type ThreatTone } from '@/features/monsters/lib/stats';
 import { cn } from '@/utils/cn';
 import { isBrandPlaceholder } from '../CategoryPlaceholder';
 import { WikiBreadcrumbs } from './WikiBreadcrumbs';
@@ -26,6 +27,8 @@ interface WikiArticleHeaderProps {
   /** Entradilla (frontmatter `description`). */
   description?: string;
   stats?: WikiFrontmatter['stats'];
+  /** El artículo tiene datos de ficha (`hasStats(frontmatter)` en la página); sin ellos no hay línea de datos. */
+  hasStats: boolean;
   /** La portada ya aparece en el cuerpo del MDX: la cabecera no la repite. */
   imageInBody?: boolean;
 }
@@ -53,13 +56,16 @@ export function WikiArticleHeader({
   imageCaption,
   description,
   stats,
+  hasStats,
   imageInBody = false,
 }: WikiArticleHeaderProps) {
-  const cover = image && !isBrandPlaceholder(image) && !imageInBody ? image : undefined;
-  const facts = stats && hasStats({ title, universe, stats }) ? buildFacts(stats) : [];
+  // Las páginas índice (Directorio, Categoría) no llevan portada: su `image` es solo la miniatura del menú.
+  const cover =
+    image && !isBrandPlaceholder(image) && !imageInBody && !isIndexCategory(category) ? image : undefined;
+  const facts = hasStats && stats ? buildFacts(stats) : [];
 
   return (
-    <header className="relative z-20 border-b border-white/10 print:hidden">
+    <header className="relative z-20 border-b border-white/10">
       <div className="wiki-container pb-8">
         {cover && (
           <figure className="mt-6">
@@ -93,7 +99,7 @@ export function WikiArticleHeader({
 
           <FactsLine items={facts} />
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 print:hidden">
             {arenaSlug && (
               <Link
                 href={`/wiki/arena?a=${arenaSlug}` as Route}
