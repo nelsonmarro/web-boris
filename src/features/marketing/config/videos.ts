@@ -1,10 +1,8 @@
-export type VideoOrientation = 'landscape' | 'short';
-
 export interface FeaturedVideo {
   id: string;
   title: string;
-  category: string;
-  orientation: VideoOrientation;
+  /** Etiqueta visible de la tarjeta, ya en "sentence case" y con los nombres propios bien escritos. */
+  label: string;
 }
 
 /**
@@ -16,19 +14,16 @@ export const FEATURED_VIDEOS: readonly FeaturedVideo[] = [
   {
     id: 'hedUAqopPBg',
     title: 'Colosos - The Bloop vs El Gran Majá - La Batalla',
-    category: 'COLOSOS',
-    orientation: 'landscape',
+    label: 'Colosos',
   },
   {
     id: 'XurjKHinBIY',
     title: 'Extinción masiva',
-    category: 'SHORT · CGI',
-    orientation: 'short',
+    label: 'Short · CGI',
   },
   {
     id: 'BP6fwpSuR7I',
     title: 'El Blitz',
-    category: 'SHORT · SEGUNDA GUERRA MUNDIAL',
-    orientation: 'short',
+    label: 'Short · Segunda Guerra Mundial',
   },
 ];

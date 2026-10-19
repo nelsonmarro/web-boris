@@ -51,7 +51,7 @@ export function CategoryPlaceholder({ category, className, variant = 'full' }: C
         aria-hidden="true"
         className={cn('absolute inset-0 bg-[radial-gradient(ellipse_at_top,#0064A0_0%,#00203F_55%,#00122E_100%)]', className)}
       >
-        <Icon className="absolute right-[var(--tile-p,1.5rem)] top-[var(--tile-p,1.5rem)] h-6 w-6 text-primary/80 drop-shadow-[0_0_18px_rgba(255,115,0,0.5)]" />
+        <Icon className="absolute right-6 top-6 h-6 w-6 text-primary/80 drop-shadow-[0_0_18px_rgba(255,115,0,0.5)]" />
       </div>
     );
   }

@@ -1,32 +1,43 @@
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 import { WikiList } from '@/features/monsters/components/WikiList';
-import { SectionHeader } from '@/features/monsters/components/wiki/SectionHeader';
 import { getFilterOptions } from '@/features/monsters/actions/get-wiki-articles';
 
+/**
+ * Esqueleto que ve el HTML estático mientras WikiList se hidrata. Reserva el hueco del buscador y las
+ * pestañas y lleva los mismos anclajes (#explorar, #catalogo): una carga directa con hash
+ * (`/wiki?universe=…#catalogo`) encuentra el destino sin esperar a la hidratación.
+ */
+function WikiListFallback() {
+  return (
+    <div role="status">
+      <div className="mb-6 h-14 max-w-2xl rounded-xl border border-white/10 bg-[#061a2e]" />
+      <div className="h-[6.5rem] lg:h-11" />
+      <span id="explorar" className="block scroll-mt-24" />
+      <div id="catalogo" className="mt-8 flex min-h-[400px] scroll-mt-24 items-center justify-center">
+        <Loader2 aria-hidden="true" className="h-10 w-10 animate-spin text-primary motion-reduce:animate-none" />
+        <span className="sr-only">Cargando el archivo</span>
+      </div>
+    </div>
+  );
+}
+
+/** Portada de la wiki (spec #55 §4): cabecera, buscador, pestañas por tipo y catálogo. */
 export async function WikiExplorerSection() {
   const options = await getFilterOptions();
 
   return (
-    <section id="explorar" className="relative space-y-8 scroll-mt-24">
-      <SectionHeader
-        eyebrow="Biblioteca"
-        title={<>Explorar <span className="text-primary">todos los registros</span></>}
-        description="Busca por nombre o filtra por universo y categoría."
-      />
-      <div className="relative">
-        <div className="pointer-events-none absolute -inset-4 rounded-full bg-primary/5 opacity-30 blur-[80px]" />
-        {/* useSearchParams exige un límite de Suspense para no des-optimizar la página estática. */}
-        <Suspense
-          fallback={
-            <div className="flex min-h-[400px] items-center justify-center">
-              <Loader2 className="h-12 w-12 animate-spin text-primary" />
-            </div>
-          }
-        >
-          <WikiList options={options} />
-        </Suspense>
-      </div>
-    </section>
+    <div className="space-y-8">
+      <header className="space-y-3">
+        <h1 className="page-title">Archivo</h1>
+        <p className="text-lg text-white/70">
+          Criaturas, personajes, organizaciones e historia de los universos de BorisaoBlois.
+        </p>
+      </header>
+      {/* useSearchParams exige un límite de Suspense para no des-optimizar la página estática. */}
+      <Suspense fallback={<WikiListFallback />}>
+        <WikiList options={options} />
+      </Suspense>
+    </div>
   );
 }

@@ -4,16 +4,18 @@ import { cn } from '@/utils/cn';
 
 interface ContactFieldProps {
   label: string;
+  /** `id` del campo: asocia la etiqueta con su control. */
+  htmlFor?: string;
   icon: LucideIcon;
   error?: string;
   children: React.ReactNode;
   className?: string;
 }
 
-export function ContactField({ label, icon: Icon, error, children, className }: ContactFieldProps) {
+export function ContactField({ label, htmlFor, icon: Icon, error, children, className }: ContactFieldProps) {
   return (
     <div className={cn("space-y-2", className)}>
-      <label className="eyebrow text-white/60 mb-1 block pl-1">
+      <label htmlFor={htmlFor} className="eyebrow text-white/60 mb-1 block pl-1">
         {label}
       </label>
       <div className="relative group">
@@ -30,10 +32,10 @@ export function ContactField({ label, icon: Icon, error, children, className }: 
 }
 
 // Specialized Textarea Field (Icon position differs)
-export function ContactTextAreaField({ label, icon: Icon, error, children, className }: ContactFieldProps) {
+export function ContactTextAreaField({ label, htmlFor, icon: Icon, error, children, className }: ContactFieldProps) {
   return (
     <div className={cn("space-y-2", className)}>
-      <label className="eyebrow text-white/60 mb-1 block pl-1">
+      <label htmlFor={htmlFor} className="eyebrow text-white/60 mb-1 block pl-1">
         {label}
       </label>
       <div className="relative group">

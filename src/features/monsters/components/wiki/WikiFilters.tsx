@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { WikiSearch } from './WikiSearch';
+import Link from 'next/link';
+import type { Route } from 'next';
 import {
   Select,
   SelectContent,
@@ -9,97 +10,110 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { WikiFilterOptions } from '@/features/monsters/actions/get-wiki-articles';
+import type { WikiFilterOptions, WikiTabCounts } from '@/features/monsters/actions/get-wiki-articles';
+import { cn } from '@/utils/cn';
 
 interface WikiFiltersProps {
+  /** Define qué pestañas existen (universos y grupos con contenido en todo el archivo). */
   options: WikiFilterOptions;
-  /** Texto del buscador (controlado). */
-  search: string;
-  onSearchChange: (value: string) => void;
-  onUniverseChange: (value: string | null) => void;
-  onCategoryChange: (value: string | null) => void;
+  /** Número de cada pestaña con la búsqueda y el universo activos (las opciones globales sirven mientras carga). */
+  counts: WikiTabCounts;
+  /** `'all'` o el id de un tipo de `options.tipos`. */
+  currentTipo: string;
   currentUniverse: string;
-  currentCategory: string;
+  /** URL de cada pestaña (`'all'` quita `?tipo=`); permite abrirla en otra pestaña del navegador. */
+  hrefForTipo: (tipo: string) => string;
+  onTipoChange: (tipo: string) => void;
+  onUniverseChange: (value: string | null) => void;
 }
-
-/** Etiquetas en plural para mostrar; el `value` es el string exacto del frontmatter. */
-const CATEGORY_LABELS: Record<string, string> = {
-  Coloso: 'Colosos',
-  Titán: 'Titanes',
-  Animal: 'Animales',
-  Especie: 'Especies',
-  Humano: 'Humanos',
-  Organización: 'Organizaciones',
-  Vehículo: 'Vehículos',
-  Libro: 'Libros',
-  Historia: 'Historias',
-  Entidad: 'Entidades',
-  Categoría: 'Categorías',
-  Directorio: 'Directorios',
-};
 
 // `ui/select` fija la altura con `data-[size=default]:h-8`: hay que sobrescribir esa misma variante.
 const triggerClass =
-  'h-12 data-[size=default]:h-12 w-full rounded-xl border-white/15 bg-[#061a2e] px-4 text-sm font-semibold text-white focus-visible:ring-4 focus-visible:ring-primary/20 sm:w-[210px]';
+  'h-11 data-[size=default]:h-11 w-full rounded-xl border-white/15 bg-[#061a2e] px-4 text-sm font-semibold text-white focus-visible:ring-4 focus-visible:ring-primary/20 sm:w-[210px]';
 const contentClass = 'bg-[#061a2e] border-white/10 text-white min-w-[200px]';
+
+const pillBase =
+  'inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-full px-4 text-sm font-bold transition-colors motion-reduce:transition-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a2339]';
+
+/** Una pulsación normal cambia la URL sin navegar; Ctrl/Cmd/Mayús/botón medio siguen abriendo el enlace. */
+function isPlainClick(e: React.MouseEvent) {
+  return !e.defaultPrevented && e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+}
 
 export function WikiFilters({
   options,
-  search,
-  onSearchChange,
-  onUniverseChange,
-  onCategoryChange,
+  counts,
+  currentTipo,
   currentUniverse,
-  currentCategory,
+  hrefForTipo,
+  onTipoChange,
+  onUniverseChange,
 }: WikiFiltersProps) {
   // Base UI muestra el valor crudo salvo que reciba el mapa `items` valor → etiqueta.
   const universeItems = React.useMemo(
-    () => ({ all: 'Todos los Universos', ...Object.fromEntries(options.universes.map((u) => [u, u])) }),
+    () => ({ all: 'Todos los universos', ...Object.fromEntries(options.universes.map((u) => [u, u])) }),
     [options.universes],
   );
-  const categoryItems = React.useMemo(
-    () => ({
-      all: 'Todas las Categorías',
-      ...Object.fromEntries(options.categories.map((c) => [c, CATEGORY_LABELS[c] ?? c])),
-    }),
-    [options.categories],
-  );
+
+  // La fila no cambia de forma al filtrar: un grupo sin fichas para el filtro actual sigue ahí, con 0.
+  const tabs = [
+    { id: 'all', label: 'Todo', count: counts.total },
+    ...options.tipos.map(({ id, label }) => ({
+      id,
+      label,
+      count: counts.tipos.find((t) => t.id === id)?.count ?? 0,
+    })),
+  ];
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 items-center w-full">
-      <div className="flex-1 w-full lg:max-w-xl">
-        <WikiSearch value={search} onSearch={onSearchChange} placeholder="Filtrar por nombre..." />
-      </div>
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      {/* Enlaces que cambian la URL, no pestañas ARIA: la activa se marca con aria-current. */}
+      <nav aria-label="Tipos de expediente" className="min-w-0">
+        <div className="-mx-4 -my-1.5 flex gap-2 overflow-x-auto px-4 py-1.5 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
+          {tabs.map(({ id, label, count }) => {
+            const active = id === currentTipo;
+            // Atenuada pero pulsable: lleva a una lista vacía con su botón de «Limpiar filtros».
+            const empty = count === 0 && !active;
+            return (
+              <Link
+                key={id}
+                href={hrefForTipo(id) as Route}
+                prefetch={false}
+                aria-current={active ? 'page' : undefined}
+                aria-disabled={empty ? 'true' : undefined}
+                onClick={(e) => {
+                  if (!isPlainClick(e)) return;
+                  e.preventDefault();
+                  onTipoChange(id);
+                }}
+                className={cn(
+                  pillBase,
+                  active
+                    ? 'bg-primary text-[#00122E]'
+                    : 'border border-white/15 text-white/80 hover:border-primary/40',
+                  empty && 'opacity-50',
+                )}
+              >
+                {label} · {count}
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
 
-      <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-        <Select value={currentUniverse} onValueChange={onUniverseChange} items={universeItems}>
-          <SelectTrigger aria-label="Universo" className={triggerClass}>
-            <SelectValue placeholder="Universo" />
-          </SelectTrigger>
-          <SelectContent className={contentClass}>
-            <SelectItem value="all">Todos los Universos</SelectItem>
-            {options.universes.map((universe) => (
-              <SelectItem key={universe} value={universe}>
-                {universe}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={currentCategory} onValueChange={onCategoryChange} items={categoryItems}>
-          <SelectTrigger aria-label="Categoría" className={triggerClass}>
-            <SelectValue placeholder="Categoría" />
-          </SelectTrigger>
-          <SelectContent className={contentClass}>
-            <SelectItem value="all">Todas las Categorías</SelectItem>
-            {options.categories.map((category) => (
-              <SelectItem key={category} value={category}>
-                {CATEGORY_LABELS[category] ?? category}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <Select value={currentUniverse} onValueChange={onUniverseChange} items={universeItems}>
+        <SelectTrigger aria-label="Universo" className={triggerClass}>
+          <SelectValue placeholder="Universo" />
+        </SelectTrigger>
+        <SelectContent className={contentClass}>
+          <SelectItem value="all">Todos los universos</SelectItem>
+          {options.universes.map((universe) => (
+            <SelectItem key={universe} value={universe}>
+              {universe}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

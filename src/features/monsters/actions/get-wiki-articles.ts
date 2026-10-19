@@ -3,24 +3,38 @@
 import { getAllArticles } from '@/utils/mdx';
 import { compareDiscovery } from '@/features/monsters/lib/discovery-order';
 import { toSummary, type WikiArticleSummary } from '@/core/types/wiki';
+import { catalogFilter, tipoCounts } from '@/core/search/catalog';
+import { isTipoId, type TipoId } from '@/core/search/tipos';
 
 export interface GetWikiArticlesParams {
   page?: number;
   pageSize?: number;
   search?: string;
   universe?: string;
-  category?: string;
+  /** Id de un grupo de `TIPOS` (`criaturas`, `personajes`…). Un valor desconocido se ignora. */
+  tipo?: string;
+}
+
+/** Número de fichas por pestaña: «Todo» y cada grupo de `TIPOS` con contenido. */
+export interface WikiTabCounts {
+  total: number;
+  tipos: { id: TipoId; label: string; count: number }[];
 }
 
 export interface GetWikiArticlesResult {
   articles: WikiArticleSummary[];
   total: number;
   totalPages: number;
+  /** Números de las pestañas con la búsqueda y el universo activos, sin aplicar `tipo` (cada pestaña cuenta lo que mostraría). */
+  counts: WikiTabCounts;
 }
 
 export interface WikiFilterOptions {
   universes: string[];
-  categories: string[];
+  /** Grupos con contenido y su número de fichas (sin directorios, con las Próximamente). */
+  tipos: { id: TipoId; label: string; count: number }[];
+  /** Fichas del catálogo: todas menos los directorios. */
+  total: number;
 }
 
 export interface WikiIndexEntry {
@@ -43,10 +57,10 @@ const normalize = (value: string) =>
 
 export async function getWikiArticles({
   page = 1,
-  pageSize = 9,
+  pageSize = 12,
   search = '',
   universe = 'all',
-  category = 'all',
+  tipo,
 }: GetWikiArticlesParams): Promise<GetWikiArticlesResult> {
   let articles = await getAllArticles();
 
@@ -60,13 +74,14 @@ export async function getWikiArticles({
     );
   }
 
-  if (universe && universe !== 'all') {
-    articles = articles.filter((a) => a.frontmatter.universe === universe);
-  }
+  // Excluye siempre los directorios y filtra por universo; los números de las pestañas se calculan sobre
+  // este conjunto (búsqueda + universo), antes de aplicar `tipo` (lógica pura en core/search/catalog).
+  const scoped = catalogFilter(articles, {
+    universe: universe && universe !== 'all' ? universe : undefined,
+  });
+  const counts: WikiTabCounts = { total: catalogFilter(scoped, {}).length, tipos: tipoCounts(scoped) };
 
-  if (category && category !== 'all') {
-    articles = articles.filter((a) => a.frontmatter.category === category);
-  }
+  articles = catalogFilter(scoped, { tipo: tipo && isTipoId(tipo) ? tipo : undefined });
 
   articles = [...articles].sort((a, b) => compareDiscovery(a.frontmatter, b.frontmatter));
 
@@ -78,20 +93,18 @@ export async function getWikiArticles({
     articles: articles.slice(skip, skip + pageSize).map(toSummary),
     total,
     totalPages,
+    counts,
   };
 }
 
-/** Universos y categorías reales presentes en el contenido (para los filtros). */
+/** Universos del catálogo, pestañas por tipo con su número y total de fichas (para los filtros). */
 export async function getFilterOptions(): Promise<WikiFilterOptions> {
   const articles = await getAllArticles();
-  const universes = new Set<string>();
-  const categories = new Set<string>();
-  for (const { frontmatter } of articles) {
-    universes.add(frontmatter.universe);
-    if (frontmatter.category) categories.add(frontmatter.category);
-  }
-  const sort = (set: Set<string>) => [...set].sort((a, b) => a.localeCompare(b, 'es'));
-  return { universes: sort(universes), categories: sort(categories) };
+  const catalog = catalogFilter(articles, {});
+  const universes = [...new Set(catalog.map((a) => a.frontmatter.universe))].sort((a, b) =>
+    a.localeCompare(b, 'es'),
+  );
+  return { universes, tipos: tipoCounts(articles), total: catalog.length };
 }
 
 /** Índice ligero para la paleta de búsqueda (⌘K). */
