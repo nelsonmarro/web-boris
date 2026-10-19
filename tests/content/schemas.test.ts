@@ -5,7 +5,7 @@ import { CuratedPollsSchema, NewsEntrySchema } from '../../src/core/content/sche
 test('acepta duelos curados válidos', () => {
   const r = CuratedPollsSchema.safeParse([
     { semana: '2026-W42', a: 'vlad-julia', b: 'el-gran-maja' },
-    { semana: '2026-W43', a: 'the-bloop', b: 'slowdown-criyote', pregunta: '¿Quién gana?' },
+    { semana: '2026-W43', a: 'the-bloop', b: 'slowdown-criyonte', pregunta: '¿Quién gana?' },
   ]);
   assert.equal(r.success, true);
 });

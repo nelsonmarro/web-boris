@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // Slug canónico de Criyonte: el enlace antiguo sigue funcionando.
+      { source: '/wiki/slowdown-criyote', destination: '/wiki/slowdown-criyonte', permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

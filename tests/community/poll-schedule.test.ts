@@ -8,7 +8,7 @@ import {
   weeksSinceEpoch,
 } from '../../src/features/community/lib/poll-schedule.ts';
 
-const FIGHTERS = ['vlad-julia', 'the-bloop', 'el-gran-maja', 'bogbo', 'le-mug', 'slowdown-criyote'];
+const FIGHTERS = ['vlad-julia', 'the-bloop', 'el-gran-maja', 'bogbo', 'le-mug', 'slowdown-criyonte'];
 
 test('isoWeekKey sigue la definición ISO (lunes, jueves decide el año)', () => {
   assert.equal(isoWeekKey(new Date('2026-10-18T12:00:00Z')), '2026-W42'); // domingo

@@ -20,14 +20,20 @@ const triggerClass =
   'h-12 w-full rounded-xl border-white/15 bg-[#061a2e] px-4 text-sm font-semibold text-white focus-visible:ring-4 focus-visible:ring-primary/20';
 const contentClass = 'bg-[#061a2e] border-white/10 text-white min-w-[240px]';
 
+/** Slugs antiguos que aún circulan en enlaces compartidos (?a=/?b=) → slug canónico actual. */
+const LEGACY_SLUGS: Record<string, string> = { 'slowdown-criyote': 'slowdown-criyonte' };
+
 export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
   // La URL es la fuente de verdad (?a=<slug>&b=<slug>): un enfrentamiento se comparte copiando el enlace.
   // Valores ausentes o inválidos caen en los dos primeros combatientes.
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const slugs = React.useMemo(() => new Set(fighters.map((f) => f.slug)), [fighters]);
-  const paramA = searchParams.get('a');
-  const paramB = searchParams.get('b');
+  const rawA = searchParams.get('a');
+  const rawB = searchParams.get('b');
+  const paramA = rawA ? (LEGACY_SLUGS[rawA] ?? rawA) : rawA;
+  const paramB = rawB ? (LEGACY_SLUGS[rawB] ?? rawB) : rawB;
+  const hasLegacyParam = paramA !== rawA || paramB !== rawB;
   const slugA = paramA && slugs.has(paramA) ? paramA : (fighters[0]?.slug ?? '');
   const defaultB = paramB && slugs.has(paramB) ? paramB : (fighters[1]?.slug ?? fighters[0]?.slug ?? '');
   // Con un solo parámetro (?a=bogbo) B puede coincidir con A: se toma el primer combatiente distinto.
@@ -47,6 +53,14 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
     },
     [pathname, fighters],
   );
+
+  // Un enlace con un slug antiguo se reescribe una sola vez con el slug canónico.
+  const legacyRewritten = React.useRef(false);
+  React.useEffect(() => {
+    if (!hasLegacyParam || legacyRewritten.current) return;
+    legacyRewritten.current = true;
+    writePair(slugA, slugB);
+  }, [hasLegacyParam, slugA, slugB, writePair]);
 
   const fighterItems = React.useMemo(
     () => Object.fromEntries(fighters.map((f) => [f.slug, f.frontmatter.title])),
