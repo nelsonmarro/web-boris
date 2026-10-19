@@ -10,7 +10,7 @@ export function FactsLine({ items }: { items: { label: string; value: string; to
     <dl className="flex flex-wrap gap-x-8 gap-y-3">
       {items.map((it) => (
         <div key={it.label}>
-          <dt className="text-[11px] font-bold uppercase tracking-wider text-white/45">{it.label}</dt>
+          <dt className="text-[11px] font-bold uppercase tracking-wider text-white/60">{it.label}</dt>
           <dd className={cn('text-base font-semibold text-white', it.tone && TONE[it.tone])}>{it.value}</dd>
         </div>
       ))}
