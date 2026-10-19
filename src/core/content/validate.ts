@@ -1,4 +1,5 @@
 /** Referencias cruzadas del contenido del hub contra los artículos. Puro. */
+import { normalize } from '../search/entity-index.ts';
 import type { CuratedPoll, NewsEntry } from './schemas.ts';
 
 /** Rutas propias (no MDX) a las que puede enlazar una novedad. */
@@ -27,6 +28,31 @@ export function crossCheckNews(news: readonly NewsEntry[], articleSlugs: Readonl
     const article = pathOnly.match(/^\/wiki\/([^/]+)$/)?.[1];
     const ok = STATIC_ROUTES.has(pathOnly) || (article !== undefined && articleSlugs.has(article));
     if (!ok) errors.push(`novedades/${n.id}.md: enlace interno inexistente ${n.enlace}`);
+  }
+  return errors;
+}
+
+/** Apodos (`aliases`) y `related` de las fichas: sin duplicados, sin colisión con títulos y apuntando a fichas que existen. */
+export function crossCheckEntities(
+  items: readonly { slug: string; title: string; aliases?: readonly string[]; related?: readonly string[] }[],
+): string[] {
+  const errors: string[] = [];
+  const titles = new Map(items.map((i) => [normalize(i.title), i.slug]));
+  const aliasOwner = new Map<string, string>();
+  const slugs = new Set(items.map((i) => i.slug));
+  for (const item of items) {
+    for (const alias of item.aliases ?? []) {
+      const n = normalize(alias);
+      const owner = aliasOwner.get(n);
+      if (owner && owner !== item.slug) errors.push(`apodo "${alias}" repetido en ${owner} y ${item.slug}`);
+      aliasOwner.set(n, item.slug);
+      const titled = titles.get(n);
+      if (titled && titled !== item.slug) errors.push(`apodo "${alias}" de ${item.slug} es el título de ${titled}`);
+    }
+    for (const rel of item.related ?? []) {
+      if (rel === item.slug) errors.push(`related de ${item.slug} se apunta a sí misma`);
+      else if (!slugs.has(rel)) errors.push(`related de ${item.slug} apunta a "${rel}", que no existe`);
+    }
   }
   return errors;
 }

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { crossCheckNews, crossCheckPolls } from '../../src/core/content/validate.ts';
+import { crossCheckEntities, crossCheckNews, crossCheckPolls } from '../../src/core/content/validate.ts';
 
 const ARTICLES = new Set(['the-bloop', 'el-gran-maja', 'la-hecatombe-del-lapeon']);
 const FIGHTERS = new Set(['the-bloop', 'el-gran-maja']);
@@ -33,4 +33,19 @@ test('novedades: enlaces internos rotos; externos e internos válidos pasan', ()
     ARTICLES,
   );
   assert.deepEqual(errors, ['novedades/rota.md: enlace interno inexistente /wiki/no-existe']);
+});
+
+test('crossCheckEntities: apodo duplicado, apodo igual a otro título y related inválido', () => {
+  const errors = crossCheckEntities([
+    { slug: 'a', title: 'Alfa', aliases: ['La Bestia'], related: ['zzz'] },
+    { slug: 'b', title: 'Beta', aliases: ['la bestia', 'Alfa'], related: ['b'] },
+  ]);
+  assert.ok(errors.some((e) => e.includes('la bestia')));
+  assert.ok(errors.some((e) => e.includes('Alfa')));
+  assert.ok(errors.some((e) => e.includes('zzz')));
+  assert.ok(errors.some((e) => e.includes('b') && e.includes('sí misma')));
+});
+
+test('crossCheckEntities: contenido válido no da errores', () => {
+  assert.deepEqual(crossCheckEntities([{ slug: 'a', title: 'Alfa', aliases: ['La Bestia'] }, { slug: 'b', title: 'Beta', related: ['a'] }]), []);
 });

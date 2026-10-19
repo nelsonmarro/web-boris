@@ -12,6 +12,8 @@ export const WikiFrontmatterSchema = z.object({
   /** `proximamente`: artículo sin lore canónico aún (chip + bloque en la ficha). */
   status: z.enum(['proximamente']).optional(),
   description: z.string().optional(),
+  aliases: z.array(z.string().min(1)).optional(), // apodos canónicos (spec Ola B §6)
+  related: z.array(z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)).optional(), // orden fijado a mano
   infobox: z.record(z.string(), z.record(z.string(), z.string())).optional(), // E.g. { "Información Biológica": { "Especie": "Labodotype macrostoma" } }
   stats: z.object({
     length: z.number().optional(), // in meters
