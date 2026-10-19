@@ -30,7 +30,24 @@ function matchToken(token: string, words: readonly string[]): Hit {
   return null;
 }
 
-const toks = (s?: string) => (s ? wordsOf(s).map((w) => w.norm) : []);
+/**
+ * Palabras normalizadas para casar. Una palabra con apóstrofo emite además sus partes:
+ * `Le'Mug` -> `lemug`, `le`, `mug`, para que "mug" y "le mug" encuentren la ficha.
+ */
+function toks(s?: string): string[] {
+  if (!s) return [];
+  const out: string[] = [];
+  for (const w of wordsOf(s)) {
+    out.push(w.norm);
+    if (/['’]/.test(w.raw)) {
+      for (const part of w.raw.split(/['’]/)) {
+        const norm = normalize(part);
+        if (norm) out.push(norm);
+      }
+    }
+  }
+  return out;
+}
 
 function queryTokens(q: string): string[] {
   const all = q.split(' ').filter(Boolean);
@@ -55,9 +72,16 @@ function scoreEntry(entry: EntityEntry, qn: string, tokens: string[]): SearchHit
   const aliasHit = aliasWords.find((a) => a.norm === qn || a.norm.startsWith(qn));
   if (aliasHit) return { entry, score: 50, matchedAlias: aliasHit.alias };
 
-  for (const a of aliasWords) {
-    const both = tokens.map((t) => matchToken(t, [...titleWords, ...a.words]));
-    if (both.every(Boolean)) return { entry, score: 40 - 5 * typos(both), matchedAlias: a.alias };
+  // Todos los tokens entre el título y los apodos juntos; matchedAlias es el primer apodo que
+  // aporta un token que el título no cubre.
+  if (aliasWords.length > 0) {
+    const allAliasWords = aliasWords.flatMap((a) => a.words);
+    const both = tokens.map((t) => matchToken(t, [...titleWords, ...allAliasWords]));
+    if (both.every(Boolean)) {
+      const missingInTitle = tokens.filter((_, k) => inTitle[k] === null);
+      const contributor = aliasWords.find((a) => missingInTitle.some((t) => matchToken(t, a.words)));
+      return { entry, score: 40 - 5 * typos(both), matchedAlias: contributor?.alias };
+    }
   }
 
   const anyField = [...titleWords, ...aliasWords.flatMap((a) => a.words), ...otherWords];
@@ -79,17 +103,21 @@ export function search(query: string, entries: readonly EntityEntry[], opts: { l
       .filter((h): h is SearchHit => h !== null)
       .sort((a, b) => b.score - a.score || byDiscovery(a.entry, b.entry));
   }
-  return opts.limit ? hits.slice(0, opts.limit) : hits;
+  return opts.limit !== undefined ? hits.slice(0, Math.max(0, opts.limit)) : hits;
 }
 
 export function suggest(query: string, entries: readonly EntityEntry[]): { slug: string; title: string } | null {
   const qn = normalize(query);
   if (qn.length < 3) return null;
+  // Distancia máxima proporcional a la consulta: 1 para 3 letras, 2 a partir de 4.
+  const maxDistance = Math.min(2, Math.ceil(qn.length / 3));
   let best: { entry: EntityEntry; d: number } | null = null;
   for (const entry of entries) {
-    const candidates = [normalize(entry.title), ...toks(entry.title), ...entry.aliases.map(normalize)];
+    // Títulos y apodos enteros, y solo las palabras sueltas con cuerpo (≥ 4 letras y no vacías).
+    const words = toks(entry.title).filter((w) => w.length >= 4 && !STOP.has(w));
+    const candidates = [normalize(entry.title), ...words, ...entry.aliases.map(normalize)];
     const d = Math.min(...candidates.map((c) => levenshtein(qn, c)));
-    if (d <= 2 && (!best || d < best.d || (d === best.d && entry.richness > best.entry.richness))) {
+    if (d <= maxDistance && (!best || d < best.d || (d === best.d && entry.richness > best.entry.richness))) {
       best = { entry, d };
     }
   }

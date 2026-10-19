@@ -50,6 +50,34 @@ test('nunca la propia ficha y nunca entidades no enlazables', () => {
   assert.equal(findMentions('Animales del Universo Colosos', INDEX).length, 0);
 });
 
+test('la propia ficha consume su nombre largo: Vlad no roba "Vlad Julia" (self)', () => {
+  assert.deepEqual(findMentions('Vlad Julia ataca.', INDEX, { self: 'vlad-julia' }), []);
+  // sin self sigue ganando el nombre largo
+  assert.deepEqual(findMentions('Vlad Julia ataca.', INDEX).map((x) => x.slug), ['vlad-julia']);
+});
+
+test('con self, las demás menciones del texto siguen saliendo en su sitio', () => {
+  const text = 'Vlad Julia vio a Vlad.';
+  const mentions = findMentions(text, INDEX, { self: 'vlad-julia' });
+  assert.equal(mentions.length, 1);
+  assert.equal(mentions[0].slug, 'vlad');
+  assert.equal(text.slice(mentions[0].start, mentions[0].end), 'Vlad');
+  assert.equal(mentions[0].start, text.lastIndexOf('Vlad'));
+});
+
+test('start y end de la mención recortan exactamente el nombre del texto', () => {
+  const text = "Vio a Le'Mug.";
+  const mentions = findMentions(text, INDEX);
+  assert.equal(mentions.length, 1);
+  assert.equal(mentions[0].slug, 'le-mug');
+  assert.equal(mentions[0].name, "Le'Mug");
+  assert.equal(text.slice(mentions[0].start, mentions[0].end), "Le'Mug");
+
+  const multi = 'Entonces Vlad Julia ataca.';
+  const [m] = findMentions(multi, INDEX);
+  assert.equal(multi.slice(m.start, m.end), 'Vlad Julia');
+});
+
 test('las entradas llevan richness y linkable', () => {
   const cael = INDEX.bySlug.get('cael-cortes')!;
   assert.ok(cael.richness < 0);

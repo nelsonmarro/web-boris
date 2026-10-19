@@ -40,10 +40,33 @@ test('crossCheckEntities: apodo duplicado, apodo igual a otro título y related 
     { slug: 'a', title: 'Alfa', aliases: ['La Bestia'], related: ['zzz'] },
     { slug: 'b', title: 'Beta', aliases: ['la bestia', 'Alfa'], related: ['b'] },
   ]);
-  assert.ok(errors.some((e) => e.includes('la bestia')));
-  assert.ok(errors.some((e) => e.includes('Alfa')));
-  assert.ok(errors.some((e) => e.includes('zzz')));
-  assert.ok(errors.some((e) => e.includes('b') && e.includes('sí misma')));
+  assert.deepEqual(errors, [
+    'related de a apunta a "zzz", que no existe',
+    'apodo "la bestia" repetido en a y b',
+    'apodo "Alfa" de b es el título de a',
+    'related de b se apunta a sí misma',
+  ]);
+});
+
+test('crossCheckEntities: un apodo que se queda vacío al normalizar es un error y no choca con otros', () => {
+  assert.deepEqual(
+    crossCheckEntities([
+      { slug: 'a', title: 'Alfa', aliases: ['¡¡!!', 'Ok'] },
+      { slug: 'b', title: 'Beta', aliases: ['---'] },
+    ]),
+    ['apodo "¡¡!!" de a queda vacío al normalizar', 'apodo "---" de b queda vacío al normalizar'],
+  );
+});
+
+test('crossCheckEntities: related con el mismo slug repetido', () => {
+  assert.deepEqual(
+    crossCheckEntities([
+      { slug: 'a', title: 'Alfa', related: ['b', 'c', 'b'] },
+      { slug: 'b', title: 'Beta' },
+      { slug: 'c', title: 'Gamma' },
+    ]),
+    ['related de a repite "b"'],
+  );
 });
 
 test('crossCheckEntities: contenido válido no da errores', () => {

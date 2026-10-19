@@ -105,7 +105,6 @@ export function findMentions(text: string, index: EntityIndex, opts: { self?: st
   while (i < words.length) {
     let matched: NameEntry | undefined;
     for (const n of index.names) {
-      if (n.slug === opts.self) continue;
       if (i + n.tokens.length > words.length) continue;
       let ok = true;
       for (let k = 0; k < n.tokens.length; k++) {
@@ -117,8 +116,11 @@ export function findMentions(text: string, index: EntityIndex, opts: { self?: st
       break;
     }
     if (matched) {
-      const last = words[i + matched.tokens.length - 1];
-      mentions.push({ slug: matched.slug, start: words[i].start, end: last.end, name: matched.name });
+      // La propia ficha también gana y consume sus palabras (así "Vlad" no roba "Vlad Julia"); solo no se emite.
+      if (matched.slug !== opts.self) {
+        const last = words[i + matched.tokens.length - 1];
+        mentions.push({ slug: matched.slug, start: words[i].start, end: last.end, name: matched.name });
+      }
       i += matched.tokens.length;
     } else {
       i += 1;

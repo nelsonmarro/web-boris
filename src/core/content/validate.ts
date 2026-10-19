@@ -43,13 +43,23 @@ export function crossCheckEntities(
   for (const item of items) {
     for (const alias of item.aliases ?? []) {
       const n = normalize(alias);
+      if (!n) {
+        errors.push(`apodo "${alias}" de ${item.slug} queda vacío al normalizar`);
+        continue;
+      }
       const owner = aliasOwner.get(n);
       if (owner && owner !== item.slug) errors.push(`apodo "${alias}" repetido en ${owner} y ${item.slug}`);
       aliasOwner.set(n, item.slug);
       const titled = titles.get(n);
       if (titled && titled !== item.slug) errors.push(`apodo "${alias}" de ${item.slug} es el título de ${titled}`);
     }
+    const seenRelated = new Set<string>();
     for (const rel of item.related ?? []) {
+      if (seenRelated.has(rel)) {
+        errors.push(`related de ${item.slug} repite "${rel}"`);
+        continue;
+      }
+      seenRelated.add(rel);
       if (rel === item.slug) errors.push(`related de ${item.slug} se apunta a sí misma`);
       else if (!slugs.has(rel)) errors.push(`related de ${item.slug} apunta a "${rel}", que no existe`);
     }
