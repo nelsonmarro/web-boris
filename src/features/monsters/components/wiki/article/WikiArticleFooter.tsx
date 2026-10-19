@@ -11,8 +11,8 @@ export function WikiArticleFooter({ related = [] }: WikiArticleFooterProps) {
     <footer className="clear-both mt-8 border-t border-white/10">
       <div className="wiki-container">
         {related.length > 0 && (
-          // `Section` trae `container px-6 py-16`: dentro de `wiki-container` se anula el padding lateral para no duplicarlo.
-          <Section title="Archivos relacionados" className="px-0 py-10 md:py-14">
+          // Dentro de `wiki-container` la sección no trae su propio contenedor ni margen lateral.
+          <Section title="Archivos relacionados" contained={false} className="py-10 md:py-14">
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
               {related.map(({ slug, frontmatter }, index) => (
                 <ContentCard

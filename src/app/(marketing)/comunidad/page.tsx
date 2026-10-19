@@ -5,7 +5,7 @@ import { getContentRepository } from '@/core/content';
 import { pickFeatured } from '@/features/monsters/lib/featured';
 import { getWeeklyPoll } from '@/features/community/data/weekly-poll';
 import { getLatestVideo } from '@/features/community/data/latest-video';
-import { ContentCard } from '@/components/content';
+import { ContentCard, Section } from '@/components/content';
 import { CommunityCreatureRow } from '@/features/community/components/CommunityCreatureRow';
 import { NewsList } from '@/features/community/components/NewsList';
 import { PollTile, type PollFighter } from '@/features/community/components/PollTile';
@@ -62,18 +62,12 @@ export default async function ComunidadPage() {
           {poll && <PollTile initialPoll={poll} fighters={fighterCards} />}
 
           {creature && (
-            <section aria-labelledby="criatura-semana-titulo">
-              <h2 id="criatura-semana-titulo" className="section-title mb-6 text-white">
-                Criatura de la semana
-              </h2>
+            <Section id="criatura-semana" title="Criatura de la semana" contained={false}>
               <CommunityCreatureRow creature={creature} />
-            </section>
+            </Section>
           )}
 
-          <section aria-labelledby="ultimo-video-titulo">
-            <h2 id="ultimo-video-titulo" className="section-title mb-6 text-white">
-              Último vídeo
-            </h2>
+          <Section id="ultimo-video" title={video.source === 'fallback' ? 'Vídeo destacado' : 'Último vídeo'} contained={false}>
             <ContentCard
               external
               href={`https://www.youtube.com/watch?v=${video.id}`}
@@ -83,14 +77,11 @@ export default async function ComunidadPage() {
               sizes="(min-width: 768px) 448px, 100vw"
               className="max-w-md"
             />
-          </section>
+          </Section>
 
-          <section aria-labelledby="novedades-titulo">
-            <h2 id="novedades-titulo" className="section-title mb-6 text-white">
-              Novedades
-            </h2>
+          <Section id="novedades" title="Novedades" contained={false}>
             <NewsList news={news} />
-          </section>
+          </Section>
         </div>
       </main>
       <Footer />
