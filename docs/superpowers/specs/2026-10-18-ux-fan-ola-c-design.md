@@ -1,5 +1,7 @@
 # UX fan · Ola C (enganche) — diseño
 
+> **Actualización 2026-10-19 (tras #55 y la Ola B):** el alcance vigente está en `docs/superpowers/plans/2026-10-19-ux-fan-ola-c.md`, sección "Alcance tras #55 y la Ola B". Fuera: §2 completo, taxonomía §7 (ya hecha), novedades en la portada de la wiki y chips en las tarjetas de vídeo de la landing.
+
 **Issue:** #51 (épica #52). **Auditoría:** `docs/audits/2026-10-18-experiencia-fan/README.md`, hallazgos #5, #7, #14, #15 y #16.
 **Depende de la Ola B** (`docs/superpowers/specs/2026-10-18-ux-fan-ola-b-design.md`): el índice de entidades (`src/core/search/entity-index.ts`), `findMentions`, la paleta global, `getWikiIndex` con `richness` y los enlaces automáticos (`data-entity`).
 **Objetivo:** que el fan tenga razones para seguir, volver y compartir:
