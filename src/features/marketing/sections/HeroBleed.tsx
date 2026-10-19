@@ -19,6 +19,10 @@ import { UNIVERSES } from '../config/universes';
  *  - 170–380 px (línea naranja del h1 y la frase blanca/80): alfa 0.88 → sobre blanco puro, #FF7300 da 4.99:1
  *    (necesita ≥ 0.85) y la frase ≥ 0.66.
  *  - de 380 px a 78 %: hasta #00122E sólido (bajo la fila de universos, que ya lleva su propia superficie).
+ * En escritorio el velo es horizontal y el corte depende del breakpoint, porque el `container` mide 1024 px de
+ * ancho hasta 1279 px y el h1 (60 px, 797 px de ancho) ocupa más del viewport cuanto menos ancho es este:
+ *  - lg (1024–1279 px): el h1 llega al 80 % del ancho a 1024 px (78 % a 1100 px) → 0.92 hasta el 82 %.
+ *  - xl (≥ 1280 px): el h1 llega como máximo al 64 % → 0.92 hasta el 60 % y alfa ≥ 0.84 en su último carácter.
  * La capa se desvanece en su borde inferior para fundirse con el fondo fijo del layout en vez de cortarse en seco.
  */
 export async function HeroBleed() {
@@ -47,8 +51,10 @@ export async function HeroBleed() {
         )}
         {/* Móvil: el texto ocupa todo el ancho → velo vertical (≥ 0.85 bajo el texto naranja). */}
         <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,18,46,0.7)_0,rgba(0,18,46,0.7)_90px,rgba(0,18,46,0.88)_170px,rgba(0,18,46,0.88)_380px,#00122E_78%)] lg:hidden" />
-        {/* Escritorio: el texto vive en el 60 % izquierdo → velo horizontal; la criatura se ve en el tercio derecho. */}
-        <div className="absolute inset-0 hidden bg-[linear-gradient(to_right,rgba(0,18,46,0.94)_0%,rgba(0,18,46,0.92)_60%,rgba(0,18,46,0.45)_85%,rgba(0,18,46,0.25)_100%)] lg:block" />
+        {/* lg (1024–1279 px): el h1 llega al 80 % del ancho → 0.92 hasta el 82 %; la criatura queda en el borde derecho. */}
+        <div className="absolute inset-0 hidden bg-[linear-gradient(to_right,rgba(0,18,46,0.94)_0%,rgba(0,18,46,0.92)_82%,rgba(0,18,46,0.45)_100%)] lg:block xl:hidden" />
+        {/* xl (≥ 1280 px): el texto vive en el 60 % izquierdo → velo horizontal; la criatura se ve en el tercio derecho. */}
+        <div className="absolute inset-0 hidden bg-[linear-gradient(to_right,rgba(0,18,46,0.94)_0%,rgba(0,18,46,0.92)_60%,rgba(0,18,46,0.45)_85%,rgba(0,18,46,0.25)_100%)] xl:block" />
         <div className="absolute inset-x-0 bottom-0 hidden h-1/2 bg-[linear-gradient(to_top,#00122E_0%,rgba(0,18,46,0.8)_45%,transparent_100%)] lg:block" />
       </div>
 
