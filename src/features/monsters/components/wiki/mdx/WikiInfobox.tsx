@@ -50,25 +50,27 @@ interface WikiInfoboxProps {
   image?: string;
   imageCaption?: string;
   category?: string;
+  /** La portada ya se muestra en la cabecera de la ficha: la infobox no repite imagen ni marcador. */
+  hideImage?: boolean;
   children: React.ReactNode;
   className?: string;
 }
 
-export function WikiInfobox({ title, image, imageCaption, category, children, className }: WikiInfoboxProps) {
+export function WikiInfobox({ title, image, imageCaption, category, hideImage = false, children, className }: WikiInfoboxProps) {
   return (
     <aside className={cn(
-      "w-full mb-8 bg-[#061a2e] rounded-2xl border border-white/10 shadow-2xl overflow-hidden z-20",
+      "w-full mb-8 bg-[#061a2e] rounded-2xl border border-white/10 overflow-hidden z-20",
       className
     )}>
       {/* Header */}
-      <div className="bg-primary/90 p-5 text-center shadow-lg border-b border-primary">
-        <div className="font-display text-2xl font-black text-white italic uppercase tracking-widest drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+      <div className="bg-primary/90 p-5 text-center border-b border-primary">
+        <div className="font-display text-2xl font-black text-white italic uppercase tracking-widest">
           {title}
         </div>
       </div>
 
       {/* Image - Filling the rectangle edge-to-edge */}
-      {(!image || isBrandPlaceholder(image)) ? (
+      {hideImage ? null : (!image || isBrandPlaceholder(image)) ? (
         <div className="relative aspect-video w-full border-b border-white/10 bg-black/40">
           <CategoryPlaceholder category={category} />
         </div>
@@ -108,9 +110,6 @@ export function WikiInfobox({ title, image, imageCaption, category, children, cl
       <div className="pb-4">
         {children}
       </div>
-      
-      {/* Decorative footer */}
-      <div className="h-1 w-full bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
     </aside>
   );
 }

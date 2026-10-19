@@ -53,6 +53,8 @@ export default async function WikiArticlePage({ params }: Props) {
 
   const { frontmatter, content } = article;
   const related = getRelatedArticles(slug, await getAllArticles());
+  // La portada sube a la cabecera; si el MDX ya la usa en el cuerpo, la cabecera no la repite.
+  const imageInBody = !!frontmatter.image && content.includes(frontmatter.image);
 
   return (
     <div className="w-full min-h-screen bg-[#0a2339]">
@@ -63,6 +65,12 @@ export default async function WikiArticlePage({ params }: Props) {
           category={frontmatter.category}
           status={frontmatter.status}
           arenaSlug={hasStats(frontmatter) ? slug : undefined}
+          image={frontmatter.image}
+          imagePosition={frontmatter.imagePosition}
+          imageCaption={frontmatter.imageCaption}
+          description={frontmatter.description}
+          stats={frontmatter.stats}
+          imageInBody={imageInBody}
         />
 
         <WikiArticleContent frontmatter={frontmatter} content={content} />
