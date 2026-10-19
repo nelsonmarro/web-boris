@@ -34,34 +34,31 @@ function findNavSiblings(slug: string): string[] {
   return [];
 }
 
-/** El grafo solo depende de la lista de artículos: en producción es el mismo array memoizado, así que se calcula una vez. */
-const graphCache = new WeakMap<readonly WikiArticle[], MentionGraph>();
-
 /**
  * Artículos relacionados (spec Ola B §7): `related` del frontmatter → menciones mutuas →
  * salientes → entrantes → hermanos del menú → misma categoría → mismo universo.
  * El orden vive en `rankRelated` (puro); aquí solo se le dan los datos reales.
+ *
+ * `graph` es el grafo de menciones ya construido (`getMentionGraph()`, en caché por petición): la ficha lo
+ * pasa para no construir otro. Sin él se construye aquí a partir de `all`.
  */
 export function getRelatedArticles(
   slug: string,
   all: WikiArticle[],
   max = 4,
+  graph?: MentionGraph,
 ): WikiArticleSummary[] {
   const bySlug = new Map(all.map((article) => [article.slug, article]));
   const current = bySlug.get(slug);
   if (!current) return [];
 
-  let graph = graphCache.get(all);
-  if (!graph) {
-    graph = buildMentionGraph(all, buildEntityIndex(all));
-    graphCache.set(all, graph);
-  }
+  const mentions = graph ?? buildMentionGraph(all, buildEntityIndex(all));
 
   const { category, universe } = current.frontmatter;
   const slugs = rankRelated({
     slug,
     curated: current.frontmatter.related,
-    graph,
+    graph: mentions,
     siblings: findNavSiblings(slug)
       .map(slugFromUrl)
       .filter((s): s is string => !!s),

@@ -9,7 +9,7 @@ export const getEntityIndex = cache(async (): Promise<EntityIndex> => {
   return buildEntityIndex(articles);
 });
 
-/** Grafo de menciones (quién nombra a quién), una vez por petición/build (spec Ola B §7). Sin consumidores aún: lo usará la Ola C. */
+/** Grafo de menciones (quién nombra a quién), una vez por petición/build (spec Ola B §7). Lo consume la ficha para los relacionados (`getRelatedArticles`). */
 export const getMentionGraph = cache(async (): Promise<MentionGraph> => {
   const articles = await getContentRepository().getArticles();
   return buildMentionGraph(articles, await getEntityIndex());

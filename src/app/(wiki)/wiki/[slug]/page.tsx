@@ -6,7 +6,7 @@ import { WikiArticleFooter } from '@/features/monsters/components/wiki/article/W
 import type { Metadata } from 'next';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { getRelatedArticles } from '@/features/monsters/lib/related';
-import { getEntityIndex } from '@/core/content/entities';
+import { getEntityIndex, getMentionGraph } from '@/core/content/entities';
 import { extractHeadings } from '@/utils/headings';
 import { ArticleProgress } from '@/features/monsters/components/wiki/article/ArticleProgress';
 import { SectionChip } from '@/features/monsters/components/wiki/article/SectionChip';
@@ -57,7 +57,7 @@ export default async function WikiArticlePage({ params }: Props) {
   }
 
   const { frontmatter, content } = article;
-  const related = getRelatedArticles(slug, await getAllArticles());
+  const related = getRelatedArticles(slug, await getAllArticles(), 4, await getMentionGraph());
   const entityIndex = await getEntityIndex();
   // La portada sube a la cabecera; si el MDX ya la usa en el cuerpo, la cabecera no la repite.
   const imageInBody = !!frontmatter.image && content.includes(frontmatter.image);
