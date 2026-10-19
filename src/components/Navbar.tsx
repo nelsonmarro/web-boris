@@ -77,7 +77,7 @@ export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
           <Sheet>
             <SheetTrigger
               render={
-                <button aria-label="Abrir menú de navegación" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors">
+                <button aria-label="Abrir menú de navegación" className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors">
                   <Menu className="w-5 h-5" aria-hidden />
                 </button>
               }

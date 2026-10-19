@@ -31,6 +31,15 @@ test('levenshtein', () => {
   assert.equal(levenshtein('blopu', 'bloop'), 2);
 });
 
+test('levenshtein con max: sale antes cuando las longitudes ya difieren en más de max', () => {
+  assert.equal(levenshtein('bloop', 'bloopbloopbloop', 2), 3);
+  assert.equal(levenshtein('a'.repeat(1000), 'b', 1), 2);
+  // Dentro del margen sigue siendo la distancia real; sin max no cambia nada.
+  assert.equal(levenshtein('philip', 'phillip', 1), 1);
+  assert.equal(levenshtein('blopu', 'bloop', 2), 2);
+  assert.equal(levenshtein('bloop', 'bloopbloopbloop'), 10);
+});
+
 test('palabras en cualquier orden', () => {
   assert.equal(slugs('bloop solo')[0], 'the-bloop');
   assert.equal(slugs('solo bloop')[0], 'the-bloop');

@@ -47,6 +47,9 @@ export interface WikiFilterOptions {
 /** Entrada del índice de la paleta (⌘K): la del índice de entidades, con `aliases` y `richness` (sin `stats` ni `infobox`). */
 export type WikiIndexEntry = EntityEntry;
 
+/** Tope de la consulta: el motor compara cada palabra con distancia de edición, y un cliente puede enviar lo que quiera. */
+const MAX_QUERY_LENGTH = 80;
+
 /** Ficha de cada hit, en el orden de los hits (los slugs sin ficha se descartan). */
 function articlesOf(hits: readonly { entry: { slug: string } }[], all: readonly WikiArticle[]): WikiArticle[] {
   const bySlug = new Map(all.map((a) => [a.slug, a]));
@@ -61,7 +64,7 @@ export async function getWikiArticles({
   tipo,
 }: GetWikiArticlesParams): Promise<GetWikiArticlesResult> {
   const [all, { entries }] = await Promise.all([getAllArticles(), getEntityIndex()]);
-  const query = search.trim();
+  const query = search.trim().slice(0, MAX_QUERY_LENGTH);
 
   // Con búsqueda manda el motor del archivo (palabras en cualquier orden, apodos, erratas) y su ranking;
   // sin ella, el orden de descubrimiento. Los filtros se aplican después, sobre ese orden.

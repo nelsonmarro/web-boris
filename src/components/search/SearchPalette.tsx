@@ -14,6 +14,8 @@ import { getWikiIndex } from '@/features/monsters/actions/get-wiki-articles';
 import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { useSearchPalette } from './useSearchPalette';
 
+/** Mismo tope que aplica `getWikiArticles` a la consulta del catálogo. */
+const MAX_QUERY_LENGTH = 80;
 const RESULT_LIMIT = 10;
 const POPULAR_LIMIT = 8;
 const POPULAR_FALLBACK_LIMIT = 6;
@@ -98,7 +100,7 @@ export function SearchPalette() {
   // ⌘K / Ctrl+K abre o cierra la paleta desde cualquier página.
   React.useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+      if ((event.metaKey || event.ctrlKey) && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         if (event.repeat) return;
         const state = useSearchPalette.getState();
@@ -177,13 +179,13 @@ export function SearchPalette() {
     }
   };
 
-  const status = isPending
-    ? 'Cargando el archivo'
-    : noResults
-      ? `Sin coincidencias para ${shownQuery}`
-      : hasQuery
-        ? `${rows.length - 1} ${rows.length - 1 === 1 ? 'resultado' : 'resultados'}`
-        : '';
+  // Texto para lectores de pantalla (región `role="status"`).
+  const found = rows.filter((r) => r.kind === 'entry').length;
+  let status = '';
+  if (isError) status = 'No se pudo cargar el archivo';
+  else if (isPending) status = 'Cargando el archivo';
+  else if (noResults) status = `Sin coincidencias para ${shownQuery}`;
+  else if (hasQuery) status = `${found} ${found === 1 ? 'resultado' : 'resultados'}`;
 
   return (
     <Dialog open={open} onOpenChange={(next) => !next && close()}>
@@ -207,7 +209,7 @@ export function SearchPalette() {
             type="text"
             role="combobox"
             aria-expanded={rows.length > 0}
-            aria-controls={listId}
+            aria-controls={rows.length > 0 ? listId : undefined}
             aria-autocomplete="list"
             aria-activedescendant={rows.length > 0 ? `${listId}-${active}` : undefined}
             aria-label="Buscar en el archivo"
@@ -215,6 +217,7 @@ export function SearchPalette() {
             autoCorrect="off"
             spellCheck={false}
             enterKeyHint="search"
+            maxLength={MAX_QUERY_LENGTH}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKeyDown}
@@ -269,7 +272,7 @@ export function SearchPalette() {
                     {(i === 0 && !noResults && label) || separator ? (
                       <li
                         role="presentation"
-                        className="px-3 pb-1 pt-3 text-[11px] font-bold uppercase tracking-wider text-white/60"
+                        className="px-3 pb-1 pt-3 text-xs font-semibold text-white/60"
                       >
                         {label}
                       </li>

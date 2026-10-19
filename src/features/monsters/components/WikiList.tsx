@@ -211,8 +211,8 @@ export function WikiList({ options }: WikiListProps) {
         ) : (
           <WikiEmptyState
             query={debouncedSearch.trim()}
-            suggestion={data?.suggestion}
-            popular={data?.popular}
+            suggestion={isPlaceholderData ? undefined : data?.suggestion}
+            popular={isPlaceholderData ? undefined : data?.popular}
             onClear={clearFilters}
             onSearch={applySearch}
           />

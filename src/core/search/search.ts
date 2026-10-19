@@ -6,8 +6,13 @@ export interface SearchHit { entry: EntityEntry; score: number; matchedAlias?: s
 
 const STOP = new Set(['el', 'la', 'los', 'las', 'de', 'del', 'y', 'the']);
 
-export function levenshtein(a: string, b: string): number {
+/**
+ * Distancia de Levenshtein. Con `max`, si las longitudes ya difieren en más de `max` devuelve `max + 1`
+ * sin recorrer la matriz (cualquier valor > `max` solo significa «demasiado lejos»).
+ */
+export function levenshtein(a: string, b: string, max = Infinity): number {
   if (a === b) return 0;
+  if (Math.abs(a.length - b.length) > max) return max + 1;
   const prev = Array.from({ length: b.length + 1 }, (_, j) => j);
   for (let i = 1; i <= a.length; i++) {
     let diag = prev[0];
@@ -26,7 +31,7 @@ type Hit = 'exact' | 'typo' | null;
 /** El token coincide con alguna palabra: como prefijo (exacto) o a distancia 1 si tiene ≥ 5 letras (errata). */
 function matchToken(token: string, words: readonly string[]): Hit {
   if (words.some((w) => w.startsWith(token))) return 'exact';
-  if (token.length >= 5 && words.some((w) => levenshtein(token, w) <= 1)) return 'typo';
+  if (token.length >= 5 && words.some((w) => levenshtein(token, w, 1) <= 1)) return 'typo';
   return null;
 }
 
@@ -116,7 +121,7 @@ export function suggest(query: string, entries: readonly EntityEntry[]): { slug:
     // Títulos y apodos enteros, y solo las palabras sueltas con cuerpo (≥ 4 letras y no vacías).
     const words = toks(entry.title).filter((w) => w.length >= 4 && !STOP.has(w));
     const candidates = [normalize(entry.title), ...words, ...entry.aliases.map(normalize)];
-    const d = Math.min(...candidates.map((c) => levenshtein(qn, c)));
+    const d = Math.min(...candidates.map((c) => levenshtein(qn, c, maxDistance)));
     if (d <= maxDistance && (!best || d < best.d || (d === best.d && entry.richness > best.entry.richness))) {
       best = { entry, d };
     }
