@@ -34,7 +34,7 @@ export function WikiArticleContent({ frontmatter, content }: WikiArticleContentP
 
   // La portada va arriba (cabecera): la infobox no la repite.
   const infoboxFull = showRail ? (
-    <WikiInfobox title={title} hideImage className="w-full mb-0">
+    <WikiInfobox title={title} className="w-full mb-0">
       {hasInfobox &&
         Object.entries(infobox).map(([sectionTitle, fields]) => (
           <InfoSection key={sectionTitle} title={sectionTitle}>

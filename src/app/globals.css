@@ -211,38 +211,6 @@
     }
   }
 
-  /* 3D Transform Utilities */
-  .preserve-3d {
-    transform-style: preserve-3d;
-  }
-  .backface-hidden {
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
-  .rotate-y-180 {
-    transform: rotateY(180deg);
-  }
-  .rotate-y-0 {
-    transform: rotateY(0deg);
-  }
-  .translate-z-1 {
-    transform: translateZ(1px);
-  }
-  .translate-z--1 {
-    transform: translateZ(-1px);
-  }
-
-  /* FeaturedVideosSection depende de esta regla para los Shorts 9:16 (el marco define la proporción). */
-  /* YouTube Embed Fixes */
-  lite-youtube {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    height: 100% !important;
-    position: absolute !important;
-    inset: 0 !important;
-  }
-
   @media print {
     /* Hide non-essential UI */
     .sidebar, 
