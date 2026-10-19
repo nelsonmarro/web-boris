@@ -6,7 +6,7 @@ import { compareDiscovery } from '@/features/monsters/lib/discovery-order';
 import { toSummary, type WikiArticle, type WikiArticleSummary } from '@/core/types/wiki';
 import { catalogFilter, tipoCounts } from '@/core/search/catalog';
 import type { EntityEntry } from '@/core/search/entity-index';
-import { search as searchEntities, suggest } from '@/core/search/search';
+import { MAX_QUERY_LENGTH, search as searchEntities, suggest } from '@/core/search/search';
 import { isTipoId, type TipoId } from '@/core/search/tipos';
 
 export interface GetWikiArticlesParams {
@@ -46,9 +46,6 @@ export interface WikiFilterOptions {
 
 /** Entrada del índice de la paleta (⌘K): la del índice de entidades, con `aliases` y `richness` (sin `stats` ni `infobox`). */
 export type WikiIndexEntry = EntityEntry;
-
-/** Tope de la consulta: el motor compara cada palabra con distancia de edición, y un cliente puede enviar lo que quiera. */
-const MAX_QUERY_LENGTH = 80;
 
 /** Ficha de cada hit, en el orden de los hits (los slugs sin ficha se descartan). */
 function articlesOf(hits: readonly { entry: { slug: string } }[], all: readonly WikiArticle[]): WikiArticle[] {

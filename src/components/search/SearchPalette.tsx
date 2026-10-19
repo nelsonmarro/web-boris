@@ -9,13 +9,11 @@ import { Search } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/utils/cn';
 import { normalize, type EntityEntry } from '@/core/search/entity-index';
-import { search, suggest, type SearchHit } from '@/core/search/search';
+import { MAX_QUERY_LENGTH, search, suggest, type SearchHit } from '@/core/search/search';
 import { getWikiIndex } from '@/features/monsters/actions/get-wiki-articles';
 import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { useSearchPalette } from './useSearchPalette';
 
-/** Mismo tope que aplica `getWikiArticles` a la consulta del catálogo. */
-const MAX_QUERY_LENGTH = 80;
 const RESULT_LIMIT = 10;
 const POPULAR_LIMIT = 8;
 const POPULAR_FALLBACK_LIMIT = 6;

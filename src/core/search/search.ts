@@ -4,6 +4,12 @@ import { compareDiscovery } from './discovery-order.ts';
 
 export interface SearchHit { entry: EntityEntry; score: number; matchedAlias?: string }
 
+/**
+ * Tope de la consulta. El motor compara cada palabra con distancia de edición y un cliente puede enviar lo que
+ * quiera: lo aplican el campo de la paleta (`maxLength`) y `getWikiArticles` (en el servidor, que no se fía del cliente).
+ */
+export const MAX_QUERY_LENGTH = 80;
+
 const STOP = new Set(['el', 'la', 'los', 'las', 'de', 'del', 'y', 'the']);
 
 /**
