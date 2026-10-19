@@ -1,5 +1,5 @@
 import type { WikiArticle } from '@/core/types/wiki';
-import type { CuratedPoll, NewsEntry } from './schemas';
+import type { CuratedPoll, NewsEntry, VideoLink } from './schemas';
 
 /**
  * Fuente de contenido de la web. Hoy la implementa `fileContentRepository` (archivos en src/content);
@@ -10,4 +10,6 @@ export interface ContentRepository {
   /** Novedades ordenadas por fecha descendente. */
   getNews(limit?: number): Promise<NewsEntry[]>;
   getCuratedPolls(): Promise<CuratedPoll[]>;
+  /** Relaciones manuales vídeo ↔ ficha (`videos.json`); las del título se calculan aparte (`linkVideos`). */
+  getVideoLinks(): Promise<VideoLink[]>;
 }

@@ -65,7 +65,7 @@ export const SILHOUETTE_BY_SLUG: Record<string, SilhouetteKind> = {
   'el-gran-maja': 'anguila',
   'the-bloop': 'cetaceo',
   bogbo: 'cetaceo',
-  'slowdown-criyote': 'pez',
+  'slowdown-criyonte': 'pez',
   'vlad-julia': 'acorazado',
   'le-mug': 'pez',
 };

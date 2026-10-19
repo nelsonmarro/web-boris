@@ -13,7 +13,7 @@ import { PollTile, type PollFighter } from '@/features/community/components/Poll
 /** Criatura y duelo cambian cada lunes sin rebuild; el estado de la encuesta se pide aparte, sin caché. */
 export const revalidate = 3600;
 
-const INTRO = 'Cada semana: una criatura, un duelo y lo último de BorisaoBlois.';
+const INTRO = 'Cada semana: una criatura, una votación y lo último de BorisaoBlois.';
 
 const dateFormat = new Intl.DateTimeFormat('es', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 
@@ -32,8 +32,10 @@ export default async function ComunidadPage() {
     getLatestVideo(),
   ]);
   const { poll, fighters } = weekly;
+  // Los luchadores (con stats) y, en una votación «desclasificar», las dos fichas selladas, que no tienen stats.
+  const pollSides = poll ? articles.filter((a) => a.slug === poll.a || a.slug === poll.b) : [];
   const fighterCards: Record<string, PollFighter> = Object.fromEntries(
-    fighters.map((a) => [
+    [...fighters, ...pollSides].map((a) => [
       a.slug,
       {
         slug: a.slug,
@@ -41,6 +43,7 @@ export default async function ComunidadPage() {
         image: a.frontmatter.image,
         imagePosition: a.frontmatter.imagePosition,
         category: a.frontmatter.category,
+        status: a.frontmatter.status,
       },
     ]),
   );

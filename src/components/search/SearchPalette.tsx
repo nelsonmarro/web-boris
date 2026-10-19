@@ -11,6 +11,7 @@ import { cn } from '@/utils/cn';
 import { normalize, type EntityEntry } from '@/core/search/entity-index';
 import { MAX_QUERY_LENGTH, search, suggest, type SearchHit } from '@/core/search/search';
 import { getWikiIndex } from '@/features/monsters/actions/get-wiki-articles';
+import { RANDOM_ROUTE } from '@/features/monsters/config/wiki-routes';
 import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { useSearchPalette } from './useSearchPalette';
 
@@ -24,6 +25,7 @@ const OTHER_MODAL = '[data-vaul-drawer]:not([data-search-palette]), [role="dialo
 type Row =
   | { kind: 'entry'; entry: EntityEntry; alias?: string }
   | { kind: 'all' }
+  | { kind: 'random' }
   | { kind: 'suggest'; slug: string; title: string };
 
 const toRow = (hit: SearchHit): Row => ({ kind: 'entry', entry: hit.entry, alias: hit.matchedAlias });
@@ -127,12 +129,14 @@ export function SearchPalette() {
   const { rows, label, noResults } = React.useMemo((): { rows: Row[]; label: string | null; noResults: boolean } => {
     if (!index) return { rows: [], label: null, noResults: false };
     const popular = (limit: number) => search('', entries, { limit }).map(toRow);
-    if (!hasQuery) return { rows: popular(POPULAR_LIMIT), label: 'Populares', noResults: false };
+    // «Expediente aleatorio» cierra la lista cuando no hay consulta y cuando no hay coincidencias: ahí el fan no sabe qué buscar.
+    const random: Row = { kind: 'random' };
+    if (!hasQuery) return { rows: [...popular(POPULAR_LIMIT), random], label: 'Populares', noResults: false };
     const hits = search(query, entries, { limit: RESULT_LIMIT });
     if (hits.length > 0) return { rows: [...hits.map(toRow), { kind: 'all' }], label: null, noResults: false };
     const hint = suggest(query, entries);
     return {
-      rows: [...(hint ? [{ kind: 'suggest' as const, ...hint }] : []), ...popular(POPULAR_FALLBACK_LIMIT)],
+      rows: [...(hint ? [{ kind: 'suggest' as const, ...hint }] : []), ...popular(POPULAR_FALLBACK_LIMIT), random],
       label: 'Populares',
       noResults: true,
     };
@@ -161,6 +165,7 @@ export function SearchPalette() {
     if (!row) return;
     if (row.kind === 'entry') go(`/wiki/${row.entry.slug}`);
     else if (row.kind === 'all') go(`/wiki?search=${encodeURIComponent(shownQuery)}#explorar`);
+    else if (row.kind === 'random') go(RANDOM_ROUTE);
     else {
       setQuery(row.title);
       inputRef.current?.focus();
@@ -295,6 +300,11 @@ export function SearchPalette() {
                       {row.kind === 'all' && (
                         <span className={cn('flex-1 text-sm font-bold', selected ? 'text-primary' : 'text-white')}>
                           Ver todos en el explorador <span aria-hidden="true">→</span>
+                        </span>
+                      )}
+                      {row.kind === 'random' && (
+                        <span className={cn('flex-1 text-sm font-bold', selected ? 'text-primary' : 'text-white')}>
+                          Expediente aleatorio <span aria-hidden="true">→</span>
                         </span>
                       )}
                       {row.kind === 'suggest' && (

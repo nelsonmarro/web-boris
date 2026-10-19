@@ -2,6 +2,10 @@ import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 import { WikiList } from '@/features/monsters/components/WikiList';
 import { getFilterOptions } from '@/features/monsters/actions/get-wiki-articles';
+import { getEntityIndex } from '@/core/content/entities';
+import { registroSlugs } from '@/core/search/registro';
+import { RegistroLink } from '@/features/monsters/components/wiki/registro/RegistroLink';
+import { ExpedienteAleatorioLink } from '@/features/monsters/components/wiki/registro/ExpedienteAleatorioLink';
 
 /**
  * Esqueleto que ve el HTML estático mientras WikiList se hidrata. Reserva el hueco del buscador y las
@@ -24,7 +28,7 @@ function WikiListFallback() {
 
 /** Portada de la wiki (spec #55 §4): cabecera, buscador, pestañas por tipo y catálogo. */
 export async function WikiExplorerSection() {
-  const options = await getFilterOptions();
+  const [options, { entries }] = await Promise.all([getFilterOptions(), getEntityIndex()]);
 
   return (
     <div className="space-y-8">
@@ -33,6 +37,10 @@ export async function WikiExplorerSection() {
         <p className="text-lg text-white/70">
           Criaturas, personajes, organizaciones e historia de los universos de BorisaoBlois.
         </p>
+        <div className="flex flex-wrap items-center gap-x-6">
+          <RegistroLink slugs={registroSlugs(entries)} />
+          <ExpedienteAleatorioLink />
+        </div>
       </header>
       {/* useSearchParams exige un límite de Suspense para no des-optimizar la página estática. */}
       <Suspense fallback={<WikiListFallback />}>

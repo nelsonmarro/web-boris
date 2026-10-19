@@ -11,6 +11,8 @@ export interface ContentCardProps {
   meta?: string;
   description?: string;
   lines?: 1 | 2 | 3;
+  /** Recorta el título a N líneas (por defecto no se recorta). */
+  titleLines?: 1 | 2 | 3;
   image?: string;
   imagePosition?: string;
   category?: string;
@@ -26,7 +28,7 @@ const CLAMP = { 1: 'line-clamp-1', 2: 'line-clamp-2', 3: 'line-clamp-3' } as con
 
 /** Tarjeta sobria única del sitio (spec #55 §1–§2): imagen a sangre, título, una o dos líneas. Toda la tarjeta es el enlace. */
 export function ContentCard({
-  href, external = false, title, meta, description, lines = 2, image, imagePosition, category,
+  href, external = false, title, meta, description, lines = 2, titleLines, image, imagePosition, category,
   aspect = 'video', pending = false, headingLevel = 3, sizes = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw',
   eager = false, className,
 }: ContentCardProps) {
@@ -56,7 +58,7 @@ export function ContentCard({
         )}
       </div>
       <div className="flex flex-1 flex-col gap-1.5 p-4 md:p-5">
-        <Heading className="font-display text-xl font-black uppercase italic leading-tight tracking-tight text-white">
+        <Heading className={cn('font-display text-xl font-black uppercase italic leading-tight tracking-tight text-white', titleLines && CLAMP[titleLines])}>
           {title}
           {pending && <span className="sr-only"> (próximamente)</span>}
         </Heading>

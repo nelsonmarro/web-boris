@@ -11,30 +11,27 @@ export function WikiArticleFooter({ related = [] }: WikiArticleFooterProps) {
     <footer className="clear-both mt-8 border-t border-white/10">
       <div className="wiki-container">
         {related.length > 0 && (
-          // `data-related` marca el inicio de los relacionados: `SectionChip` se oculta al entrar en la ventana.
-          <div data-related>
-            {/* Dentro de `wiki-container` la sección no trae su propio contenedor ni margen lateral. */}
-            <Section title="Archivos relacionados" contained={false} className="py-10 md:py-14">
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                {related.map(({ slug, frontmatter }, index) => (
-                  <ContentCard
-                    key={slug}
-                    href={`/wiki/${slug}`}
-                    title={frontmatter.title}
-                    meta={frontmatter.category}
-                    category={frontmatter.category}
-                    image={frontmatter.image}
-                    imagePosition={frontmatter.imagePosition}
-                    pending={frontmatter.status === 'proximamente'}
-                    lines={1}
-                    sizes="(min-width: 768px) 360px, 50vw"
-                    // 2 columnas en el móvil (4 tarjetas = 2×2) y 3 desde md: la cuarta no se muestra para no dejar una huérfana.
-                    className={index === 3 ? 'md:hidden' : undefined}
-                  />
-                ))}
-              </div>
-            </Section>
-          </div>
+          // Dentro de `wiki-container` la sección no trae su propio contenedor ni margen lateral.
+          <Section title="Archivos relacionados" contained={false} className="py-10 md:py-14">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+              {related.map(({ slug, frontmatter }, index) => (
+                <ContentCard
+                  key={slug}
+                  href={`/wiki/${slug}`}
+                  title={frontmatter.title}
+                  meta={frontmatter.category}
+                  category={frontmatter.category}
+                  image={frontmatter.image}
+                  imagePosition={frontmatter.imagePosition}
+                  pending={frontmatter.status === 'proximamente'}
+                  lines={1}
+                  sizes="(min-width: 768px) 360px, 50vw"
+                  // 2 columnas en el móvil (4 tarjetas = 2×2) y 3 desde md: la cuarta no se muestra para no dejar una huérfana.
+                  className={index === 3 ? 'md:hidden' : undefined}
+                />
+              ))}
+            </div>
+          </Section>
         )}
 
         <div

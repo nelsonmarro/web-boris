@@ -9,17 +9,32 @@
  *  4. Alguna ruta /assets/... referenciada en MDX o universes.ts no existe en public/.
  *  5. Algún MDX usa el logo (Branding/) o el esquema del sitio (Esquemas/) como imagen:
  *     no representan lore; sin arte concreto se omite la portada (placeholder por categoría).
- *  6. Las novedades (src/content/novedades/*.md) o los duelos (src/content/encuestas.json) no cumplen su esquema,
- *     un duelo usa una criatura inexistente o sin stats, o una novedad enlaza a una ruta interna inexistente.
+ *  6. Las novedades (src/content/novedades/*.md) o las encuestas (src/content/encuestas.json) no cumplen su esquema,
+ *     un duelo usa una criatura inexistente o sin stats, una encuesta `desclasificar` de una semana futura usa una
+ *     ficha que no está sellada (`status: proximamente`; en la semana actual y las pasadas basta con que exista), o
+ *     una novedad enlaza a una ruta interna inexistente (las rutas estáticas /wiki/arena, /wiki/registro y
+ *     /wiki/aleatorio sí valen).
  *  7. Los apodos (`aliases`) se repiten entre fichas o coinciden con el título de otra, o un `related` apunta a sí
  *     misma o a una ficha inexistente.
+ *  8. `videos.json` (relaciones vídeo ↔ ficha de «Aparece en») no cumple su esquema (id de YouTube de 11 caracteres,
+ *     fichas sin repetir, vídeo sin repetir, `titulo` de 1 a 200 caracteres), nombra una ficha que no existe en
+ *     src/content o trae un id que no está en FEATURED_VIDEOS sin `titulo`.
+ *  9. Un MDX usa como slug un nombre reservado por una ruta estática (`arena`, `registro`, `aleatorio`).
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { WikiFrontmatterSchema } from '../src/core/types/wiki.ts';
-import { readCuratedPolls, readNews } from '../src/core/content/readers.ts';
-import { crossCheckEntities, crossCheckNews, crossCheckPolls } from '../src/core/content/validate.ts';
+import { readCuratedPolls, readNews, readVideoLinks } from '../src/core/content/readers.ts';
+import {
+  crossCheckEntities,
+  crossCheckNews,
+  crossCheckPolls,
+  crossCheckReservedSlugs,
+  crossCheckVideoLinks,
+} from '../src/core/content/validate.ts';
+// Solo datos, sin dependencias de servidor: se pueden leer desde el script.
+import { FEATURED_VIDEOS } from '../src/features/marketing/config/videos.ts';
 
 const ROOT = process.cwd();
 const CONTENT_DIR = path.join(ROOT, 'src', 'content');
@@ -36,6 +51,8 @@ const problems: Record<string, string[]> = {
   'Imagen que no es lore': [],
   'Comunidad (novedades / encuestas)': [],
   'Apodos y relacionados': [],
+  'Vídeos ↔ fichas (videos.json)': [],
+  'Slugs reservados': [],
 };
 
 const NON_LORE_ASSETS = ['/assets/Branding/', '/assets/Universo_Colosos/Esquemas/'];
@@ -44,6 +61,7 @@ const mdxFiles = readdirSync(CONTENT_DIR).filter((f) => f.endsWith('.mdx')).sort
 const slugs = new Set(mdxFiles.map((f) => f.replace(/\.mdx$/, '')));
 const universesWithArticles = new Set<string>();
 const fighterSlugs = new Set<string>();
+const sealedSlugs = new Set<string>();
 const entityItems: { slug: string; title: string; aliases?: string[]; related?: string[] }[] = [];
 
 /** Extrae rutas /assets/... de un texto (MDX o TS). */
@@ -81,6 +99,7 @@ for (const file of mdxFiles) {
     universesWithArticles.add(parsed.data.universe);
     const stats = parsed.data.stats;
     if (stats && Object.keys(stats).length > 0) fighterSlugs.add(file.replace(/\.mdx$/, ''));
+    if (parsed.data.status === 'proximamente') sealedSlugs.add(file.replace(/\.mdx$/, ''));
     entityItems.push({
       slug: file.replace(/\.mdx$/, ''),
       title: parsed.data.title,
@@ -123,11 +142,21 @@ problems['Comunidad (novedades / encuestas)'].push(
   ...news.errors,
   ...polls.errors,
   ...crossCheckNews(news.items, slugs),
-  ...crossCheckPolls(polls.items, slugs, fighterSlugs),
+  ...crossCheckPolls(polls.items, slugs, fighterSlugs, sealedSlugs),
 );
 
 // 7: apodos y related
 problems['Apodos y relacionados'].push(...crossCheckEntities(entityItems));
+
+// 8: vídeos ↔ fichas
+const videoLinks = readVideoLinks(path.join(CONTENT_DIR, 'videos.json'));
+problems['Vídeos ↔ fichas (videos.json)'].push(
+  ...videoLinks.errors,
+  ...crossCheckVideoLinks(videoLinks.items, slugs, new Set(FEATURED_VIDEOS.map((v) => v.id))),
+);
+
+// 9: nombres reservados por rutas estáticas
+problems['Slugs reservados'].push(...crossCheckReservedSlugs(slugs));
 
 // Reporte
 console.log(

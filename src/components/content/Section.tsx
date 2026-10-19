@@ -17,7 +17,7 @@ interface SectionProps {
   children: ReactNode;
 }
 
-const ACTION = 'inline-flex min-h-11 items-center text-[12px] font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary rounded-sm';
+const ACTION = 'inline-flex min-h-11 items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary rounded-sm';
 
 const YOUTUBE = /youtu\.?be/;
 
