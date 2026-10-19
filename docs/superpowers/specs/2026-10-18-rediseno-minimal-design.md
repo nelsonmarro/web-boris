@@ -49,7 +49,7 @@
 |---|---|---|
 | `ContentCard` | `src/components/content/ContentCard.tsx` | Props: `href`, `external?`, `title`, `meta?`, `description?`, `lines?: 1 \| 2 \| 3` (por defecto 2), `image?`, `imagePosition?`, `category?` (placeholder), `aspect?: 'video' \| 'portrait'` (16:9 por defecto; 4:5 para retratos), `pending?`, `headingLevel?: 2 \| 3` (por defecto 3), `sizes?`, `eager?` (LCP) |
 | `Section` | `src/components/content/Section.tsx` | Props: `id?`, `title`, `action?: { href; label }`, `className?` y `children`. Renderiza `<section aria-labelledby>` con `h2.section-title` y el enlace "Ver todo" alineado a la derecha |
-| `FactsLine` | `src/components/content/FactsLine.tsx` | Props: `items: { label: string; value: string; tone?: 'danger' \| 'warning' \| 'ok' }[]`. Un `<dl>` en línea; la etiqueta va en 11 px uppercase `text-white/45` y el valor en blanco (o en el color del tono) |
+| `FactsLine` | `src/components/content/FactsLine.tsx` | Props: `items: { label: string; value: string; tone?: ThreatTone }[]` (`'green' \| 'amber' \| 'red'`, de `lib/stats.ts`). Un `<dl>` en línea; la etiqueta va en 11 px uppercase `text-white/45` y el valor en blanco (o en el color del tono) |
 | `tipos` | `src/core/search/tipos.ts` (puro) | `TIPOS`: lista ordenada `{ id, label, categories }`; `tipoOf(category)` → id o `null` |
 
 **`ContentCard`, detalle:**
@@ -147,7 +147,7 @@ Orden del DOM igual al orden visual.
    - **`h1`.**
    - **`FactsLine`:** solo si `hasStats`, con hasta 3 datos en este orden:
      - Longitud (`stats.length` m);
-     - Amenaza (`getThreatLevel`, con tono `danger`/`warning`/`ok`);
+     - Amenaza (`getThreatLevel(stats.hostility)`: su `label` con su `tone`);
      - Peso (`stats.weight`).
    - **Acciones:**
      - "Arena", el botón primario de la Ola A, solo con stats;
