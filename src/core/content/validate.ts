@@ -1,5 +1,5 @@
 /** Referencias cruzadas del contenido del hub contra los artículos. Puro. */
-import { isoWeekKey } from '../../features/community/lib/poll-schedule.ts';
+import { isoWeekKey } from './iso-week.ts';
 import { normalize } from '../search/entity-index.ts';
 import { RESERVED_SLUGS, STATIC_WIKI_ROUTES } from '../search/wiki-routes.ts';
 import type { CuratedPoll, NewsEntry, VideoLink } from './schemas.ts';

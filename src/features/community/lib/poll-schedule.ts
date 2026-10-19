@@ -3,6 +3,9 @@
  * solo imports relativos con extensión .ts.
  */
 import type { CuratedPoll, PollTipo } from '../../../core/content/schemas.ts';
+import { DAY_MS, isoWeekKey, mondayUtc } from '../../../core/content/iso-week.ts';
+
+export { isoWeekKey };
 
 export const DEFAULT_QUESTION = '¿Quién gana?';
 export const DEFAULT_QUESTION_DESCLASIFICAR = '¿Qué expediente quieres que Boris desclasifique primero?';
@@ -18,23 +21,8 @@ export interface PollDef {
   question: string;
 }
 
-const DAY_MS = 86_400_000;
 /** Lunes 1970-01-05 00:00 UTC: origen para contar semanas completas. */
 const EPOCH_MONDAY_MS = Date.UTC(1970, 0, 5);
-
-/** Lunes 00:00 UTC de la semana ISO que contiene `date`. */
-function mondayUtc(date: Date): number {
-  const day = date.getUTCDay() || 7; // 1 = lunes … 7 = domingo
-  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() - (day - 1));
-}
-
-/** Clave de semana ISO, p. ej. `2026-W42`. El jueves de la semana decide el año. */
-export function isoWeekKey(date: Date): string {
-  const thursday = new Date(mondayUtc(date) + 3 * DAY_MS);
-  const year = thursday.getUTCFullYear();
-  const week = Math.floor((thursday.getTime() - Date.UTC(year, 0, 1)) / DAY_MS / 7) + 1;
-  return `${year}-W${String(week).padStart(2, '0')}`;
-}
 
 /** Semanas completas desde el lunes 1970-01-05 hasta el lunes de la semana de `date`. */
 export function weeksSinceEpoch(date: Date): number {
