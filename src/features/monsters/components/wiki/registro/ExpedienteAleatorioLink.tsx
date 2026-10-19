@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Route } from 'next';
+import { RANDOM_ROUTE } from '@/features/monsters/config/wiki-routes';
 
 /** Estilo de los enlaces de texto del registro: el mismo «Ver todo ›» de `Section`, con objetivo de 44 px. */
 export const REGISTRO_TEXT_LINK =
@@ -12,7 +13,7 @@ export const REGISTRO_TEXT_LINK =
 export function ExpedienteAleatorioLink({ className }: { className?: string }) {
   return (
     <Link
-      href={'/wiki/aleatorio' as Route}
+      href={RANDOM_ROUTE as Route}
       prefetch={false}
       className={className ? `${REGISTRO_TEXT_LINK} ${className}` : REGISTRO_TEXT_LINK}
     >

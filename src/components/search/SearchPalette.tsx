@@ -11,6 +11,7 @@ import { cn } from '@/utils/cn';
 import { normalize, type EntityEntry } from '@/core/search/entity-index';
 import { MAX_QUERY_LENGTH, search, suggest, type SearchHit } from '@/core/search/search';
 import { getWikiIndex } from '@/features/monsters/actions/get-wiki-articles';
+import { RANDOM_ROUTE } from '@/features/monsters/config/wiki-routes';
 import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { useSearchPalette } from './useSearchPalette';
 
@@ -28,9 +29,6 @@ type Row =
   | { kind: 'suggest'; slug: string; title: string };
 
 const toRow = (hit: SearchHit): Row => ({ kind: 'entry', entry: hit.entry, alias: hit.matchedAlias });
-
-/** La ruta que redirige a una ficha al azar (spec Ola C §5). */
-const RANDOM_HREF = '/wiki/aleatorio';
 
 /** Miniatura de 40 px: la portada, o el icono de la categoría si no hay portada o es de marca. */
 function Thumb({ entry }: { entry: EntityEntry }) {
@@ -167,7 +165,7 @@ export function SearchPalette() {
     if (!row) return;
     if (row.kind === 'entry') go(`/wiki/${row.entry.slug}`);
     else if (row.kind === 'all') go(`/wiki?search=${encodeURIComponent(shownQuery)}#explorar`);
-    else if (row.kind === 'random') go(RANDOM_HREF);
+    else if (row.kind === 'random') go(RANDOM_ROUTE);
     else {
       setQuery(row.title);
       inputRef.current?.focus();

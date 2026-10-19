@@ -3,6 +3,7 @@
 import * as React from "react";
 import { SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
 import { WIKI_NAVIGATION } from "@/features/monsters/config/wiki-navigation";
+import { RANDOM_ROUTE, REGISTRO_ROUTE } from "@/features/monsters/config/wiki-routes";
 import { SidebarCollapsibleItem } from "./SidebarCollapsibleItem";
 import { Home, Globe, MessageSquare, ListChecks, Shuffle } from "lucide-react";
 import Link from "next/link";
@@ -15,7 +16,7 @@ const ARCHIVO_ITEM =
 
 export function SidebarNavigation() {
   const pathname = usePathname();
-  const registroActive = pathname === "/wiki/registro";
+  const registroActive = pathname === REGISTRO_ROUTE;
 
   return (
     <SidebarContent className="relative z-10 py-4 scrollbar-none group-data-[collapsible=icon]:overflow-y-auto group-data-[collapsible=icon]:overflow-x-hidden group-data-[collapsible=icon]:py-2 group-data-[collapsible=icon]:[mask-image:linear-gradient(to_bottom,transparent,black_16px,black_calc(100%-16px),transparent)]">
@@ -69,7 +70,7 @@ export function SidebarNavigation() {
               tooltip="Registro del archivo"
               isActive={registroActive}
               className={cn(ARCHIVO_ITEM, registroActive && "bg-primary/10 text-primary hover:bg-primary/15")}
-              render={<Link href="/wiki/registro" aria-label="Registro del archivo" aria-current={registroActive ? "page" : undefined} />}
+              render={<Link href={REGISTRO_ROUTE} aria-label="Registro del archivo" aria-current={registroActive ? "page" : undefined} />}
             >
               <ListChecks className={cn(
                 "h-4 w-4 mr-3 shrink-0 transition-colors group-data-[collapsible=icon]:mr-0 group-data-[collapsible=icon]:size-5",
@@ -88,7 +89,7 @@ export function SidebarNavigation() {
             <SidebarMenuButton
               tooltip="Expediente aleatorio"
               className={ARCHIVO_ITEM}
-              render={<Link href={"/wiki/aleatorio" as Route} prefetch={false} aria-label="Expediente aleatorio" />}
+              render={<Link href={RANDOM_ROUTE as Route} prefetch={false} aria-label="Expediente aleatorio" />}
             >
               <Shuffle className="h-4 w-4 mr-3 shrink-0 text-primary/60 transition-colors group-hover:text-primary group-data-[collapsible=icon]:mr-0 group-data-[collapsible=icon]:size-5" />
               <span className="font-semibold text-[13.5px] text-white/80 transition-colors group-hover:text-white group-data-[collapsible=icon]:hidden">
