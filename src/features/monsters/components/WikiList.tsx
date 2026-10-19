@@ -44,6 +44,8 @@ export function WikiList({ options }: WikiListProps) {
   );
   const urlPage = parsePage(searchParams.get('page'));
 
+  const searchInputRef = React.useRef<HTMLInputElement>(null);
+
   // El texto del input vive en local (cada tecla) y llega a la URL con debounce.
   const [search, setSearch] = React.useState(urlSearch);
   const [debouncedSearch, setDebouncedSearch] = React.useState(urlSearch);
@@ -122,6 +124,8 @@ export function WikiList({ options }: WikiListProps) {
     setSearch('');
     setDebouncedSearch('');
     replaceQuery({ search: null, tipo: null, universe: null, page: null });
+    // El botón «Limpiar filtros» desaparece con el estado vacío: el foco pasa al campo de búsqueda.
+    searchInputRef.current?.focus();
   };
 
   const goToPage = (next: number) => {
@@ -152,7 +156,7 @@ export function WikiList({ options }: WikiListProps) {
 
   return (
     <div>
-      <WikiSearch value={search} onSearch={setSearch} className="mb-6" />
+      <WikiSearch value={search} onSearch={setSearch} inputRef={searchInputRef} className="mb-6" />
 
       <WikiFilters
         options={options}

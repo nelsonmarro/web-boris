@@ -11,7 +11,8 @@ interface WikiSearchProps {
   onSearch: (value: string) => void;
   placeholder?: string;
   className?: string;
-  inputClassName?: string;
+  /** Referencia al campo, para que el padre pueda devolverle el foco (p. ej. tras «Limpiar filtros»). */
+  inputRef?: React.RefObject<HTMLInputElement | null>;
 }
 
 /** Buscador grande de la portada del archivo (spec #55 §4). El debounce y la URL los gestiona el padre. */
@@ -20,9 +21,10 @@ export function WikiSearch({
   onSearch,
   placeholder = 'Buscar criaturas, personajes, especies…',
   className,
-  inputClassName,
+  inputRef: externalRef,
 }: WikiSearchProps) {
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const ownRef = React.useRef<HTMLInputElement>(null);
+  const inputRef = externalRef ?? ownRef;
 
   const clear = () => {
     onSearch('');
@@ -43,10 +45,7 @@ export function WikiSearch({
         onChange={(e) => onSearch(e.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className={cn(
-          'h-14 rounded-xl border-white/15 bg-[#061a2e] pl-14 pr-14 text-base font-medium text-white shadow-none backdrop-blur-none placeholder:text-white/60 focus-visible:border-primary/60 focus-visible:bg-[#061a2e] focus-visible:ring-4 focus-visible:ring-primary/20 focus-visible:shadow-[0_0_30px_rgba(255,115,0,0.12)] [&::-webkit-search-cancel-button]:hidden',
-          inputClassName,
-        )}
+        className="h-14 rounded-xl border-white/15 bg-[#061a2e] pl-14 pr-14 text-base font-medium text-white shadow-none backdrop-blur-none placeholder:text-white/60 focus-visible:border-primary/60 focus-visible:bg-[#061a2e] focus-visible:ring-4 focus-visible:ring-primary/20 focus-visible:shadow-[0_0_30px_rgba(255,115,0,0.12)] [&::-webkit-search-cancel-button]:hidden"
       />
       {value && (
         <button
