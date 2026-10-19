@@ -11,13 +11,15 @@
  *     no representan lore; sin arte concreto se omite la portada (placeholder por categoría).
  *  6. Las novedades (src/content/novedades/*.md) o los duelos (src/content/encuestas.json) no cumplen su esquema,
  *     un duelo usa una criatura inexistente o sin stats, o una novedad enlaza a una ruta interna inexistente.
+ *  7. Los apodos (`aliases`) se repiten entre fichas o coinciden con el título de otra, o un `related` apunta a sí
+ *     misma o a una ficha inexistente.
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { WikiFrontmatterSchema } from '../src/core/types/wiki.ts';
 import { readCuratedPolls, readNews } from '../src/core/content/readers.ts';
-import { crossCheckNews, crossCheckPolls } from '../src/core/content/validate.ts';
+import { crossCheckEntities, crossCheckNews, crossCheckPolls } from '../src/core/content/validate.ts';
 
 const ROOT = process.cwd();
 const CONTENT_DIR = path.join(ROOT, 'src', 'content');
@@ -33,6 +35,7 @@ const problems: Record<string, string[]> = {
   'Assets inexistentes': [],
   'Imagen que no es lore': [],
   'Comunidad (novedades / encuestas)': [],
+  'Apodos y relacionados': [],
 };
 
 const NON_LORE_ASSETS = ['/assets/Branding/', '/assets/Universo_Colosos/Esquemas/'];
@@ -41,6 +44,7 @@ const mdxFiles = readdirSync(CONTENT_DIR).filter((f) => f.endsWith('.mdx')).sort
 const slugs = new Set(mdxFiles.map((f) => f.replace(/\.mdx$/, '')));
 const universesWithArticles = new Set<string>();
 const fighterSlugs = new Set<string>();
+const entityItems: { slug: string; title: string; aliases?: string[]; related?: string[] }[] = [];
 
 /** Extrae rutas /assets/... de un texto (MDX o TS). */
 function extractAssets(text: string): string[] {
@@ -77,6 +81,12 @@ for (const file of mdxFiles) {
     universesWithArticles.add(parsed.data.universe);
     const stats = parsed.data.stats;
     if (stats && Object.keys(stats).length > 0) fighterSlugs.add(file.replace(/\.mdx$/, ''));
+    entityItems.push({
+      slug: file.replace(/\.mdx$/, ''),
+      title: parsed.data.title,
+      aliases: parsed.data.aliases,
+      related: parsed.data.related,
+    });
   }
   for (const asset of extractAssets(raw)) {
     if (!assetExists(asset)) problems['Assets inexistentes'].push(`${file}: ${asset}`);
@@ -115,6 +125,9 @@ problems['Comunidad (novedades / encuestas)'].push(
   ...crossCheckNews(news.items, slugs),
   ...crossCheckPolls(polls.items, slugs, fighterSlugs),
 );
+
+// 7: apodos y related
+problems['Apodos y relacionados'].push(...crossCheckEntities(entityItems));
 
 // Reporte
 console.log(

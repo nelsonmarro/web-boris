@@ -2,6 +2,7 @@ import * as React from 'react';
 import Image from 'next/image';
 import { Maximize2, ImageOff } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { ViewerLink } from '@/features/monsters/components/wiki/mdx/ArticleImages';
 
 interface WikiGalleryProps {
   children: React.ReactNode;
@@ -63,12 +64,12 @@ export function WikiImage({
           {alt && <span className="line-clamp-2 max-w-[90%] text-[11px] text-white/60">{alt}</span>}
         </div>
       ) : (
-      <a
-        href={src}
-        target="_blank"
-        rel="noopener noreferrer"
+      <ViewerLink
+        src={src}
+        alt={alt}
+        caption={caption}
         className={cn(
-          'relative block w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl transition-all duration-500 group-hover:border-primary/40 p-0 m-0 bg-transparent cursor-zoom-in',
+          'relative block w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl transition-all duration-500 group-hover:border-primary/40 p-0 m-0 bg-transparent cursor-zoom-in focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary',
           aspect,
         )}
       >
@@ -91,7 +92,7 @@ export function WikiImage({
             <Maximize2 className="w-5 h-5 text-white" />
           </div>
         </div>
-      </a>
+      </ViewerLink>
       )}
 
       {caption && (

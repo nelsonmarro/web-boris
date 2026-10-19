@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { compareDiscovery, richness } from '../../src/features/monsters/lib/discovery-order.ts';
+import { compareDiscovery, richness } from '../../src/core/search/discovery-order.ts';
 
 const full = { title: 'Zeta', stats: {}, image: '/assets/X/x.webp', infobox: { A: { k: 'v' } }, description: 'd' };
 

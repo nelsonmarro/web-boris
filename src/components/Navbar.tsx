@@ -5,6 +5,7 @@ import { cn } from '@/utils/cn';
 import { NavLogo } from './navbar/components/NavLogo';
 import { NavLinks } from './navbar/components/NavLinks';
 import { NavActions } from './navbar/components/NavActions';
+import { SearchTrigger } from './search/SearchTrigger';
 import { Menu } from 'lucide-react';
 import {
   Sheet,
@@ -59,20 +60,23 @@ export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
         {/* Desktop Links */}
         <div
           className={cn(
-            'hidden md:flex items-center gap-2 relative z-10',
+            'hidden xl:flex items-center gap-2 relative z-10',
             hideLogoOnDesktop && 'md:gap-1',
           )}
         >
           <NavLinks />
           <NavActions />
+          {/* Búsqueda global: la barra completa solo cabe desde xl (por debajo, menú + lupa). */}
+          <SearchTrigger variant="pill" className="ml-2" />
         </div>
 
         {/* Mobile Menu */}
-        <div className="md:hidden flex items-center gap-2 relative z-10">
+        <div className="xl:hidden flex items-center gap-2 relative z-10">
+          <SearchTrigger variant="icon" />
           <Sheet>
             <SheetTrigger
               render={
-                <button aria-label="Abrir menú de navegación" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors">
+                <button aria-label="Abrir menú de navegación" className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors">
                   <Menu className="w-5 h-5" aria-hidden />
                 </button>
               }

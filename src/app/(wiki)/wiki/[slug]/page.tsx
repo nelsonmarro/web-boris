@@ -6,6 +6,11 @@ import { WikiArticleFooter } from '@/features/monsters/components/wiki/article/W
 import type { Metadata } from 'next';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { getRelatedArticles } from '@/features/monsters/lib/related';
+import { getEntityIndex, getMentionGraph } from '@/core/content/entities';
+import { extractHeadings } from '@/utils/headings';
+import { ArticleProgress } from '@/features/monsters/components/wiki/article/ArticleProgress';
+import { SectionChip } from '@/features/monsters/components/wiki/article/SectionChip';
+import { ArticleImagesProvider } from '@/features/monsters/components/wiki/mdx/ArticleImages';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -52,7 +57,8 @@ export default async function WikiArticlePage({ params }: Props) {
   }
 
   const { frontmatter, content } = article;
-  const related = getRelatedArticles(slug, await getAllArticles());
+  const related = getRelatedArticles(slug, await getAllArticles(), 4, await getMentionGraph());
+  const entityIndex = await getEntityIndex();
   // La portada sube a la cabecera; si el MDX ya la usa en el cuerpo, la cabecera no la repite.
   const imageInBody = !!frontmatter.image && content.includes(frontmatter.image);
   const withStats = hasStats(frontmatter);
@@ -60,6 +66,7 @@ export default async function WikiArticlePage({ params }: Props) {
   return (
     <div className="w-full min-h-screen bg-[#0a2339]">
       <article className="w-full">
+        <ArticleProgress />
         <WikiArticleHeader
           title={frontmatter.title}
           universe={frontmatter.universe}
@@ -75,7 +82,17 @@ export default async function WikiArticlePage({ params }: Props) {
           imageInBody={imageInBody}
         />
 
-        <WikiArticleContent frontmatter={frontmatter} content={content} />
+        <ArticleImagesProvider>
+          <WikiArticleContent
+            frontmatter={frontmatter}
+            content={content}
+            slug={slug}
+            entityIndex={entityIndex}
+          />
+        </ArticleImagesProvider>
+
+        {/* Después del cuerpo y antes del pie: el orden de tabulación sigue el de lectura. Es `fixed`, no ocupa lugar. */}
+        <SectionChip headings={extractHeadings(content)} />
 
         <WikiArticleFooter related={related} />
       </article>
