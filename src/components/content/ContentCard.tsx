@@ -60,7 +60,10 @@ export function ContentCard({
           {title}
           {pending && <span className="sr-only"> (próximamente)</span>}
         </Heading>
-        {pending && <p className="text-[11px] font-bold uppercase tracking-wider text-primary">Próximamente</p>}
+        {pending && (
+          // El título ya anuncia «(próximamente)» a los lectores de pantalla: la etiqueta visible no se repite.
+          <p aria-hidden="true" className="text-[11px] font-bold uppercase tracking-wider text-primary">Próximamente</p>
+        )}
         {meta && <p className="text-[12px] font-semibold text-white/55">{meta}</p>}
         {description && <p className={cn('text-sm leading-relaxed text-white/70', CLAMP[lines])}>{description}</p>}
       </div>
