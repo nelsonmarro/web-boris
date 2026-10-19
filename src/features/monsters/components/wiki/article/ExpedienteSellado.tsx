@@ -44,7 +44,7 @@ export async function ExpedienteSellado({ slug }: { slug: string }) {
           <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-0">
             {inPoll && (
               <li>
-                <Link href="/comunidad" className={LINK}>
+                <Link href="/comunidad#encuesta" className={LINK}>
                   Pide que se desclasifique <span aria-hidden="true">›</span>
                 </Link>
               </li>
