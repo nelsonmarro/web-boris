@@ -18,7 +18,7 @@ This document provides a comprehensive overview of the current status, standards
 - **MDX Headers:** `h2` and `h3` redesigned with "Premium Abyssal" styling. `h2` uses a 10px primary border and gradient background. `h3` features a status-indicator dot. Both use `clear-both` to prevent float overlaps.
 - **WikiQuote:** Simplified aesthetic with a 3px left vertical line and compact Lucide icons.
 - **WikiImage "Nuclear Fix":** Resolved a persistent gap issue. The component now uses `not-prose` to avoid global style interference and forces edge-to-edge alignment using `!important` flags (e.g., `!top-0 !inset-0`).
-- **Interactive Effects:** The `BubbleTrail` (crystal-style bubbles on click) is fully restored and active in the Wiki layout.
+- **Interactive Effects:** The `BubbleTrail` (crystal-style bubbles on click) was removed in #55 (minimalist redesign); it is no longer part of the Wiki layout.
 
 ### 📂 Asset Organization
 - **Refactor Completed:** Every file and folder in `public/assets/` and root `assets/` has been renamed to remove spaces (replaced with `_`).
@@ -44,7 +44,7 @@ This document provides a comprehensive overview of the current status, standards
 - **WikiHeaders:** MUST use `clear-both`.
 - **Images:** MUST fill their containers edge-to-edge (no internal padding/gaps).
 - **Global `img`:** In `MdxRenderer.tsx`, the global `img` override has been cleaned of background colors to avoid "ghost gaps".
-- **Interactive:** `BubbleTrail` must be present in the root layout or specific feature layouts to maintain the "Submarine" feel.
+- **Interactive:** `BubbleTrail` was removed in #55 (minimalist redesign) and is no longer required in any layout.
 
 ## 5. Pending / Future Roadmap
 - **Fase 5 Development:** The Dashboard/Control Center inspired by iPadOS.

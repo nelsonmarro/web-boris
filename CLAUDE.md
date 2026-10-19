@@ -60,6 +60,7 @@ Frontmatter (ver `WikiFrontmatterSchema`): `title` y `universe` obligatorios; op
 - `src/features/` — módulos por dominio (`monsters` es el de la wiki; también `marketing`, `auth`, `payments`, `community` (hub /comunidad)).
 - `src/features/monsters/actions/get-wiki-articles.ts` — server action de listado con búsqueda/filtros/paginación (filtra en memoria sobre los MDX).
 - `src/core/` — server actions globales, config de Auth.js, tipos.
+- `src/core/search/` — lógica pura (imports relativos `.ts`, probada con node:test): `tipos` (agrupación de categorías: una categoría nueva del frontmatter debe añadirse a `TIPOS`, lo exige `tipos.test.ts`) y `catalog` (el catálogo excluye las páginas `Directorio`/`Categoría`). La `image` del frontmatter se muestra como imagen de cabecera de la ficha salvo que el cuerpo MDX ya la use.
 - `src/components/content/` — primitivas del rediseño minimalista (#55): `ContentCard`, `Section`, `FactsLine`.
 - `src/lib/prisma.ts` — cliente Prisma (instanciar siempre con el driver adapter).
 - Base de datos y migraciones: migraciones en `prisma/migrations` (la primera, `hub_comunidad`, crea también las tablas de Auth.js). Producción: `npx prisma migrate deploy` sobre una base vacía; una base local creada antes con `db push` necesita `npx prisma migrate reset` (borra datos). `VOTE_SECRET` (≥ 32 caracteres) habilita la votación de /comunidad; `DB_PORT` cambia el puerto publicado por docker compose.
