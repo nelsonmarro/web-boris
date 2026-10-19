@@ -4,8 +4,9 @@ import * as React from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { ContentCard } from '@/components/content/ContentCard';
+import { WikiSearch } from './wiki/WikiSearch';
 import { WikiFilters } from './wiki/WikiFilters';
-import { WikiArticleCard } from './wiki/WikiArticleCard';
 import { WikiEmptyState } from './wiki/WikiEmptyState';
 import { getWikiArticles, type WikiFilterOptions } from '../actions/get-wiki-articles';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,7 @@ interface WikiListProps {
   options: WikiFilterOptions;
 }
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 12;
 const SEARCH_DEBOUNCE_MS = 400;
 
 /** Acepta un valor de la URL solo si existe entre las opciones; evita filtros vacíos por typos. */
@@ -30,14 +31,17 @@ function parsePage(value: string | null): number {
 }
 
 export function WikiList({ options }: WikiListProps) {
-  // La URL es la única fuente de verdad (?search=&universe=&category=&page=): las tarjetas de la
-  // landing, el hero y el footer enlazan a /wiki?…, y navegar dentro de /wiki actualiza la lista sin remontarla.
+  // La URL es la única fuente de verdad (?search=&tipo=&universe=&page=): la landing, el hero y el footer
+  // enlazan a /wiki?…, y navegar dentro de /wiki actualiza la lista sin remontarla.
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const query = searchParams.toString();
   const urlSearch = searchParams.get('search') ?? '';
   const universe = pickFilter(searchParams.get('universe'), options.universes);
-  const category = pickFilter(searchParams.get('category'), options.categories);
+  const tipo = pickFilter(
+    searchParams.get('tipo'),
+    options.tipos.map((t) => t.id),
+  );
   const urlPage = parsePage(searchParams.get('page'));
 
   // El texto del input vive en local (cada tecla) y llega a la URL con debounce.
@@ -77,7 +81,7 @@ export function WikiList({ options }: WikiListProps) {
       const qs = next.toString();
       queryRef.current = qs;
       // History API nativa: Next 16 sincroniza useSearchParams/usePathname con replaceState sin pedir un
-      // payload RSC al servidor (los filtros responden al instante). Se conserva el hash (#explorar).
+      // payload RSC al servidor (los filtros responden al instante). Se conserva el hash (#catalogo).
       const url = (qs ? `${pathname}?${qs}` : pathname) + window.location.hash;
       window.history.replaceState(null, '', url);
     },
@@ -102,21 +106,36 @@ export function WikiList({ options }: WikiListProps) {
   const handleUniverseChange = (value: string | null) =>
     replaceQuery({ universe: value ?? 'all', page: null });
 
-  const handleCategoryChange = (value: string | null) =>
-    replaceQuery({ category: value ?? 'all', page: null });
+  const handleTipoChange = (value: string) => replaceQuery({ tipo: value, page: null });
+
+  /** Enlace de cada pestaña a partir de la URL actual: conserva búsqueda y universo y reinicia la página. */
+  const hrefForTipo = (value: string) => {
+    const next = new URLSearchParams(query);
+    next.delete('page');
+    if (value === 'all') next.delete('tipo');
+    else next.set('tipo', value);
+    const qs = next.toString();
+    return qs ? `${pathname}?${qs}` : pathname;
+  };
+
+  const clearFilters = () => {
+    setSearch('');
+    setDebouncedSearch('');
+    replaceQuery({ search: null, tipo: null, universe: null, page: null });
+  };
 
   const goToPage = (next: number) => {
     replaceQuery({ page: String(next) });
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     document
-      .getElementById('explorar')
+      .getElementById('catalogo')
       ?.scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' });
   };
 
   const { data, isPending, isPlaceholderData, isFetching } = useQuery({
-    queryKey: ['wiki-articles', page, debouncedSearch, universe, category],
+    queryKey: ['wiki-articles', page, debouncedSearch, universe, tipo],
     queryFn: () =>
-      getWikiArticles({ page, pageSize: PAGE_SIZE, search: debouncedSearch, universe, category }),
+      getWikiArticles({ page, pageSize: PAGE_SIZE, search: debouncedSearch, universe, tipo }),
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
   });
@@ -132,41 +151,58 @@ export function WikiList({ options }: WikiListProps) {
   }, [resolvedTotalPages, page, replaceQuery]);
 
   return (
-    <div className="space-y-10">
+    <div>
+      <WikiSearch value={search} onSearch={setSearch} className="mb-6" />
+
       <WikiFilters
         options={options}
-        search={search}
-        onSearchChange={setSearch}
-        onUniverseChange={handleUniverseChange}
-        onCategoryChange={handleCategoryChange}
+        currentTipo={tipo}
         currentUniverse={universe}
-        currentCategory={category}
+        hrefForTipo={hrefForTipo}
+        onTipoChange={handleTipoChange}
+        onUniverseChange={handleUniverseChange}
       />
 
-      <div className="relative min-h-[400px]">
+      {/* #explorar sigue vivo como alias de #catalogo: los enlaces antiguos (footer, landing) no se rompen. */}
+      <span id="explorar" className="block scroll-mt-24" />
+      <div id="catalogo" className="relative mt-8 min-h-[400px] scroll-mt-24">
+        <p role="status" className="sr-only">
+          {data ? `${data.total} ${data.total === 1 ? 'registro' : 'registros'}` : ''}
+        </p>
         {isPending && !isPlaceholderData ? (
           <div className="absolute inset-0 flex items-center justify-center">
-            <Loader2 className="w-12 h-12 text-primary animate-spin" />
+            <Loader2 aria-hidden="true" className="h-10 w-10 animate-spin text-primary motion-reduce:animate-none" />
           </div>
         ) : articles.length > 0 ? (
           <div
             className={cn(
-              'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300',
+              'grid gap-4 transition-opacity duration-300 motion-reduce:transition-none sm:grid-cols-2 lg:grid-cols-3',
               isFetching && isPlaceholderData ? 'opacity-50' : 'opacity-100',
             )}
           >
-            {articles.map((article) => (
-              <WikiArticleCard key={article.slug} slug={article.slug} frontmatter={article.frontmatter} />
+            {articles.map(({ slug, frontmatter: fm }) => (
+              <ContentCard
+                key={slug}
+                href={`/wiki/${slug}`}
+                title={fm.title}
+                meta={[fm.category, fm.universe].filter(Boolean).join(' · ')}
+                description={fm.description}
+                image={fm.image}
+                imagePosition={fm.imagePosition}
+                category={fm.category}
+                pending={fm.status === 'proximamente'}
+                headingLevel={2}
+              />
             ))}
           </div>
         ) : (
-          <WikiEmptyState />
+          <WikiEmptyState onClear={clearFilters} />
         )}
       </div>
 
       {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-8 border-t border-white/10">
-          <p className="eyebrow text-white/40">
+        <div className="mt-10 flex flex-col items-center justify-between gap-6 border-t border-white/10 pt-8 sm:flex-row">
+          <p className="eyebrow text-white/60">
             Mostrando página <span className="text-white">{page}</span> de{' '}
             <span className="text-white">{totalPages}</span>
           </p>
@@ -177,7 +213,7 @@ export function WikiList({ options }: WikiListProps) {
               size="sm"
               onClick={() => goToPage(Math.max(1, page - 1))}
               disabled={page === 1 || isFetching}
-              className="h-10 rounded-xl border-white/15 bg-[#061a2e] px-5 text-white hover:bg-white/5"
+              className="h-11 rounded-xl border-white/15 bg-[#061a2e] px-5 text-white hover:bg-white/5"
             >
               <ChevronLeft className="w-4 h-4 mr-2" /> Anterior
             </Button>
@@ -192,7 +228,7 @@ export function WikiList({ options }: WikiListProps) {
                       onClick={() => goToPage(p)}
                       aria-current={page === p ? 'page' : undefined}
                       className={cn(
-                        'h-10 w-10 rounded-xl text-xs font-bold transition-all',
+                        'h-11 w-11 rounded-xl text-xs font-bold transition-all motion-reduce:transition-none',
                         page === p
                           ? 'bg-primary text-[#00122E] shadow-[0_0_15px_rgba(255,115,0,0.4)]'
                           : 'text-white/60 hover:text-white hover:bg-white/5',
@@ -204,7 +240,7 @@ export function WikiList({ options }: WikiListProps) {
                 }
                 if (p === page - 2 || p === page + 2) {
                   return (
-                    <span key={p} className="text-white/20">
+                    <span key={p} aria-hidden="true" className="text-white/50">
                       …
                     </span>
                   );
@@ -218,7 +254,7 @@ export function WikiList({ options }: WikiListProps) {
               size="sm"
               onClick={() => goToPage(Math.min(totalPages, page + 1))}
               disabled={page === totalPages || isFetching}
-              className="h-10 rounded-xl border-white/15 bg-[#061a2e] px-5 text-white hover:bg-white/5"
+              className="h-11 rounded-xl border-white/15 bg-[#061a2e] px-5 text-white hover:bg-white/5"
             >
               Siguiente <ChevronRight className="w-4 h-4 ml-2" />
             </Button>
