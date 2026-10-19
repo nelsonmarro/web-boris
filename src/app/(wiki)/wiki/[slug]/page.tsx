@@ -76,7 +76,8 @@ export default async function WikiArticlePage({ params }: Props) {
     <div className="w-full min-h-screen bg-[#0a2339]">
       <article className="w-full">
         <ArticleProgress />
-        <MarkSeen slug={slug} />
+        {/* El registro solo cuenta expedientes abiertos: un expediente sellado no cuenta (ver `registroSlugs`). */}
+        {frontmatter.status !== 'proximamente' && <MarkSeen slug={slug} />}
         <WikiArticleHeader
           title={frontmatter.title}
           universe={frontmatter.universe}
@@ -105,10 +106,12 @@ export default async function WikiArticlePage({ params }: Props) {
         <SectionChip headings={extractHeadings(content)} />
         <EntityPreview />
 
-        <ApareceEn videos={videos} />
-        <ArticleNeighbors slug={slug} />
-
-        <WikiArticleFooter related={related} />
+        {/* Bloque de cierre: `SectionChip` se oculta al llegar al primer `[data-related]`, así que es uno solo. */}
+        <div data-related>
+          <ApareceEn videos={videos} />
+          <ArticleNeighbors slug={slug} />
+          <WikiArticleFooter related={related} />
+        </div>
       </article>
     </div>
   );

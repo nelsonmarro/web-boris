@@ -14,8 +14,7 @@ interface ApareceEnProps {
 export function ApareceEn({ videos }: ApareceEnProps) {
   if (videos.length === 0) return null;
   return (
-    // `data-related` también aquí: es el primer bloque del cierre, así `SectionChip` se oculta al llegar a él y no lo tapa.
-    <div data-related className="clear-both mt-8 border-t border-white/10">
+    <div className="clear-both mt-8 border-t border-white/10">
       <div className="wiki-container">
         <Section id="aparece-en" title="Aparece en" contained={false} className="py-10 md:py-14">
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">

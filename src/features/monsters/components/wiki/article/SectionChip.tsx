@@ -32,7 +32,8 @@ const isRendered = (el: HTMLElement) => el.getClientRects().length > 0;
  * Visible si, y solo si:
  * - la fila de desplegables `[data-article-disclosures]` está pintada (con rail, su contenedor está oculto);
  * - esa fila ya salió de la ventana por arriba;
- * - el pie `[data-related]` aún no entró en la ventana (sin relacionados, hasta que el cuerpo termina de verse).
+ * - el bloque de cierre `[data-related]` (Aparece en, vecinos y pie, un único contenedor en la página de la ficha) aún
+ *   no entró en la ventana. Si no existe, hasta que el cuerpo termina de verse.
  */
 export function SectionChip({ headings }: SectionChipProps) {
   const sections = React.useMemo(() => headings.filter((h) => h.level === 2), [headings]);
@@ -57,7 +58,7 @@ export function SectionChip({ headings }: SectionChipProps) {
         if (related) {
           next = related.getBoundingClientRect().top >= window.innerHeight;
         } else {
-          // Sin relacionados: se oculta cuando el final del cuerpo ya está a la vista.
+          // Sin bloque de cierre: se oculta cuando el final del cuerpo ya está a la vista.
           const body = document.querySelector<HTMLElement>('[data-article-body]');
           next = !body || body.getBoundingClientRect().bottom > window.innerHeight;
         }

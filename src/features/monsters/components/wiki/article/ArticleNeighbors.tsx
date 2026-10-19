@@ -15,34 +15,39 @@ const TITLE =
 
 /**
  * «Anterior» / «Siguiente» de la ficha (spec Ola C §5): sus vecinos dentro del mismo grupo del menú, con vuelta
- * circular. Dos enlaces de texto de 44 px; en el móvil van apilados con el siguiente primero. Una ficha que no
- * está en el menú, o que es la única de su grupo, no pinta nada.
+ * circular. Dos enlaces de texto de 44 px; en el móvil van apilados con el siguiente primero. En un grupo de dos
+ * solo hay «Siguiente» (el otro); una ficha que no está en el menú, o que es la única de su grupo, no pinta nada.
  *
  * El orden del DOM es el de lectura (anterior, siguiente); `flex-col-reverse` solo cambia el orden visual del móvil.
  */
 export function ArticleNeighbors({ slug }: ArticleNeighborsProps) {
   const neighbors = navNeighbors(slug, WIKI_NAVIGATION);
-  if (!neighbors?.prev || !neighbors.next) return null;
+  if (!neighbors || (!neighbors.prev && !neighbors.next)) return null;
   const { group, prev, next } = neighbors;
 
   return (
     <nav aria-label="Fichas vecinas" className="clear-both">
       <div className="wiki-container">
         <div className="flex flex-col-reverse gap-1 pb-2 md:flex-row md:items-center md:justify-between md:gap-6">
-          <Link href={prev.url as Route} rel="prev" className={LINK}>
-            <span>
-              <span aria-hidden="true" className="mr-1.5 text-white/60">‹</span>
-              <span className="sr-only">Anterior: </span>
-              <span className={TITLE}>{prev.title}</span>
-            </span>
-          </Link>
-          <Link href={next.url as Route} rel="next" className={`${LINK} md:justify-end md:text-right`}>
-            <span>
-              <span className="text-white/60">Siguiente en {groupLabel(group)}: </span>
-              <span className={TITLE}>{next.title}</span>
-              <span aria-hidden="true" className="ml-1.5 text-white/60">›</span>
-            </span>
-          </Link>
+          {prev && (
+            <Link href={prev.url as Route} rel="prev" className={LINK}>
+              <span>
+                <span aria-hidden="true" className="mr-1.5 text-white/60">‹</span>
+                <span className="sr-only">Anterior: </span>
+                <span className={TITLE}>{prev.title}</span>
+              </span>
+            </Link>
+          )}
+          {next && (
+            // `md:ml-auto`: si «Siguiente» va sola, se queda a la derecha como cuando acompaña a «Anterior».
+            <Link href={next.url as Route} rel="next" className={`${LINK} md:ml-auto md:justify-end md:text-right`}>
+              <span>
+                <span className="text-white/60">Siguiente en {groupLabel(group)}: </span>
+                <span className={TITLE}>{next.title}</span>
+                <span aria-hidden="true" className="ml-1.5 text-white/60">›</span>
+              </span>
+            </Link>
+          )}
         </div>
       </div>
     </nav>
