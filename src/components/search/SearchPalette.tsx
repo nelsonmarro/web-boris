@@ -18,6 +18,8 @@ const RESULT_LIMIT = 10;
 const POPULAR_LIMIT = 8;
 const POPULAR_FALLBACK_LIMIT = 6;
 const NO_ENTRIES: readonly EntityEntry[] = [];
+/** Cualquier modal abierto que no sea la paleta (hojas de vaul y diálogos de Radix / Base UI); la paleta lleva `data-search-palette`. */
+const OTHER_MODAL = '[data-vaul-drawer]:not([data-search-palette]), [role="dialog"]:not([data-search-palette])';
 
 type Row =
   | { kind: 'entry'; entry: EntityEntry; alias?: string }
@@ -95,7 +97,8 @@ export function SearchPalette() {
   const listRef = React.useRef<HTMLUListElement>(null);
   const [cursor, setCursor] = React.useState(0);
 
-  // ⌘K / Ctrl+K abre o cierra la paleta desde cualquier página.
+  // ⌘K / Ctrl+K abre o cierra la paleta desde cualquier página. No la abre encima de otro modal (la hoja del
+  // índice, el visor de imágenes, el menú móvil…): dos diálogos a la vez se roban el foco y el scroll lock.
   React.useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'k') {
@@ -103,7 +106,7 @@ export function SearchPalette() {
         if (event.repeat) return;
         const state = useSearchPalette.getState();
         if (state.open) state.close();
-        else state.openPalette();
+        else if (!document.querySelector(OTHER_MODAL)) state.openPalette();
       }
     };
     window.addEventListener('keydown', onKey);
@@ -190,6 +193,7 @@ export function SearchPalette() {
       <DialogContent
         showCloseButton={false}
         initialFocus={inputRef}
+        data-search-palette=""
         className={cn(
           // Móvil: pantalla completa, sin bordes redondeados.
           'inset-0 flex w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-none border-0 bg-[#061a2e] p-0 ring-0',
