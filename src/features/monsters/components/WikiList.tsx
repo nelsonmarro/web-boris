@@ -156,6 +156,7 @@ export function WikiList({ options }: WikiListProps) {
 
       <WikiFilters
         options={options}
+        counts={data?.counts ?? options}
         currentTipo={tipo}
         currentUniverse={universe}
         hrefForTipo={hrefForTipo}

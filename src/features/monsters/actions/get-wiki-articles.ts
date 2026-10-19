@@ -15,10 +15,18 @@ export interface GetWikiArticlesParams {
   tipo?: string;
 }
 
+/** Número de fichas por pestaña: «Todo» y cada grupo de `TIPOS` con contenido. */
+export interface WikiTabCounts {
+  total: number;
+  tipos: { id: TipoId; label: string; count: number }[];
+}
+
 export interface GetWikiArticlesResult {
   articles: WikiArticleSummary[];
   total: number;
   totalPages: number;
+  /** Números de las pestañas con la búsqueda y el universo activos, sin aplicar `tipo` (cada pestaña cuenta lo que mostraría). */
+  counts: WikiTabCounts;
 }
 
 export interface WikiFilterOptions {
@@ -66,11 +74,14 @@ export async function getWikiArticles({
     );
   }
 
-  // Excluye siempre los directorios y filtra por tipo y universo (lógica pura en core/search/catalog).
-  articles = catalogFilter(articles, {
-    tipo: tipo && isTipoId(tipo) ? tipo : undefined,
+  // Excluye siempre los directorios y filtra por universo; los números de las pestañas se calculan sobre
+  // este conjunto (búsqueda + universo), antes de aplicar `tipo` (lógica pura en core/search/catalog).
+  const scoped = catalogFilter(articles, {
     universe: universe && universe !== 'all' ? universe : undefined,
   });
+  const counts: WikiTabCounts = { total: catalogFilter(scoped, {}).length, tipos: tipoCounts(scoped) };
+
+  articles = catalogFilter(scoped, { tipo: tipo && isTipoId(tipo) ? tipo : undefined });
 
   articles = [...articles].sort((a, b) => compareDiscovery(a.frontmatter, b.frontmatter));
 
@@ -82,6 +93,7 @@ export async function getWikiArticles({
     articles: articles.slice(skip, skip + pageSize).map(toSummary),
     total,
     totalPages,
+    counts,
   };
 }
 

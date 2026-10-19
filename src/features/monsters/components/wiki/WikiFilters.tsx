@@ -10,11 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { WikiFilterOptions } from '@/features/monsters/actions/get-wiki-articles';
+import type { WikiFilterOptions, WikiTabCounts } from '@/features/monsters/actions/get-wiki-articles';
 import { cn } from '@/utils/cn';
 
 interface WikiFiltersProps {
+  /** Define qué pestañas existen (universos y grupos con contenido en todo el archivo). */
   options: WikiFilterOptions;
+  /** Número de cada pestaña con la búsqueda y el universo activos (las opciones globales sirven mientras carga). */
+  counts: WikiTabCounts;
   /** `'all'` o el id de un tipo de `options.tipos`. */
   currentTipo: string;
   currentUniverse: string;
@@ -39,6 +42,7 @@ function isPlainClick(e: React.MouseEvent) {
 
 export function WikiFilters({
   options,
+  counts,
   currentTipo,
   currentUniverse,
   hrefForTipo,
@@ -51,20 +55,32 @@ export function WikiFilters({
     [options.universes],
   );
 
-  const tabs = [{ id: 'all', label: 'Todo', count: options.total }, ...options.tipos];
+  // La fila no cambia de forma al filtrar: un grupo sin fichas para el filtro actual sigue ahí, con 0.
+  const tabs = [
+    { id: 'all', label: 'Todo', count: counts.total },
+    ...options.tipos.map(({ id, label }) => ({
+      id,
+      label,
+      count: counts.tipos.find((t) => t.id === id)?.count ?? 0,
+    })),
+  ];
 
   return (
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
       {/* Enlaces que cambian la URL, no pestañas ARIA: la activa se marca con aria-current. */}
       <nav aria-label="Tipos de expediente" className="min-w-0">
         <div className="-mx-4 -my-1.5 flex gap-2 overflow-x-auto px-4 py-1.5 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
           {tabs.map(({ id, label, count }) => {
             const active = id === currentTipo;
+            // Atenuada pero pulsable: lleva a una lista vacía con su botón de «Limpiar filtros».
+            const empty = count === 0 && !active;
             return (
               <Link
                 key={id}
                 href={hrefForTipo(id) as Route}
+                prefetch={false}
                 aria-current={active ? 'page' : undefined}
+                aria-disabled={empty ? 'true' : undefined}
                 onClick={(e) => {
                   if (!isPlainClick(e)) return;
                   e.preventDefault();
@@ -75,6 +91,7 @@ export function WikiFilters({
                   active
                     ? 'bg-primary text-[#00122E]'
                     : 'border border-white/15 text-white/80 hover:border-primary/40',
+                  empty && 'opacity-50',
                 )}
               >
                 {label} · {count}
