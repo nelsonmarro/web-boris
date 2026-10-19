@@ -10,12 +10,16 @@
  *  5. Algún MDX usa el logo (Branding/) o el esquema del sitio (Esquemas/) como imagen:
  *     no representan lore; sin arte concreto se omite la portada (placeholder por categoría).
  *  6. Las novedades (src/content/novedades/*.md) o las encuestas (src/content/encuestas.json) no cumplen su esquema,
- *     un duelo usa una criatura inexistente o sin stats, una encuesta `desclasificar` usa una ficha que no está
- *     sellada (`status: proximamente`), o una novedad enlaza a una ruta interna inexistente.
+ *     un duelo usa una criatura inexistente o sin stats, una encuesta `desclasificar` de una semana futura usa una
+ *     ficha que no está sellada (`status: proximamente`; en la semana actual y las pasadas basta con que exista), o
+ *     una novedad enlaza a una ruta interna inexistente (las rutas estáticas /wiki/arena, /wiki/registro y
+ *     /wiki/aleatorio sí valen).
  *  7. Los apodos (`aliases`) se repiten entre fichas o coinciden con el título de otra, o un `related` apunta a sí
  *     misma o a una ficha inexistente.
  *  8. `videos.json` (relaciones vídeo ↔ ficha de «Aparece en») no cumple su esquema (id de YouTube de 11 caracteres,
- *     fichas sin repetir, vídeo sin repetir) o nombra una ficha que no existe en src/content.
+ *     fichas sin repetir, vídeo sin repetir, `titulo` de 1 a 200 caracteres), nombra una ficha que no existe en
+ *     src/content o trae un id que no está en FEATURED_VIDEOS sin `titulo`.
+ *  9. Un MDX usa como slug un nombre reservado por una ruta estática (`arena`, `registro`, `aleatorio`).
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
@@ -26,8 +30,11 @@ import {
   crossCheckEntities,
   crossCheckNews,
   crossCheckPolls,
+  crossCheckReservedSlugs,
   crossCheckVideoLinks,
 } from '../src/core/content/validate.ts';
+// Solo datos, sin dependencias de servidor: se pueden leer desde el script.
+import { FEATURED_VIDEOS } from '../src/features/marketing/config/videos.ts';
 
 const ROOT = process.cwd();
 const CONTENT_DIR = path.join(ROOT, 'src', 'content');
@@ -45,6 +52,7 @@ const problems: Record<string, string[]> = {
   'Comunidad (novedades / encuestas)': [],
   'Apodos y relacionados': [],
   'Vídeos ↔ fichas (videos.json)': [],
+  'Slugs reservados': [],
 };
 
 const NON_LORE_ASSETS = ['/assets/Branding/', '/assets/Universo_Colosos/Esquemas/'];
@@ -142,7 +150,13 @@ problems['Apodos y relacionados'].push(...crossCheckEntities(entityItems));
 
 // 8: vídeos ↔ fichas
 const videoLinks = readVideoLinks(path.join(CONTENT_DIR, 'videos.json'));
-problems['Vídeos ↔ fichas (videos.json)'].push(...videoLinks.errors, ...crossCheckVideoLinks(videoLinks.items, slugs));
+problems['Vídeos ↔ fichas (videos.json)'].push(
+  ...videoLinks.errors,
+  ...crossCheckVideoLinks(videoLinks.items, slugs, new Set(FEATURED_VIDEOS.map((v) => v.id))),
+);
+
+// 9: nombres reservados por rutas estáticas
+problems['Slugs reservados'].push(...crossCheckReservedSlugs(slugs));
 
 // Reporte
 console.log(

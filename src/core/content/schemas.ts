@@ -63,6 +63,8 @@ export const YOUTUBE_ID_REGEX = /^[A-Za-z0-9_-]{11}$/;
 /**
  * Relaciones manuales vídeo ↔ ficha («Aparece en»). Solo hechos: el vídeo nombra o muestra a esas fichas.
  * Las que salen del título del vídeo se calculan solas (`linkVideos`) y no hay que repetirlas aquí.
+ * `titulo` es el título real del vídeo en YouTube: hace falta si el id no está en `FEATURED_VIDEOS` (el feed del
+ * canal solo trae los últimos vídeos, así que un id fuera de ambos no tendría título que mostrar).
  */
 export const VideoLinkSchema = z.object({
   id: z.string().regex(YOUTUBE_ID_REGEX, { message: 'id de YouTube inválido (11 caracteres [A-Za-z0-9_-])' }),
@@ -76,6 +78,7 @@ export const VideoLinkSchema = z.object({
         seen.add(slug);
       });
     }),
+  titulo: z.string().trim().min(1).max(200).optional(),
 });
 
 export const VideoLinksSchema = z.array(VideoLinkSchema).superRefine((links, ctx) => {

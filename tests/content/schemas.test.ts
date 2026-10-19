@@ -88,3 +88,14 @@ test('videos.json: rechaza el mismo vídeo dos veces', () => {
   ]);
   assert.equal(r.success, false);
 });
+
+test('videos.json: `titulo` es opcional y, si está, tiene entre 1 y 200 caracteres', () => {
+  const ok = VideoLinksSchema.safeParse([{ id: 'hedUAqopPBg', fichas: ['the-bloop'], titulo: 'Colosos - La Batalla' }]);
+  assert.equal(ok.success, true);
+  assert.equal(ok.success && ok.data[0].titulo, 'Colosos - La Batalla');
+  assert.equal(VideoLinksSchema.safeParse([{ id: 'hedUAqopPBg', fichas: ['the-bloop'] }]).success, true);
+  assert.equal(VideoLinksSchema.safeParse([{ id: 'hedUAqopPBg', fichas: ['the-bloop'], titulo: '' }]).success, false);
+  assert.equal(VideoLinksSchema.safeParse([{ id: 'hedUAqopPBg', fichas: ['the-bloop'], titulo: '   ' }]).success, false);
+  assert.equal(VideoLinksSchema.safeParse([{ id: 'hedUAqopPBg', fichas: ['the-bloop'], titulo: 'x'.repeat(200) }]).success, true);
+  assert.equal(VideoLinksSchema.safeParse([{ id: 'hedUAqopPBg', fichas: ['the-bloop'], titulo: 'x'.repeat(201) }]).success, false);
+});

@@ -1,26 +1,45 @@
 /** Referencias cruzadas del contenido del hub contra los artículos. Puro. */
+import { isoWeekKey } from '../../features/community/lib/poll-schedule.ts';
 import { normalize } from '../search/entity-index.ts';
+import { RESERVED_SLUGS, STATIC_WIKI_ROUTES } from '../search/wiki-routes.ts';
 import type { CuratedPoll, NewsEntry, VideoLink } from './schemas.ts';
 
 /** Rutas propias (no MDX) a las que puede enlazar una novedad. */
-const STATIC_ROUTES = new Set(['/', '/wiki', '/wiki/arena', '/comunidad']);
+const STATIC_ROUTES: ReadonlySet<string> = new Set(['/', '/wiki', '/comunidad', ...STATIC_WIKI_ROUTES]);
+
+/** Un MDX no puede llamarse como una ruta estática de la wiki (`arena`, `registro`, `aleatorio`): la ruta ganaría y la ficha sería inalcanzable. */
+export function crossCheckReservedSlugs(slugs: Iterable<string>): string[] {
+  const errors: string[] = [];
+  const present = new Set(slugs);
+  for (const slug of RESERVED_SLUGS) {
+    if (present.has(slug)) {
+      errors.push(`src/content/${slug}.mdx: "${slug}" es un nombre reservado (ruta estática /wiki/${slug}); renombra la ficha`);
+    }
+  }
+  return errors;
+}
 
 /**
- * `duelo`: a y b deben existir y tener stats (la Arena). `desclasificar`: a y b deben existir y estar
- * sellados (`status: proximamente`); no piden stats.
+ * `duelo`: a y b deben existir y tener stats (la Arena). `desclasificar`: a y b deben existir y, mientras la
+ * votación es de una semana estrictamente futura respecto a `now`, estar sellados (`status: proximamente`). En la
+ * semana actual y las pasadas basta con que existan: que Boris desclasifique una ficha es justo el resultado esperado.
+ * La semana es la ISO de `poll-schedule` (`YYYY-Www`, que se ordena como texto).
  */
 export function crossCheckPolls(
   polls: readonly CuratedPoll[],
   articleSlugs: ReadonlySet<string>,
   fighterSlugs: ReadonlySet<string>,
   sealedSlugs: ReadonlySet<string>,
+  now: Date = new Date(),
 ): string[] {
   const errors: string[] = [];
+  const currentWeek = isoWeekKey(now);
   for (const p of polls) {
+    const future = p.semana > currentWeek;
     for (const slug of [p.a, p.b]) {
       if (!articleSlugs.has(slug)) errors.push(`encuestas.json ${p.semana}: "${slug}" no existe en src/content`);
       else if (p.tipo === 'desclasificar') {
-        if (!sealedSlugs.has(slug)) {
+        if (future && !sealedSlugs.has(slug)) {
           errors.push(`encuestas.json ${p.semana}: "${slug}" no es un expediente sellado (status: proximamente)`);
         }
       } else if (!fighterSlugs.has(slug)) errors.push(`encuestas.json ${p.semana}: "${slug}" no tiene stats`);
@@ -41,12 +60,23 @@ export function crossCheckNews(news: readonly NewsEntry[], articleSlugs: Readonl
   return errors;
 }
 
-/** `videos.json`: cada ficha de cada vídeo debe existir en src/content. (El formato del id ya lo valida el esquema.) */
-export function crossCheckVideoLinks(links: readonly VideoLink[], articleSlugs: ReadonlySet<string>): string[] {
+/**
+ * `videos.json`: cada ficha de cada vídeo debe existir en src/content, y un vídeo que no está en `FEATURED_VIDEOS`
+ * (`featuredIds`) tiene que traer `titulo`: el feed del canal no se conoce al validar y sin título no hay qué mostrar.
+ * (El formato del id ya lo valida el esquema.)
+ */
+export function crossCheckVideoLinks(
+  links: readonly VideoLink[],
+  articleSlugs: ReadonlySet<string>,
+  featuredIds: ReadonlySet<string>,
+): string[] {
   const errors: string[] = [];
   for (const l of links) {
     for (const slug of l.fichas) {
       if (!articleSlugs.has(slug)) errors.push(`videos.json ${l.id}: "${slug}" no existe en src/content`);
+    }
+    if (!featuredIds.has(l.id) && !l.titulo) {
+      errors.push(`videos.json ${l.id}: no está en FEATURED_VIDEOS y no trae "titulo" (sin título no se puede mostrar en «Aparece en»)`);
     }
   }
   return errors;

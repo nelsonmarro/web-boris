@@ -96,3 +96,34 @@ test('una relación manual con un vídeo que no está en la lista se ignora (no 
   ]);
   assert.equal(map.size, 0);
 });
+
+test('una relación manual con `titulo` sobre un vídeo fuera de la lista usa ese título y no se pierde', () => {
+  const map = linkVideos([{ id: 'aaaaaaaaaaa', title: 'Vlog del canal' }], INDEX, [
+    { id: 'zzzzzzzzzzz', fichas: ['bogbo'], titulo: 'Un short manual' },
+  ]);
+  assert.deepEqual(map.get('bogbo'), [{ id: 'zzzzzzzzzzz', title: 'Un short manual' }]);
+});
+
+test('el título del canal manda sobre `titulo` si el vídeo sí está en la lista', () => {
+  const map = linkVideos([{ id: 'aaaaaaaaaaa', title: 'Título del canal' }], INDEX, [
+    { id: 'aaaaaaaaaaa', fichas: ['bogbo'], titulo: 'Otro título' },
+  ]);
+  assert.deepEqual(map.get('bogbo'), [{ id: 'aaaaaaaaaaa', title: 'Título del canal' }]);
+});
+
+test('los vídeos manuales con `titulo` van después de los del canal y sin repetirse', () => {
+  const map = linkVideos([{ id: 'aaaaaaaaaaa', title: 'Primero: Bogbo' }], INDEX, [
+    { id: 'zzzzzzzzzzz', fichas: ['bogbo'], titulo: 'Manual uno' },
+    { id: 'yyyyyyyyyyy', fichas: ['bogbo', 'the-bloop'], titulo: 'Manual dos' },
+    { id: 'zzzzzzzzzzz', fichas: ['bogbo'], titulo: 'Manual uno otra vez' },
+  ]);
+  assert.deepEqual(ids(map.get('bogbo')), ['aaaaaaaaaaa', 'zzzzzzzzzzz', 'yyyyyyyyyyy']);
+  assert.equal(map.get('bogbo')?.[1].title, 'Manual uno');
+  assert.deepEqual(map.get('the-bloop'), [{ id: 'yyyyyyyyyyy', title: 'Manual dos' }]);
+});
+
+test('un `titulo` manual que nombra a una ficha también la relaciona (mismas reglas que el título del canal)', () => {
+  const map = linkVideos([], INDEX, [{ id: 'zzzzzzzzzzz', fichas: ['the-bloop'], titulo: 'Bogbo en el puerto' }]);
+  assert.deepEqual(ids(map.get('bogbo')), ['zzzzzzzzzzz']);
+  assert.deepEqual(ids(map.get('the-bloop')), ['zzzzzzzzzzz']);
+});
