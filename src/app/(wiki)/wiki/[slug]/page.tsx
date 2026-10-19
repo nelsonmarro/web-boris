@@ -7,6 +7,10 @@ import type { Metadata } from 'next';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { getRelatedArticles } from '@/features/monsters/lib/related';
 import { getEntityIndex } from '@/core/content/entities';
+import { extractHeadings } from '@/utils/headings';
+import { ArticleProgress } from '@/features/monsters/components/wiki/article/ArticleProgress';
+import { SectionChip } from '@/features/monsters/components/wiki/article/SectionChip';
+import { ArticleImagesProvider } from '@/features/monsters/components/wiki/mdx/ArticleImages';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -62,6 +66,8 @@ export default async function WikiArticlePage({ params }: Props) {
   return (
     <div className="w-full min-h-screen bg-[#0a2339]">
       <article className="w-full">
+        <ArticleProgress />
+        <SectionChip headings={extractHeadings(content)} />
         <WikiArticleHeader
           title={frontmatter.title}
           universe={frontmatter.universe}
@@ -77,12 +83,14 @@ export default async function WikiArticlePage({ params }: Props) {
           imageInBody={imageInBody}
         />
 
-        <WikiArticleContent
-          frontmatter={frontmatter}
-          content={content}
-          slug={slug}
-          entityIndex={entityIndex}
-        />
+        <ArticleImagesProvider>
+          <WikiArticleContent
+            frontmatter={frontmatter}
+            content={content}
+            slug={slug}
+            entityIndex={entityIndex}
+          />
+        </ArticleImagesProvider>
 
         <WikiArticleFooter related={related} />
       </article>
