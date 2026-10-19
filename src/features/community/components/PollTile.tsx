@@ -58,11 +58,9 @@ function Portrait({ fighter }: { fighter: PollFighter }) {
 export function PollTile({
   initialPoll,
   fighters,
-  className,
 }: {
   initialPoll: PollDef;
   fighters: Record<string, PollFighter>;
-  className?: string;
 }) {
   const queryClient = useQueryClient();
   const { data: state, isError } = useQuery({ queryKey: QUERY_KEY, queryFn: fetchPollState, staleTime: 30_000, retry: 1 });
@@ -91,7 +89,7 @@ export function PollTile({
   const headingId = React.useId();
 
   return (
-    <section aria-labelledby={headingId} className={cn('crystal-surface flex flex-col rounded-2xl p-6 md:p-8', className)}>
+    <section aria-labelledby={headingId} className="crystal-surface flex flex-col rounded-2xl p-6 md:p-8">
       <h2 id={headingId} className="section-title text-white">
         {poll.question}
       </h2>
@@ -143,7 +141,7 @@ export function PollTile({
               disabled={!open || vote.isPending}
               aria-pressed={open?.myOption === f.slug}
               onClick={() => vote.mutate({ pollId: poll.id, option: f.slug })}
-              className="min-h-12 rounded-xl border border-white/15 bg-[#00122E] px-3 text-[13px] font-bold uppercase tracking-wider text-white transition-colors hover:border-primary/60 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-60"
+              className="min-h-12 rounded-xl border border-white/15 bg-[#00122E] px-3 text-[13px] font-bold uppercase tracking-wider text-white transition-colors hover:border-primary/60 hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-60"
             >
               {f.title}
             </button>
@@ -157,7 +155,7 @@ export function PollTile({
       <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-3">
         <Link
           href={`/wiki/arena?a=${poll.a}&b=${poll.b}` as Route}
-          className="inline-flex min-h-11 items-center rounded-xl text-[11px] font-bold uppercase tracking-wider text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className="inline-flex min-h-11 items-center rounded-xl text-[11px] font-bold uppercase tracking-wider text-primary hover:underline focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
         >
           Ver el duelo en la Arena
         </Link>

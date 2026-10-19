@@ -26,7 +26,7 @@ export function SearchBar({ placeholder = '¿Qué criatura buscas?' }: { placeho
           placeholder={placeholder}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="h-12 min-w-0 flex-1 bg-transparent text-base font-bold tracking-tight text-white outline-none placeholder:text-white/50 [&::-webkit-search-cancel-button]:hidden"
+          className="h-12 min-w-0 flex-1 bg-transparent text-base font-bold tracking-tight text-white outline-hidden placeholder:text-white/50 [&::-webkit-search-cancel-button]:hidden"
         />
         {search && (
           <button
