@@ -130,7 +130,7 @@ Orden del DOM igual al orden visual.
 - **Catálogo** (`id="catalogo"`, que sustituye a `#explorar`; `#explorar` se mantiene como alias en el mismo elemento):
   - rejilla de `ContentCard` (`meta` = "Categoría · Universo", `description` en 2 líneas): 1 columna < sm, 2 desde sm y 3 desde lg;
   - orden de descubrimiento (Ola A);
-  - los artículos con `category: 'Directorio'` se excluyen del catálogo;
+  - los artículos con `category: 'Directorio'` o `'Categoría'` (páginas índice, que viven en el menú lateral) se excluyen del catálogo, así que "Todo" = la suma de las pestañas;
   - paginación de 12 por página, con el componente de paginación actual.
 - **Estado vacío:** "Ningún registro coincide" + "Limpiar filtros" (44 px).
 - **Server action** (`getWikiArticles`):

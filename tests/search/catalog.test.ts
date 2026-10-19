@@ -12,8 +12,8 @@ const ITEMS = [
   a('galeon', 'Historia', 'Capitán de Galeón'),
 ];
 
-test('sin filtros: todo menos los directorios', () => {
-  assert.deepEqual(catalogFilter(ITEMS, {}).map((i) => i.slug), ['maja', 'lemug', 'phillip', 'colosos', 'galeon']);
+test('sin filtros: todo menos directorios y páginas de categoría', () => {
+  assert.deepEqual(catalogFilter(ITEMS, {}).map((i) => i.slug), ['maja', 'lemug', 'phillip', 'galeon']);
 });
 
 test('por tipo y por universo', () => {
