@@ -114,7 +114,7 @@ src/content/*.mdx ──► getAllArticles() ──► buildEntityIndex() ─┬
 - **Destino:** `/wiki/<slug>`. Hoy `MdxRenderer` no define un componente `a` y los enlaces heredan el estilo por defecto de `@tailwindcss/typography`. Se añade el componente `a`:
   - **enlaces internos** (`/…`): `next/link`, en blanco con subrayado `decoration-primary/50` y `underline-offset-4`, `hover:decoration-primary` y `hover:text-primary`, y foco visible;
   - **enlaces externos:** se renderizan como hoy, con `target="_blank"` y `rel="noopener noreferrer"`.
-- **Si el destino es `status: proximamente`:** el enlace lleva la clase `entity-link-pending` (subrayado discontinuo) y un `<span class="sr-only"> (próximamente)</span>`.
+- **Si el destino es `status: proximamente`:** el enlace lleva el atributo `data-entity-pending="true"`, el subrayado discontinuo `decoration-dashed` y un `<span class="sr-only"> (próximamente)</span>`.
 - **Tests:** se escriben sobre árboles mdast construidos a mano, sin parser.
 
 ## 6. Apodos canónicos (únicos permitidos)
