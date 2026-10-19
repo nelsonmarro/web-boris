@@ -16,3 +16,8 @@ Build de producción (`next start -p 3131`), Chrome DevTools, 2026-10-18. Sobre 
 | **Pruebas:** lint, `npm test` (89/89), `check:content` y `build` en verde. Índice de la paleta: 10,8 KB | ✅ |
 
 Fuera de la ola: durante el build, el feed RSS de YouTube devolvió 404, así que el "último vídeo" usa el respaldo del PDF.
+
+**Después de la revisión final** (`98a7abc..b80ace5`):
+- **Chip de apartado:** al elegir "Comportamiento", el foco pasa al encabezado (a 96 px de arriba) y la URL queda en `#comportamiento` sin salir de la ficha. El chip anuncia "Apartado actual: Descubrimiento (1 de 7)" y el apartado actual lleva `aria-current="location"`.
+- **⌘K:** no abre la paleta encima de la hoja inferior. Fuera de ella, la abre y la cierra con normalidad. Consola limpia.
+- **Pruebas:** Lighthouse 100/100/100 en la ficha (móvil) y 91/91 tests.
