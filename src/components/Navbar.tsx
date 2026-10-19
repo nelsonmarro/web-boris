@@ -60,19 +60,18 @@ export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
         {/* Desktop Links */}
         <div
           className={cn(
-            'hidden md:flex items-center gap-2 relative z-10',
+            'hidden xl:flex items-center gap-2 relative z-10',
             hideLogoOnDesktop && 'md:gap-1',
           )}
         >
           <NavLinks />
           <NavActions />
-          {/* Búsqueda global: píldora desde lg; entre md y lg, solo la lupa (no cabe más). */}
-          <SearchTrigger variant="pill" className="ml-2 hidden lg:inline-flex" />
-          <SearchTrigger variant="icon" className="lg:hidden" />
+          {/* Búsqueda global: la barra completa solo cabe desde xl (por debajo, menú + lupa). */}
+          <SearchTrigger variant="pill" className="ml-2" />
         </div>
 
         {/* Mobile Menu */}
-        <div className="md:hidden flex items-center gap-2 relative z-10">
+        <div className="xl:hidden flex items-center gap-2 relative z-10">
           <SearchTrigger variant="icon" />
           <Sheet>
             <SheetTrigger

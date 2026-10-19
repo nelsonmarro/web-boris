@@ -9,6 +9,8 @@ export interface RankInput {
   sameUniverse: readonly string[];
   isDirectory: (s: string) => boolean;
   isStub: (s: string) => boolean;
+  /** Peso dentro de cada grupo de menciones (p. ej. riqueza de la ficha): mayor primero, orden estable. */
+  weight?: (s: string) => number;
   max?: number;
 }
 
@@ -26,13 +28,16 @@ export function rankRelated({
   sameUniverse,
   isDirectory,
   isStub,
+  weight,
   max = 6,
 }: RankInput): string[] {
   const out = graph.out.get(slug) ?? new Set<string>();
   const inn = graph.in.get(slug) ?? new Set<string>();
-  const mutual = [...out].filter((s) => inn.has(s));
-  const onlyOut = [...out].filter((s) => !inn.has(s));
-  const onlyIn = [...inn].filter((s) => !out.has(s));
+  // Dentro de cada grupo de menciones, las fichas más completas primero (sort estable).
+  const byWeight = (list: string[]) => (weight ? [...list].sort((a, b) => weight(b) - weight(a)) : list);
+  const mutual = byWeight([...out].filter((s) => inn.has(s)));
+  const onlyOut = byWeight([...out].filter((s) => !inn.has(s)));
+  const onlyIn = byWeight([...inn].filter((s) => !out.has(s)));
   const seen = new Set<string>([slug]);
   const ordered: string[] = [];
   for (const s of [...curated, ...mutual, ...onlyOut, ...onlyIn, ...siblings, ...sameCategory, ...sameUniverse]) {

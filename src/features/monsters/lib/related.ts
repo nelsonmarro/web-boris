@@ -3,6 +3,7 @@ import { toSummary, type WikiArticle, type WikiArticleSummary } from '@/core/typ
 import { buildEntityIndex } from '@/core/search/entity-index';
 import { buildMentionGraph, type MentionGraph } from '@/core/search/mention-graph';
 import { rankRelated } from '@/core/search/related-rank';
+import { richness } from '@/core/search/discovery-order';
 
 export type { WikiArticleSummary };
 
@@ -70,6 +71,10 @@ export function getRelatedArticles(
     sameUniverse: all.filter((a) => a.frontmatter.universe === universe).map((a) => a.slug),
     isDirectory: (s) => bySlug.get(s)?.frontmatter.category === 'Directorio',
     isStub: (s) => bySlug.get(s)?.frontmatter.status === 'proximamente',
+    weight: (s) => {
+      const fm = bySlug.get(s)?.frontmatter;
+      return fm ? richness(fm) : 0;
+    },
     max,
   });
 
