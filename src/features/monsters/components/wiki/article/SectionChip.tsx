@@ -130,7 +130,7 @@ export function SectionChip({ headings }: SectionChipProps) {
         <DrawerTrigger asChild>
           <button
             type="button"
-            aria-label={`Apartado actual: ${current.text}. Abrir índice`}
+            aria-label={`Apartado actual: ${current.text} (${activeIndex + 1} de ${sections.length}). Abrir índice`}
             className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 z-40 inline-flex h-11 max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-2 rounded-full border border-white/15 bg-[#061a2e] px-4 shadow-[0_20px_50px_rgba(0,0,0,0.55)] animate-in fade-in-0 slide-in-from-bottom-2 duration-200 hover:border-primary/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:animate-none"
           >
             <ListTree aria-hidden="true" className="h-4 w-4 shrink-0 text-white/80" />
@@ -160,7 +160,7 @@ export function SectionChip({ headings }: SectionChipProps) {
                   <DrawerClose asChild>
                     <button
                       type="button"
-                      aria-current={active ? 'true' : undefined}
+                      aria-current={active ? 'location' : undefined}
                       onClick={() => {
                         pendingId.current = h.id;
                       }}
