@@ -1,3 +1,5 @@
+import { WIKI_LINK } from './wiki-routes.ts';
+
 /** Texto del cuerpo de un MDX para el grafo de menciones (spec Ola B §7). Puro. */
 export function extractBodyText(mdx: string): string {
   return mdx
@@ -12,6 +14,9 @@ export function extractBodyText(mdx: string): string {
 
 export function extractWikiLinks(mdx: string): string[] {
   const slugs = new Set<string>();
-  for (const m of mdx.matchAll(/\]\(\/wiki\/([a-z0-9-]+)\)/g)) slugs.add(m[1]);
+  for (const m of mdx.matchAll(/\]\(([^)\s]+)/g)) {
+    const slug = WIKI_LINK.exec(m[1])?.[1];
+    if (slug) slugs.add(slug);
+  }
   return [...slugs];
 }

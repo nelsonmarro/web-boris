@@ -115,7 +115,21 @@ export function findMentions(text: string, index: EntityIndex, opts: { self?: st
       matched = n;
       break;
     }
-    if (matched) {
+    // Contracción «del»/«al» + nombre sin su «El» inicial (decisión D3): solo si lo que sigue empieza en mayúscula.
+    let contracted: NameEntry | undefined;
+    if (!matched && (words[i].norm === 'del' || words[i].norm === 'al') && i + 1 < words.length && startsUpper(words[i + 1].raw)) {
+      contracted = index.names.find((n) => {
+        if (n.tokens[0] !== 'el' || n.tokens.length < 2 || i + n.tokens.length > words.length) return false;
+        return n.tokens.slice(1).every((t, k) => words[i + 1 + k].norm === t);
+      });
+    }
+    if (contracted) {
+      if (contracted.slug !== opts.self) {
+        const last = words[i + contracted.tokens.length - 1];
+        mentions.push({ slug: contracted.slug, start: words[i + 1].start, end: last.end, name: contracted.name });
+      }
+      i += contracted.tokens.length;
+    } else if (matched) {
       // La propia ficha también gana y consume sus palabras (así "Vlad" no roba "Vlad Julia"); solo no se emite.
       if (matched.slug !== opts.self) {
         const last = words[i + matched.tokens.length - 1];

@@ -3,6 +3,7 @@
  * Puro: imports relativos con `.ts` para que `node:test` lo cargue sin el alias `@/`.
  */
 import { findMentions, type EntityIndex } from '../core/search/entity-index.ts';
+import { WIKI_LINK } from '../core/search/wiki-routes.ts';
 
 interface Node { type: string; value?: string; url?: string; name?: string; children?: Node[]; data?: { hProperties?: Record<string, string> } }
 
@@ -12,7 +13,6 @@ const SKIP_JSX = new Set([
   // HTML escrito a mano en el MDX: enlaces (anidar un <a> es HTML inválido), código y títulos.
   'a', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
 ]);
-const WIKI_LINK = /^\/wiki\/([a-z0-9-]+)(?:[/?#]|$)/;
 
 /** Slugs a los que el autor ya enlazó a mano en cualquier punto de la ficha. */
 function manualLinks(node: Node, into: Set<string>): Set<string> {

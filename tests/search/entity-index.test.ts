@@ -84,3 +84,46 @@ test('las entradas llevan richness y linkable', () => {
   assert.equal(INDEX.bySlug.get('animales-colosos')!.linkable, false);
   assert.equal(INDEX.bySlug.get('le-mug')!.linkable, true);
 });
+
+// Contracciones «del»/«al» + nombres que empiezan por «El» (decisión D3).
+const CONTRACCIONES = buildEntityIndex([
+  art('el-angel', 'El Ángel'),
+  art('el-gran-maja', 'El Gran Majá'),
+]);
+
+test('contracción: «del Ángel» enlaza el nombre sin la contracción', () => {
+  const text = 'la llegada del Ángel';
+  const m = findMentions(text, CONTRACCIONES);
+  assert.deepEqual(m.map((x) => x.slug), ['el-angel']);
+  assert.equal(text.slice(m[0].start, m[0].end), 'Ángel');
+  assert.equal(m[0].name, 'El Ángel');
+});
+
+test('contracción: «al Gran Majá» de varias palabras', () => {
+  const text = 'se enfrentó al Gran Majá';
+  const m = findMentions(text, CONTRACCIONES);
+  assert.deepEqual(m.map((x) => x.slug), ['el-gran-maja']);
+  assert.equal(text.slice(m[0].start, m[0].end), 'Gran Majá');
+});
+
+test('contracción: «del ángel» en minúscula no enlaza', () => {
+  assert.equal(findMentions('la llegada del ángel', CONTRACCIONES).length, 0);
+});
+
+test('contracción: «el Ángel» sin contracción sigue funcionando', () => {
+  const text = 'vio. El Ángel nadó';
+  const m = findMentions(text, CONTRACCIONES);
+  assert.deepEqual(m.map((x) => x.slug), ['el-angel']);
+  assert.equal(text.slice(m[0].start, m[0].end), 'El Ángel');
+});
+
+test('contracción: la propia ficha consume pero no emite', () => {
+  assert.equal(findMentions('la llegada del Ángel', CONTRACCIONES, { self: 'el-angel' }).length, 0);
+});
+
+test('contracción: «Al» al inicio de frase y «del» al final del texto', () => {
+  const text = 'Al Gran Majá le temen. Es la llegada del';
+  const m = findMentions(text, CONTRACCIONES);
+  assert.deepEqual(m.map((x) => x.slug), ['el-gran-maja']);
+  assert.equal(text.slice(m[0].start, m[0].end), 'Gran Majá');
+});
