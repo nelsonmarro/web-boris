@@ -1,4 +1,5 @@
 import { ContentCard, Section } from '@/components/content';
+import { youtubeThumbUrl, youtubeWatchUrl } from '@/utils/youtube';
 import { getLatestVideo } from '@/features/community/data/latest-video';
 import { cn } from '@/utils/cn';
 import { SOCIAL_LINKS } from '../config/social';
@@ -31,8 +32,8 @@ export async function FeaturedVideosSection() {
           <ContentCard
             key={video.id}
             external
-            href={`https://www.youtube.com/watch?v=${video.id}`}
-            image={`https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`}
+            href={youtubeWatchUrl(video.id)}
+            image={youtubeThumbUrl(video.id)}
             title={video.title}
             meta={video.meta}
             sizes={shown.length === 3 ? '(min-width: 1024px) 33vw, 50vw' : '(min-width: 1024px) 25vw, 50vw'}

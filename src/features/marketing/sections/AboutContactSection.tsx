@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Route } from 'next';
-import { Section } from '@/components/content';
+import { PendingLabel, Section } from '@/components/content';
 import { ContactForm } from '../components/contact/ContactForm';
 import { SOCIAL_LINKS, YOUTUBE_HANDLE, CONTACT_EMAIL } from '../config/social';
 import { UNIVERSES } from '../config/universes';
@@ -16,8 +16,6 @@ const TEXT_LINK =
 
 const BUTTON =
   'inline-flex min-h-11 items-center rounded-full border border-white/15 bg-[#061a2e] px-5 text-sm font-semibold text-white transition-colors hover:border-primary/40 hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none';
-
-const PENDING = 'text-[11px] font-bold uppercase tracking-wider text-primary';
 
 /** "Sobre Boris" (datos del autor) y el formulario de contacto, a dos columnas desde lg (spec #55 §3.5). */
 export function AboutContactSection() {
@@ -61,13 +59,13 @@ export function AboutContactSection() {
                 ) : (
                   <span className="inline-flex min-h-11 items-center font-semibold text-white/70">{u.title}</span>
                 )}
-                {u.comingSoon && <span className={PENDING}>Próximamente</span>}
+                {u.comingSoon && <PendingLabel />}
               </li>
             ))}
           </ul>
 
           <p className="flex items-center gap-2 text-white/70">
-            Biografía: <span className={PENDING}>Próximamente</span>
+            Biografía: <PendingLabel />
           </p>
 
           <p className="flex flex-wrap items-center gap-x-2 text-white/70">

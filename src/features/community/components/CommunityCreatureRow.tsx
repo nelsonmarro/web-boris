@@ -2,12 +2,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Route } from 'next';
 import type { WikiArticleSummary } from '@/core/types/wiki';
-import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
+import { CategoryPlaceholder, coverOf } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 
 /** "Criatura de la semana" en una sola fila (spec #55 §6): miniatura, nombre, "Categoría · Universo" y "Ver ficha ›". Toda la fila es el enlace. */
 export function CommunityCreatureRow({ creature }: { creature: WikiArticleSummary }) {
   const { title, image, imagePosition, category, universe } = creature.frontmatter;
-  const cover = image && !isBrandPlaceholder(image) ? image : undefined;
+  const cover = coverOf(image);
   const meta = [category, universe].filter(Boolean).join(' · ');
 
   return (

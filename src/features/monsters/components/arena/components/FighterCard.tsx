@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Ruler } from 'lucide-react';
 import { cn } from '@/utils/cn';
-import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
+import { CategoryPlaceholder, coverOf } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { StatRow } from '@/features/monsters/components/wiki/StatRow';
 import { getThreatLevel, scaleTen, THREAT_TONE_CLASSES } from '@/features/monsters/lib/stats';
 import type { Fighter } from '@/features/monsters/lib/arena';
@@ -19,6 +19,7 @@ interface FighterCardProps {
 
 export function FighterCard({ fighter, side, score, winner }: FighterCardProps) {
   const { slug, frontmatter: fm } = fighter;
+  const cover = coverOf(fm.image);
   const stats = fm.stats;
   const threat = getThreatLevel(stats.hostility);
   const accent = side === 'A' ? 'text-primary' : 'text-cyan-300';
@@ -33,8 +34,8 @@ export function FighterCard({ fighter, side, score, winner }: FighterCardProps) 
       )}
     >
       <div className="relative aspect-[16/10] w-full bg-black/40">
-        {fm.image && !isBrandPlaceholder(fm.image) ? (
-          <Image src={fm.image} alt={fm.title} fill sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover" style={{ objectPosition: fm.imagePosition ?? '50% 50%' }} />
+        {cover ? (
+          <Image src={cover} alt={fm.title} fill sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover" style={{ objectPosition: fm.imagePosition ?? '50% 50%' }} />
         ) : (
           <CategoryPlaceholder category={fm.category} />
         )}

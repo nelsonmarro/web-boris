@@ -2,15 +2,15 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { ArrowUpRight } from 'lucide-react';
 import type { NewsEntry } from '@/core/content';
-
-const dateFormat = new Intl.DateTimeFormat('es', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+import { PendingLabel } from '@/components/content';
+import { formatFecha } from '@/utils/format-date';
 
 /** "Novedades" como lista plana (spec #55 §6): fecha, título enlazado y una línea de resumen. Sin tarjetas. */
 export function NewsList({ news }: { news: NewsEntry[] }) {
   if (news.length === 0) {
     return (
       <div>
-        <p className="text-[11px] font-bold uppercase tracking-wider text-primary">Próximamente</p>
+        <PendingLabel className="block" />
         <p className="mt-1 text-white/70">Novedades en preparación.</p>
       </div>
     );
@@ -23,7 +23,7 @@ export function NewsList({ news }: { news: NewsEntry[] }) {
         return (
           <li key={n.id} className="py-4">
             <time dateTime={n.fecha} className="block text-[12px] text-white/55">
-              {dateFormat.format(new Date(`${n.fecha}T00:00:00Z`))}
+              {formatFecha(new Date(`${n.fecha}T00:00:00Z`))}
             </time>
             <Link
               href={n.enlace as Route}

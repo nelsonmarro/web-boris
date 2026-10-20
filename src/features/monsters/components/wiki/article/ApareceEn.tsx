@@ -1,4 +1,5 @@
 import { ContentCard, Section } from '@/components/content';
+import { youtubeThumbUrl, youtubeWatchUrl } from '@/utils/youtube';
 
 const MAX_VIDEOS = 4;
 
@@ -21,10 +22,10 @@ export function ApareceEn({ videos }: ApareceEnProps) {
             {videos.slice(0, MAX_VIDEOS).map((video) => (
               <ContentCard
                 key={video.id}
-                href={`https://www.youtube.com/watch?v=${video.id}`}
+                href={youtubeWatchUrl(video.id)}
                 external
                 title={video.title}
-                image={`https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`}
+                image={youtubeThumbUrl(video.id)}
                 titleLines={3}
                 sizes="(min-width: 768px) 280px, 50vw"
               />

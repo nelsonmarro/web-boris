@@ -6,8 +6,9 @@ import { usePathname } from 'next/navigation';
 import { createPortal } from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
 import { cn } from '@/utils/cn';
+import { PendingLabel } from '@/components/content';
 import { getWikiIndex } from '@/features/monsters/actions/get-wiki-articles';
-import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
+import { CategoryPlaceholder, coverOf } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 
 /** Los enlaces automáticos que pone `remarkEntityLinks` (`data-entity="<slug>"`), solo dentro del cuerpo de la ficha. */
 const ENTITY_LINK = 'a[data-entity]';
@@ -209,7 +210,7 @@ export function EntityPreview() {
 
   if (!shown || !entry) return null;
 
-  const cover = entry.image && !isBrandPlaceholder(entry.image) ? entry.image : undefined;
+  const cover = coverOf(entry.image);
   const pending = entry.status === 'proximamente';
   const meta = [entry.category, entry.universe].filter(Boolean).join(' · ');
 
@@ -240,7 +241,7 @@ export function EntityPreview() {
         <p className="font-display text-lg font-black uppercase italic leading-tight tracking-tight text-white">
           {entry.title}
         </p>
-        {pending && <p className="text-[11px] font-bold uppercase tracking-wider text-primary">Próximamente</p>}
+        {pending && <PendingLabel className="block" />}
         {meta && <p className="text-[12px] font-semibold text-white/60">{meta}</p>}
         {entry.description && (
           <p className="line-clamp-3 text-sm leading-relaxed text-white/70">{entry.description}</p>
