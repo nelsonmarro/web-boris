@@ -32,3 +32,10 @@ test('enlaces markdown → su texto; títulos se conservan; código fuera', () =
 test('extractWikiLinks devuelve los slugs enlazados a mano', () => {
   assert.deepEqual(extractWikiLinks(MDX), ['the-bloop']);
 });
+
+test('extractWikiLinks admite sufijos (#ancla, / final, ?query) y descarta lo externo', () => {
+  const links = extractWikiLinks(
+    '[A](/wiki/the-bloop#anatomia) [B](/wiki/bogbo/) [C](/wiki/el-angel?x=1) [E](/wiki/x-y) [D](https://otro/wiki/no) [F](/wikipedia/foo)',
+  );
+  assert.deepEqual(links.sort(), ['bogbo', 'el-angel', 'the-bloop', 'x-y']);
+});

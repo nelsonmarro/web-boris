@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import type { Route } from 'next';
+import { PendingLabel } from '@/components/content';
 import type { WikiArticleSummary } from '@/core/types/wiki';
 
 interface WikiEmptyStateProps {
@@ -63,7 +64,7 @@ export function WikiEmptyState({ query, suggestion, popular, onClear, onSearch }
                 <Link href={`/wiki/${slug}` as Route} className={`${LINK} inline-flex min-h-11 items-center rounded-sm text-sm`}>
                   {fm.title}
                   {fm.status === 'proximamente' && (
-                    <span className="ml-2 text-[11px] font-bold uppercase tracking-wider text-primary">Próximamente</span>
+                    <PendingLabel className="ml-2" />
                   )}
                 </Link>
               </li>

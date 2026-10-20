@@ -3,8 +3,8 @@ import { create } from 'zustand';
 interface SearchPaletteState {
   open: boolean;
   query: string;
-  /** Abre la paleta, opcionalmente con una consulta inicial. Siempre se llama con `() => openPalette()`, nunca como handler directo. */
-  openPalette: (initialQuery?: string) => void;
+  /** Abre la paleta con la consulta vacía. */
+  openPalette: () => void;
   close: () => void;
   setQuery: (query: string) => void;
 }
@@ -17,7 +17,7 @@ interface SearchPaletteState {
 export const useSearchPalette = create<SearchPaletteState>((set) => ({
   open: false,
   query: '',
-  openPalette: (initialQuery = '') => set({ open: true, query: initialQuery }),
+  openPalette: () => set({ open: true, query: '' }),
   close: () => set({ open: false }),
   setQuery: (query) => set({ query }),
 }));

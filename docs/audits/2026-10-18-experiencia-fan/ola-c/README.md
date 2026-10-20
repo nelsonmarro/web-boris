@@ -17,7 +17,7 @@ Build de producción (`next start -p 3131`), Chrome DevTools, 2026-10-19, sobre 
 
 **Medidor de apartados:** no aparece en ninguna ficha hoy. Ningún apartado `##` tiene solo `<Proximamente />`: Bogbo y Porcia no tienen apartados `##`, y los demás tienen texto canónico junto al aviso. El componente queda listo para cuando un apartado esté pendiente.
 
-**Fuera de la ola:** el feed RSS de YouTube sigue devolviendo 404, y es un problema de YouTube. "Aparece en" y el "último vídeo" usan los vídeos destacados.
+**Fuera de la ola:** el feed RSS de YouTube sigue devolviendo 404, y es un problema de YouTube. "Aparece en" y el "último vídeo" usan los vídeos destacados. *Corrección posterior (QA de #57/#58): el feed no está caído, es intermitente. Responde 200, 404 o 500 al azar, tanto a Node como a `curl` (ver `../pendientes/README.md`).*
 
 **Después de la revisión final** (`4251c2d..c3063ca`):
 - **Bloque de cierre de la ficha:** "Aparece en", Anterior/Siguiente y "Archivos relacionados" van en un único `data-related`. En Vlad Julia (390 px, sin vídeos), con el foco en el enlace de cierre, el chip de apartado ya no está y no lo tapa. A mitad de la ficha sigue apareciendo ("Apartado actual: Anatomía (1 de 3)").

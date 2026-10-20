@@ -3,9 +3,9 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { ContentCard } from '@/components/content';
 import { getContentRepository } from '@/core/content';
-import { isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
+import { SearchTrigger } from '@/components/search/SearchTrigger';
+import { coverOf } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { pickFeatured } from '@/features/monsters/lib/featured';
-import { SearchBar } from '../components/hero/SearchBar';
 import { UNIVERSES } from '../config/universes';
 
 /**
@@ -29,7 +29,7 @@ export async function HeroBleed() {
   const articles = await getContentRepository().getArticles();
   const creature = pickFeatured(articles);
   const fm = creature?.frontmatter;
-  const cover = fm?.image && !isBrandPlaceholder(fm.image) ? fm.image : undefined;
+  const cover = coverOf(fm?.image);
 
   return (
     <section className="relative isolate overflow-hidden">
@@ -64,7 +64,7 @@ export async function HeroBleed() {
         </h1>
         <p className="mt-4 text-lg text-white/80">Todo el lore oficial de BorisaoBlois en un solo archivo.</p>
         <div className="mt-6 max-w-xl">
-          <SearchBar />
+          <SearchTrigger variant="hero" />
         </div>
         {creature && fm && (
           <Link

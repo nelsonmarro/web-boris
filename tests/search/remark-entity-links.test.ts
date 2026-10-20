@@ -88,3 +88,41 @@ test('un <a> escrito a mano con texto «IPCARO» no se enlaza, pero la prosa vec
   const links = kids.filter((k: { type: string }) => k.type === 'link');
   assert.deepEqual(links.map((l: { url: string }) => l.url), ['/wiki/delirium']);
 });
+
+// Desplazamientos, recorrido de contenedores y varias menciones en un mismo nodo.
+const index2 = buildEntityIndex([
+  { slug: 'el-angel', frontmatter: { title: 'El Ángel', universe: 'Colosos', category: 'Coloso' } },
+  { slug: 'el-gran-maja', frontmatter: { title: 'El Gran Majá', universe: 'Colosos', category: 'Coloso' } },
+  { slug: 'obrien', frontmatter: { title: 'O’Brien', universe: 'Colosos', category: 'Humano' } },
+]);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const run2 = (tree: any) => { remarkEntityLinks({ index: index2 })(tree); return tree; };
+type K = { type: string; value?: string; url?: string; children?: K[] };
+const shape = (kids: K[]) => kids.map((k) => (k.type === 'link' ? `[${k.children![0].value}]` : k.value)).join('|');
+
+test('desplazamientos con tildes y apóstrofos parten el nodo en su sitio', () => {
+  const tree = run2({ type: 'root', children: [p(text('Según O’Brien, el Ángel nada.'))] });
+  assert.equal(shape(tree.children[0].children), 'Según |[O’Brien]|, |[el Ángel]| nada.');
+  const t2 = run2({ type: 'root', children: [p(text('Majá y Ángel'))] });
+  // «Majá» y «Ángel» sueltos no son nombres completos: no se enlaza nada.
+  assert.equal(t2.children[0].children.length, 1);
+});
+
+test('el recorrido entra en listItem, blockquote y un WikiQuote', () => {
+  const tree = run2({ type: 'root', children: [
+    { type: 'list', children: [{ type: 'listItem', children: [p(text('Vio al Gran Majá.'))] }] },
+    { type: 'blockquote', children: [p(text('Dijo O’Brien.'))] },
+    { type: 'mdxJsxFlowElement', name: 'WikiQuote', attributes: [], children: [p(text('Llegó El Ángel.'))] },
+  ] });
+  const kids = (n: K) => n.children!;
+  assert.equal(shape(kids(kids(kids(tree.children[0])[0])[0])), 'Vio al |[Gran Majá]|.');
+  assert.equal(shape(kids(kids(tree.children[1])[0])), 'Dijo |[O’Brien]|.');
+  assert.equal(shape(kids(kids(tree.children[2])[0])), 'Llegó |[El Ángel]|.');
+});
+
+test('dos menciones distintas en un mismo nodo: dos enlaces y el texto intermedio intacto', () => {
+  const tree = run2({ type: 'root', children: [p(text('O’Brien vio a El Gran Majá ayer'))] });
+  const kids = tree.children[0].children;
+  assert.equal(shape(kids), '[O’Brien]| vio a |[El Gran Majá]| ayer');
+  assert.deepEqual(kids.filter((k: K) => k.type === 'link').map((l: K) => l.url), ['/wiki/obrien', '/wiki/el-gran-maja']);
+});

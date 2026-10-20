@@ -2,7 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { cn } from '@/utils/cn';
-import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
+import { CategoryPlaceholder, coverOf } from '@/features/monsters/components/wiki/CategoryPlaceholder';
+import { PendingLabel } from './PendingLabel';
 
 export interface ContentCardProps {
   href?: string;
@@ -33,7 +34,7 @@ export function ContentCard({
   eager = false, className,
 }: ContentCardProps) {
   const Heading = `h${headingLevel}` as 'h2' | 'h3';
-  const cover = image && !isBrandPlaceholder(image) ? image : undefined;
+  const cover = coverOf(image);
   const classes = cn(
     'crystal-surface group flex h-full flex-col overflow-hidden rounded-2xl',
     href && 'transition-colors duration-200 hover:border-primary/40 focus-visible:border-primary/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none',
@@ -64,7 +65,7 @@ export function ContentCard({
         </Heading>
         {pending && (
           // El título ya anuncia «(próximamente)» a los lectores de pantalla: la etiqueta visible no se repite.
-          <p aria-hidden="true" className="text-[11px] font-bold uppercase tracking-wider text-primary">Próximamente</p>
+          <PendingLabel aria-hidden="true" className="block" />
         )}
         {meta && <p className="text-[12px] font-semibold text-white/55">{meta}</p>}
         {description && <p className={cn('text-sm leading-relaxed text-white/70', CLAMP[lines])}>{description}</p>}

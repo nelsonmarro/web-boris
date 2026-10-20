@@ -33,7 +33,10 @@ const ICONS: Record<string, LucideIcon> = {
 };
 
 /** Los directorios/organizaciones usan el logo del canal como portada: se tratan como "sin imagen". */
-export const isBrandPlaceholder = (src?: string) => !!src && src.includes('/assets/Branding/');
+const isBrandPlaceholder = (src?: string) => !!src && src.includes('/assets/Branding/');
+
+/** Portada utilizable: la `image` del frontmatter, salvo que falte o sea de marca (nunca va de portada). */
+export const coverOf = (src?: string) => (src && !isBrandPlaceholder(src) ? src : undefined);
 
 interface CategoryPlaceholderProps {
   category?: string;

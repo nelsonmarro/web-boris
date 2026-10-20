@@ -115,14 +115,14 @@ const components = {
   ),
   hr: () => <hr className="my-12 border-white/5" />,
   // Enlaces internos con next/link (los automáticos de `remarkEntityLinks` y los escritos a mano);
-  // anclas y mailto:/tel: como <a> normal; solo los http(s) abren pestaña nueva.
+  // anclas y mailto:/tel: como <a> normal; solo los http(s) (y `//host`) abren pestaña nueva.
   a: ({
     href = '',
     children,
     ...props
   }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { 'data-entity-pending'?: string }) => {
     const pending = props['data-entity-pending'] === 'true';
-    if (href.startsWith('/')) {
+    if (href.startsWith('/') && !href.startsWith('//')) {
       return (
         <Link
           href={href as Route}
@@ -134,7 +134,7 @@ const components = {
         </Link>
       );
     }
-    if (/^https?:\/\//i.test(href)) {
+    if (/^(https?:)?\/\//i.test(href)) {
       return (
         <a href={href} target="_blank" rel="noopener noreferrer" {...props} className={LINK_CLASS}>
           {children}

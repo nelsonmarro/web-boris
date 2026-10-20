@@ -6,7 +6,8 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { cn } from '@/utils/cn';
-import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
+import { PendingLabel } from '@/components/content';
+import { CategoryPlaceholder, coverOf } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { castVote, type CastVoteError } from '../actions/cast-vote';
 import type { PollDef } from '../lib/poll-schedule';
 import type { PollState } from '../types';
@@ -22,9 +23,6 @@ export interface PollFighter {
 }
 
 const QUERY_KEY = ['comunidad', 'encuesta'] as const;
-
-/** Marca de estado de una opción cuya ficha sigue sellada: texto naranja de 11 px (spec #55 §1). */
-const PENDING_LABEL = 'block text-[11px] font-bold uppercase tracking-wider text-primary';
 
 const ERROR_COPY: Record<CastVoteError, string> = {
   cerrada: 'La encuesta de esta semana cambió: ya puedes ver la nueva.',
@@ -42,7 +40,7 @@ async function fetchPollState(): Promise<PollState> {
 
 /** `pending`: la ficha aún no está desclasificada; el retrato va apagado (en gris), como las tarjetas «Próximamente». */
 function Portrait({ fighter, pending = false }: { fighter: PollFighter; pending?: boolean }) {
-  const cover = fighter.image && !isBrandPlaceholder(fighter.image) ? fighter.image : undefined;
+  const cover = coverOf(fighter.image);
   return (
     <div
       className={cn(
@@ -137,7 +135,7 @@ export function PollTile({
                     <span>
                       {f.title}
                       {mine && <span className="ml-2 text-[11px] uppercase tracking-wider text-primary">Tu voto</span>}
-                      {isPending(f) && <span className={PENDING_LABEL}>Próximamente</span>}
+                      {isPending(f) && <PendingLabel className="block" />}
                     </span>
                     <span>{pct}%</span>
                   </div>
@@ -167,7 +165,7 @@ export function PollTile({
               className="min-h-12 rounded-xl border border-white/15 bg-[#00122E] px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-white transition-colors hover:border-primary/60 hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
             >
               {f.title}
-              {isPending(f) && <span className={cn(PENDING_LABEL, 'mt-0.5')}>Próximamente</span>}
+              {isPending(f) && <PendingLabel className="mt-0.5 block" />}
             </button>
           ))}
         </div>

@@ -6,6 +6,8 @@ import { pickFeatured } from '@/features/monsters/lib/featured';
 import { getWeeklyPoll } from '@/features/community/data/weekly-poll';
 import { getLatestVideo } from '@/features/community/data/latest-video';
 import { ContentCard, Section } from '@/components/content';
+import { formatFecha } from '@/utils/format-date';
+import { youtubeThumbUrl, youtubeWatchUrl } from '@/utils/youtube';
 import { CommunityCreatureRow } from '@/features/community/components/CommunityCreatureRow';
 import { NewsList } from '@/features/community/components/NewsList';
 import { PollTile, type PollFighter } from '@/features/community/components/PollTile';
@@ -14,8 +16,6 @@ import { PollTile, type PollFighter } from '@/features/community/components/Poll
 export const revalidate = 3600;
 
 const INTRO = 'Cada semana: una criatura, una votación y lo último de BorisaoBlois.';
-
-const dateFormat = new Intl.DateTimeFormat('es', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 
 export const metadata: Metadata = {
   title: 'Comunidad | Universos de BorisaoBlois',
@@ -49,7 +49,7 @@ export default async function ComunidadPage() {
   );
 
   const creature = pickFeatured(articles);
-  const videoDate = video.published && !Number.isNaN(Date.parse(video.published)) ? dateFormat.format(new Date(video.published)) : undefined;
+  const videoDate = video.published && !Number.isNaN(Date.parse(video.published)) ? formatFecha(new Date(video.published)) : undefined;
 
   return (
     <div className="relative flex min-h-screen flex-col">
@@ -73,10 +73,10 @@ export default async function ComunidadPage() {
           <Section id="ultimo-video" title={video.source === 'fallback' ? 'Vídeo destacado' : 'Último vídeo'} contained={false}>
             <ContentCard
               external
-              href={`https://www.youtube.com/watch?v=${video.id}`}
+              href={youtubeWatchUrl(video.id)}
               title={video.title}
               meta={videoDate}
-              image={`https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`}
+              image={youtubeThumbUrl(video.id)}
               sizes="(min-width: 768px) 448px, 100vw"
               className="max-w-md"
             />

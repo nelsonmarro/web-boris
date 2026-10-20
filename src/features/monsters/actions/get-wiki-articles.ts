@@ -2,7 +2,7 @@
 
 import { getAllArticles } from '@/utils/mdx';
 import { getEntityIndex } from '@/core/content/entities';
-import { compareDiscovery } from '@/features/monsters/lib/discovery-order';
+import { compareDiscovery } from '@/core/search/discovery-order';
 import { toSummary, type WikiArticle, type WikiArticleSummary } from '@/core/types/wiki';
 import { catalogFilter, tipoCounts } from '@/core/search/catalog';
 import type { EntityEntry } from '@/core/search/entity-index';

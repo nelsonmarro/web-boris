@@ -7,7 +7,7 @@ import { isIndexCategory } from '@/core/search/catalog';
 import type { WikiFrontmatter } from '@/core/types/wiki';
 import { getThreatLevel, type ThreatTone } from '@/features/monsters/lib/stats';
 import { cn } from '@/utils/cn';
-import { isBrandPlaceholder } from '../CategoryPlaceholder';
+import { coverOf } from '../CategoryPlaceholder';
 import { WikiBreadcrumbs } from './WikiBreadcrumbs';
 import { WikiArticleActions } from './WikiArticleActions';
 import { ProximamenteChip } from '../mdx/Proximamente';
@@ -60,8 +60,7 @@ export function WikiArticleHeader({
   imageInBody = false,
 }: WikiArticleHeaderProps) {
   // Las páginas índice (Directorio, Categoría) no llevan portada: su `image` es solo la miniatura del menú.
-  const cover =
-    image && !isBrandPlaceholder(image) && !imageInBody && !isIndexCategory(category) ? image : undefined;
+  const cover = !imageInBody && !isIndexCategory(category) ? coverOf(image) : undefined;
   const facts = hasStats && stats ? buildFacts(stats) : [];
 
   return (
@@ -76,7 +75,7 @@ export function WikiArticleHeader({
                 fill
                 fetchPriority="high"
                 loading="eager"
-                sizes="(min-width: 1280px) 1100px, 100vw"
+                sizes="(min-width: 1408px) 1088px, (min-width: 1024px) calc(100vw - 20rem), (min-width: 768px) calc(100vw - 19rem), calc(100vw - 2rem)"
                 className="object-cover"
                 style={{ objectPosition: imagePosition ?? '50% 30%' }}
               />
