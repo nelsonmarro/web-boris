@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Search } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { useSearchPalette } from './useSearchPalette';
+import { preloadSearchPalette } from './SearchPaletteHost';
 
 interface SearchTriggerProps {
   /** `hero`: campo grande de la portada. `pill`: «Buscar ⌘K» de las cabeceras. `icon`: solo la lupa (móvil). */
@@ -36,7 +37,9 @@ export function SearchTrigger({ variant, placeholder = '¿Qué criatura buscas?'
     return (
       <button
         type="button"
-        onClick={() => openPalette()}
+        onClick={openPalette}
+        onPointerEnter={preloadSearchPalette}
+        onFocus={preloadSearchPalette}
         aria-haspopup="dialog"
         className={cn(
           'flex w-full max-w-xl items-center rounded-full border border-white/15 bg-[#061a2e] p-1 text-left transition-colors hover:border-primary/40 motion-reduce:transition-none',
@@ -61,7 +64,9 @@ export function SearchTrigger({ variant, placeholder = '¿Qué criatura buscas?'
     return (
       <button
         type="button"
-        onClick={() => openPalette()}
+        onClick={openPalette}
+        onPointerEnter={preloadSearchPalette}
+        onFocus={preloadSearchPalette}
         aria-haspopup="dialog"
         aria-keyshortcuts="Control+K Meta+K"
         className={cn(
@@ -85,7 +90,9 @@ export function SearchTrigger({ variant, placeholder = '¿Qué criatura buscas?'
   return (
     <button
       type="button"
-      onClick={() => openPalette()}
+      onClick={openPalette}
+      onPointerEnter={preloadSearchPalette}
+      onFocus={preloadSearchPalette}
       aria-haspopup="dialog"
       aria-label="Buscar en el archivo"
       className={cn(

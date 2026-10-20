@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 };
 
 import { Providers } from './providers';
-import { SearchPalette } from '@/components/search/SearchPalette';
+import { SearchPaletteHost } from '@/components/search/SearchPaletteHost';
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -54,8 +54,9 @@ export default function RootLayout({
         <TooltipProvider>
           <Providers>
             {children}
-            {/* Una sola paleta de búsqueda para todo el sitio; necesita el QueryClient de Providers. */}
-            <SearchPalette />
+            {/* Una sola paleta de búsqueda para todo el sitio; necesita el QueryClient de Providers. El host solo
+                lleva el atajo ⌘K y carga la paleta en la primera apertura. */}
+            <SearchPaletteHost />
           </Providers>
         </TooltipProvider>
         <Toaster position="bottom-right" richColors />

@@ -12,15 +12,15 @@ import { normalize, type EntityEntry } from '@/core/search/entity-index';
 import { MAX_QUERY_LENGTH, search, suggest, type SearchHit } from '@/core/search/search';
 import { getWikiIndex } from '@/features/monsters/actions/get-wiki-articles';
 import { RANDOM_ROUTE } from '@/features/monsters/config/wiki-routes';
-import { CategoryPlaceholder, isBrandPlaceholder } from '@/features/monsters/components/wiki/CategoryPlaceholder';
+import { PendingLabel } from '@/components/content';
+import { CategoryPlaceholder, coverOf } from '@/features/monsters/components/wiki/CategoryPlaceholder';
 import { useSearchPalette } from './useSearchPalette';
 
 const RESULT_LIMIT = 10;
 const POPULAR_LIMIT = 8;
 const POPULAR_FALLBACK_LIMIT = 6;
 const NO_ENTRIES: readonly EntityEntry[] = [];
-/** Cualquier modal abierto que no sea la paleta (hojas de vaul y diálogos de Radix / Base UI); la paleta lleva `data-search-palette`. */
-const OTHER_MODAL = '[data-vaul-drawer]:not([data-search-palette]), [role="dialog"]:not([data-search-palette])';
+const STATUS_DELAY_MS = 300;
 
 type Row =
   | { kind: 'entry'; entry: EntityEntry; alias?: string }
@@ -28,11 +28,21 @@ type Row =
   | { kind: 'random' }
   | { kind: 'suggest'; slug: string; title: string };
 
+/** Valor que sigue a `value` con retraso: se actualiza `delay` ms después del último cambio. */
+function useDebouncedValue<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = React.useState(value);
+  React.useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  return debounced;
+}
+
 const toRow = (hit: SearchHit): Row => ({ kind: 'entry', entry: hit.entry, alias: hit.matchedAlias });
 
 /** Miniatura de 40 px: la portada, o el icono de la categoría si no hay portada o es de marca. */
 function Thumb({ entry }: { entry: EntityEntry }) {
-  const cover = entry.image && !isBrandPlaceholder(entry.image) ? entry.image : undefined;
+  const cover = coverOf(entry.image);
   const pending = entry.status === 'proximamente';
   return (
     <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-[#00122E]">
@@ -71,9 +81,7 @@ function EntryRow({ entry, alias, active }: { entry: EntityEntry; alias?: string
           {entry.title}
         </span>
         <span className="block truncate text-[12px] font-semibold text-white/60">
-          {entry.status === 'proximamente' && (
-            <span className="mr-2 text-[11px] font-bold uppercase tracking-wider text-primary">Próximamente</span>
-          )}
+          {entry.status === 'proximamente' && <PendingLabel className="mr-2" />}
           {meta}
         </span>
         {alias && <span className="block truncate text-[12px] text-white/60">también: {alias}</span>}
@@ -96,24 +104,8 @@ export function SearchPalette() {
 
   const listId = React.useId();
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const listRef = React.useRef<HTMLUListElement>(null);
+  const listRef = React.useRef<HTMLDivElement>(null);
   const [cursor, setCursor] = React.useState(0);
-
-  // ⌘K / Ctrl+K abre o cierra la paleta desde cualquier página. No la abre encima de otro modal (la hoja del
-  // índice, el visor de imágenes, el menú móvil…): dos diálogos a la vez se roban el foco y el scroll lock.
-  React.useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'k') {
-        event.preventDefault();
-        if (event.repeat) return;
-        const state = useSearchPalette.getState();
-        if (state.open) state.close();
-        else if (!document.querySelector(OTHER_MODAL)) state.openPalette();
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
 
   const { data: index, isPending, isError } = useQuery({
     queryKey: ['wiki-index'],
@@ -185,13 +177,63 @@ export function SearchPalette() {
     }
   };
 
-  // Texto para lectores de pantalla (región `role="status"`).
+  // Texto para lectores de pantalla (región `role="status"`): se retrasa para no anunciar cada pulsación.
   const found = rows.filter((r) => r.kind === 'entry').length;
-  let status = '';
-  if (isError) status = 'No se pudo cargar el archivo';
-  else if (isPending) status = 'Cargando el archivo';
-  else if (noResults) status = `Sin coincidencias para ${shownQuery}`;
-  else if (hasQuery) status = `${found} ${found === 1 ? 'resultado' : 'resultados'}`;
+  let liveStatus = '';
+  if (isError) liveStatus = 'No se pudo cargar el archivo';
+  else if (isPending) liveStatus = 'Cargando el archivo';
+  else if (noResults) liveStatus = `Sin coincidencias para ${shownQuery}`;
+  else if (hasQuery) liveStatus = `${found} ${found === 1 ? 'resultado' : 'resultados'}`;
+
+  const status = useDebouncedValue(liveStatus, STATUS_DELAY_MS);
+
+  // Los tramos con rótulo van en un grupo; el resto, en una lista neutra (patrón de listbox agrupado de APG).
+  // El rótulo está donde estaba: al principio sin consulta y antes de la primera entrada sin coincidencias.
+  const labelAt = !label ? -1 : noResults ? rows.findIndex((r) => r.kind === 'entry') : 0;
+  const segments: { start: number; end: number; labelled: boolean }[] =
+    labelAt < 0
+      ? [{ start: 0, end: rows.length, labelled: false }]
+      : [
+          ...(labelAt > 0 ? [{ start: 0, end: labelAt, labelled: false }] : []),
+          { start: labelAt, end: rows.length, labelled: true },
+        ];
+
+  const renderRow = (row: Row, i: number) => {
+    const selected = i === active;
+    return (
+      <li
+        key={row.kind === 'entry' ? row.entry.slug : row.kind}
+        id={`${listId}-${i}`}
+        data-row={i}
+        role="option"
+        aria-selected={selected}
+        onClick={() => activate(row)}
+        onMouseMove={() => setCursor(i)}
+        className={cn(
+          'flex min-h-14 cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-colors motion-reduce:transition-none',
+          selected ? 'bg-primary/15' : 'hover:bg-white/5',
+        )}
+      >
+        {row.kind === 'entry' && <EntryRow entry={row.entry} alias={row.alias} active={selected} />}
+        {row.kind === 'all' && (
+          <span className={cn('flex-1 text-sm font-bold', selected ? 'text-primary' : 'text-white')}>
+            Ver todos en el explorador <span aria-hidden="true">→</span>
+          </span>
+        )}
+        {row.kind === 'random' && (
+          <span className={cn('flex-1 text-sm font-bold', selected ? 'text-primary' : 'text-white')}>
+            Expediente aleatorio <span aria-hidden="true">→</span>
+          </span>
+        )}
+        {row.kind === 'suggest' && (
+          <span className="flex-1 text-sm text-white/80">
+            ¿Quisiste decir{' '}
+            <strong className={cn('font-bold', selected ? 'text-primary' : 'text-white')}>{row.title}</strong>?
+          </span>
+        )}
+      </li>
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={(next) => !next && close()}>
@@ -264,60 +306,28 @@ export function SearchPalette() {
 
           {rows.length > 0 && (
             // Se evita mover el foco al pulsar una fila: el campo conserva el teclado y las flechas.
-            <ul
+            <div
               ref={listRef}
               id={listId}
               role="listbox"
               aria-label={noResults ? 'Sugerencias' : label ?? 'Resultados'}
               onMouseDown={(e) => e.preventDefault()}
             >
-              {rows.map((row, i) => {
-                const selected = i === active;
-                const separator = noResults && row.kind === 'entry' && rows[i - 1]?.kind !== 'entry';
-                return (
-                  <React.Fragment key={row.kind === 'entry' ? row.entry.slug : row.kind}>
-                    {(i === 0 && !noResults && label) || separator ? (
-                      <li
-                        role="presentation"
-                        className="px-3 pb-1 pt-3 text-xs font-semibold text-white/60"
-                      >
-                        {label}
-                      </li>
-                    ) : null}
-                    <li
-                      id={`${listId}-${i}`}
-                      data-row={i}
-                      role="option"
-                      aria-selected={selected}
-                      onClick={() => activate(row)}
-                      onMouseMove={() => setCursor(i)}
-                      className={cn(
-                        'flex min-h-14 cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-colors motion-reduce:transition-none',
-                        selected ? 'bg-primary/15' : 'hover:bg-white/5',
-                      )}
-                    >
-                      {row.kind === 'entry' && <EntryRow entry={row.entry} alias={row.alias} active={selected} />}
-                      {row.kind === 'all' && (
-                        <span className={cn('flex-1 text-sm font-bold', selected ? 'text-primary' : 'text-white')}>
-                          Ver todos en el explorador <span aria-hidden="true">→</span>
-                        </span>
-                      )}
-                      {row.kind === 'random' && (
-                        <span className={cn('flex-1 text-sm font-bold', selected ? 'text-primary' : 'text-white')}>
-                          Expediente aleatorio <span aria-hidden="true">→</span>
-                        </span>
-                      )}
-                      {row.kind === 'suggest' && (
-                        <span className="flex-1 text-sm text-white/80">
-                          ¿Quisiste decir{' '}
-                          <strong className={cn('font-bold', selected ? 'text-primary' : 'text-white')}>{row.title}</strong>?
-                        </span>
-                      )}
+              {segments.map((seg) =>
+                seg.labelled ? (
+                  <ul key={seg.start} role="group" aria-labelledby={`${listId}-label`}>
+                    <li id={`${listId}-label`} role="presentation" className="px-3 pb-1 pt-3 text-xs font-semibold text-white/60">
+                      {label}
                     </li>
-                  </React.Fragment>
-                );
-              })}
-            </ul>
+                    {rows.slice(seg.start, seg.end).map((row, k) => renderRow(row, seg.start + k))}
+                  </ul>
+                ) : (
+                  <ul key={seg.start} role="presentation">
+                    {rows.slice(seg.start, seg.end).map((row, k) => renderRow(row, seg.start + k))}
+                  </ul>
+                ),
+              )}
+            </div>
           )}
         </div>
       </DialogContent>
