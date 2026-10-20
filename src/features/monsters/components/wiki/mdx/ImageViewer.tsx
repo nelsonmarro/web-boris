@@ -144,7 +144,7 @@ function ViewerBody({
       onKeyDown={onKeyDown}
       className={cn(
         // Pantalla completa sobre el fondo abisal, sin la tarjeta centrada por defecto del Dialog.
-        'inset-0 flex h-full w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-none border-0 bg-[#00122E]/95 p-0 text-white ring-0 outline-hidden',
+        'inset-0 flex h-full w-full max-w-none translate-x-0 translate-y-0 flex-col gap-0 overflow-hidden rounded-none border-0 bg-[#00122E]/95 p-0 text-white ring-0 outline-none focus-visible:outline-hidden',
         'motion-reduce:data-open:animate-none motion-reduce:data-closed:animate-none',
       )}
     >

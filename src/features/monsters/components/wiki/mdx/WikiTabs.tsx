@@ -48,7 +48,7 @@ export function WikiTabs({ defaultValue, children, className }: WikiTabsProps) {
           <Tabs.Tab
             key={tab.props.value}
             value={tab.props.value}
-            className="relative z-10 rounded-t-lg px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white/50 outline-hidden transition-colors hover:text-white/80 focus-visible:ring-2 focus-visible:ring-primary/40 data-[active]:text-primary data-[selected]:text-primary"
+            className="relative z-10 rounded-t-lg px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white/50 outline-none focus-visible:outline-hidden transition-colors hover:text-white/80 focus-visible:ring-2 focus-visible:ring-primary/40 data-[active]:text-primary data-[selected]:text-primary"
           >
             {tab.props.label}
           </Tabs.Tab>
@@ -60,7 +60,7 @@ export function WikiTabs({ defaultValue, children, className }: WikiTabsProps) {
         <Tabs.Panel
           key={tab.props.value}
           value={tab.props.value}
-          className="px-5 py-5 text-[16px] leading-[1.7] text-white/80 outline-hidden md:px-6 [&_div]:mb-4 [&_div]:text-[16px] [&_div]:font-normal [&_div]:leading-[1.7] [&_div:last-child]:mb-0"
+          className="px-5 py-5 text-[16px] leading-[1.7] text-white/80 outline-none focus-visible:outline-hidden md:px-6 [&_div]:mb-4 [&_div]:text-[16px] [&_div]:font-normal [&_div]:leading-[1.7] [&_div:last-child]:mb-0"
         >
           {tab.props.children}
         </Tabs.Panel>

@@ -28,10 +28,15 @@ type Row =
   | { kind: 'random' }
   | { kind: 'suggest'; slug: string; title: string };
 
-/** Valor que sigue a `value` con retraso: se actualiza `delay` ms después del último cambio. */
-function useDebouncedValue<T>(value: T, delay: number): T {
+/**
+ * Texto que sigue a `value` con retraso: se actualiza `delay` ms después del último cambio. El vacío pasa al
+ * momento (ajuste durante el render), así al reabrir la paleta no reaparece el anuncio de la vez anterior.
+ */
+function useDebouncedText(value: string, delay: number): string {
   const [debounced, setDebounced] = React.useState(value);
+  if (value === '' && debounced !== '') setDebounced('');
   React.useEffect(() => {
+    if (value === '') return;
     const timer = setTimeout(() => setDebounced(value), delay);
     return () => clearTimeout(timer);
   }, [value, delay]);
@@ -91,9 +96,10 @@ function EntryRow({ entry, alias, active }: { entry: EntityEntry; alias?: string
 }
 
 /**
- * Paleta de búsqueda global (spec Ola B §8): ⌘K / Ctrl+K y los disparadores `SearchTrigger`. Se monta una
- * vez en el layout raíz, dentro de `Providers` (necesita el QueryClient). A pantalla completa en móvil;
- * centrada, `max-w-xl`, desde md. Los resultados van sobre superficie sólida `#061a2e`.
+ * Paleta de búsqueda global (spec Ola B §8). La abren ⌘K / Ctrl+K y los disparadores `SearchTrigger`; la carga y
+ * la monta `SearchPaletteHost` (layout raíz, dentro de `Providers`: necesita el QueryClient) tras la primera
+ * apertura. A pantalla completa en móvil; centrada, `max-w-xl`, desde md. Los resultados van sobre superficie
+ * sólida `#061a2e`.
  */
 export function SearchPalette() {
   const router = useRouter();
@@ -185,18 +191,23 @@ export function SearchPalette() {
   else if (noResults) liveStatus = `Sin coincidencias para ${shownQuery}`;
   else if (hasQuery) liveStatus = `${found} ${found === 1 ? 'resultado' : 'resultados'}`;
 
-  const status = useDebouncedValue(liveStatus, STATUS_DELAY_MS);
+  const status = useDebouncedText(liveStatus, STATUS_DELAY_MS);
 
-  // Los tramos con rótulo van en un grupo; el resto, en una lista neutra (patrón de listbox agrupado de APG).
-  // El rótulo está donde estaba: al principio sin consulta y antes de la primera entrada sin coincidencias.
-  const labelAt = !label ? -1 : noResults ? rows.findIndex((r) => r.kind === 'entry') : 0;
-  const segments: { start: number; end: number; labelled: boolean }[] =
+  // El tramo con rótulo (las fichas populares) va en un grupo; el resto («¿Quisiste decir…?», «Ver todos»,
+  // «Expediente aleatorio»), en listas neutras (patrón de listbox agrupado de APG). El rótulo está donde estaba:
+  // al principio sin consulta y antes de la primera entrada sin coincidencias.
+  const labelAt = label ? rows.findIndex((r) => r.kind === 'entry') : -1;
+  let labelEnd = labelAt;
+  while (labelEnd >= 0 && rows[labelEnd]?.kind === 'entry') labelEnd++;
+  const segments = (
     labelAt < 0
       ? [{ start: 0, end: rows.length, labelled: false }]
       : [
-          ...(labelAt > 0 ? [{ start: 0, end: labelAt, labelled: false }] : []),
-          { start: labelAt, end: rows.length, labelled: true },
-        ];
+          { start: 0, end: labelAt, labelled: false },
+          { start: labelAt, end: labelEnd, labelled: true },
+          { start: labelEnd, end: rows.length, labelled: false },
+        ]
+  ).filter((seg) => seg.end > seg.start);
 
   const renderRow = (row: Row, i: number) => {
     const selected = i === active;
@@ -271,7 +282,7 @@ export function SearchPalette() {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKeyDown}
             placeholder="Buscar criaturas, personajes, especies…"
-            className="h-14 min-w-0 flex-1 bg-transparent text-base text-white outline-hidden placeholder:text-white/50"
+            className="h-14 min-w-0 flex-1 bg-transparent text-base text-white outline-none focus-visible:outline-hidden placeholder:text-white/50"
           />
           <button
             type="button"
@@ -310,7 +321,7 @@ export function SearchPalette() {
               ref={listRef}
               id={listId}
               role="listbox"
-              aria-label={noResults ? 'Sugerencias' : label ?? 'Resultados'}
+              aria-label={hasQuery && !noResults ? 'Resultados' : 'Sugerencias'}
               onMouseDown={(e) => e.preventDefault()}
             >
               {segments.map((seg) =>

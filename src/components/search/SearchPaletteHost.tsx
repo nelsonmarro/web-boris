@@ -2,12 +2,39 @@
 
 import * as React from 'react';
 import dynamic from 'next/dynamic';
+import { toast } from 'sonner';
 import { useSearchPalette } from './useSearchPalette';
 
-/** La paleta pesa (búsqueda, Dialog, TanStack Query): su chunk solo se pide al abrirla por primera vez. */
-const SearchPalette = dynamic(() => import('./SearchPalette').then((m) => m.SearchPalette), { ssr: false });
+/**
+ * Respaldo si el chunk de la paleta no llega (sin red, o un despliegue nuevo que ya no lo tiene). Una carga
+ * fallida no se reintenta hasta recargar la página: cada apertura cierra la paleta y ofrece recargar, en lugar
+ * de que el error de render tumbe la página entera.
+ */
+function PaletteUnavailable() {
+  const open = useSearchPalette((s) => s.open);
+  React.useEffect(() => {
+    if (!open) return;
+    useSearchPalette.getState().close();
+    toast.error('No se pudo abrir la búsqueda.', {
+      action: { label: 'Recargar', onClick: () => window.location.reload() },
+    });
+  }, [open]);
+  return null;
+}
 
-/** Pide el chunk de la paleta antes de abrirla (hover / foco de los disparadores). Si falla, ya lo reintentará la apertura. */
+/** La paleta pesa (búsqueda, Dialog, TanStack Query): su chunk solo se pide al abrirla por primera vez. */
+const SearchPalette = dynamic(
+  () =>
+    import('./SearchPalette')
+      .then((m) => m.SearchPalette)
+      .catch(() => PaletteUnavailable),
+  { ssr: false },
+);
+
+/**
+ * Pide el chunk de la paleta antes de abrirla (hover / foco de los disparadores). Si falla, se ignora aquí: la
+ * apertura recibe el mismo fallo y muestra el aviso de `PaletteUnavailable`.
+ */
 export const preloadSearchPalette = () => void import('./SearchPalette').catch(() => {});
 
 /** Cualquier modal abierto que no sea la paleta (hojas de vaul y diálogos de Radix / Base UI); la paleta lleva `data-search-palette`. */
