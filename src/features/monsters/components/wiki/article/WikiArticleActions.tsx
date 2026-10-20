@@ -10,7 +10,7 @@ interface WikiArticleActionsProps {
 }
 
 const MENU_ITEM =
-  'flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-lg px-3 text-[13px] font-semibold text-white/85 outline-hidden select-none data-[highlighted]:bg-white/10 data-[highlighted]:text-white';
+  'flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-lg px-3 text-[13px] font-semibold text-white/85 outline-none focus-visible:outline-hidden select-none data-[highlighted]:bg-white/10 data-[highlighted]:text-white';
 
 export function WikiArticleActions({ title }: WikiArticleActionsProps) {
   const [isCopying, setIsCopying] = React.useState(false);
@@ -70,7 +70,7 @@ export function WikiArticleActions({ title }: WikiArticleActionsProps) {
         </Menu.Trigger>
         <Menu.Portal>
           <Menu.Positioner align="end" sideOffset={8} className="z-50 print:hidden">
-            <Menu.Popup className="crystal-surface min-w-44 rounded-xl p-1.5 outline-hidden">
+            <Menu.Popup className="crystal-surface min-w-44 rounded-xl p-1.5 outline-none focus-visible:outline-hidden">
               <Menu.Item onClick={handleHistory} className={MENU_ITEM}>
                 <History className="h-4 w-4 text-white/60" aria-hidden="true" />
                 Historial

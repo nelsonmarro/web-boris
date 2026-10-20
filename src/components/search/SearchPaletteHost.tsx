@@ -15,7 +15,9 @@ function PaletteUnavailable() {
   React.useEffect(() => {
     if (!open) return;
     useSearchPalette.getState().close();
+    // `id` fijo: un solo aviso aunque se reabra varias veces (o el efecto se repita en StrictMode).
     toast.error('No se pudo abrir la búsqueda.', {
+      id: 'search-palette-unavailable',
       action: { label: 'Recargar', onClick: () => window.location.reload() },
     });
   }, [open]);
