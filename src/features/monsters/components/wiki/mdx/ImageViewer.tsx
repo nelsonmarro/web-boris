@@ -66,6 +66,8 @@ function ViewerBody({
   // Diapositiva a la que va un desplazamiento suave en curso (para encadenar pulsaciones de flecha).
   const targetRef = React.useRef<number | null>(null);
   const trackRef = React.useRef<HTMLDivElement | null>(null);
+  // El foco estaba en el «Abrir original» de la diapositiva que se deja: debe seguir a la nueva.
+  const followFocusRef = React.useRef(false);
 
   // Al montar la pista, se coloca sin suavizado en la imagen pulsada; si cambia su ancho (girar el móvil),
   // se recoloca en la diapositiva actual.
@@ -93,9 +95,21 @@ function ViewerBody({
     const next = Math.min(count - 1, Math.max(0, Math.round(track.scrollLeft / track.clientWidth)));
     if (targetRef.current === next) targetRef.current = null;
     if (next === indexRef.current) return;
+    // Los enlaces de las diapositivas no activas pasan a `tabIndex={-1}`, pero conservan el foco si ya lo tenían:
+    // se anota la intención para moverlo al de la nueva diapositiva en cuanto se pinte (ver el efecto de abajo).
+    const active = document.activeElement;
+    followFocusRef.current =
+      active instanceof HTMLElement && active.hasAttribute('data-viewer-original') && track.contains(active);
     indexRef.current = next;
     setIndex(next);
   };
+
+  React.useEffect(() => {
+    if (!followFocusRef.current) return;
+    followFocusRef.current = false;
+    // `preventScroll`: el foco no debe mover la pista, que ya está colocada por el scroll nativo.
+    trackRef.current?.querySelector<HTMLElement>(`[data-viewer-original="${index}"]`)?.focus({ preventScroll: true });
+  }, [index]);
 
   const step = (delta: number) => {
     const track = trackRef.current;
@@ -209,6 +223,7 @@ function ViewerBody({
                 </span>
                 <a
                   href={image.src}
+                  data-viewer-original={i}
                   target="_blank"
                   rel="noopener noreferrer"
                   tabIndex={i === index ? 0 : -1}
