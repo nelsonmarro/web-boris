@@ -51,4 +51,5 @@ test('decodifica entidades numéricas una sola vez', () => {
   assert.equal(parseYoutubeFeed(entry('Boris&#8217;s &#x201C;Colosos&#x201D;'))[0].title, 'Boris’s “Colosos”');
   assert.equal(parseYoutubeFeed(entry('&amp;#8217; literal'))[0].title, '&#8217; literal');
   assert.equal(parseYoutubeFeed(entry('nulo &#0; y fuera de rango &#x110000;'))[0].title, 'nulo &#0; y fuera de rango &#x110000;');
+  assert.equal(parseYoutubeFeed(entry('sustituto &#xD800; y &nbsp;'))[0].title, 'sustituto &#xD800; y &nbsp;');
 });

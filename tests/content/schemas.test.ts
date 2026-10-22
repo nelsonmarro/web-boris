@@ -70,6 +70,7 @@ test('novedades: enlaces https solo de YouTube (youtube.com, www.youtube.com, m.
   assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: 'https://youtube.com.evil.com/x' }).success, false);
   assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: 'https://user@www.youtube.com/x' }).success, false);
   assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: 'https://' }).success, false);
+  assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: 'https://youtube.com:8080/x' }).success, false);
 });
 
 test('videos.json: acepta un vídeo con sus fichas', () => {

@@ -48,7 +48,7 @@ function isAllowedExternal(value: string): boolean {
   if (!value.startsWith('https://')) return false;
   try {
     const url = new URL(value);
-    return !url.username && !url.password && NEWS_HOSTS.includes(url.hostname);
+    return !url.username && !url.password && !url.port && NEWS_HOSTS.includes(url.hostname);
   } catch {
     return false;
   }
