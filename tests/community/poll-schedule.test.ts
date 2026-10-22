@@ -90,3 +90,9 @@ test('menos de dos luchadores → sin encuesta', () => {
   assert.equal(getCurrentPoll([], ['bogbo'], new Date('2026-11-04T12:00:00Z')), null);
   assert.equal(getCurrentPoll([], [], new Date('2026-11-04T12:00:00Z')), null);
 });
+
+test('una encuesta curada de otra semana no cuenta: rotación automática', () => {
+  const date = new Date('2026-10-14T09:00:00Z'); // 2026-W42
+  const curated = [{ semana: '2026-W41', tipo: 'duelo' as const, a: 'vlad-julia', b: 'el-gran-maja' }];
+  assert.deepEqual(getCurrentPoll(curated, FIGHTERS, date), getCurrentPoll([], FIGHTERS, date));
+});

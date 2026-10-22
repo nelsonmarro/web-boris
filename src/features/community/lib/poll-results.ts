@@ -19,7 +19,8 @@ export function computeTally(options: readonly string[], counts: Readonly<Record
   const exact = options.map((o) => ({ o, value: (totals[o] * 100) / total }));
   for (const { o, value } of exact) percents[o] = Math.floor(value);
   let remaining = 100 - options.reduce((sum, o) => sum + percents[o], 0);
-  const byRemainder = [...exact].sort((x, y) => (y.value % 1) - (x.value % 1) || x.o.localeCompare(y.o));
+  // Restos iguales: `sort` es estable, así que el punto va a la opción que va antes en `options` (poll.a primero).
+  const byRemainder = [...exact].sort((x, y) => (y.value % 1) - (x.value % 1));
   for (const { o } of byRemainder) {
     if (remaining <= 0) break;
     percents[o] += 1;

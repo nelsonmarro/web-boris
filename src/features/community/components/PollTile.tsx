@@ -74,6 +74,7 @@ export function PollTile({
   const queryClient = useQueryClient();
   const { data: state, isError } = useQuery({ queryKey: QUERY_KEY, queryFn: fetchPollState, staleTime: 30_000, retry: 1 });
   const [message, setMessage] = React.useState<string | null>(null);
+  const [limitReached, setLimitReached] = React.useState(false);
 
   const vote = useMutation({
     mutationFn: castVote,
@@ -84,6 +85,8 @@ export function PollTile({
         return;
       }
       setMessage(ERROR_COPY[result.error]);
+      // Sin más votos desde esta red: se enseña el recuento en lugar de unos botones que ya no sirven.
+      if (result.error === 'limite') setLimitReached(true);
       if (result.error === 'cerrada') void queryClient.invalidateQueries({ queryKey: QUERY_KEY });
     },
     onError: () => setMessage(ERROR_COPY['no-disponible']),
@@ -97,8 +100,10 @@ export function PollTile({
   // ficha decide la marca «Próximamente» y el gris: una ficha ya desclasificada se muestra como cualquier otra.
   const declassify = poll.tipo === 'desclasificar';
   const isPending = (f: PollFighter) => f.status === 'proximamente';
-  const showResults = !!open?.myOption;
-  const status = message ?? (unavailable ? ERROR_COPY['no-disponible'] : '');
+  // Antes de la primera respuesta los botones están desactivados: se dice por qué.
+  const loading = !state && !isError;
+  const showResults = !!open && (!!open.myOption || limitReached);
+  const status = message ?? (unavailable ? ERROR_COPY['no-disponible'] : loading ? 'Cargando la votación…' : '');
   const headingId = React.useId();
 
   return (
@@ -122,56 +127,55 @@ export function PollTile({
         </div>
       )}
 
-      <div aria-live="polite">
-      {showResults && open ? (
-        <div className="mt-5">
-          <ul className="space-y-3" aria-label="Resultados de la encuesta">
-            {sides.map((f) => {
-              const pct = open.percents[f.slug] ?? 0;
-              const mine = open.myOption === f.slug;
-              return (
-                <li key={f.slug}>
-                  <div className="flex items-baseline justify-between gap-2 text-sm font-bold text-white">
-                    <span>
-                      {f.title}
-                      {mine && <span className="ml-2 text-[11px] uppercase tracking-wider text-primary">Tu voto</span>}
-                      {isPending(f) && <PendingLabel className="block" />}
-                    </span>
-                    <span>{pct}%</span>
-                  </div>
-                  <div className="mt-1 h-3 overflow-hidden rounded-full bg-white/10">
-                    <div
-                      className={cn('h-full rounded-full transition-[width] duration-700', mine ? 'bg-primary' : 'bg-[#0064A0]')}
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-          <p className="mt-2 text-[11px] font-bold uppercase tracking-wider text-white/60">
-            {open.total} {open.total === 1 ? 'voto' : 'votos'}
-          </p>
-        </div>
-      ) : (
-        <div className="mt-5 grid grid-cols-2 gap-3">
-          {sides.map((f) => (
-            <button
-              key={f.slug}
-              type="button"
-              disabled={!open || vote.isPending}
-              aria-pressed={open?.myOption === f.slug}
-              onClick={() => vote.mutate({ pollId: poll.id, option: f.slug })}
-              className="min-h-12 rounded-xl border border-white/15 bg-[#00122E] px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-white transition-colors hover:border-primary/60 hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
-            >
-              {f.title}
-              {isPending(f) && <PendingLabel className="mt-0.5 block" />}
-            </button>
-          ))}
-        </div>
-      )}
+      <div aria-live="polite" aria-busy={loading}>
+        {showResults && open ? (
+          <div className="mt-5">
+            <ul className="space-y-3" aria-label="Resultados de la encuesta">
+              {sides.map((f) => {
+                const pct = open.percents[f.slug] ?? 0;
+                const mine = open.myOption === f.slug;
+                return (
+                  <li key={f.slug}>
+                    <div className="flex items-baseline justify-between gap-2 text-sm font-bold text-white">
+                      <span>
+                        {f.title}
+                        {mine && <span className="ml-2 text-[11px] uppercase tracking-wider text-primary">Tu voto</span>}
+                        {isPending(f) && <PendingLabel className="block" />}
+                      </span>
+                      <span>{pct}%</span>
+                    </div>
+                    <div className="mt-1 h-3 overflow-hidden rounded-full bg-white/10">
+                      <div
+                        className={cn('h-full rounded-full transition-[width] duration-700', mine ? 'bg-primary' : 'bg-[#0064A0]')}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+            <p className="mt-2 text-[11px] font-bold uppercase tracking-wider text-white/60">
+              {open.total} {open.total === 1 ? 'voto' : 'votos'}
+            </p>
+          </div>
+        ) : (
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            {sides.map((f) => (
+              <button
+                key={f.slug}
+                type="button"
+                disabled={!open || vote.isPending}
+                onClick={() => vote.mutate({ pollId: poll.id, option: f.slug })}
+                className="min-h-12 rounded-xl border border-white/15 bg-[#00122E] px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-white transition-colors hover:border-primary/60 hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
+              >
+                {f.title}
+                {isPending(f) && <PendingLabel className="mt-0.5 block" />}
+              </button>
+            ))}
+          </div>
+        )}
 
-      <p className="mt-3 min-h-5 text-sm text-white/70">{status}</p>
+        <p className="mt-3 min-h-5 text-sm text-white/70">{status}</p>
       </div>
 
       {declassify ? (
