@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Ruler } from 'lucide-react';
 import { cn } from '@/utils/cn';
-import { CategoryPlaceholder, coverOf } from '@/features/monsters/components/wiki/CategoryPlaceholder';
+import { CategoryPlaceholder, coverOf } from '@/components/content/CategoryPlaceholder';
 import { StatRow } from '@/features/monsters/components/wiki/StatRow';
 import { getThreatLevel, scaleTen, THREAT_TONE_CLASSES } from '@/features/monsters/lib/stats';
 import type { Fighter } from '@/features/monsters/lib/arena';

@@ -13,7 +13,7 @@ import { MAX_QUERY_LENGTH, search, suggest, type SearchHit } from '@/core/search
 import { getWikiIndex } from '@/features/monsters/actions/get-wiki-articles';
 import { RANDOM_ROUTE } from '@/features/monsters/config/wiki-routes';
 import { PendingLabel } from '@/components/content';
-import { CategoryPlaceholder, coverOf } from '@/features/monsters/components/wiki/CategoryPlaceholder';
+import { CategoryPlaceholder, coverOf } from '@/components/content/CategoryPlaceholder';
 import { useSearchPalette } from './useSearchPalette';
 
 const RESULT_LIMIT = 10;

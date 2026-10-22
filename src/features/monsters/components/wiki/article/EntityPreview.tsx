@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { cn } from '@/utils/cn';
 import { PendingLabel } from '@/components/content';
 import { getWikiIndex } from '@/features/monsters/actions/get-wiki-articles';
-import { CategoryPlaceholder, coverOf } from '@/features/monsters/components/wiki/CategoryPlaceholder';
+import { CategoryPlaceholder, coverOf } from '@/components/content/CategoryPlaceholder';
 
 /** Los enlaces automáticos que pone `remarkEntityLinks` (`data-entity="<slug>"`), solo dentro del cuerpo de la ficha. */
 const ENTITY_LINK = 'a[data-entity]';

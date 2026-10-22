@@ -1,13 +1,15 @@
+import { useId } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { cn } from '@/utils/cn';
-import { CategoryPlaceholder, coverOf } from '@/features/monsters/components/wiki/CategoryPlaceholder';
+import { CategoryPlaceholder, coverOf } from './CategoryPlaceholder';
 import { PendingLabel } from './PendingLabel';
 
-export interface ContentCardProps {
-  href?: string;
-  external?: boolean;
+/** `external` solo tiene sentido con `href`. */
+type ContentCardLink = { href: string; external?: boolean } | { href?: undefined; external?: never };
+
+export type ContentCardProps = ContentCardLink & {
   title: string;
   meta?: string;
   description?: string;
@@ -23,7 +25,7 @@ export interface ContentCardProps {
   sizes?: string;
   eager?: boolean;
   className?: string;
-}
+};
 
 const CLAMP = { 1: 'line-clamp-1', 2: 'line-clamp-2', 3: 'line-clamp-3' } as const;
 
@@ -33,6 +35,10 @@ export function ContentCard({
   aspect = 'video', pending = false, headingLevel = 3, sizes = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw',
   eager = false, className,
 }: ContentCardProps) {
+  const titleId = useId();
+  const metaId = useId();
+  const descriptionId = useId();
+  const hintId = useId();
   const Heading = `h${headingLevel}` as 'h2' | 'h3';
   const cover = coverOf(image);
   const classes = cn(
@@ -59,7 +65,7 @@ export function ContentCard({
         )}
       </div>
       <div className="flex flex-1 flex-col gap-1.5 p-4 md:p-5">
-        <Heading className={cn('font-display text-xl font-black uppercase italic leading-tight tracking-tight text-white', titleLines && CLAMP[titleLines])}>
+        <Heading id={titleId} className={cn('font-display text-xl font-black uppercase italic leading-tight tracking-tight text-white', titleLines && CLAMP[titleLines])}>
           {title}
           {pending && <span className="sr-only"> (próximamente)</span>}
         </Heading>
@@ -67,20 +73,22 @@ export function ContentCard({
           // El título ya anuncia «(próximamente)» a los lectores de pantalla: la etiqueta visible no se repite.
           <PendingLabel aria-hidden="true" className="block" />
         )}
-        {meta && <p className="text-[12px] font-semibold text-white/55">{meta}</p>}
-        {description && <p className={cn('text-sm leading-relaxed text-white/70', CLAMP[lines])}>{description}</p>}
+        {meta && <p id={metaId} className="text-[12px] font-semibold text-white/55">{meta}</p>}
+        {description && <p id={descriptionId} className={cn('text-sm leading-relaxed text-white/70', CLAMP[lines])}>{description}</p>}
       </div>
     </>
   );
+  // Nombre = el título (WCAG 2.5.3: contiene el texto visible); la meta y la descripción, como descripción.
+  const describedBy = [meta && metaId, description && descriptionId].filter(Boolean).join(' ') || undefined;
   if (!href) return <div className={classes}>{body}</div>;
   if (external) {
     const isYoutube = /youtu\.?be/.test(href);
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={classes}>
+      <a href={href} target="_blank" rel="noopener noreferrer" aria-labelledby={`${titleId} ${hintId}`} aria-describedby={describedBy} className={classes}>
         {body}
-        <span className="sr-only">{isYoutube ? ' (se abre en YouTube)' : ' (se abre en una pestaña nueva)'}</span>
+        <span id={hintId} className="sr-only">{isYoutube ? ' (se abre en YouTube)' : ' (se abre en una pestaña nueva)'}</span>
       </a>
     );
   }
-  return <Link href={href as Route} className={classes}>{body}</Link>;
+  return <Link href={href as Route} aria-labelledby={titleId} aria-describedby={describedBy} className={classes}>{body}</Link>;
 }

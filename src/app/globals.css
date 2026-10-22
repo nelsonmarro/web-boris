@@ -299,13 +299,25 @@
 @layer components {
   .crystal-surface {
     --crystal-line: rgb(255 255 255 / 0.3);
-    background:
-      linear-gradient(90deg, transparent, var(--crystal-line), transparent) top / 100% 1px no-repeat,
-      #061a2e;
+    /* Contenedor del hilo; las utilidades (`sticky`, `absolute`…) van en una capa posterior y mandan. */
+    position: relative;
+    background: #061a2e;
     border-width: 1px;
     border-style: solid;
     border-color: rgb(255 255 255 / 0.1);
     box-shadow: 0 20px 50px rgb(0 0 0 / 0.45);
+  }
+
+  /* Hilo de brillo superior: encima de la portada de las tarjetas con imagen arriba. */
+  .crystal-surface::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    z-index: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--crystal-line), transparent);
+    pointer-events: none;
   }
 
 }
