@@ -6,16 +6,18 @@ export interface FeedVideo {
   published?: string;
 }
 
-const ENTITIES: Record<string, string> = {
-  '&amp;': '&',
-  '&lt;': '<',
-  '&gt;': '>',
-  '&quot;': '"',
-  '&#39;': "'",
-  '&apos;': "'",
-};
+const NAMED: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
 
-const decode = (s: string) => s.replace(/&(amp|lt|gt|quot|#39|apos);/g, (m) => ENTITIES[m] ?? m);
+/** Un carácter válido de XML: ni el nulo ni las mitades de un par sustituto, y dentro de Unicode. */
+const isXmlChar = (cp: number) => cp > 0 && cp <= 0x10ffff && (cp < 0xd800 || cp > 0xdfff);
+
+/** Entidades con nombre y numéricas (`&#8217;`, `&#x2019;`) en una sola pasada: `&amp;#39;` queda en `&#39;`. */
+const decode = (s: string) =>
+  s.replace(/&(?:#(\d+)|#x([0-9a-f]+)|(amp|lt|gt|quot|apos));/gi, (match, dec?: string, hex?: string, name?: string) => {
+    if (name) return NAMED[name.toLowerCase()] ?? match;
+    const cp = dec ? Number.parseInt(dec, 10) : Number.parseInt(hex ?? '', 16);
+    return isXmlChar(cp) ? String.fromCodePoint(cp) : match;
+  });
 
 /** Vídeos en el orden del feed (el más reciente primero). Las entradas incompletas se descartan. */
 export function parseYoutubeFeed(xml: string): FeedVideo[] {
