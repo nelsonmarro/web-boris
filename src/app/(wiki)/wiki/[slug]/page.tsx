@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getArticleBySlug, getAllArticles } from '@/utils/mdx';
+import { getContentRepository } from '@/core/content';
 import { WikiArticleHeader } from '@/features/monsters/components/wiki/article/WikiArticleHeader';
 import { WikiArticleContent } from '@/features/monsters/components/wiki/article/WikiArticleContent';
 import { WikiArticleFooter } from '@/features/monsters/components/wiki/article/WikiArticleFooter';
@@ -26,7 +26,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getArticleBySlug(slug);
+  const article = await getContentRepository().getArticle(slug);
 
   if (!article) {
     return {
@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  const articles = await getAllArticles();
+  const articles = await getContentRepository().getArticles();
   return articles.map((article) => ({
     slug: article.slug,
   }));
@@ -58,14 +58,14 @@ export async function generateStaticParams() {
 
 export default async function WikiArticlePage({ params }: Props) {
   const { slug } = await params;
-  const article = await getArticleBySlug(slug);
+  const article = await getContentRepository().getArticle(slug);
 
   if (!article) {
     notFound();
   }
 
   const { frontmatter, content } = article;
-  const related = getRelatedArticles(slug, await getAllArticles(), 4, await getMentionGraph());
+  const related = getRelatedArticles(slug, await getContentRepository().getArticles(), 4, await getMentionGraph());
   const entityIndex = await getEntityIndex();
   const videos = await getVideosForSlug(slug);
   // La portada sube a la cabecera; si el MDX ya la usa en el cuerpo, la cabecera no la repite.

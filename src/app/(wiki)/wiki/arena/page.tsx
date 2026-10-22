@@ -1,7 +1,7 @@
 import { cache } from 'react';
 import type { Metadata } from 'next';
 import VersusArena from '@/features/monsters/components/VersusArena';
-import { getAllArticles } from '@/utils/mdx';
+import { getContentRepository } from '@/core/content';
 import { toSummary } from '@/core/types/wiki';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { computeMatchup, type Fighter } from '@/features/monsters/lib/arena';
@@ -19,7 +19,7 @@ interface ArenaPageProps {
 
 // generateMetadata y la página comparten la lectura de los MDX dentro de la misma petición.
 const getFighters = cache(async (): Promise<Fighter[]> => {
-  const articles = await getAllArticles();
+  const articles = await getContentRepository().getArticles();
   return articles
     .filter((a) => hasStats(a.frontmatter))
     .map(toSummary)

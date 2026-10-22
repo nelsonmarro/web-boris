@@ -1,6 +1,6 @@
 'use server';
 
-import { getAllArticles } from '@/utils/mdx';
+import { getContentRepository } from '@/core/content';
 import { getEntityIndex } from '@/core/content/entities';
 import { compareDiscovery } from '@/core/search/discovery-order';
 import { toSummary, type WikiArticle, type WikiArticleSummary } from '@/core/types/wiki';
@@ -60,7 +60,7 @@ export async function getWikiArticles({
   universe = 'all',
   tipo,
 }: GetWikiArticlesParams): Promise<GetWikiArticlesResult> {
-  const [all, { entries }] = await Promise.all([getAllArticles(), getEntityIndex()]);
+  const [all, { entries }] = await Promise.all([getContentRepository().getArticles(), getEntityIndex()]);
   const query = search.trim().slice(0, MAX_QUERY_LENGTH);
 
   // Con búsqueda manda el motor del archivo (palabras en cualquier orden, apodos, erratas) y su ranking;
@@ -101,7 +101,7 @@ export async function getWikiArticles({
 
 /** Universos del catálogo, pestañas por tipo con su número y total de fichas (para los filtros). */
 export async function getFilterOptions(): Promise<WikiFilterOptions> {
-  const articles = await getAllArticles();
+  const articles = await getContentRepository().getArticles();
   const catalog = catalogFilter(articles, {});
   const universes = [...new Set(catalog.map((a) => a.frontmatter.universe))].sort((a, b) =>
     a.localeCompare(b, 'es'),
