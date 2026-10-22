@@ -19,19 +19,37 @@ export interface ReadResult<T> {
   errors: string[];
 }
 
+/** `<yyyy-mm-dd>-<slug>.md`: la fecha del nombre debe ser la del frontmatter. */
+const NEWS_FILE = /^(\d{4}-\d{2}-\d{2})-[a-z0-9]+(?:-[a-z0-9]+)*\.md$/;
+
 export function readNews(dir: string): ReadResult<NewsEntry> {
   if (!fs.existsSync(dir)) return { items: [], errors: [] };
   const items: NewsEntry[] = [];
   const errors: string[] = [];
   for (const file of fs.readdirSync(dir).filter((f) => f.endsWith('.md')).sort()) {
-    const { data } = matter(fs.readFileSync(path.join(dir, file), 'utf8'));
+    let data: unknown;
+    try {
+      ({ data } = matter(fs.readFileSync(path.join(dir, file), 'utf8')));
+    } catch (error) {
+      // Un frontmatter mal formado no tumba la página: se registra y se salta, como un esquema inválido.
+      errors.push(`${file}: YAML inválido — ${(error as Error).message.split('\n')[0]}`);
+      continue;
+    }
     const parsed = NewsEntrySchema.safeParse(data);
-    if (parsed.success) {
-      items.push({ ...parsed.data, id: file.replace(/\.md$/, '') });
-    } else {
+    if (!parsed.success) {
       for (const issue of parsed.error.issues) {
         errors.push(`${file}: ${issue.path.join('.') || '(raíz)'} — ${issue.message}`);
       }
+      continue;
+    }
+    const prefix = NEWS_FILE.exec(file)?.[1];
+    if (!prefix) {
+      errors.push(`${file}: el nombre debe ser <yyyy-mm-dd>-<slug>.md`);
+    } else if (prefix !== parsed.data.fecha) {
+      // js-yaml convierte una fecha imposible (2026-02-30) en otra real (2026-03-02) sin avisar.
+      errors.push(`${file}: la fecha ${parsed.data.fecha} no coincide con la del nombre (${prefix})`);
+    } else {
+      items.push({ ...parsed.data, id: file.replace(/\.md$/, '') });
     }
   }
   items.sort((x, y) => y.fecha.localeCompare(x.fecha) || x.id.localeCompare(y.id));

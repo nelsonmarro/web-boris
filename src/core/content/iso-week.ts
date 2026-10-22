@@ -15,3 +15,8 @@ export function isoWeekKey(date: Date): string {
   const week = Math.floor((thursday.getTime() - Date.UTC(year, 0, 1)) / DAY_MS / 7) + 1;
   return `${year}-W${String(week).padStart(2, '0')}`;
 }
+
+/** Número de la semana ISO (1–53) de `date`, en UTC: el mismo que `isoWeekKey`. */
+export function isoWeekNumber(date: Date): number {
+  return Number(isoWeekKey(date).slice(-2));
+}

@@ -63,6 +63,15 @@ test('rechaza enlaces http y resúmenes largos', () => {
   assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: 'https://www.youtube.com/watch?v=vRVFd7LfTTs' }).success, true);
 });
 
+test('novedades: enlaces https solo de YouTube (youtube.com, www.youtube.com, m.youtube.com, youtu.be)', () => {
+  const base = { fecha: '2026-10-18', titulo: 'Título de prueba', resumen: 'Resumen corto' };
+  assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: 'https://youtu.be/vRVFd7LfTTs' }).success, true);
+  assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: 'https://evil.com/x' }).success, false);
+  assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: 'https://youtube.com.evil.com/x' }).success, false);
+  assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: 'https://user@www.youtube.com/x' }).success, false);
+  assert.equal(NewsEntrySchema.safeParse({ ...base, enlace: 'https://' }).success, false);
+});
+
 test('videos.json: acepta un vídeo con sus fichas', () => {
   const r = VideoLinksSchema.safeParse([{ id: 'hedUAqopPBg', fichas: ['the-bloop', 'el-gran-maja'] }]);
   assert.equal(r.success, true);
