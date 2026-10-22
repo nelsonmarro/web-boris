@@ -72,9 +72,10 @@ export function PollTile({
   fighters: Record<string, PollFighter>;
 }) {
   const queryClient = useQueryClient();
-  const { data: state, isError } = useQuery({ queryKey: QUERY_KEY, queryFn: fetchPollState, staleTime: 30_000, retry: 1 });
+  const { data: state, isError, fetchStatus } = useQuery({ queryKey: QUERY_KEY, queryFn: fetchPollState, staleTime: 30_000, retry: 1 });
   const [message, setMessage] = React.useState<string | null>(null);
-  const [limitReached, setLimitReached] = React.useState(false);
+  // Encuesta para la que se alcanzó el límite: si la semana cambia, la nueva no hereda los resultados.
+  const [limitFor, setLimitFor] = React.useState<string | null>(null);
 
   const vote = useMutation({
     mutationFn: castVote,
@@ -86,7 +87,7 @@ export function PollTile({
       }
       setMessage(ERROR_COPY[result.error]);
       // Sin más votos desde esta red: se enseña el recuento en lugar de unos botones que ya no sirven.
-      if (result.error === 'limite') setLimitReached(true);
+      if (result.error === 'limite') setLimitFor(result.state?.poll?.id ?? null);
       if (result.error === 'cerrada') void queryClient.invalidateQueries({ queryKey: QUERY_KEY });
     },
     onError: () => setMessage(ERROR_COPY['no-disponible']),
@@ -101,9 +102,12 @@ export function PollTile({
   const declassify = poll.tipo === 'desclasificar';
   const isPending = (f: PollFighter) => f.status === 'proximamente';
   // Antes de la primera respuesta los botones están desactivados: se dice por qué.
-  const loading = !state && !isError;
-  const showResults = !!open && (!!open.myOption || limitReached);
-  const status = message ?? (unavailable ? ERROR_COPY['no-disponible'] : loading ? 'Cargando la votación…' : '');
+  // Sin conexión la consulta queda en pausa: no es una carga, es que no hay votación disponible.
+  const paused = !state && fetchStatus === 'paused';
+  const loading = !state && !isError && !paused;
+  const showResults = !!open && (!!open.myOption || limitFor === open.poll.id);
+  const status =
+    message ?? (unavailable || paused ? ERROR_COPY['no-disponible'] : loading ? 'Cargando la votación…' : '');
   const headingId = React.useId();
 
   return (

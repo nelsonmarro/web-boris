@@ -56,7 +56,14 @@ export function networkOf(ip: string): string {
   const mapped = /^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/i.exec(value);
   if (mapped && isIP(mapped[1]) === 4) return mapped[1];
   if (isIP(value) !== 6) return value;
-  return `${ipv6Groups(value).slice(0, 4).join(':')}::/64`;
+  const groups = ipv6Groups(value);
+  // IPv4 mapeada en hex (`::ffff:c000:204`): también es esa IPv4, no el /64 compartido `0:0:0:0::/64`.
+  if (groups.slice(0, 5).every((g) => g === '0') && groups[5] === 'ffff') {
+    const hi = Number.parseInt(groups[6], 16);
+    const lo = Number.parseInt(groups[7], 16);
+    return `${hi >> 8}.${hi & 255}.${lo >> 8}.${lo & 255}`;
+  }
+  return `${groups.slice(0, 4).join(':')}::/64`;
 }
 
 /** Secreto de votación (≥ 32 caracteres) o `null` si la votación no está configurada. */
