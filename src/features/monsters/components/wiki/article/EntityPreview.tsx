@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { createPortal } from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
 import { cn } from '@/utils/cn';
-import { PendingLabel } from '@/components/content';
+import { PendingLabel } from '@/components/content/PendingLabel';
 import { getWikiIndex } from '@/features/monsters/actions/get-wiki-articles';
 import { CategoryPlaceholder, coverOf } from '@/components/content/CategoryPlaceholder';
 

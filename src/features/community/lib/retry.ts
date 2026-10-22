@@ -29,6 +29,28 @@ export async function withRetry<T>(
   }
 }
 
+/**
+ * Rechaza con `signal.reason` en cuanto `signal` aborte, aunque `promise` siga pendiente. Hace falta porque Next quita el
+ * `signal` del `fetch` cuando revalida una entrada caducada de su caché: sin esto, el tiempo límite no se cumpliría.
+ */
+export function abortable<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
+  if (signal.aborted) return Promise.reject(signal.reason);
+  return new Promise<T>((resolve, reject) => {
+    const onAbort = () => reject(signal.reason);
+    signal.addEventListener('abort', onAbort, { once: true });
+    promise.then(
+      (value) => {
+        signal.removeEventListener('abort', onAbort);
+        resolve(value);
+      },
+      (error) => {
+        signal.removeEventListener('abort', onAbort);
+        reject(error);
+      },
+    );
+  });
+}
+
 /** Respuesta HTTP no satisfactoria, con su código para decidir si se reintenta. */
 export class HttpError extends Error {
   readonly status: number;

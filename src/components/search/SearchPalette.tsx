@@ -12,7 +12,7 @@ import { normalize, type EntityEntry } from '@/core/search/entity-index';
 import { MAX_QUERY_LENGTH, search, suggest, type SearchHit } from '@/core/search/search';
 import { getWikiIndex } from '@/features/monsters/actions/get-wiki-articles';
 import { RANDOM_ROUTE } from '@/features/monsters/config/wiki-routes';
-import { PendingLabel } from '@/components/content';
+import { PendingLabel } from '@/components/content/PendingLabel';
 import { CategoryPlaceholder, coverOf } from '@/components/content/CategoryPlaceholder';
 import { useSearchPalette } from './useSearchPalette';
 

@@ -83,3 +83,13 @@ test('novedades: un YAML roto se registra y se salta, sin lanzar', () => {
   assert.equal(errors.length, 1);
   assert.match(errors[0], /^2026-01-01-rota\.md: YAML inválido/);
 });
+
+test('novedades: el YAML roto se reporta igual en cada lectura (sin caché de gray-matter)', () => {
+  const dir = tmpDir();
+  fs.writeFileSync(path.join(dir, '2026-01-01-rota.md'), '---\nfecha: 2026-01-01\ntitulo: "sin cerrar\n  : [\n---\n');
+  for (let i = 0; i < 2; i++) {
+    const { errors } = readNews(dir);
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /^2026-01-01-rota\.md: YAML inválido/);
+  }
+});

@@ -19,6 +19,9 @@ import { getVideosForSlug } from '@/features/community/data/channel-videos';
 
 // ISR: la encuesta de la semana (expediente sellado) y los vídeos del canal ("Aparece en") cambian con el tiempo.
 export const revalidate = 3600;
+// Todos los MDX se generan en el build (`generateStaticParams`): un slug desconocido responde un 404 real, no un 200 con
+// la página not-found (el `loading.tsx` de la wiki empieza a emitir antes de `notFound()`).
+export const dynamicParams = false;
 
 interface Props {
   params: Promise<{ slug: string }>;

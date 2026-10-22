@@ -1,6 +1,6 @@
 import { YOUTUBE_CHANNEL_ID } from '@/features/marketing/config/social';
 import { memoizeFailure } from '../lib/failure-memo';
-import { HttpError, isTransientFetchError, withRetry } from '../lib/retry';
+import { abortable, HttpError, isTransientFetchError, withRetry } from '../lib/retry';
 import { parseYoutubeFeed, type FeedVideo } from '../lib/youtube-feed';
 
 const DEFAULT_FEED_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${YOUTUBE_CHANNEL_ID}`;
@@ -8,8 +8,9 @@ const DEFAULT_FEED_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${
 /** Cuánto se recuerda que el feed falló antes de volver a intentarlo. */
 const FAILURE_TTL_MS = 60_000;
 /**
- * Tiempo límite de cada intento y de toda la lectura, reintentos incluidos. Las pausas no se interrumpen: en el peor
- * caso el build espera el total más la última pausa (6,75 s).
+ * Tiempo límite de cada intento y de toda la lectura, reintentos incluidos. Se cumple aunque Next revalide su caché de
+ * `fetch` (entonces quita el `signal`): por eso cada espera va envuelta en `abortable`. Las pausas no se interrumpen: en
+ * el peor caso el build espera el total más la última pausa (6,75 s).
  */
 const ATTEMPT_TIMEOUT_MS = 4000;
 const TOTAL_TIMEOUT_MS = 6000;
@@ -21,10 +22,8 @@ async function fetchFeed(): Promise<FeedVideo[]> {
   const budget = AbortSignal.timeout(TOTAL_TIMEOUT_MS);
   const res = await withRetry(
     async () => {
-      const response = await fetch(feedUrl, {
-        next: { revalidate: 3600 },
-        signal: AbortSignal.any([budget, AbortSignal.timeout(ATTEMPT_TIMEOUT_MS)]),
-      });
+      const signal = AbortSignal.any([budget, AbortSignal.timeout(ATTEMPT_TIMEOUT_MS)]);
+      const response = await abortable(fetch(feedUrl, { next: { revalidate: 3600 }, signal }), signal);
       if (!response.ok) {
         // Se descarta el cuerpo para liberar la conexión antes del siguiente intento.
         await response.body?.cancel().catch(() => {});
@@ -35,7 +34,7 @@ async function fetchFeed(): Promise<FeedVideo[]> {
     // Agotado el tiempo total, no se reintenta aunque el error sea transitorio.
     { delaysMs: RETRY_DELAYS_MS, shouldRetry: (error) => !budget.aborted && isTransientFetchError(error) },
   );
-  const videos = parseYoutubeFeed(await res.text());
+  const videos = parseYoutubeFeed(await abortable(res.text(), budget));
   if (videos.length === 0) throw new Error('feed sin vídeos');
   return videos;
 }

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { cn } from '@/utils/cn';
-import { PendingLabel } from '@/components/content';
+import { PendingLabel } from '@/components/content/PendingLabel';
 import { CategoryPlaceholder, coverOf } from '@/components/content/CategoryPlaceholder';
 import { castVote, type CastVoteError } from '../actions/cast-vote';
 import type { PollDef } from '../lib/poll-schedule';

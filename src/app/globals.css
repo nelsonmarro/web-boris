@@ -295,7 +295,7 @@
 
 /* ---------- Material "cristal sutil" (#11) ----------
  * En @layer components: cualquier utilidad (border-*, shadow-*, bg-*) las sobrescribe.
- * --crystal-line es el color del hilo de brillo superior (las tiles enlazables lo cambian en hover/foco). */
+ * --crystal-line es el color del hilo de brillo superior; las tarjetas enlazables resaltan el borde en hover/foco. */
 @layer components {
   .crystal-surface {
     --crystal-line: rgb(255 255 255 / 0.3);

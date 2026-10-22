@@ -29,7 +29,8 @@ export function readNews(dir: string): ReadResult<NewsEntry> {
   for (const file of fs.readdirSync(dir).filter((f) => f.endsWith('.md')).sort()) {
     let data: unknown;
     try {
-      ({ data } = matter(fs.readFileSync(path.join(dir, file), 'utf8')));
+      // Con opciones, gray-matter no usa su caché: tras un YAML roto, la caché devolvería `data: {}` sin lanzar en la lectura siguiente.
+      ({ data } = matter(fs.readFileSync(path.join(dir, file), 'utf8'), {}));
     } catch (error) {
       // Un frontmatter mal formado no tumba la página: se registra y se salta, como un esquema inválido.
       errors.push(`${file}: YAML inválido — ${(error as Error).message.split('\n')[0]}`);

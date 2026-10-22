@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HttpError, isTransientFetchError, withRetry } from '../../src/features/community/lib/retry.ts';
+import { abortable, HttpError, isTransientFetchError, withRetry } from '../../src/features/community/lib/retry.ts';
 
 const noSleep = async () => {};
 
@@ -71,4 +71,27 @@ test('isTransientFetchError: 404, 408, 429, 5xx, red y tiempo límite sí; 400, 
   assert.equal(isTransientFetchError(new DOMException('The operation timed out.', 'TimeoutError')), true);
   assert.equal(isTransientFetchError(new Error('feed sin vídeos')), false);
   assert.equal(isTransientFetchError('texto'), false);
+});
+
+test('abortable: resuelve con el valor si la promesa acaba antes que la señal', async () => {
+  const controller = new AbortController();
+  assert.equal(await abortable(Promise.resolve('ok'), controller.signal), 'ok');
+});
+
+test('abortable: rechaza con el error de la promesa', async () => {
+  const controller = new AbortController();
+  await assert.rejects(abortable(Promise.reject(new HttpError(500)), controller.signal), { name: 'HttpError' });
+});
+
+test('abortable: rechaza con el motivo de la señal si aborta antes, aunque la promesa siga pendiente', async () => {
+  const controller = new AbortController();
+  const reason = new Error('tiempo agotado');
+  const pending = abortable(new Promise<string>(() => {}), controller.signal);
+  controller.abort(reason);
+  await assert.rejects(pending, (error) => error === reason);
+});
+
+test('abortable: rechaza al instante si la señal ya estaba abortada', async () => {
+  const reason = new Error('ya abortada');
+  await assert.rejects(abortable(new Promise<string>(() => {}), AbortSignal.abort(reason)), (error) => error === reason);
 });
