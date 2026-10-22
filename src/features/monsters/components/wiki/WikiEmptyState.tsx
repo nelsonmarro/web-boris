@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import type { Route } from 'next';
-import { PendingLabel } from '@/components/content';
+import { PendingLabel } from '@/components/content/PendingLabel';
 import type { WikiArticleSummary } from '@/core/types/wiki';
 
 interface WikiEmptyStateProps {

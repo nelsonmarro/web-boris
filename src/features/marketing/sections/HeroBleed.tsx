@@ -4,7 +4,7 @@ import type { Route } from 'next';
 import { ContentCard } from '@/components/content';
 import { getContentRepository } from '@/core/content';
 import { SearchTrigger } from '@/components/search/SearchTrigger';
-import { coverOf } from '@/features/monsters/components/wiki/CategoryPlaceholder';
+import { coverOf } from '@/components/content/CategoryPlaceholder';
 import { pickFeatured } from '@/features/monsters/lib/featured';
 import { UNIVERSES } from '../config/universes';
 

@@ -13,7 +13,8 @@
  *     un duelo usa una criatura inexistente o sin stats, una encuesta `desclasificar` de una semana futura usa una
  *     ficha que no está sellada (`status: proximamente`; en la semana actual y las pasadas basta con que exista), o
  *     una novedad enlaza a una ruta interna inexistente (las rutas estáticas /wiki/arena, /wiki/registro y
- *     /wiki/aleatorio sí valen).
+ *     /wiki/aleatorio sí valen). Además, cada novedad se llama `<yyyy-mm-dd>-<slug>.md` con la fecha de su `fecha`,
+ *     un enlace externo solo puede ser de YouTube y un frontmatter YAML mal formado se reporta como error.
  *  7. Los apodos (`aliases`) se repiten entre fichas o coinciden con el título de otra, o un `related` apunta a sí
  *     misma o a una ficha inexistente.
  *  8. `videos.json` (relaciones vídeo ↔ ficha de «Aparece en») no cumple su esquema (id de YouTube de 11 caracteres,

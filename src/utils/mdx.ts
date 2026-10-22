@@ -10,7 +10,7 @@ const IS_PROD = process.env.NODE_ENV === 'production';
 /** Memo de proceso: en producción el contenido es inmutable tras el build. */
 let allArticlesMemo: WikiArticle[] | null = null;
 
-export async function getArticleBySlug(slug: string): Promise<WikiArticle | null> {
+async function readArticle(slug: string): Promise<WikiArticle | null> {
   try {
     const fullPath = path.join(CONTENT_PATH, `${slug}.mdx`);
     const fileContents = fs.readFileSync(fullPath, 'utf8');
@@ -25,7 +25,8 @@ export async function getArticleBySlug(slug: string): Promise<WikiArticle | null
   }
 }
 
-/** Lee todos los MDX. Deduplicado por request (React cache) y memoizado en producción. */
+/** Lee todos los MDX. Deduplicado por request (React cache) y memoizado en producción.
+ * Fuera de aquí, los artículos se leen con `getContentRepository()`. */
 export const getAllArticles = cache(async (): Promise<WikiArticle[]> => {
   if (IS_PROD && allArticlesMemo) return allArticlesMemo;
   if (!fs.existsSync(CONTENT_PATH)) return [];
@@ -34,7 +35,7 @@ export const getAllArticles = cache(async (): Promise<WikiArticle[]> => {
   const articles: WikiArticle[] = [];
 
   for (const file of files) {
-    const article = await getArticleBySlug(file.replace(/\.mdx$/, ''));
+    const article = await readArticle(file.replace(/\.mdx$/, ''));
     if (article) articles.push(article);
   }
 

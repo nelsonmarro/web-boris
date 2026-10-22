@@ -13,6 +13,11 @@ function logErrors(source: string, errors: string[]): void {
 export const fileContentRepository: ContentRepository = {
   getArticles: () => getAllArticles(),
 
+  // Busca en la lista (en caché por petición) en lugar de leer `<slug>.mdx`: no construye rutas con la URL.
+  async getArticle(slug) {
+    return (await getAllArticles()).find((article) => article.slug === slug) ?? null;
+  },
+
   async getNews(limit) {
     const { items, errors } = readNews(path.join(CONTENT_DIR, 'novedades'));
     logErrors('novedades', errors);

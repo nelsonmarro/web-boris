@@ -7,6 +7,9 @@ import { z } from 'zod';
 /** Semana ISO `YYYY-Www` (W01–W53). */
 export const WEEK_KEY_REGEX = /^\d{4}-W(0[1-9]|[1-4]\d|5[0-3])$/;
 
+/** Hosts externos de una novedad: solo YouTube, la única red que Boris ha confirmado (`SOCIAL_LINKS`). */
+export const NEWS_HOSTS: readonly string[] = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be'];
+
 const Slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, { message: 'slug inválido' });
 
 /** `duelo`: luchadores con stats (la Arena); `desclasificar`: expedientes sellados que la comunidad quiere ver primero. */
@@ -41,10 +44,20 @@ const IsoDate = z.preprocess(
   z.iso.date(),
 );
 
+function isAllowedExternal(value: string): boolean {
+  if (!value.startsWith('https://')) return false;
+  try {
+    const url = new URL(value);
+    return !url.username && !url.password && !url.port && NEWS_HOSTS.includes(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
 const NewsLink = z
   .string()
-  .refine((v) => v.startsWith('https://') || (v.startsWith('/') && !v.startsWith('//') && !v.startsWith('/\\')), {
-    message: 'el enlace debe ser interno (/…) o https://',
+  .refine((v) => isAllowedExternal(v) || (v.startsWith('/') && !v.startsWith('//') && !v.startsWith('/\\')), {
+    message: 'el enlace debe ser interno (/…) o https:// de YouTube',
   });
 
 export const NewsEntrySchema = z.object({

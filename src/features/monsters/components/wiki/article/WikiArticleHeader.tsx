@@ -7,7 +7,7 @@ import { isIndexCategory } from '@/core/search/catalog';
 import type { WikiFrontmatter } from '@/core/types/wiki';
 import { getThreatLevel, type ThreatTone } from '@/features/monsters/lib/stats';
 import { cn } from '@/utils/cn';
-import { coverOf } from '../CategoryPlaceholder';
+import { coverOf } from '@/components/content/CategoryPlaceholder';
 import { WikiBreadcrumbs } from './WikiBreadcrumbs';
 import { WikiArticleActions } from './WikiArticleActions';
 import { ProximamenteChip } from '../mdx/Proximamente';

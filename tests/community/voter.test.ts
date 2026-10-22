@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { clientIp, hmac, ipHashFor, voteSecret, voterKeyFor } from '../../src/features/community/lib/voter.ts';
+import { clientIp, hmac, ipHashFor, networkOf, voteSecret, voterKeyFor } from '../../src/features/community/lib/voter.ts';
 
 const SECRET = 'x'.repeat(32);
 
@@ -30,4 +30,22 @@ test('voteSecret exige secreto ≥ 32 caracteres y DATABASE_URL', () => {
   assert.equal(voteSecret({ VOTE_SECRET: 'corto', DATABASE_URL: 'postgresql://x' }), null);
   assert.equal(voteSecret({ VOTE_SECRET: SECRET }), null);
   assert.equal(voteSecret({}), null);
+});
+
+test('networkOf: IPv4 tal cual, IPv4 mapeada a IPv4 e IPv6 por su /64', () => {
+  assert.equal(networkOf('203.0.113.7'), '203.0.113.7');
+  assert.equal(networkOf('::ffff:203.0.113.7'), '203.0.113.7');
+  assert.equal(networkOf('::FFFF:203.0.113.7'), '203.0.113.7');
+  // Dos direcciones de privacidad de la misma red cuentan como una.
+  assert.equal(networkOf('2001:db8:1:2:aaaa::1'), '2001:db8:1:2::/64');
+  assert.equal(networkOf('2001:db8:1:2:bbbb:cccc:dddd:eeee'), '2001:db8:1:2::/64');
+  assert.equal(networkOf('2001:0DB8:0001:0002::1'), '2001:db8:1:2::/64');
+  assert.equal(networkOf('2001:db8::1'), '2001:db8:0:0::/64');
+  assert.equal(networkOf('::1'), '0:0:0:0::/64');
+  assert.equal(networkOf('fe80::1%eth0'), 'fe80:0:0:0::/64');
+  assert.equal(networkOf('2001:db8:1:2:3:4:198.51.100.2'), '2001:db8:1:2::/64');
+  assert.equal(networkOf('::ffff:c000:204'), '192.0.2.4');
+  assert.equal(networkOf('2001:db8:1:2::'), '2001:db8:1:2::/64');
+  assert.equal(networkOf('desconocida'), 'desconocida');
+  assert.notEqual(networkOf('2001:db8:1:2::1'), networkOf('2001:db8:1:3::1'));
 });

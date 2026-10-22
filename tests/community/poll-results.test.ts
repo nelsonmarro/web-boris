@@ -32,3 +32,9 @@ test('la suma es 100 para cualquier recuento positivo', () => {
     }
   }
 });
+
+test('con restos iguales, el punto va a la opción que va primero (sin depender del idioma)', () => {
+  // 1 de 200 = 0,5 % y 199 de 200 = 99,5 %: mismo resto.
+  assert.deepEqual(computeTally(['b', 'a'], { a: 1, b: 199 }).percents, { b: 100, a: 0 });
+  assert.deepEqual(computeTally(['a', 'b'], { a: 1, b: 199 }).percents, { a: 1, b: 99 });
+});

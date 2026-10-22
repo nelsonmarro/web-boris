@@ -36,6 +36,10 @@ export function pollIdFor(week: string, a: string, b: string): string {
 /**
  * Encuesta vigente: la encuesta curada de la semana si existe (duelo o desclasificar); si no, un emparejamiento
  * determinista entre luchadores (artículos con stats). `null` con menos de dos luchadores.
+ *
+ * Ojo: el emparejamiento automático depende de la lista de luchadores. Publicar a mitad de semana una ficha con
+ * stats (o quitarlas de una) cambia el duelo de esa semana, y con él su id: el recuento empieza de cero.
+ * Para fijar un duelo, ponerlo en `encuestas.json`.
  */
 export function getCurrentPoll(
   curated: readonly CuratedPoll[],

@@ -60,3 +60,36 @@ test('lee videos.json y reporta archivo ausente, JSON roto o esquema inválido',
   assert.equal(r.items.length, 0);
   assert.match(r.errors[0], /^invalid\.json: 0\.id/);
 });
+
+test('novedades: la fecha debe coincidir con el prefijo del nombre del archivo', () => {
+  const dir = tmpDir();
+  // js-yaml convierte 2026-02-30 en 2026-03-02 sin avisar: el nombre lo delata.
+  fs.writeFileSync(path.join(dir, '2026-02-30-imposible.md'), '---\nfecha: 2026-02-30\ntitulo: "Fecha imposible"\nresumen: "Texto"\nenlace: /wiki\n---\n');
+  fs.writeFileSync(path.join(dir, 'sin-fecha-en-el-nombre.md'), '---\nfecha: 2026-01-01\ntitulo: "Nombre sin fecha"\nresumen: "Texto"\nenlace: /wiki\n---\n');
+  fs.writeFileSync(path.join(dir, '2026-01-02-ok.md'), '---\nfecha: 2026-01-02\ntitulo: "Correcta"\nresumen: "Texto"\nenlace: /wiki\n---\n');
+  const { items, errors } = readNews(dir);
+  assert.deepEqual(items.map((n) => n.id), ['2026-01-02-ok']);
+  assert.equal(errors.length, 2);
+  assert.match(errors.find((e) => e.startsWith('2026-02-30-imposible.md')) ?? '', /2026-03-02/);
+  assert.match(errors.find((e) => e.startsWith('sin-fecha-en-el-nombre.md')) ?? '', /<yyyy-mm-dd>-<slug>\.md/);
+});
+
+test('novedades: un YAML roto se registra y se salta, sin lanzar', () => {
+  const dir = tmpDir();
+  fs.writeFileSync(path.join(dir, '2026-01-01-rota.md'), '---\nfecha: 2026-01-01\ntitulo: "sin cerrar\n  : [\n---\n');
+  fs.writeFileSync(path.join(dir, '2026-01-02-ok.md'), '---\nfecha: 2026-01-02\ntitulo: "Correcta"\nresumen: "Texto"\nenlace: /wiki\n---\n');
+  const { items, errors } = readNews(dir);
+  assert.deepEqual(items.map((n) => n.id), ['2026-01-02-ok']);
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /^2026-01-01-rota\.md: YAML inválido/);
+});
+
+test('novedades: el YAML roto se reporta igual en cada lectura (sin caché de gray-matter)', () => {
+  const dir = tmpDir();
+  fs.writeFileSync(path.join(dir, '2026-01-01-rota.md'), '---\nfecha: 2026-01-01\ntitulo: "sin cerrar\n  : [\n---\n');
+  for (let i = 0; i < 2; i++) {
+    const { errors } = readNews(dir);
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /^2026-01-01-rota\.md: YAML inválido/);
+  }
+});

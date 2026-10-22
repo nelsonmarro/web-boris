@@ -2,7 +2,6 @@
 
 import { randomUUID } from 'node:crypto';
 import { cookies, headers } from 'next/headers';
-import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { getActivePoll, isUniqueViolation, loadOpenState } from '../server/poll-state';
 import {
@@ -11,16 +10,13 @@ import {
   VOTER_COOKIE_MAX_AGE,
   clientIp,
   ipHashFor,
+  networkOf,
   voteSecret,
   voterKeyFor,
 } from '../lib/voter';
+import { checkVote } from '../lib/vote-input';
 import type { PollDef } from '../lib/poll-schedule';
 import type { PollState } from '../types';
-
-const VoteInput = z.object({
-  pollId: z.string().min(1).max(160),
-  option: z.string().min(1).max(80),
-});
 
 export type CastVoteError = 'cerrada' | 'opcion' | 'limite' | 'no-disponible' | 'invalido';
 
@@ -29,15 +25,13 @@ export type CastVoteResult =
   | { ok: false; error: CastVoteError; state?: PollState };
 
 export async function castVote(input: { pollId: string; option: string }): Promise<CastVoteResult> {
-  const parsed = VoteInput.safeParse(input);
-  if (!parsed.success) return { ok: false, error: 'invalido' };
-  const { pollId, option } = parsed.data;
-
   let poll: PollDef | null = null;
   try {
     poll = await getActivePoll();
-    if (!poll || poll.id !== pollId) return { ok: false, error: 'cerrada' };
-    if (option !== poll.a && option !== poll.b) return { ok: false, error: 'opcion' };
+    // Orden de los códigos: `invalido` (forma), `cerrada` (no es la vigente), `opcion` (no es suya).
+    const check = checkVote(input, poll);
+    if (!check.ok || !poll) return { ok: false, error: check.ok ? 'cerrada' : check.error };
+    const { option } = check;
 
     const secret = voteSecret();
     if (!secret) return { ok: false, error: 'no-disponible', state: { status: 'unavailable', poll } };
@@ -56,7 +50,7 @@ export async function castVote(input: { pollId: string; option: string }): Promi
     }
     const voterKey = voterKeyFor(secret, voterId);
     const requestHeaders = await headers();
-    const ipHash = ipHashFor(secret, clientIp((name) => requestHeaders.get(name)), poll.id);
+    const ipHash = ipHashFor(secret, networkOf(clientIp((name) => requestHeaders.get(name))), poll.id);
 
     const already = await prisma.pollVote.findUnique({
       where: { pollId_voterKey: { pollId: poll.id, voterKey } },
