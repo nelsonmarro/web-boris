@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  checkArticleStandard,
   crossCheckEntities,
   crossCheckHeroPool,
   crossCheckNews,
@@ -257,4 +258,72 @@ test('HERO_POOL válido: sin errores (sin toma propia basta la image de la ficha
     ),
     [],
   );
+});
+
+/** Ficha que cumple el estándar (spec «fichas estándar» §4): cada test rompe una regla. */
+const STANDARD = {
+  slug: 'the-bloop',
+  category: 'Coloso',
+  description: 'Coloso del Pacífico Sur.',
+  image: '/assets/The_Bloop/x.webp',
+  imageCaption: 'The Bloop emergiendo.',
+  infoboxSections: 2,
+  h2Titles: ['Características', 'Alimentación', 'Referencias'],
+};
+
+test('checkArticleStandard: una ficha completa no da errores (sin image no pide imageCaption)', () => {
+  assert.deepEqual(checkArticleStandard([STANDARD]), []);
+  assert.deepEqual(checkArticleStandard([{ ...STANDARD, image: undefined, imageCaption: undefined }]), []);
+});
+
+test('checkArticleStandard: falta description (o está en blanco)', () => {
+  for (const description of [undefined, '  ']) {
+    const errors = checkArticleStandard([{ ...STANDARD, description }]);
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /^src\/content\/the-bloop\.mdx: falta `description`/);
+  }
+});
+
+test('checkArticleStandard: image sin imageCaption', () => {
+  const errors = checkArticleStandard([{ ...STANDARD, imageCaption: undefined }]);
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /the-bloop\.mdx: tiene `image` pero falta `imageCaption`/);
+});
+
+test('checkArticleStandard: infobox sin secciones', () => {
+  const errors = checkArticleStandard([{ ...STANDARD, infoboxSections: 0 }]);
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /the-bloop\.mdx: el `infobox` necesita al menos una sección/);
+});
+
+test('checkArticleStandard: menos de dos apartados ## sin contar Referencias (con o sin tilde)', () => {
+  const errors = checkArticleStandard([
+    { ...STANDARD, slug: 'uno', h2Titles: ['Características', 'Referencias'] },
+    { ...STANDARD, slug: 'ninguno', h2Titles: ['REFERENCIAS'] },
+  ]);
+  assert.equal(errors.length, 2);
+  assert.match(errors[0], /uno\.mdx: tiene 1 apartado/);
+  assert.match(errors[1], /ninguno\.mdx: tiene 0 apartado/);
+});
+
+test('checkArticleStandard: varias reglas incumplidas dan un error por regla', () => {
+  const errors = checkArticleStandard([
+    { slug: 'vacia', category: 'Humano', image: '/assets/x.webp', infoboxSections: 0, h2Titles: [] },
+  ]);
+  assert.equal(errors.length, 4);
+  assert.ok(errors.every((e) => e.startsWith('src/content/vacia.mdx: ')));
+});
+
+test('checkArticleStandard: los índices (Directorio / Categoría) y las selladas quedan exentos', () => {
+  const bare = { slug: 'x', infoboxSections: 0, h2Titles: [] };
+  assert.deepEqual(
+    checkArticleStandard([
+      { ...bare, slug: 'directorio', category: 'Directorio' },
+      { ...bare, slug: 'categoria', category: 'Categoría' },
+      { ...bare, slug: 'sellada', category: 'Coloso', status: 'proximamente', image: '/assets/x.webp' },
+    ]),
+    [],
+  );
+  // Sin categoría no es un índice: se le exige el estándar.
+  assert.equal(checkArticleStandard([bare]).length, 3);
 });

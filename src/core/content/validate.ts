@@ -2,6 +2,7 @@
 import { isoWeekKey } from './iso-week.ts';
 import { normalize } from '../search/entity-index.ts';
 import { RESERVED_SLUGS, STATIC_WIKI_ROUTES } from '../search/wiki-routes.ts';
+import { isIndexCategory } from '../search/catalog.ts';
 import type { CuratedPoll, NewsEntry, VideoLink } from './schemas.ts';
 
 /** Rutas propias (no MDX) a las que puede enlazar una novedad. */
@@ -161,6 +162,48 @@ export function crossCheckEntities(
       seenRelated.add(rel);
       if (rel === item.slug) errors.push(`related de ${item.slug} se apunta a sí misma`);
       else if (!slugs.has(rel)) errors.push(`related de ${item.slug} apunta a "${rel}", que no existe`);
+    }
+  }
+  return errors;
+}
+
+/** Lo que `checkArticleStandard` necesita de cada ficha (el script lo saca del frontmatter y del cuerpo MDX). */
+export interface ArticleStandardInput {
+  slug: string;
+  category?: string;
+  status?: string;
+  description?: string;
+  image?: string;
+  imageCaption?: string;
+  /** Secciones del `infobox` del frontmatter (la automática «Expediente» no cuenta). */
+  infoboxSections: number;
+  /** Títulos de los apartados `##` del cuerpo, en orden (fuera de bloques de código). */
+  h2Titles: readonly string[];
+}
+
+const isReferencias = (title: string) =>
+  title
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase() === 'referencias';
+
+/**
+ * Estándar de ficha (spec 2026-10-27 «fichas estándar» §2 y §4): toda ficha que no es índice (Directorio/Categoría)
+ * ni está sellada (`status: proximamente`) debe tener `description`, `imageCaption` si tiene `image`, un `infobox`
+ * con al menos una sección propia y al menos dos apartados `##` sin contar «Referencias». Un error por regla incumplida.
+ */
+export function checkArticleStandard(articles: readonly ArticleStandardInput[]): string[] {
+  const errors: string[] = [];
+  for (const a of articles) {
+    if (isIndexCategory(a.category) || a.status === 'proximamente') continue;
+    const file = `src/content/${a.slug}.mdx`;
+    if (!a.description?.trim()) errors.push(`${file}: falta \`description\``);
+    if (a.image && !a.imageCaption?.trim()) errors.push(`${file}: tiene \`image\` pero falta \`imageCaption\``);
+    if (a.infoboxSections < 1) errors.push(`${file}: el \`infobox\` necesita al menos una sección propia (además de «Expediente»)`);
+    const sections = a.h2Titles.filter((t) => !isReferencias(t)).length;
+    if (sections < 2) {
+      errors.push(`${file}: tiene ${sections} apartado(s) \`##\` sin contar Referencias; el estándar pide al menos 2 (los vacíos llevan <Proximamente />)`);
     }
   }
   return errors;
