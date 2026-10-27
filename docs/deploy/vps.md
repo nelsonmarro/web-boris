@@ -1,13 +1,14 @@
 # Despliegue en el VPS de Hostinger (#44)
 
-Vista previa para Boris en `https://borisaoblois.82-25-95-39.sslip.io`. sslip.io es gratuito y resuelve ese nombre a la IP del VPS sin registrar nada; cuando haya dominio definitivo se cambia (ver al final).
+Vista previa para Boris en `https://borisaoblois.82-25-95-39.sslip.io`, desplegada el 2026-10-27. sslip.io es gratuito y resuelve ese nombre a la IP del VPS sin registrar nada; cuando haya dominio definitivo se cambia (ver al final).
 
 **Arquitectura:** Docker Compose (`docker-compose.prod.yml`, proyecto `web-boris-prod`) con dos servicios. `app` es Next en modo `standalone` sobre Node 24, con `TZ=UTC` y escucha solo en `127.0.0.1:3131`. `db` es Postgres 17 sin puertos publicados, con el volumen `pgdata`. El nginx que ya sirve `naphsoft.dev` hace de proxy con TLS mediante un vhost propio (`deploy/nginx/web-boris.conf`), sin tocar los demás sitios.
 
 ## Primera instalación
 
 1. **Acceso SSH como root.** La clave registrada en el VPS es la tuya (`nelsonmarro@gmail.com`). Para desplegar desde la máquina `nelson@archlinux`, añade su clave pública (`~/.ssh/id_ed25519.pub`) en hPanel → VPS → Claves SSH.
-2. En el VPS:
+2. **Sistema al día.** Arch no admite actualizaciones parciales: si la base de pacman es antigua, `pacman -S docker` da 404. Antes de instalar, en una terminal interactiva (pacman pregunta; acepta cambiar `iptables` por `iptables-nft` y conserva `nginx.conf` si aparece un `.pacnew`), ejecuta `pacman -Sy --needed archlinux-keyring && pacman -Su` y reinicia. `naphsoft.dev` se cae uno o dos minutos durante el reinicio.
+3. En el VPS:
 
    ```bash
    pacman -S --needed git
@@ -21,9 +22,9 @@ Vista previa para Boris en `https://borisaoblois.82-25-95-39.sslip.io`. sslip.io
    - crea `.env.production` con secretos generados en el propio servidor, con permisos 600 y sin imprimirlos;
    - construye y arranca la app y aplica las migraciones;
    - añade el vhost en el directorio que nginx ya incluye (`conf.d` o `sites-enabled`) y valida con `nginx -t` antes de recargar;
-   - pide el certificado de Let's Encrypt y redirige HTTP a HTTPS.
+   - pide el certificado de Let's Encrypt y redirige HTTP a HTTPS. Lo renueva `certbot-renew.timer` (ya activo en el VPS), que recarga nginx solo.
 
-3. **Formulario de contacto (#5).** `RESEND_API_KEY` empieza con un valor de relleno, así que el formulario avisa de que no se pudo enviar. Crea una clave **nueva** en Resend (la anterior pasó por el chat), ponla en `/srv/web-boris/.env.production` y ejecuta `docker compose --env-file .env.production -f docker-compose.prod.yml up -d app`. Es una variable de ejecución: no hace falta reconstruir.
+4. **Formulario de contacto (#5).** `RESEND_API_KEY` empieza con un valor de relleno, así que el formulario avisa de que no se pudo enviar. Crea una clave **nueva** en Resend (la anterior pasó por el chat), ponla en `/srv/web-boris/.env.production` y ejecuta `docker compose --env-file .env.production -f docker-compose.prod.yml up -d app`. Es una variable de ejecución: no hace falta reconstruir.
 
 ## Actualizar
 
