@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // La imagen Docker de producción compila con NEXT_OUTPUT=standalone (servidor mínimo sin node_modules completos);
+  // en local, `next start` sigue igual.
+  output: process.env.NEXT_OUTPUT === 'standalone' ? 'standalone' : undefined,
   typedRoutes: true,
   images: {
     remotePatterns: [

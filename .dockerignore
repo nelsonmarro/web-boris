@@ -1,0 +1,14 @@
+.git
+.next
+node_modules
+.env*
+!.env.example
+.superpowers
+.remember
+docs
+tests
+exa-results
+conductor
+coverage
+*.log
+tsconfig.tsbuildinfo
