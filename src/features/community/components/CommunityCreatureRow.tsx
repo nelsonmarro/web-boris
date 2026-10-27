@@ -30,8 +30,8 @@ export function CommunityCreatureRow({ creature }: { creature: WikiArticleSummar
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate font-display text-xl font-black uppercase italic leading-tight tracking-tight text-white">{title}</p>
-        {meta && <p className="mt-0.5 truncate text-[12px] font-semibold text-white/55">{meta}</p>}
+        <p className="line-clamp-2 break-words font-display text-xl font-black uppercase italic leading-tight tracking-tight text-white">{title}</p>
+        {meta && <p className="mt-0.5 line-clamp-2 text-[12px] font-semibold text-white/55 sm:truncate">{meta}</p>}
       </div>
       <span className="shrink-0 pr-2 text-[12px] font-bold uppercase tracking-wider text-primary">
         Ver ficha <span aria-hidden="true">›</span>

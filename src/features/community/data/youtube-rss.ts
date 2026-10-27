@@ -1,5 +1,6 @@
 import { YOUTUBE_CHANNEL_ID } from '@/features/marketing/config/social';
 import { memoizeFailure } from '../lib/failure-memo';
+import { describeError } from '../lib/describe-error';
 import { abortable, HttpError, isTransientFetchError, withRetry } from '../lib/retry';
 import { parseYoutubeFeed, type FeedVideo } from '../lib/youtube-feed';
 
@@ -47,4 +48,13 @@ async function fetchFeed(): Promise<FeedVideo[]> {
  * recuerda `FAILURE_TTL_MS` en el módulo: durante el build y el ISR, las páginas que lo piden después reciben el
  * mismo error al instante, sin repetir los intentos.
  */
-export const fetchChannelFeed: () => Promise<FeedVideo[]> = memoizeFailure(fetchFeed, FAILURE_TTL_MS);
+export const fetchChannelFeed: () => Promise<FeedVideo[]> = memoizeFailure(async () => {
+  try {
+    return await fetchFeed();
+  } catch (error) {
+    // Único sitio donde se registra el fallo: `memoizeFailure` solo ejecuta esto una vez por ventana, y los
+    // consumidores (`getLatestVideo`, `getChannelVideos`) no vuelven a registrarlo. Una línea, sin traza.
+    console.warn(`[youtube-rss] feed no disponible (${describeError(error)}); respaldo durante ${FAILURE_TTL_MS / 1000} s`);
+    throw error;
+  }
+}, FAILURE_TTL_MS);

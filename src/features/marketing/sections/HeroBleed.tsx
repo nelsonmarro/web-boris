@@ -89,6 +89,8 @@ export async function HeroBleed() {
               imagePosition={u.imagePosition}
               pending={u.comingSoon}
               headingLevel={2}
+              // Primera fila de universos: está en el primer pliegue y puede ser el LCP.
+              eager
               sizes="(min-width: 768px) 25vw, 50vw"
             />
           ))}

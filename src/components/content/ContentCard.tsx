@@ -81,6 +81,8 @@ export function ContentCard({
             sizes={sizes}
             fetchPriority={eager ? 'high' : undefined}
             loading={eager ? 'eager' : undefined}
+            // Las miniaturas de YouTube ya vienen optimizadas: pasarlas por /_next/image no gana nada y depende del DNS del servidor.
+            unoptimized={cover.startsWith('https://i.ytimg.com/')}
             className={cn('object-cover', pending && 'opacity-70 grayscale')}
             style={{ objectPosition: imagePosition ?? '50% 50%' }}
           />

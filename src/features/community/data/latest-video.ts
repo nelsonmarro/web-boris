@@ -13,8 +13,8 @@ export async function getLatestVideo(): Promise<LatestVideo> {
   try {
     const [latest] = await fetchChannelFeed();
     return { ...latest, source: 'rss' };
-  } catch (error) {
-    console.error('[comunidad] feed de YouTube no disponible, uso el respaldo:', error);
+  } catch {
+    // El fallo ya lo registra `youtube-rss.ts`, una vez por ventana de memoización.
   }
   const fallback = FEATURED_VIDEOS[0];
   return { id: fallback.id, title: fallback.title, source: 'fallback' };

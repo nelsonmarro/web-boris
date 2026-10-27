@@ -9,9 +9,6 @@ import { fetchChannelFeed } from './youtube-rss';
 
 export type ChannelVideo = FeedVideo;
 
-// El RSS de YouTube puede estar caído de forma sostenida: se avisa una vez por proceso, no en cada ficha.
-let feedWarned = false;
-
 /**
  * Vídeos del canal: los destacados de Boris más los del RSS (caché 1 h), sin repetir ids.
  * Si el RSS falla, solo los destacados.
@@ -20,11 +17,8 @@ export const getChannelVideos = cache(async (): Promise<ChannelVideo[]> => {
   let feed: FeedVideo[] = [];
   try {
     feed = await fetchChannelFeed();
-  } catch (error) {
-    if (!feedWarned) {
-      feedWarned = true;
-      console.warn('[aparece-en] feed de YouTube no disponible, solo los vídeos destacados:', error);
-    }
+  } catch {
+    // El fallo ya lo registra `youtube-rss.ts`, una vez por ventana de memoización.
   }
   return mergeChannelVideos(FEATURED_VIDEOS, feed);
 });

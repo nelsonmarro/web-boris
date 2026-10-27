@@ -54,6 +54,8 @@ function Portrait({ fighter, pending = false }: { fighter: PollFighter; pending?
           alt=""
           fill
           sizes="(min-width: 768px) 300px, 40vw"
+          // Los retratos están en el primer pliegue de /comunidad y uno es el LCP.
+          loading="eager"
           className="object-cover"
           style={{ objectPosition: fighter.imagePosition ?? '50% 50%' }}
         />
@@ -72,7 +74,7 @@ export function PollTile({
   fighters: Record<string, PollFighter>;
 }) {
   const queryClient = useQueryClient();
-  const { data: state, isError, fetchStatus } = useQuery({ queryKey: QUERY_KEY, queryFn: fetchPollState, staleTime: 30_000, retry: 1 });
+  const { data: state, isError, fetchStatus, refetch } = useQuery({ queryKey: QUERY_KEY, queryFn: fetchPollState, staleTime: 30_000, retry: 1 });
   const [message, setMessage] = React.useState<string | null>(null);
   // Encuesta para la que se alcanzó el límite: si la semana cambia, la nueva no hereda los resultados.
   const [limitFor, setLimitFor] = React.useState<string | null>(null);
@@ -179,7 +181,18 @@ export function PollTile({
           </div>
         )}
 
-        <p className="mt-3 min-h-5 text-sm text-white/70">{status}</p>
+        <p className="mt-3 min-h-5 text-sm text-white/70">
+          {status}
+          {(unavailable || paused) && (
+            <button
+              type="button"
+              onClick={() => void refetch()}
+              className="ml-2 inline-flex min-h-11 items-center rounded-xl px-2 font-bold text-primary underline-offset-2 outline-none hover:underline focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              Reintentar
+            </button>
+          )}
+        </p>
       </div>
 
       {declassify ? (
