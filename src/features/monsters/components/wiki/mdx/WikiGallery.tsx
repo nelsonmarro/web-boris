@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Image from 'next/image';
+import { IMAGE_QUALITY } from '@/utils/image';
 import { Maximize2, ImageOff } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { ViewerLink } from '@/features/monsters/components/wiki/mdx/ArticleImages';
@@ -74,6 +75,7 @@ export function WikiImage({
         )}
       >
         <Image
+          quality={IMAGE_QUALITY}
           src={src}
           alt={alt}
           fill

@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
+import { IMAGE_QUALITY } from "@/utils/image";
 import Link from "next/link";
 import type { Route } from "next";
 import { ChevronDown } from "lucide-react";
@@ -62,9 +63,9 @@ export async function HeroAbisal() {
               src={hero.image}
               alt=""
               fill
-              // En lg+ la imagen ocupa el 72 % derecho; con `100vw` el navegador pedía 1920 px (300 kB).
+              // En lg+ la imagen ocupa el 72 % derecho; con `100vw` el navegador pedía 1920 px.
               sizes="(min-width: 1024px) 72vw, 100vw"
-              quality={60}
+              quality={IMAGE_QUALITY}
               fetchPriority="high"
               loading="eager"
               className="object-cover"

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Image from 'next/image';
+import { IMAGE_QUALITY } from '@/utils/image';
 
 // Named imports
 import { AbyssalAlert } from '@/features/monsters/components/wiki/mdx/AbyssalAlert';
@@ -57,7 +58,8 @@ export function useMDXComponents(components: MDXComponents = {}): MDXComponents 
     img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
       <span className="relative block aspect-video w-full my-12 rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#0a2339]">
         {props.src && (
-          <Image 
+          <Image
+            quality={IMAGE_QUALITY}
             src={props.src as string} 
             alt={props.alt || ""} 
             fill 

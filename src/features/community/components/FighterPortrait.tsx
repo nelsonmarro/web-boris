@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { IMAGE_QUALITY } from '@/utils/image';
 import { cn } from '@/utils/cn';
 import { CategoryPlaceholder, coverOf } from '@/components/content/CategoryPlaceholder';
 
@@ -42,6 +43,7 @@ export function FighterPortrait({
     >
       {cover ? (
         <Image
+          quality={IMAGE_QUALITY}
           src={cover}
           alt=""
           fill

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Image from 'next/image';
+import { IMAGE_QUALITY } from '@/utils/image';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Dialog, DialogClose, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/utils/cn';
@@ -204,6 +205,7 @@ function ViewerBody({
             <figure className="my-auto flex w-full max-w-6xl flex-col items-center">
               <div className="relative h-[70svh] w-full">
                 <Image
+                  quality={IMAGE_QUALITY}
                   src={image.src}
                   alt={image.alt}
                   fill

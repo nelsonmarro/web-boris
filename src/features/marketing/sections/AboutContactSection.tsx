@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { IMAGE_QUALITY } from '@/utils/image';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { PendingLabel, Section } from '@/components/content';
@@ -25,6 +26,7 @@ export function AboutContactSection() {
         <div className="space-y-6">
           <div className="flex items-center gap-4">
             <Image
+              quality={IMAGE_QUALITY}
               src="/assets/Branding/Logo2.webp"
               alt=""
               width={64}

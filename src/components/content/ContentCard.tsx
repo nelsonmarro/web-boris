@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import Image from 'next/image';
+import { IMAGE_QUALITY } from '@/utils/image';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { cn } from '@/utils/cn';
@@ -75,6 +76,7 @@ export function ContentCard({
       <div className={cn('relative w-full overflow-hidden bg-[#00122E]', aspect === 'portrait' ? 'aspect-[4/5]' : 'aspect-video')}>
         {cover ? (
           <Image
+            quality={IMAGE_QUALITY}
             src={cover}
             alt=""
             fill

@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { IMAGE_QUALITY } from '@/utils/image';
 import Link from 'next/link';
 import type { Route } from 'next';
 import type { WikiArticleSummary } from '@/core/types/wiki';
@@ -18,6 +19,7 @@ export function CommunityCreatureRow({ creature }: { creature: WikiArticleSummar
       <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-[#00122E]">
         {cover ? (
           <Image
+            quality={IMAGE_QUALITY}
             src={cover}
             alt=""
             fill

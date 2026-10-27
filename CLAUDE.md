@@ -101,5 +101,6 @@ Otros campos opcionales del frontmatter: `aliases` (apodos canónicos con los qu
 - Paleta: primario `#FF7300` (naranja), fondo `#00122E`, gradientes `#00203F`→`#00162D`, cian `#0064A0`, texto blanco/70%.
 - Tarjetas: `ContentCard`; secciones: `Section`; datos: `FactsLine` (`src/components/content/`). Una sección = un propósito (h2 + contenido + como mucho "Ver todo"); sin eyebrows por tarjeta ni por sección; iconos solo funcionales. Superficie `crystal-surface` (es `position: relative` y su `::after` dibuja el hilo de brillo superior: no usar `after:*` en un elemento con esa clase, y un hijo `absolute` se coloca respecto a ella); `.glass-liquid` solo en navbar, footer y botón secundario; superficie sólida `#061a2e` bajo texto largo.
 - Headers MDX (`h2`/`h3`) deben mantener `clear-both` (evita solaparse con `WikiImage` flotados).
+- Las ilustraciones (`<Image>` de arte) usan `quality={IMAGE_QUALITY}` (85, `src/utils/image.ts`), listado en `images.qualities` de `next.config.ts`; las miniaturas de vídeo son `sddefault` (640×480; la caja 16:9 recorta las barras).
 - Las imágenes llenan su contenedor edge-to-edge, sin padding interno.
 - Assets físicos en `public/assets/` usan guiones bajos, nunca espacios (`The_Bloop`, `El_Gran_Maja`, …), organizados por entidad del lore.
