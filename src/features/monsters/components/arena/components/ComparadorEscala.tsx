@@ -90,7 +90,7 @@ export function ComparadorEscala({ fighters }: ComparadorEscalaProps) {
       <ul className="flex flex-wrap gap-2">
         {rows.map((r) => (
           <li key={r.slug}>
-            <Link href={`/wiki/${r.slug}`} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white/70 transition-colors hover:border-primary/40 hover:text-primary">
+            <Link href={`/wiki/${r.slug}`} className="inline-flex min-h-11 items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white/70 transition-colors hover:border-primary/40 hover:text-primary">
               {r.label}
             </Link>
           </li>

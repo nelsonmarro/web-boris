@@ -183,7 +183,7 @@ export function PollTile({
 
         <p className="mt-3 min-h-5 text-sm text-white/70">
           {status}
-          {(unavailable || paused) && (
+          {(isError || paused) && (
             <button
               type="button"
               onClick={() => void refetch()}

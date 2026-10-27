@@ -54,12 +54,15 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
   );
 
   // Un enlace no canónico se reescribe una sola vez con lo que se muestra.
-  const rewritten = React.useRef(false);
+  // Se recuerda la query ya reescrita (no un booleano): una navegación del cliente a otra query no canónica también se normaliza.
+  const rewritten = React.useRef<string | null>(null);
   React.useEffect(() => {
-    if (!needsRewrite || rewritten.current) return;
-    rewritten.current = true;
+    if (!needsRewrite) return;
+    const key = `${rawA ?? ''}|${rawB ?? ''}`;
+    if (rewritten.current === key) return;
+    rewritten.current = key;
     writePair(slugA, slugB);
-  }, [needsRewrite, slugA, slugB, writePair]);
+  }, [needsRewrite, rawA, rawB, slugA, slugB, writePair]);
 
   /** Al elegir en un lado el combatiente del otro, se intercambian (B pasa a ser el A anterior) y se avisa. */
   const pickA = (v: string) => {
@@ -151,14 +154,14 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
             type="button"
             variant="outline"
             onClick={shuffle}
-            className="glass-liquid h-12 flex-1 shrink-0 whitespace-nowrap rounded-xl border-white/10 px-5 text-[11px] font-bold uppercase tracking-wider text-white lg:flex-none"
+            className="glass-liquid h-12 min-h-12 flex-1 shrink-0 whitespace-nowrap rounded-xl border-white/10 px-5 text-[11px] font-bold uppercase tracking-wider text-white lg:flex-none"
           >
             <Shuffle className="mr-2 h-4 w-4 text-primary" /> Aleatorio
           </Button>
           <Button
             type="button"
             onClick={shareMatchup}
-            className="h-12 w-auto flex-1 shrink-0 whitespace-nowrap rounded-xl bg-primary px-5 text-[11px] font-bold uppercase tracking-wider text-[#00122E] hover:bg-primary/90 lg:flex-none"
+            className="h-12 min-h-12 w-auto flex-1 shrink-0 whitespace-nowrap rounded-xl bg-primary px-5 text-[11px] font-bold uppercase tracking-wider text-[#00122E] hover:bg-primary/90 lg:flex-none"
           >
             <Share2 className="mr-2 h-4 w-4" /> Compartir<span className="lg:sr-only">&nbsp;enfrentamiento</span>
           </Button>
@@ -192,16 +195,10 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
           />
         </div>
         <p className="mt-4 text-sm text-white/70">
-          {slugA === slugB ? (
-            <>Un coloso contra sí mismo: empate técnico. Elige dos combatientes distintos.</>
-          ) : (
-            <>
-              <span className="font-bold text-white">{favorite.frontmatter.title}</span> parte como favorito. Factor decisivo:{' '}
-              <span className="font-bold text-primary">{matchup.decisiveAxis.label}</span> (
-              {matchup.decisiveAxis.delta > 0 ? '+' : ''}{Math.round(matchup.decisiveAxis.delta)} a favor de{' '}
-              {matchup.decisiveAxis.delta >= 0 ? a.frontmatter.title : b.frontmatter.title}).
-            </>
-          )}
+          <span className="font-bold text-white">{favorite.frontmatter.title}</span> parte como favorito. Factor decisivo:{' '}
+          <span className="font-bold text-primary">{matchup.decisiveAxis.label}</span> (
+          {matchup.decisiveAxis.delta > 0 ? '+' : ''}{Math.round(matchup.decisiveAxis.delta)} a favor de{' '}
+          {matchup.decisiveAxis.delta >= 0 ? a.frontmatter.title : b.frontmatter.title}).
         </p>
       </div>
 
