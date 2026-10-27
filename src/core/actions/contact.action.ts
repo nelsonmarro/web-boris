@@ -2,6 +2,9 @@
 
 import { Resend } from 'resend';
 import { z } from 'zod';
+import { headers } from 'next/headers';
+import { clientIp, networkOf } from '@/features/community/lib/voter';
+import { allowContact, hasUsableResendKey, type ContactHits } from '@/features/marketing/lib/contact-limit';
 
 const contactEmail = process.env.CONTACT_EMAIL || 'borisaoblois343@gmail.com';
 
@@ -31,12 +34,8 @@ const ContactSchema = z.object({
     .max(5000, 'El mensaje no puede superar los 5000 caracteres.'),
 });
 
-// Una clave ausente o de relleno (p. ej. en local) no debe lanzar al importar el módulo:
-// el cliente de Resend se crea al enviar y, sin clave válida, se responde con un error amable.
-function hasUsableResendKey(key: string | undefined): key is string {
-  if (!key) return false;
-  return /^re_\S+$/.test(key) && !/x{4,}|placeholder|changeme|your|tu_/i.test(key);
-}
+// Envíos recientes por red, en memoria del proceso (basta con un solo contenedor).
+const contactHits: ContactHits = new Map();
 
 // Escapa los valores del usuario antes de interpolarlos en el HTML del correo.
 function escapeHtml(value: string): string {
@@ -50,6 +49,16 @@ function escapeHtml(value: string): string {
 
 export async function sendContactEmail(formData: FormData) {
   try {
+    // Honeypot: un campo oculto que una persona no rellena. Si llega con texto, se finge éxito sin enviar.
+    const trap = formData.get('website');
+    if (typeof trap === 'string' && trap.trim() !== '') return { success: true };
+
+    const h = await headers();
+    const network = networkOf(clientIp((name) => h.get(name)));
+    if (!allowContact(contactHits, network, Date.now())) {
+      return { error: 'Has enviado varios mensajes seguidos. Inténtalo de nuevo en un rato.' };
+    }
+
     const rawData = {
       name: formData.get('name'),
       email: formData.get('email'),

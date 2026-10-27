@@ -35,6 +35,8 @@ const contactSchema = z.object({
     .string()
     .min(10, 'El mensaje debe tener al menos 10 caracteres.')
     .max(MAX.message, `El mensaje no puede superar los ${MAX.message} caracteres.`),
+  // Honeypot: oculto para personas; un robot lo rellena.
+  website: z.string().optional(),
 });
 
 type ContactFormValues = z.infer<typeof contactSchema>;
@@ -51,6 +53,7 @@ export function ContactForm() {
       email: '',
       subject: '',
       message: '',
+      website: '',
     },
   });
   const { isSubmitting } = form.formState;
@@ -59,7 +62,7 @@ export function ContactForm() {
     // Guarda contra el doble clic: mientras envía, `handleSubmit` ya no vuelve a entrar,
     // pero el botón desactivado es la señal visible.
     const formData = new FormData();
-    for (const [key, value] of Object.entries(data)) formData.append(key, value);
+    for (const [key, value] of Object.entries(data)) formData.append(key, value ?? '');
 
     try {
       const result = await sendContactEmail(formData);
@@ -190,6 +193,18 @@ export function ContactForm() {
             </FormItem>
           )}
         />
+
+        {/* Honeypot: fuera de pantalla, sin foco ni autocompletado y oculto a lectores de pantalla. */}
+        <div aria-hidden="true" className="pointer-events-none absolute -left-[9999px] h-0 w-0 overflow-hidden">
+          <label htmlFor="contact-website">No rellenar</label>
+          <input
+            id="contact-website"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            {...form.register('website')}
+          />
+        </div>
 
         <Button
           type="submit"

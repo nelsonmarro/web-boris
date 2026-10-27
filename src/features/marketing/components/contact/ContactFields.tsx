@@ -25,7 +25,7 @@ export function ContactField({ label, htmlFor, icon: Icon, error, errorId, child
         {children}
       </div>
       {error && (
-        <p id={errorId} role="alert" className="text-red-400 text-[11px] font-bold italic pl-1 animate-in fade-in slide-in-from-top-1">
+        <p id={errorId} className="text-red-400 text-[11px] font-bold italic pl-1 animate-in fade-in slide-in-from-top-1">
           {error}
         </p>
       )}
@@ -45,7 +45,7 @@ export function ContactTextAreaField({ label, htmlFor, icon: Icon, error, errorI
         {children}
       </div>
       {error && (
-        <p id={errorId} role="alert" className="text-red-400 text-[11px] font-bold italic pl-1 animate-in fade-in slide-in-from-top-1">
+        <p id={errorId} className="text-red-400 text-[11px] font-bold italic pl-1 animate-in fade-in slide-in-from-top-1">
           {error}
         </p>
       )}
