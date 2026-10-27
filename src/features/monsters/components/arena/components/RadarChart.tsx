@@ -17,7 +17,7 @@ interface RadarChartProps {
 /** Radar SVG de 5 ejes para comparar dos combatientes. */
 export function RadarChart({ labels, series, size = 280 }: RadarChartProps) {
   const center = size / 2;
-  const radius = size * 0.36;
+  const radius = size * 0.32;
   const n = labels.length;
   const angle = (i: number) => -Math.PI / 2 + (i * 2 * Math.PI) / n;
   const point = (i: number, r: number) => [center + r * Math.cos(angle(i)), center + r * Math.sin(angle(i))] as const;
@@ -51,7 +51,7 @@ export function RadarChart({ labels, series, size = 280 }: RadarChartProps) {
         />
       ))}
       {labels.map((label, i) => {
-        const [x, y] = point(i, radius + 18);
+        const [x, y] = point(i, radius + 22);
         return (
           <text
             key={label}
@@ -59,10 +59,10 @@ export function RadarChart({ labels, series, size = 280 }: RadarChartProps) {
             y={y}
             textAnchor="middle"
             dominantBaseline="middle"
-            fill="rgba(255,255,255,0.55)"
-            fontSize={10}
+            fill="rgba(255,255,255,0.8)"
+            fontSize={13}
             fontWeight={700}
-            style={{ letterSpacing: '0.12em', textTransform: 'uppercase' }}
+            style={{ letterSpacing: '0.04em', textTransform: 'uppercase' }}
           >
             {label}
           </text>

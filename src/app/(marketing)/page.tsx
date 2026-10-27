@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+import { pageMetadata, SITE_NAME } from '@/lib/seo';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { HeroBleed } from '@/features/marketing/sections/HeroBleed';
@@ -8,6 +10,12 @@ import { AboutContactSection } from '@/features/marketing/sections/AboutContactS
 
 /** Criatura, duelo de la semana y último vídeo cambian sin rebuild. */
 export const revalidate = 3600;
+
+export const metadata: Metadata = pageMetadata({
+  title: SITE_NAME,
+  description: 'Explora la inmensidad de mis universos y sus historias',
+  path: '/',
+});
 
 export default function Home() {
   return (

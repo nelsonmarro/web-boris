@@ -13,57 +13,61 @@ const NAV_LINKS = [
   { name: "Contacto", href: "/#contacto" },
 ];
 
-export function NavLinks() {
+interface NavLinksProps {
+  /** Se llama tras pulsar cualquier enlace (el menú móvil lo usa para cerrar el panel). */
+  onNavigate?: () => void;
+  /** Ningún enlace aparece activo (la 404: el servidor no conoce la URL pedida). */
+  noActive?: boolean;
+}
+
+export function NavLinks({ onNavigate, noActive = false }: NavLinksProps = {}) {
   const pathname = usePathname();
   const [activeHash, setActiveHash] = React.useState("");
 
+  // Solo depende de la ruta: si dependiera de activeHash, cada cambio de sección
+  // relanzaría el efecto y restauraría el hash viejo (A1-5) y acumularía listeners (A6-10).
   React.useEffect(() => {
-    // Initial check
-    setActiveHash(window.location.hash);
+    const syncHash = () => setActiveHash(window.location.hash);
+    syncHash();
 
     const handleScroll = () => {
-      // If we are not on home page, only /wiki can be active (handled by pathname)
-      if (pathname !== "/") {
-        setActiveHash("");
-        return;
-      }
+      // Fuera de la portada solo la ruta decide qué enlace está activo.
+      if (pathname !== "/") return;
 
-      const sections = ["universos", "contacto"];
-      let currentSection = "";
-
-      // Check if we are at the very top
+      // Arriba del todo: «Inicio».
       if (window.scrollY < 100) {
-        setActiveHash("");
+        setActiveHash((prev) => (prev === "" ? prev : ""));
         return;
       }
 
-      for (const id of sections) {
+      // La última sección cuyo borde superior ya pasó la línea de lectura.
+      // No se exige que su borde inferior siga a la vista: al final de la página
+      // «contacto» queda por encima de la línea y debe seguir activa.
+      let currentSection = "";
+      for (const id of ["universos", "contacto"]) {
         const el = document.getElementById(id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          // If section is in the upper half of the viewport
-          if (rect.top <= 200 && rect.bottom >= 200) {
-            currentSection = `#${id}`;
-            break;
-          }
+        if (el && el.getBoundingClientRect().top <= 200) {
+          currentSection = `#${id}`;
         }
       }
-
-      if (currentSection !== activeHash) {
-        setActiveHash(currentSection);
-      }
+      setActiveHash((prev) => (prev === currentSection ? prev : currentSection));
     };
 
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("hashchange", () => setActiveHash(window.location.hash));
+    window.addEventListener("hashchange", syncHash);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("hashchange", () => setActiveHash(window.location.hash));
+      window.removeEventListener("hashchange", syncHash);
     };
-  }, [pathname, activeHash]);
+  }, [pathname]);
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // El scroll programático de abajo cancela la navegación que desmontaba el panel,
+    // así que el cierre del menú móvil se avisa siempre aquí (A1-2).
+    onNavigate?.();
+    if (href === "/" && pathname === "/") setActiveHash("");
     if (href.startsWith("/#")) {
       const id = href.split("#")[1];
       
@@ -90,10 +94,11 @@ export function NavLinks() {
   };
 
   const isLinkActive = (href: string) => {
+    if (noActive) return false;
     if (href === "/") return pathname === "/" && activeHash === "";
     if (href === "/wiki") return pathname.startsWith("/wiki");
     if (href.startsWith("/#")) {
-      return activeHash === href.substring(1);
+      return pathname === "/" && activeHash === href.substring(1);
     }
     return pathname === href;
   };

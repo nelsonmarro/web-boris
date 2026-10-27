@@ -80,7 +80,6 @@ export function WikiFilters({
                 href={hrefForTipo(id) as Route}
                 prefetch={false}
                 aria-current={active ? 'page' : undefined}
-                aria-disabled={empty ? 'true' : undefined}
                 onClick={(e) => {
                   if (!isPlainClick(e)) return;
                   e.preventDefault();

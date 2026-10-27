@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Geist_Mono, Unbounded, Barlow_Condensed } from 'next/font/google';
 import './globals.css';
+import { DEFAULT_OG_IMAGES, SITE_NAME, SITE_URL } from '@/lib/seo';
 
 const inter = Inter({
   variable: '--font-inter',
@@ -28,11 +29,19 @@ const barlow = Barlow_Condensed({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3131",
-  ),
-  title: "Universos de BorisaoBlois",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_NAME,
   description: "Explora la inmensidad de mis universos y sus historias",
+  // Valores por defecto; cada página los sustituye con `pageMetadata` (un `openGraph` de página reemplaza al de aquí).
+  openGraph: {
+    type: 'website',
+    siteName: SITE_NAME,
+    locale: 'es_ES',
+    title: SITE_NAME,
+    description: "Explora la inmensidad de mis universos y sus historias",
+    images: DEFAULT_OG_IMAGES,
+  },
+  twitter: { card: 'summary_large_image', images: DEFAULT_OG_IMAGES },
 };
 
 import { Providers } from './providers';

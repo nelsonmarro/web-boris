@@ -19,7 +19,7 @@ interface WikiSearchProps {
 export function WikiSearch({
   value,
   onSearch,
-  placeholder = 'Buscar criaturas, personajes, especies…',
+  placeholder = 'Buscar en el archivo…',
   className,
   inputRef: externalRef,
 }: WikiSearchProps) {
@@ -44,7 +44,7 @@ export function WikiSearch({
         value={value}
         onChange={(e) => onSearch(e.target.value)}
         placeholder={placeholder}
-        aria-label={placeholder}
+        aria-label="Buscar criaturas, personajes, especies"
         className="h-14 rounded-xl border-white/15 bg-[#061a2e] pl-14 pr-14 text-base font-medium text-white shadow-none backdrop-blur-none placeholder:text-white/60 focus-visible:border-primary/60 focus-visible:bg-[#061a2e] focus-visible:ring-4 focus-visible:ring-primary/20 focus-visible:shadow-[0_0_30px_rgba(255,115,0,0.12)] [&::-webkit-search-cancel-button]:hidden"
       />
       {value && (

@@ -12,6 +12,7 @@ import { WikiArticleDisclosures } from '@/features/monsters/components/wiki/arti
 import { WikiFrontmatter } from '@/core/types/wiki';
 import type { EntityIndex } from '@/core/search/entity-index';
 import { sectionCompleteness } from '@/core/search/section-completeness';
+import { isIndexCategory } from '@/core/search/catalog';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { extractHeadings } from '@/utils/headings';
 
@@ -40,7 +41,8 @@ export function WikiArticleContent({ frontmatter, content, slug, entityIndex }: 
   const headings = extractHeadings(content);
   const sealed = frontmatter.status === 'proximamente';
   // El medidor es solo para las fichas abiertas con apartados pendientes; las selladas llevan el expediente.
-  const completeness = sealed ? null : sectionCompleteness(content);
+  // El medidor es de fichas: un índice (Directorio/Categoría) con un apartado pendiente no es un expediente a medias.
+  const completeness = sealed || isIndexCategory(frontmatter.category) ? null : sectionCompleteness(content);
 
   // La portada va arriba (cabecera): la infobox no la repite.
   const infoboxFull = showRail ? (

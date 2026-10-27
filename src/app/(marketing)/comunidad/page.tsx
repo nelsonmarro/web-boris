@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { getContentRepository } from '@/core/content';
@@ -17,11 +18,11 @@ export const revalidate = 3600;
 
 const INTRO = 'Cada semana: una criatura, una votación y lo último de BorisaoBlois.';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Comunidad | Universos de BorisaoBlois',
   description: INTRO,
-  openGraph: { title: 'Comunidad | Universos de BorisaoBlois', description: INTRO, url: '/comunidad' },
-};
+  path: '/comunidad',
+});
 
 export default async function ComunidadPage() {
   const repo = getContentRepository();
@@ -31,11 +32,11 @@ export default async function ComunidadPage() {
     repo.getNews(5),
     getLatestVideo(),
   ]);
-  const { poll, fighters } = weekly;
-  // Los luchadores (con stats) y, en una votación «desclasificar», las dos fichas selladas, que no tienen stats.
-  const pollSides = poll ? articles.filter((a) => a.slug === poll.a || a.slug === poll.b) : [];
+  const { poll } = weekly;
+  // Todas las fichas, no solo las de la encuesta de este render: el lunes la API devuelve la encuesta nueva y la página ISR
+  // aún es la vieja; con el mapa completo la encuesta nueva sale con título y retrato en lugar del slug en bruto.
   const fighterCards: Record<string, PollFighter> = Object.fromEntries(
-    [...fighters, ...pollSides].map((a) => [
+    articles.map((a) => [
       a.slug,
       {
         slug: a.slug,

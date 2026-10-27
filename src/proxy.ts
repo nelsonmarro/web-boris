@@ -18,7 +18,8 @@ export default auth((req: NextRequest & { auth: any }) => {
   return NextResponse.next();
 });
 
-// Config matcher to exclude internal routes
+// El proxy solo corre donde protege algo (D3): así las páginas públicas no reciben cookies de Auth.js
+// ni chocan con la caché ISR. `/api/auth` queda fuera: lo atiende su propio route handler.
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/admin/:path*", "/settings/:path*"],
 };

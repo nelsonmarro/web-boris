@@ -9,7 +9,8 @@ import {
   SidebarMenuButton, 
   SidebarMenuSub, 
   SidebarMenuSubButton, 
-  SidebarMenuSubItem 
+  SidebarMenuSubItem,
+  useSidebar
 } from "@/components/ui/sidebar";
 import { 
   Collapsible, 
@@ -19,8 +20,11 @@ import {
 import { NavItem } from "@/features/monsters/config/wiki-navigation";
 import { cn } from "@/utils/cn";
 
-export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
+export function SidebarCollapsibleItem({ item, groupTitle }: { item: NavItem; groupTitle?: string }) {
   const pathname = usePathname();
+  const { state, isMobile, setOpen } = useSidebar();
+  // Nombre único: dos fichas se llaman «Historia» (una por universo) y en el rail de iconos serían indistinguibles.
+  const fullName = groupTitle ? `${item.title} · ${groupTitle}` : item.title;
   const isActive = pathname === item.url;
   
   // Check if any child is active to auto-expand (optional, but good UX)
@@ -40,12 +44,12 @@ export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
     return (
       <SidebarMenuItem>
         <SidebarMenuButton 
-          tooltip={item.title} 
+          tooltip={fullName} 
           className={cn(
             "min-h-[36px] h-auto py-2 hover:bg-white/5 transition-all group rounded-md mb-0.5 flex items-center px-4 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:mb-1",
             isActive && "bg-primary/10 text-primary hover:bg-primary/15"
           )}
-          render={<Link href={item.url as React.ComponentProps<typeof Link>['href']} aria-label={`Ir a ${item.title}`} />}
+          render={<Link href={item.url as React.ComponentProps<typeof Link>['href']} aria-label={`Ir a ${fullName}`} title={fullName} />}
         >
           {item.icon && (
             <item.icon className={cn(
@@ -68,7 +72,15 @@ export function SidebarCollapsibleItem({ item }: { item: NavItem }) {
   return (
     <Collapsible 
       open={isOpen}
-      onOpenChange={setIsOpen}
+      onOpenChange={(open) => {
+        // Con el menú plegado a iconos el submenú no cabe: pulsar el grupo despliega el menú y abre ese grupo.
+        if (state === "collapsed" && !isMobile) {
+          setOpen(true);
+          setIsOpen(true);
+          return;
+        }
+        setIsOpen(open);
+      }}
       render={<SidebarMenuItem />} 
       className="group/collapsible mb-0.5"
     >
@@ -114,7 +126,7 @@ function SidebarSubItem({ item }: { item: NavItem }) {
             "hover:text-primary transition-all min-h-[32px] h-auto py-1.5 rounded-md pl-11 flex items-center bg-transparent border-none translate-x-0 relative group/sub",
             isActive && "bg-primary/5 text-primary"
           )} 
-          render={<Link href={item.url as React.ComponentProps<typeof Link>['href']} />}
+          render={<Link href={item.url as React.ComponentProps<typeof Link>['href']} title={item.title} />}
         >
           <span className={cn(
             "text-[13px] font-semibold transition-colors",
@@ -155,7 +167,7 @@ function SidebarSubItem({ item }: { item: NavItem }) {
                     "hover:text-primary transition-all min-h-[28px] h-auto py-1 rounded-sm pl-16 flex items-center bg-transparent border-none translate-x-0 relative group/deep",
                     isDeepActive && "bg-primary/5 text-primary"
                   )} 
-                  render={<Link href={deepItem.url as React.ComponentProps<typeof Link>['href']} />}
+                  render={<Link href={deepItem.url as React.ComponentProps<typeof Link>['href']} title={deepItem.title} />}
                 >
                   <span className={cn(
                     "text-[13px] font-semibold transition-colors",

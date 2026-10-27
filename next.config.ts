@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   // en local, `next start` sigue igual.
   output: process.env.NEXT_OUTPUT === 'standalone' ? 'standalone' : undefined,
   typedRoutes: true,
+  // No anunciar el framework en `X-Powered-By`.
+  poweredByHeader: false,
   images: {
     remotePatterns: [
       {
@@ -17,6 +19,21 @@ const nextConfig: NextConfig = {
         pathname: '/vi/**',
       },
     ],
+  },
+  // Cabeceras mínimas que no rompen YouTube ni las imágenes. Sin CSP a propósito: con los scripts en línea
+  // de Next haría falta un nonce, y eso volvería dinámicas las páginas estáticas.
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()' },
+        ],
+      },
+    ];
   },
   async redirects() {
     return [

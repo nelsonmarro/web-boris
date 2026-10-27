@@ -11,38 +11,37 @@ import { ArticleStatCard } from '@/features/monsters/components/article/componen
 import { computeMatchup, radarValues, type Fighter } from '@/features/monsters/lib/arena';
 import { FighterCard } from './FighterCard';
 import { RadarChart } from './RadarChart';
+import { resolvePair } from '../resolve-pair';
 
 interface ArenaSimulatorProps {
   fighters: Fighter[];
 }
 
 const triggerClass =
-  'h-12 w-full rounded-xl border-white/15 bg-[#061a2e] px-4 text-sm font-semibold text-white focus-visible:ring-4 focus-visible:ring-primary/20';
+  'h-12 data-[size=default]:h-12 w-full rounded-xl border-white/15 bg-[#061a2e] px-4 text-sm font-semibold text-white focus-visible:ring-4 focus-visible:ring-primary/20';
 const contentClass = 'bg-[#061a2e] border-white/10 text-white min-w-[240px]';
 
-/** Slugs antiguos que aún circulan en enlaces compartidos (?a=/?b=) → slug canónico actual. */
-const LEGACY_SLUGS: Record<string, string> = { 'slowdown-criyote': 'slowdown-criyonte' };
 
 export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
   // La URL es la fuente de verdad (?a=<slug>&b=<slug>): un enfrentamiento se comparte copiando el enlace.
   // Valores ausentes o inválidos caen en los dos primeros combatientes.
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const slugs = React.useMemo(() => new Set(fighters.map((f) => f.slug)), [fighters]);
+  const slugList = React.useMemo(() => fighters.map((f) => f.slug), [fighters]);
   const rawA = searchParams.get('a');
   const rawB = searchParams.get('b');
-  const paramA = rawA ? (LEGACY_SLUGS[rawA] ?? rawA) : rawA;
-  const paramB = rawB ? (LEGACY_SLUGS[rawB] ?? rawB) : rawB;
-  const hasLegacyParam = paramA !== rawA || paramB !== rawB;
-  const slugA = paramA && slugs.has(paramA) ? paramA : (fighters[0]?.slug ?? '');
-  const defaultB = paramB && slugs.has(paramB) ? paramB : (fighters[1]?.slug ?? fighters[0]?.slug ?? '');
-  // Con un solo parámetro (?a=bogbo) B puede coincidir con A: se toma el primer combatiente distinto.
-  const slugB =
-    defaultB === slugA ? (fighters.find((f) => f.slug !== slugA)?.slug ?? defaultB) : defaultB;
+  const { slugA, slugB } = resolvePair(slugList, rawA, rawB);
+  // La URL debe reflejar lo que se ve: con parámetros presentes pero distintos de los resueltos
+  // (slug antiguo, inválido, o solo ?a=) se reescribe una vez.
+  const needsRewrite = (rawA !== null || rawB !== null) && (rawA !== slugA || rawB !== slugB);
 
   /** Escribe el par en la URL con la History API nativa (Next 16 la sincroniza con useSearchParams) y conserva hash y otros params. */
   const writePair = React.useCallback(
-    (nextA: string, nextB: string) => {
+    (requestedA: string, requestedB: string) => {
+      // Nunca se escribe «X vs X»: si coinciden, el otro lado pasa al primer combatiente distinto.
+      const nextA = requestedA;
+      let nextB = requestedB;
+      if (nextA === nextB) nextB = fighters.find((f) => f.slug !== nextA)?.slug ?? nextB;
       const next = new URLSearchParams(window.location.search);
       next.set('a', nextA);
       next.set('b', nextB);
@@ -54,13 +53,30 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
     [pathname, fighters],
   );
 
-  // Un enlace con un slug antiguo se reescribe una sola vez con el slug canónico.
-  const legacyRewritten = React.useRef(false);
+  // Un enlace no canónico se reescribe una sola vez con lo que se muestra.
+  // Se recuerda la query ya reescrita (no un booleano): una navegación del cliente a otra query no canónica también se normaliza.
+  const rewritten = React.useRef<string | null>(null);
   React.useEffect(() => {
-    if (!hasLegacyParam || legacyRewritten.current) return;
-    legacyRewritten.current = true;
+    if (!needsRewrite) return;
+    const key = `${rawA ?? ''}|${rawB ?? ''}`;
+    if (rewritten.current === key) return;
+    rewritten.current = key;
     writePair(slugA, slugB);
-  }, [hasLegacyParam, slugA, slugB, writePair]);
+  }, [needsRewrite, rawA, rawB, slugA, slugB, writePair]);
+
+  /** Al elegir en un lado el combatiente del otro, se intercambian (B pasa a ser el A anterior) y se avisa. */
+  const pickA = (v: string) => {
+    if (v === slugB) {
+      writePair(v, slugA);
+      toast.info('Combatientes intercambiados: no pueden ser el mismo.');
+    } else writePair(v, slugB);
+  };
+  const pickB = (v: string) => {
+    if (v === slugA) {
+      writePair(slugB, v);
+      toast.info('Combatientes intercambiados: no pueden ser el mismo.');
+    } else writePair(slugA, v);
+  };
 
   const fighterItems = React.useMemo(
     () => Object.fromEntries(fighters.map((f) => [f.slug, f.frontmatter.title])),
@@ -124,7 +140,7 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
       <div className="grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-end">
         <label className="space-y-2">
           <span className="eyebrow text-primary">Combatiente A</span>
-          <Select value={slugA} onValueChange={(v) => v && writePair(v, slugB)} items={fighterItems}>
+          <Select value={slugA} onValueChange={(v) => v && pickA(v)} items={fighterItems}>
             <SelectTrigger className={triggerClass}><SelectValue placeholder="Elegir" /></SelectTrigger>
             <SelectContent className={contentClass}>
               {fighters.map((f) => (
@@ -138,21 +154,21 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
             type="button"
             variant="outline"
             onClick={shuffle}
-            className="glass-liquid h-12 flex-1 shrink-0 whitespace-nowrap rounded-xl border-white/10 px-5 text-[11px] font-bold uppercase tracking-wider text-white lg:flex-none"
+            className="glass-liquid h-12 min-h-12 flex-1 shrink-0 whitespace-nowrap rounded-xl border-white/10 px-5 text-[11px] font-bold uppercase tracking-wider text-white lg:flex-none"
           >
             <Shuffle className="mr-2 h-4 w-4 text-primary" /> Aleatorio
           </Button>
           <Button
             type="button"
             onClick={shareMatchup}
-            className="h-12 w-auto flex-1 shrink-0 whitespace-nowrap rounded-xl bg-primary px-5 text-[11px] font-bold uppercase tracking-wider text-[#00122E] hover:bg-primary/90 lg:flex-none"
+            className="h-12 min-h-12 w-auto flex-1 shrink-0 whitespace-nowrap rounded-xl bg-primary px-5 text-[11px] font-bold uppercase tracking-wider text-[#00122E] hover:bg-primary/90 lg:flex-none"
           >
             <Share2 className="mr-2 h-4 w-4" /> Compartir<span className="lg:sr-only">&nbsp;enfrentamiento</span>
           </Button>
         </div>
         <label className="space-y-2">
           <span className="eyebrow text-cyan-300">Combatiente B</span>
-          <Select value={slugB} onValueChange={(v) => v && writePair(slugA, v)} items={fighterItems}>
+          <Select value={slugB} onValueChange={(v) => v && pickB(v)} items={fighterItems}>
             <SelectTrigger className={triggerClass}><SelectValue placeholder="Elegir" /></SelectTrigger>
             <SelectContent className={contentClass}>
               {fighters.map((f) => (
@@ -179,16 +195,10 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
           />
         </div>
         <p className="mt-4 text-sm text-white/70">
-          {slugA === slugB ? (
-            <>Un coloso contra sí mismo: empate técnico. Elige dos combatientes distintos.</>
-          ) : (
-            <>
-              <span className="font-bold text-white">{favorite.frontmatter.title}</span> parte como favorito. Factor decisivo:{' '}
-              <span className="font-bold text-primary">{matchup.decisiveAxis.label}</span> (
-              {matchup.decisiveAxis.delta > 0 ? '+' : ''}{Math.round(matchup.decisiveAxis.delta)} a favor de{' '}
-              {matchup.decisiveAxis.delta >= 0 ? a.frontmatter.title : b.frontmatter.title}).
-            </>
-          )}
+          <span className="font-bold text-white">{favorite.frontmatter.title}</span> parte como favorito. Factor decisivo:{' '}
+          <span className="font-bold text-primary">{matchup.decisiveAxis.label}</span> (
+          {matchup.decisiveAxis.delta > 0 ? '+' : ''}{Math.round(matchup.decisiveAxis.delta)} a favor de{' '}
+          {matchup.decisiveAxis.delta >= 0 ? a.frontmatter.title : b.frontmatter.title}).
         </p>
       </div>
 

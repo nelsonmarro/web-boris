@@ -64,7 +64,7 @@ export default function VersusArena({ fighters }: VersusArenaProps) {
             <Info className="mt-px h-3 w-3 shrink-0" />
             Puntaje: 35% poder · 25% defensa · 15% hostilidad · 15% escala · 10% inteligencia
           </div>
-          <p className="text-[11px] font-bold uppercase tracking-wider text-white/60">Borisao Archive // {new Date().getFullYear()}</p>
+          <p className="text-[11px] font-bold uppercase tracking-wider text-white/60">Borisao Archive // <span suppressHydrationWarning>{new Date().getFullYear()}</span></p>
         </footer>
       </div>
     </div>

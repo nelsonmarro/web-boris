@@ -4,6 +4,7 @@ import { WikiArticleHeader } from '@/features/monsters/components/wiki/article/W
 import { WikiArticleContent } from '@/features/monsters/components/wiki/article/WikiArticleContent';
 import { WikiArticleFooter } from '@/features/monsters/components/wiki/article/WikiArticleFooter';
 import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { getRelatedArticles } from '@/features/monsters/lib/related';
 import { getEntityIndex, getMentionGraph } from '@/core/content/entities';
@@ -37,19 +38,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  return {
+  return pageMetadata({
     title: `${article.frontmatter.title} | Wiki BorisaoBlois`,
     description:
       article.frontmatter.description ||
       `Explora el lore de ${article.frontmatter.title} en el universo de BorisaoBlois.`,
-    openGraph: {
-      title: article.frontmatter.title,
-      description: article.frontmatter.description,
-      images: article.frontmatter.image
-        ? [{ url: article.frontmatter.image }]
-        : [],
-    },
-  };
+    path: `/wiki/${slug}`,
+    image: article.frontmatter.image,
+  });
 }
 
 export async function generateStaticParams() {
