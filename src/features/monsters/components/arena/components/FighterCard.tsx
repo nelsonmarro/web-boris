@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Image from 'next/image';
+import { IMAGE_QUALITY } from '@/utils/image';
 import Link from 'next/link';
 import { Ruler } from 'lucide-react';
 import { cn } from '@/utils/cn';
@@ -35,7 +36,7 @@ export function FighterCard({ fighter, side, score, winner }: FighterCardProps) 
     >
       <div className="relative aspect-[16/10] w-full bg-black/40">
         {cover ? (
-          <Image src={cover} alt={fm.title} fill loading="eager" fetchPriority="high" sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover" style={{ objectPosition: fm.imagePosition ?? '50% 50%' }} />
+          <Image quality={IMAGE_QUALITY} src={cover} alt={fm.title} fill loading="eager" fetchPriority="high" sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover" style={{ objectPosition: fm.imagePosition ?? '50% 50%' }} />
         ) : (
           <CategoryPlaceholder category={fm.category} />
         )}

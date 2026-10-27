@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
   // No anunciar el framework en `X-Powered-By`.
   poweredByHeader: false,
   images: {
-    // Calidades permitidas en `/_next/image`: 75 por defecto y 60 para el hero de la landing (pesa la mitad).
-    qualities: [60, 75],
+    // Calidades permitidas en `/_next/image`: 75 (por defecto de next/image) y 85 (`IMAGE_QUALITY`, la de todo el sitio).
+    qualities: [75, 85],
     remotePatterns: [
       {
         protocol: 'https',

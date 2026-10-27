@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { MDXRemote } from 'next-mdx-remote-client/rsc';
 import Image from 'next/image';
+import { IMAGE_QUALITY } from '@/utils/image';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { rehypeHeadingIds } from '@/utils/rehype-heading-ids';
@@ -99,6 +100,7 @@ const components = {
     >
       {props.src && (
         <Image
+          quality={IMAGE_QUALITY}
           src={props.src as string}
           alt={props.alt || ''}
           fill

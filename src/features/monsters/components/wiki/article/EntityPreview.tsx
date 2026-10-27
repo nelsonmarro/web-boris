@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Image from 'next/image';
+import { IMAGE_QUALITY } from '@/utils/image';
 import { usePathname } from 'next/navigation';
 import { createPortal } from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -225,6 +226,7 @@ export function EntityPreview() {
       <div className="relative aspect-video w-full overflow-hidden bg-[#00122E]">
         {cover ? (
           <Image
+            quality={IMAGE_QUALITY}
             src={cover}
             alt=""
             fill

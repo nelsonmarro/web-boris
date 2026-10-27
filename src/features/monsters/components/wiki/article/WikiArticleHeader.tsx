@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { IMAGE_QUALITY } from '@/utils/image';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { Swords } from 'lucide-react';
@@ -70,6 +71,7 @@ export function WikiArticleHeader({
           <figure className="mt-6">
             <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/10 md:aspect-[21/9] md:max-h-[380px]">
               <Image
+                quality={IMAGE_QUALITY}
                 src={cover}
                 alt={title}
                 fill

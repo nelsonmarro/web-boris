@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Image from 'next/image';
+import { IMAGE_QUALITY } from '@/utils/image';
 import { useRouter } from 'next/navigation';
 import type { Route } from 'next';
 import { useQuery } from '@tanstack/react-query';
@@ -53,6 +54,7 @@ function Thumb({ entry }: { entry: EntityEntry }) {
     <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-[#00122E]">
       {cover ? (
         <Image
+          quality={IMAGE_QUALITY}
           src={cover}
           alt=""
           fill

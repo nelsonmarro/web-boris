@@ -10,7 +10,7 @@ const ARTICLES = new Map<string, NewsArticleRef>([
   ['sin-imagen', { frontmatter: { category: 'Coloso' } }],
 ]);
 
-const THUMB = (id: string) => `https://i.ytimg.com/vi/${id}/mqdefault.jpg`;
+const THUMB = (id: string) => `https://i.ytimg.com/vi/${id}/sddefault.jpg`;
 
 test('enlace a una ficha: su imagen, su encuadre y su categoría', () => {
   const expected = { image: '/assets/Hecatombe/portada.webp', imagePosition: '50% 20%', category: 'Historia' };
