@@ -15,6 +15,18 @@ const CURATED: CuratedPoll[] = [
   { semana: '2026-W45', tipo: 'desclasificar', a: 'cael-cortes', b: 'aodos-ay01' },
 ];
 const SEALED = new Set(['cael-cortes', 'aodos-ay01']);
+/** Todas las fichas que usan los fixtures. */
+const KNOWN = new Set([
+  'bogbo',
+  'le-mug',
+  'the-bloop',
+  'slowdown-criyonte',
+  'vlad-julia',
+  'el-gran-maja',
+  'cael-cortes',
+  'aodos-ay01',
+  'ya-abierta',
+]);
 
 /** Filas del `groupBy` de una encuesta: `{ opción: votos }`. */
 const rows = (pollId: string, counts: Record<string, number>): HistoryRow[] =>
@@ -24,6 +36,8 @@ const opts = (over: Partial<SummarizeOptions> = {}): SummarizeOptions => ({
   currentPollId: '2026-W44-bogbo-vs-le-mug',
   curated: CURATED,
   sealedSlugs: SEALED,
+  previousWeek: '2026-W43',
+  knownSlugs: KNOWN,
   ...over,
 });
 
@@ -99,13 +113,15 @@ test('ignora opciones ajenas, ids que no parsean y otras encuestas de la semana 
     ],
     opts(),
   );
-  assert.equal(history.lastWeek?.id, '2026-W41-bogbo-vs-le-mug');
-  assert.deepEqual(history.lastWeek?.totals, { bogbo: 2, 'le-mug': 1 });
+  // W43 no tuvo votos válidos y W41 no es «la semana pasada».
+  assert.equal(history.lastWeek, null);
   assert.deepEqual(history.palmares, [{ slug: 'bogbo', wins: 1, duels: 1 }]);
 });
 
 test('sin encuesta vigente (currentPollId null) cuentan todas las que parsean', () => {
-  const history = summarizeHistory(rows('2026-W44-bogbo-vs-le-mug', { bogbo: 1 }), opts({ currentPollId: null }));
+  const history = summarizeHistory(rows('2026-W44-bogbo-vs-le-mug', { bogbo: 1 }),
+    opts({ currentPollId: null, previousWeek: '2026-W44' }),
+  );
   assert.equal(history.lastWeek?.id, '2026-W44-bogbo-vs-le-mug');
 });
 
@@ -162,7 +178,7 @@ test('más pedidos: solo votaciones desclasificar y solo fichas aún selladas; f
       ...rows('2026-W38-cael-cortes-vs-ya-abierta', { 'cael-cortes': 2, 'ya-abierta': 9 }),
       ...rows('2026-W45-cael-cortes-vs-aodos-ay01', { 'cael-cortes': 3, 'aodos-ay01': 5 }),
     ],
-    opts({ currentPollId: '2026-W46-bogbo-vs-le-mug' }),
+    opts({ currentPollId: '2026-W46-bogbo-vs-le-mug', previousWeek: '2026-W45' }),
   );
   assert.deepEqual(history.masPedidos, [
     { slug: 'aodos-ay01', votes: 5 },
@@ -173,7 +189,7 @@ test('más pedidos: solo votaciones desclasificar y solo fichas aún selladas; f
   assert.equal(history.lastWeek?.winner, 'aodos-ay01');
   assert.deepEqual(
     summarizeHistory(rows('2026-W45-cael-cortes-vs-aodos-ay01', { 'cael-cortes': 3, 'aodos-ay01': 5 }), {
-      ...opts({ currentPollId: '2026-W46-bogbo-vs-le-mug' }),
+      ...opts({ currentPollId: '2026-W46-bogbo-vs-le-mug', previousWeek: '2026-W45' }),
       limit: 1,
     }).masPedidos,
     [{ slug: 'aodos-ay01', votes: 5 }],
@@ -189,4 +205,26 @@ test('una encuesta con las mismas fichas pero otra semana que la curada es un du
   assert.equal(history.lastWeek?.tipo, 'duelo');
   assert.deepEqual(history.masPedidos, []);
   assert.deepEqual(history.palmares, [{ slug: 'cael-cortes', wins: 1, duels: 1 }]);
+});
+
+test('lastWeek: votos solo de hace dos semanas → null, pero cuentan en el palmarés', () => {
+  const history = summarizeHistory(rows('2026-W42-bogbo-vs-le-mug', { bogbo: 2, 'le-mug': 1 }), opts());
+  assert.equal(history.lastWeek, null);
+  assert.deepEqual(history.palmares, [{ slug: 'bogbo', wins: 1, duels: 1 }]);
+});
+
+test('palmarés: una ficha inexistente no ocupa plaza y el límite se llena con las conocidas', () => {
+  const history = summarizeHistory(
+    [
+      ...rows('2026-W38-fantasma-vs-le-mug', { fantasma: 5 }),
+      ...rows('2026-W39-fantasma-vs-bogbo', { fantasma: 5 }),
+      ...rows('2026-W40-bogbo-vs-le-mug', { bogbo: 2 }),
+      ...rows('2026-W41-le-mug-vs-the-bloop', { 'le-mug': 2 }),
+    ],
+    opts({ limit: 2 }),
+  );
+  assert.deepEqual(
+    history.palmares.map((e) => e.slug),
+    ['bogbo', 'le-mug'],
+  );
 });

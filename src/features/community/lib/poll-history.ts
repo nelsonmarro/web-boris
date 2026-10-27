@@ -61,6 +61,10 @@ export interface SummarizeOptions {
   curated: readonly CuratedPoll[];
   /** Fichas con `status: proximamente`: las únicas que pueden salir en «más pedidos». */
   sealedSlugs: ReadonlySet<string>;
+  /** Semana ISO inmediatamente anterior a la actual (`YYYY-Www`): la única que puede ser «la semana pasada». */
+  previousWeek: string;
+  /** Slugs de todas las fichas existentes: el palmarés descarta los demás antes de recortar al límite. */
+  knownSlugs: ReadonlySet<string>;
   limit?: number;
 }
 
@@ -114,18 +118,15 @@ function pastPolls(rows: readonly HistoryRow[], { currentPollId, curated }: Summ
   });
 }
 
-/** La encuesta pasada más reciente con votos; en la misma semana, la de más votos (y a igualdad, la de id menor). */
-function lastWeekOf(polls: readonly PastPoll[]): LastWeekResult | null {
-  const voted = polls.filter((p) => p.tally.total > 0);
+/** La encuesta de la semana ISO anterior con votos; si hay varias, la de más votos (y a igualdad, la de id menor). */
+function lastWeekOf(polls: readonly PastPoll[], previousWeek: string): LastWeekResult | null {
+  const voted = polls.filter((p) => p.week === previousWeek && p.tally.total > 0);
   if (voted.length === 0) return null;
-  const [p] = [...voted].sort(
-    (x, y) =>
-      (x.week < y.week ? 1 : x.week > y.week ? -1 : 0) || y.tally.total - x.tally.total || (x.id < y.id ? -1 : 1),
-  );
+  const [p] = [...voted].sort((x, y) => y.tally.total - x.tally.total || (x.id < y.id ? -1 : 1));
   return { id: p.id, week: p.week, tipo: p.tipo, a: p.a, b: p.b, winner: p.winner, ...p.tally };
 }
 
-function palmaresOf(polls: readonly PastPoll[], limit: number): PalmaresEntry[] {
+function palmaresOf(polls: readonly PastPoll[], known: ReadonlySet<string>, limit: number): PalmaresEntry[] {
   const stats = new Map<string, PalmaresEntry>();
   const entry = (slug: string) => {
     let e = stats.get(slug);
@@ -142,7 +143,7 @@ function palmaresOf(polls: readonly PastPoll[], limit: number): PalmaresEntry[] 
     if (p.winner) entry(p.winner).wins += 1;
   }
   return [...stats.values()]
-    .filter((e) => e.wins >= 1)
+    .filter((e) => e.wins >= 1 && known.has(e.slug))
     .sort((x, y) => y.wins - x.wins || y.wins / y.duels - x.wins / x.duels || bySlug(x, y))
     .slice(0, limit);
 }
@@ -167,8 +168,8 @@ export function summarizeHistory(rows: readonly HistoryRow[], options: Summarize
   const limit = options.limit ?? HISTORY_LIMIT;
   const polls = pastPolls(rows, options);
   return {
-    lastWeek: lastWeekOf(polls),
-    palmares: palmaresOf(polls, limit),
+    lastWeek: lastWeekOf(polls, options.previousWeek),
+    palmares: palmaresOf(polls, options.knownSlugs, limit),
     masPedidos: masPedidosOf(polls, options.sealedSlugs, limit),
   };
 }

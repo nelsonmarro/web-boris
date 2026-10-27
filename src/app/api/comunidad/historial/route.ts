@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getContentRepository } from '@/core/content';
 import { getActivePoll } from '@/features/community/server/poll-state';
+import { DAY_MS, isoWeekKey } from '@/core/content/iso-week';
 import { describeError } from '@/features/community/lib/describe-error';
 import { emptyHistory, summarizeHistory, type PollHistory } from '@/features/community/lib/poll-history';
 
@@ -14,9 +15,10 @@ export async function GET() {
   let history: PollHistory = emptyHistory();
   try {
     const repo = getContentRepository();
+    const now = new Date();
     const [groups, current, curated, articles] = await Promise.all([
       prisma.pollVote.groupBy({ by: ['pollId', 'option'], _count: { _all: true } }),
-      getActivePoll(),
+      getActivePoll(now),
       repo.getCuratedPolls(),
       repo.getArticles(),
     ]);
@@ -25,6 +27,8 @@ export async function GET() {
       {
         currentPollId: current?.id ?? null,
         curated,
+        previousWeek: isoWeekKey(new Date(now.getTime() - 7 * DAY_MS)),
+        knownSlugs: new Set(articles.map((a) => a.slug)),
         sealedSlugs: new Set(articles.filter((a) => a.frontmatter.status === 'proximamente').map((a) => a.slug)),
       },
     );
