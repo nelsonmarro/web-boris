@@ -1006,7 +1006,7 @@ for i in $(seq 1 10); do
   curl -s --retry 10 --retry-connrefused --retry-delay 1 http://localhost:3131/ \
     | grep -o 'En pantalla: <strong[^>]*>[^<]*' | sed 's/.*>//'
 done | sort | uniq -c
-kill $SERVER; pkill -f 'next start -p 3131' || true
+kill $SERVER; kill $(lsof -t -i:3131) 2>/dev/null || true
 ```
 
 Expected: 10 títulos en total repartidos en **al menos 2** distintos, todos de entre `The Bloop Ojo Solo`, `El Gran Majá`, `Bogbo`, `Vlad Julia`, `Phillip Forte` (la probabilidad de que salgan 10 iguales es ~5·10⁻⁷).
@@ -1146,7 +1146,7 @@ echo "$HTML" | grep -o 'id="universos"' | wc -l
 echo "$HTML" | grep -oE 'Explora los universos|Cada universo tiene sus propias reglas, criaturas y misterios\.'
 echo "$HTML" | grep -oE '(Era contemporánea|Siglo XVIII|Años 40) · [0-9]+ expedientes?'
 echo "$HTML" | grep -oE '<h3[^>]*>(<a[^>]*>)?(Colosos|Capitán de Galeón|Ellos Llegaron|La Hecatombe del Lapeón)' | wc -l
-kill $SERVER; pkill -f 'next start -p 3131' || true
+kill $SERVER; kill $(lsof -t -i:3131) 2>/dev/null || true
 ```
 
 Expected (con el contenido de hoy: 17 / 2 / 2):
