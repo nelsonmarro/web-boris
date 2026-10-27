@@ -31,10 +31,11 @@ const rise = (seconds: number): CSSProperties => ({
  * Contraste (≥ 4.5:1 detrás de todo el texto, sea cual sea la imagen, incluso una de fondo blanco como el boceto de
  * El Gran Majá). A diferencia del hero anterior (#66), aquí la criatura es la protagonista, así que el velo no cubre
  * todo el hero: solo lo que hay detrás del texto.
- *  - Banda superior (todos los tamaños): alfa 0.75 en los primeros 90 px (la navbar) y luego se desvanece.
- *  - Móvil y tablet (< lg): velo base 0.25 sobre toda la imagen (se ve la criatura) y el contenido va al pie del
- *    hero (`justify-end`) con su propio velo (`before:`), que empieza 10 rem por encima del texto y llega a 0.9 dos
- *    rem antes de la primera línea: sobre blanco puro, #FF7300 da 4.99:1 con 0.85 y el blanco necesita 0.58.
+ *  - Banda superior (todos los tamaños): alfa 0.6 en los primeros 80 px (la navbar, que ya lleva su cristal) y se desvanece a 10 rem.
+ *  - Móvil y tablet (< lg): hero de 100svh, velo base 0.25 sobre toda la imagen (se ve la criatura) y el contenido
+ *    al pie (`justify-end`) con su propio velo (`before:`), transparente en el borde superior del bloque, 0.6 en la
+ *    primera línea blanca del h1 (necesita 0.58) y 0.88 en la línea naranja (sobre blanco puro, #FF7300 da 4.99:1
+ *    con 0.85). Por debajo, 0.92.
  *  - lg y xl: la imagen ocupa el 72 % derecho; el texto, una columna del 52 % del contenedor (termina antes del
  *    56 % del viewport en cualquier ancho), y el velo horizontal se mantiene en 0.9 hasta el 56 % y cae a 0 en el
  *    78 %. El h1 baja a 48 px en lg (60 px desde xl) para caber en la columna sin partir «de mis universos».
@@ -74,7 +75,7 @@ export async function HeroAbisal() {
         {/* lg+: el texto vive en la columna izquierda → velo horizontal ≥ 0.85 hasta el 56 %; la criatura, a la derecha. */}
         <div className="absolute inset-0 hidden bg-[linear-gradient(to_right,rgba(0,18,46,0.94)_0%,rgba(0,18,46,0.9)_56%,rgba(0,18,46,0.5)_65%,rgba(0,18,46,0.12)_78%,transparent_100%)] lg:block" />
         {/* Banda superior: la navbar siempre sobre fondo oscuro. */}
-        <div className="absolute inset-x-0 top-0 h-56 bg-[linear-gradient(to_bottom,rgba(0,18,46,0.75)_0,rgba(0,18,46,0.75)_90px,transparent_100%)]" />
+        <div className="absolute inset-x-0 top-0 h-40 bg-[linear-gradient(to_bottom,rgba(0,18,46,0.6)_0,rgba(0,18,46,0.6)_80px,transparent_100%)]" />
         <div className="absolute inset-x-0 bottom-0 hidden h-1/3 bg-[linear-gradient(to_top,#00122E_0%,rgba(0,18,46,0.6)_50%,transparent_100%)] lg:block" />
         {BUBBLES.map((b) => (
           <span
@@ -91,9 +92,10 @@ export async function HeroAbisal() {
         ))}
       </div>
 
-      <div className="relative flex min-h-[88svh] flex-col justify-end lg:justify-center">
-        {/* < lg: velo pegado al bloque de texto (10 rem por encima → 0.9 a 2 rem de la primera línea). */}
-        <div className="container relative mx-auto flex flex-col px-6 pb-24 pt-32 before:absolute before:-inset-x-[100vw] before:-top-40 before:bottom-0 before:-z-10 before:bg-[linear-gradient(to_bottom,transparent_0,rgba(0,18,46,0.9)_8rem,rgba(0,18,46,0.92)_100%)] md:pt-40 lg:max-w-none lg:before:hidden short-screen:pb-10 short-screen:pt-28">
+      <div className="relative flex min-h-[100svh] flex-col justify-end lg:min-h-[88svh] lg:justify-center">
+        {/* < lg: velo pegado al bloque de texto: empieza transparente en el borde del bloque (8 rem sobre el h1, su `pt-32`),
+            0.6 en la primera línea blanca (necesita 0.58) y 0.88 en la línea naranja (necesita 0.85). */}
+        <div className="container relative mx-auto flex flex-col px-6 pb-20 pt-32 before:absolute before:-inset-x-[100vw] before:top-0 before:bottom-0 before:-z-10 before:bg-[linear-gradient(to_bottom,transparent_0,rgba(0,18,46,0.6)_8rem,rgba(0,18,46,0.88)_13rem,rgba(0,18,46,0.92)_100%)] md:pt-40 lg:max-w-none lg:before:hidden short-screen:pb-10 short-screen:pt-28">
           <div className="lg:max-w-[52%]">
             <h1
               className="hero-rise font-display-wide break-words hyphens-auto text-3xl font-bold leading-[1.05] tracking-tight text-white md:text-5xl xl:text-6xl"
