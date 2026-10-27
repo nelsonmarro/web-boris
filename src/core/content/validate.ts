@@ -19,6 +19,25 @@ export function crossCheckReservedSlugs(slugs: Iterable<string>): string[] {
   return errors;
 }
 
+/** `-vs-` dentro del slug, o `-vs` al final: el corte de `parsePollId` caería dentro del nombre. */
+const POLL_SEPARATOR_IN_SLUG = /-vs(?:-|$)/;
+
+/**
+ * El id de una encuesta es `<semana>-<a>-vs-<b>` y el historial de /comunidad lo parte por el primer `-vs-`
+ * (`parsePollId`). Un slug que contenga `-vs-` o acabe en `-vs` partiría mal sus encuestas: se rechaza.
+ */
+export function crossCheckPollIdSlugs(slugs: Iterable<string>): string[] {
+  const errors: string[] = [];
+  for (const slug of slugs) {
+    if (POLL_SEPARATOR_IN_SLUG.test(slug)) {
+      errors.push(
+        `src/content/${slug}.mdx: "${slug}" contiene "-vs-" (o acaba en "-vs"), que separa las opciones en el id de una encuesta; renombra la ficha`,
+      );
+    }
+  }
+  return errors;
+}
+
 /**
  * `duelo`: a y b deben existir y tener stats (la Arena). `desclasificar`: a y b deben existir y, mientras la
  * votación es de una semana estrictamente futura respecto a `now`, estar sellados (`status: proximamente`). En la

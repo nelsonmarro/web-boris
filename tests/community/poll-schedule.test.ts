@@ -4,6 +4,7 @@ import {
   DEFAULT_QUESTION,
   DEFAULT_QUESTION_DESCLASIFICAR,
   getCurrentPoll,
+  getNextPoll,
   isoWeekKey,
   pollIdFor,
   weeksSinceEpoch,
@@ -95,4 +96,25 @@ test('una encuesta curada de otra semana no cuenta: rotación automática', () =
   const date = new Date('2026-10-14T09:00:00Z'); // 2026-W42
   const curated = [{ semana: '2026-W41', tipo: 'duelo' as const, a: 'vlad-julia', b: 'el-gran-maja' }];
   assert.deepEqual(getCurrentPoll(curated, FIGHTERS, date), getCurrentPoll([], FIGHTERS, date));
+});
+
+test('getNextPoll: la votación curada de la semana siguiente', () => {
+  const curated = [{ semana: '2026-W45', tipo: 'desclasificar' as const, a: 'cael-cortes', b: 'aodos-ay01' }];
+  // Domingo 2026-11-01, último día de 2026-W44.
+  const next = getNextPoll(curated, FIGHTERS, new Date('2026-11-01T23:59:00Z'));
+  assert.ok(next);
+  assert.equal(next.id, '2026-W45-cael-cortes-vs-aodos-ay01');
+  assert.equal(next.week, '2026-W45');
+  assert.equal(next.tipo, 'desclasificar');
+});
+
+test('getNextPoll: sin curada, el emparejamiento automático de la semana siguiente', () => {
+  const tuesday = new Date('2026-10-27T10:00:00Z'); // 2026-W44
+  const next = getNextPoll([], FIGHTERS, tuesday);
+  assert.equal(next?.week, '2026-W45');
+  assert.deepEqual(next, getCurrentPoll([], FIGHTERS, new Date('2026-11-02T00:00:00Z')));
+});
+
+test('getNextPoll: null con menos de dos luchadores y sin curada', () => {
+  assert.equal(getNextPoll([], ['bogbo'], new Date('2026-10-27T10:00:00Z')), null);
 });

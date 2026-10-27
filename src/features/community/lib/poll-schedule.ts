@@ -71,3 +71,15 @@ export function getCurrentPoll(
   const b = fighters[j];
   return { id: pollIdFor(week, a, b), week, tipo: 'duelo', a, b, question: DEFAULT_QUESTION };
 }
+
+/**
+ * Encuesta de la semana siguiente a `date` (el «Próxima semana» de `PollTile`). Es un adelanto: si entra una ficha
+ * con stats antes del lunes, el emparejamiento automático puede cambiar y el lunes se corrige solo.
+ */
+export function getNextPoll(
+  curated: readonly CuratedPoll[],
+  fighterSlugs: readonly string[],
+  date: Date = new Date(),
+): PollDef | null {
+  return getCurrentPoll(curated, fighterSlugs, new Date(date.getTime() + 7 * DAY_MS));
+}
