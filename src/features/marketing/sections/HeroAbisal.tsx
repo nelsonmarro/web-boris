@@ -25,7 +25,9 @@ const rise = (seconds: number): CSSProperties => ({
 /**
  * Primera pantalla de la landing (spec 2026-10-27 §5): un expediente de `HERO_POOL`, distinto en cada visita, emerge de
  * la oscuridad detrás del título, el buscador y el chip que lleva a su ficha. Capas (de atrás hacia delante, todas
- * `aria-hidden`): criatura, luz cáustica, velos de contraste y burbujas. La luz cáustica va debajo de los velos para
+ * `aria-hidden`): criatura, velo de «emerger», velos de contraste y burbujas. Sin luz cáustica propia: la del fondo
+ * del layout ya existe, y una segunda capa con `mix-blend-mode` sobre la imagen costaba GPU en cada frame. Todo lo
+ * que se anima son `transform` y `opacity` (compositor); nada de `filter`/`blur`, que repintaban la imagen entera.
  * no tocar el contraste calibrado en #66.
  *
  * Contraste (≥ 4.5:1 detrás de todo el texto, sea cual sea la imagen, incluso una de fondo blanco como el boceto de
@@ -60,7 +62,9 @@ export async function HeroAbisal() {
               src={hero.image}
               alt=""
               fill
-              sizes="100vw"
+              // En lg+ la imagen ocupa el 72 % derecho; con `100vw` el navegador pedía 1920 px (300 kB).
+              sizes="(min-width: 1024px) 72vw, 100vw"
+              quality={60}
               fetchPriority="high"
               loading="eager"
               className="object-cover"
@@ -68,8 +72,8 @@ export async function HeroAbisal() {
             />
           </div>
         )}
-        {/* Luz cáustica DEBAJO de los velos (ruling del controlador): así no toca el contraste calibrado en #66. */}
-        <div className="hero-caustics absolute inset-0" />
+        {/* «Emerger»: un velo opaco que se disuelve (solo opacidad: lo mueve el compositor, sin filtros ni blur). */}
+        <div className="hero-emerge-veil absolute inset-0 bg-[#00122E]" />
         {/* < lg: velo base ligero; el velo del texto va pegado al contenido (abajo, `before:`). */}
         <div className="absolute inset-0 bg-[#00122E]/25 lg:hidden" />
         {/* lg+: el texto vive en la columna izquierda → velo horizontal ≥ 0.85 hasta el 56 %; la criatura, a la derecha. */}
@@ -99,7 +103,7 @@ export async function HeroAbisal() {
           <div className="lg:max-w-[52%]">
             <h1
               className="hero-rise font-display-wide break-words hyphens-auto text-3xl font-bold leading-[1.05] tracking-tight text-white md:text-5xl xl:text-6xl"
-              style={rise(0.25)}
+              style={rise(0.1)}
             >
               Explora la inmensidad{" "}
               <span className="block italic text-primary">
@@ -108,18 +112,18 @@ export async function HeroAbisal() {
             </h1>
             <p
               className="hero-rise mt-4 text-lg text-white/80"
-              style={rise(0.4)}
+              style={rise(0.2)}
             >
               Todo el lore oficial de BorisaoBlois en un solo archivo.
             </p>
-            <div className="hero-rise mt-6 max-w-xl" style={rise(0.55)}>
+            <div className="hero-rise mt-6 max-w-xl" style={rise(0.3)}>
               <SearchTrigger variant="hero" />
             </div>
             {creature && fm && (
               <Link
                 href={`/wiki/${creature.slug}` as Route}
                 className="hero-rise mt-4 inline-flex min-h-11 items-center self-start rounded-full border border-white/15 bg-[#061a2e]/90 px-4 text-sm text-white transition-colors hover:border-primary/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none"
-                style={rise(0.7)}
+                style={rise(0.4)}
               >
                 <span>
                   En pantalla: <strong className="font-bold">{fm.title}</strong>{" "}
@@ -136,7 +140,7 @@ export async function HeroAbisal() {
         <a
           href="#universos"
           className="hero-rise pointer-events-auto inline-flex min-h-11 min-w-11 flex-col items-center justify-center gap-1 rounded-sm px-3 text-[11px] font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none"
-          style={rise(1.2)}
+          style={rise(0.8)}
         >
           Sumérgete
           <ChevronDown aria-hidden="true" className="hero-bob h-5 w-5" />
