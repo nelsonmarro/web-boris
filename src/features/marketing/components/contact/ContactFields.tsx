@@ -8,22 +8,24 @@ interface ContactFieldProps {
   htmlFor?: string;
   icon: LucideIcon;
   error?: string;
+  /** `id` del texto de error: los controles lo referencian con `aria-describedby`. */
+  errorId?: string;
   children: React.ReactNode;
   className?: string;
 }
 
-export function ContactField({ label, htmlFor, icon: Icon, error, children, className }: ContactFieldProps) {
+export function ContactField({ label, htmlFor, icon: Icon, error, errorId, children, className }: ContactFieldProps) {
   return (
     <div className={cn("space-y-2", className)}>
       <label htmlFor={htmlFor} className="eyebrow text-white/60 mb-1 block pl-1">
         {label}
       </label>
       <div className="relative group">
-        <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-primary transition-colors" />
+        <Icon aria-hidden="true" className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-primary transition-colors" />
         {children}
       </div>
       {error && (
-        <p className="text-red-400 text-[11px] font-bold italic pl-1 animate-in fade-in slide-in-from-top-1">
+        <p id={errorId} role="alert" className="text-red-400 text-[11px] font-bold italic pl-1 animate-in fade-in slide-in-from-top-1">
           {error}
         </p>
       )}
@@ -32,18 +34,18 @@ export function ContactField({ label, htmlFor, icon: Icon, error, children, clas
 }
 
 // Specialized Textarea Field (Icon position differs)
-export function ContactTextAreaField({ label, htmlFor, icon: Icon, error, children, className }: ContactFieldProps) {
+export function ContactTextAreaField({ label, htmlFor, icon: Icon, error, errorId, children, className }: ContactFieldProps) {
   return (
     <div className={cn("space-y-2", className)}>
       <label htmlFor={htmlFor} className="eyebrow text-white/60 mb-1 block pl-1">
         {label}
       </label>
       <div className="relative group">
-        <Icon className="absolute left-4 top-6 w-4 h-4 text-white/20 group-focus-within:text-primary transition-colors" />
+        <Icon aria-hidden="true" className="absolute left-4 top-6 w-4 h-4 text-white/20 group-focus-within:text-primary transition-colors" />
         {children}
       </div>
       {error && (
-        <p className="text-red-400 text-[11px] font-bold italic pl-1 animate-in fade-in slide-in-from-top-1">
+        <p id={errorId} role="alert" className="text-red-400 text-[11px] font-bold italic pl-1 animate-in fade-in slide-in-from-top-1">
           {error}
         </p>
       )}

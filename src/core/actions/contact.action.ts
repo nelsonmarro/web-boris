@@ -3,7 +3,6 @@
 import { Resend } from 'resend';
 import { z } from 'zod';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const contactEmail = process.env.CONTACT_EMAIL || 'borisaoblois343@gmail.com';
 
 // En producción, definir CONTACT_FROM_EMAIL con un dominio verificado en Resend
@@ -17,7 +16,11 @@ const ContactSchema = z.object({
     .string()
     .min(2, 'El nombre debe tener al menos 2 caracteres.')
     .max(100, 'El nombre no puede superar los 100 caracteres.'),
-  email: z.string().email('Por favor, ingresa un correo electrónico válido.'),
+  email: z
+    .string()
+    .trim()
+    .email('Por favor, ingresa un correo electrónico válido.')
+    .max(254, 'El correo no puede superar los 254 caracteres.'),
   subject: z
     .string()
     .min(5, 'El asunto debe tener al menos 5 caracteres.')
@@ -27,6 +30,13 @@ const ContactSchema = z.object({
     .min(10, 'El mensaje debe tener al menos 10 caracteres.')
     .max(5000, 'El mensaje no puede superar los 5000 caracteres.'),
 });
+
+// Una clave ausente o de relleno (p. ej. en local) no debe lanzar al importar el módulo:
+// el cliente de Resend se crea al enviar y, sin clave válida, se responde con un error amable.
+function hasUsableResendKey(key: string | undefined): key is string {
+  if (!key) return false;
+  return /^re_\S+$/.test(key) && !/x{4,}|placeholder|changeme|your|tu_/i.test(key);
+}
 
 // Escapa los valores del usuario antes de interpolarlos en el HTML del correo.
 function escapeHtml(value: string): string {
@@ -57,6 +67,16 @@ export async function sendContactEmail(formData: FormData) {
     }
 
     const { name, email, subject, message } = validatedData.data;
+
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!hasUsableResendKey(apiKey)) {
+      console.error('Contacto: RESEND_API_KEY no está configurada o es de relleno.');
+      return {
+        error:
+          'El envío de mensajes no está disponible ahora mismo. Inténtalo más tarde o escribe a Boris por sus redes.',
+      };
+    }
+    const resend = new Resend(apiKey);
 
     // Evita inyección de cabeceras: sin saltos de línea en el asunto del correo.
     const safeSubject = subject.replace(/[\r\n]+/g, ' ').trim();
