@@ -344,7 +344,8 @@
     mix-blend-mode: screen;
     opacity: 0.2; /* bajo los velos: solo asoma donde la imagen se ve */
     pointer-events: none;
-    animation: caustic-flow 60s linear infinite;
+    /* `alternate`: vuelve atrás en lugar de saltar a scale(1) cada 60 s (en xl se ve a través del velo). */
+    animation: caustic-flow 60s linear infinite alternate;
   }
 
   /* Posición, tamaño, duración (12–18 s) y retardo (0–9 s) de cada burbuja: `style` en línea. */

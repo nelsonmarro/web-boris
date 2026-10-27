@@ -24,7 +24,8 @@ const rise = (seconds: number): CSSProperties => ({ animationDelay: `${seconds}s
 /**
  * Primera pantalla de la landing (spec 2026-10-27 §5): un expediente de `HERO_POOL`, distinto en cada visita, emerge de
  * la oscuridad detrás del título, el buscador y el chip que lleva a su ficha. Capas (de atrás hacia delante, todas
- * `aria-hidden`): criatura, velos de contraste, luz cáustica y burbujas.
+ * `aria-hidden`): criatura, luz cáustica, velos de contraste y burbujas. La luz cáustica va debajo de los velos para
+ * no tocar el contraste calibrado en #66.
  *
  * Contraste (≥ 4.5:1 detrás de todo el texto, sea cual sea la imagen, incluso una de fondo blanco como el boceto de
  * El Gran Majá). Los velos son los del hero anterior (auditoría #66), sin cambios. Las paradas del degradado móvil están
