@@ -1,5 +1,6 @@
 'use server';
 
+import { z } from 'zod';
 import { getContentRepository } from '@/core/content';
 import { getEntityIndex } from '@/core/content/entities';
 import { compareDiscovery } from '@/core/search/discovery-order';
@@ -53,13 +54,28 @@ function articlesOf(hits: readonly { entry: { slug: string } }[], all: readonly 
   return hits.flatMap((hit) => bySlug.get(hit.entry.slug) ?? []);
 }
 
-export async function getWikiArticles({
-  page = 1,
-  pageSize = 12,
-  search = '',
-  universe = 'all',
-  tipo,
-}: GetWikiArticlesParams): Promise<GetWikiArticlesResult> {
+/** Tamaños de página admitidos (el explorador usa 12). */
+const PAGE_SIZES = [6, 12, 24, 48] as const;
+
+/**
+ * La acción es un endpoint público: la entrada no es de fiar. Cada campo inválido se corrige con su valor
+ * seguro (nunca lanza), y un argumento que ni siquiera es un objeto equivale a «sin parámetros».
+ */
+const ParamsSchema = z
+  .object({
+    page: z.number().int().min(1).max(1000).catch(1),
+    pageSize: z
+      .number()
+      .refine((n) => (PAGE_SIZES as readonly number[]).includes(n))
+      .catch(12),
+    search: z.string().catch(''),  // se recorta a MAX_QUERY_LENGTH más abajo
+    universe: z.string().max(100).catch('all'),
+    tipo: z.string().refine(isTipoId).optional().catch(undefined),
+  })
+  .catch({ page: 1, pageSize: 12, search: '', universe: 'all', tipo: undefined });
+
+export async function getWikiArticles(params: GetWikiArticlesParams = {}): Promise<GetWikiArticlesResult> {
+  const { page, pageSize, search, universe, tipo } = ParamsSchema.parse(params ?? {});
   const [all, { entries }] = await Promise.all([getContentRepository().getArticles(), getEntityIndex()]);
   const query = search.trim().slice(0, MAX_QUERY_LENGTH);
 
