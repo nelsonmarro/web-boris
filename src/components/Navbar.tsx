@@ -21,6 +21,8 @@ interface NavbarProps {
 
 export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
   const [scrolled, setScrolled] = React.useState(false);
+  // Sheet controlado: los enlaces de ancla no desmontan el panel, hay que cerrarlo a mano.
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
   React.useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -32,7 +34,7 @@ export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
     <nav
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        scrolled ? 'p-0' : 'px-6 py-6',
+        scrolled ? 'p-0' : 'px-3 py-4 sm:px-6 sm:py-6',
         hideLogoOnDesktop &&
           'md:px-0 md:py-0 md:relative md:top-auto md:left-auto md:right-auto',
       )}
@@ -41,8 +43,8 @@ export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
         className={cn(
           'transition-all duration-700 flex items-center justify-between glass-liquid',
           scrolled
-            ? 'w-full max-w-full rounded-none px-6 md:px-12 py-5 bg-black/80 backdrop-blur-[120px] border-b border-white/10 shadow-[0_30px_90px_rgba(0,0,0,0.9)]'
-            : 'max-w-7xl mx-auto rounded-full px-6 md:px-8 py-3 bg-black/10 border-white/10 border-refractive shadow-[0_20px_50px_rgba(0,0,0,0.5)]',
+            ? 'w-full max-w-full rounded-none px-4 sm:px-6 md:px-12 py-4 sm:py-5 bg-black/80 backdrop-blur-[120px] border-b border-white/10 shadow-[0_30px_90px_rgba(0,0,0,0.9)]'
+            : 'max-w-7xl mx-auto rounded-full px-3 sm:px-6 md:px-8 py-3 bg-black/10 border-white/10 border-refractive shadow-[0_20px_50px_rgba(0,0,0,0.5)]',
           hideLogoOnDesktop &&
             'md:bg-transparent md:border-none md:shadow-none md:px-0 md:py-0 md:w-full',
         )}
@@ -71,9 +73,9 @@ export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
         </div>
 
         {/* Mobile Menu */}
-        <div className="xl:hidden flex items-center gap-2 relative z-10">
+        <div className="xl:hidden flex shrink-0 items-center gap-1 sm:gap-2 relative z-10">
           <SearchTrigger variant="icon" />
-          <Sheet>
+          <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger
               render={
                 <button aria-label="Abrir menú de navegación" className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors">
@@ -91,7 +93,7 @@ export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
                 </SheetTitle>
               </SheetHeader>
               <div className="flex flex-col p-6 space-y-2">
-                <NavLinks />
+                <NavLinks onNavigate={() => setMenuOpen(false)} />
                 <div className="pt-6 mt-4 border-t border-white/5">
                   <NavActions />
                 </div>

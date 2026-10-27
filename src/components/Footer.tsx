@@ -16,18 +16,18 @@ const NAV_LINKS = [
 
 export default function Footer() {
   return (
-    <footer className="relative mt-20 pt-20 pb-10 overflow-hidden">
+    <footer className="@container relative mt-20 pt-20 pb-10 overflow-hidden">
       {/* Liquid Glass Footer Container */}
       <div className="container mx-auto px-6 relative z-10">
-        <div className="glass-liquid rounded-3xl p-10 md:p-16 border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.3)] relative group">
+        <div className="glass-liquid rounded-3xl p-8 @xl:p-16 border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.3)] relative group">
           {/* Glass Layers */}
           <div className="glass-shine opacity-10" />
           <div className="glass-reflection" />
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 relative z-10">
+          <div className="grid grid-cols-1 @xl:grid-cols-2 @5xl:grid-cols-4 gap-12 relative z-10">
             {/* Branding */}
-            <div className="space-y-6 lg:col-span-1">
-              <div className="flex items-center gap-3">
+            <div className="space-y-6 @5xl:col-span-1">
+              <div className="flex min-w-0 items-center gap-3">
                  <div className="relative w-11 h-11 shrink-0 aspect-square overflow-hidden rounded-xl border border-white/20 bg-white/5 p-1 glass-liquid">
                     <Image src="/assets/Branding/logo.webp" alt="Logo" width={44} height={44} className="rounded-lg object-cover" />
                  </div>
@@ -74,7 +74,7 @@ export default function Footer() {
               <ul className="space-y-2">
                 {UNIVERSES.filter((u) => u.universeKey).map((u) => (
                   <li key={u.universeKey}>
-                    <Link href={{ pathname: "/wiki", query: { universe: u.universeKey }, hash: "explorar" }} className="h-11 flex items-center text-white/60 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider">{u.title}</Link>
+                    <Link href={{ pathname: "/wiki", query: { universe: u.universeKey }, hash: "catalogo" }} className="h-11 flex items-center text-white/60 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider">{u.title}</Link>
                   </li>
                 ))}
               </ul>
@@ -98,7 +98,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
+          <div className="mt-16 pt-8 border-t border-white/5 flex flex-col @xl:flex-row justify-between items-center gap-6 relative z-10">
              <p className="text-xs text-white/60 font-bold uppercase tracking-wider">
                © {new Date().getFullYear()} BorisaoBlois. Todos los derechos reservados.
              </p>
