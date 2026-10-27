@@ -16,6 +16,22 @@ import { isIndexCategory } from '@/core/search/catalog';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { extractHeadings } from '@/utils/headings';
 
+/** Título de la sección automática de la ficha lateral. */
+const EXPEDIENTE = 'Expediente';
+
+/**
+ * Campos de la sección automática «Expediente», solo del frontmatter: `Universo`, `Categoría` (si hay) y, en las
+ * selladas, `Estado: Sellado`. Si el `infobox` ya trae una sección «Expediente», sus campos se funden aquí (un
+ * campo con la misma etiqueta sustituye al automático en su sitio; los demás van detrás) para no repetir el título.
+ */
+function expedienteFields(frontmatter: WikiFrontmatter): [string, string][] {
+  const fields = new Map<string, string>([['Universo', frontmatter.universe]]);
+  if (frontmatter.category) fields.set('Categoría', frontmatter.category);
+  if (frontmatter.status === 'proximamente') fields.set('Estado', 'Sellado');
+  for (const [label, value] of Object.entries(frontmatter.infobox?.[EXPEDIENTE] ?? {})) fields.set(label, value);
+  return [...fields];
+}
+
 interface WikiArticleContentProps {
   frontmatter: WikiFrontmatter;
   content: string;
@@ -32,29 +48,45 @@ interface WikiArticleContentProps {
  * - contenedor < 64rem (@5xl): una fila con dos desplegables ("Ficha completa" y "Contenido"), solo uno abierto
  *   a la vez, y el cuerpo en una sola columna. Nada flota.
  * - contenedor ≥ 64rem (@5xl): grid de dos columnas — cuerpo ≤ 800 px + rail derecho con infobox y TOC sticky.
+ * Toda ficha que no es un índice lleva siempre la ficha lateral, aunque no traiga `infobox` ni `stats`: empieza por
+ * la sección automática «Expediente» (universo, categoría y, en las selladas, «Estado: Sellado»), sacada del
+ * frontmatter (spec 2026-10-27 «fichas estándar» §1). Los índices (Directorio/Categoría) solo la llevan si tienen
+ * `infobox` o `stats`, como antes.
  */
 export function WikiArticleContent({ frontmatter, content, slug, entityIndex }: WikiArticleContentProps) {
   const { title, infobox } = frontmatter;
   const hasInfobox = !!infobox && Object.keys(infobox).length > 0;
   const showStats = hasStats(frontmatter);
-  const showRail = hasInfobox || showStats;
+  const isIndex = isIndexCategory(frontmatter.category);
+  const showRail = !isIndex || hasInfobox || showStats;
   const headings = extractHeadings(content);
   const sealed = frontmatter.status === 'proximamente';
   // El medidor es solo para las fichas abiertas con apartados pendientes; las selladas llevan el expediente.
   // El medidor es de fichas: un índice (Directorio/Categoría) con un apartado pendiente no es un expediente a medias.
-  const completeness = sealed || isIndexCategory(frontmatter.category) ? null : sectionCompleteness(content);
+  const completeness = sealed || isIndex ? null : sectionCompleteness(content);
+  const expediente = isIndex ? null : expedienteFields(frontmatter);
 
   // La portada va arriba (cabecera): la infobox no la repite.
   const infoboxFull = showRail ? (
     <WikiInfobox title={title} className="w-full mb-0">
+      {expediente && (
+        <InfoSection title={EXPEDIENTE}>
+          {expediente.map(([label, value]) => (
+            <InfoField key={label} label={label} value={value} />
+          ))}
+        </InfoSection>
+      )}
       {hasInfobox &&
-        Object.entries(infobox).map(([sectionTitle, fields]) => (
-          <InfoSection key={sectionTitle} title={sectionTitle}>
-            {Object.entries(fields).map(([label, value]) => (
-              <InfoField key={label} label={label} value={value} />
-            ))}
-          </InfoSection>
-        ))}
+        Object.entries(infobox)
+          // Una sección «Expediente» propia del frontmatter ya va fundida en la automática: no se repite.
+          .filter(([sectionTitle]) => !(expediente && sectionTitle === EXPEDIENTE))
+          .map(([sectionTitle, fields]) => (
+            <InfoSection key={sectionTitle} title={sectionTitle}>
+              {Object.entries(fields).map(([label, value]) => (
+                <InfoField key={label} label={label} value={value} />
+              ))}
+            </InfoSection>
+          ))}
       {showStats && <InfoStats stats={frontmatter.stats} />}
     </WikiInfobox>
   ) : null;

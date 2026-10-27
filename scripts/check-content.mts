@@ -25,6 +25,9 @@
  * 10. Un slug de HERO_POOL (src/features/marketing/config/hero-pool.ts) no existe en src/content o está sellado
  *     (`status: proximamente`), su toma propia (`image`) no existe en public/, o no trae toma y su ficha no tiene
  *     `image`.
+ * 11. Una ficha que no es índice (Directorio/Categoría) ni está sellada (`status: proximamente`) no cumple el estándar
+ *     (spec 2026-10-27 «fichas estándar» §4): le falta `description`, `imageCaption` teniendo `image`, una sección
+ *     propia en el `infobox` o dos apartados `##` (sin contar Referencias; los `##` de bloques de código no cuentan).
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
@@ -32,6 +35,8 @@ import matter from 'gray-matter';
 import { WikiFrontmatterSchema } from '../src/core/types/wiki.ts';
 import { readCuratedPolls, readNews, readVideoLinks } from '../src/core/content/readers.ts';
 import {
+  type ArticleStandardInput,
+  checkArticleStandard,
   crossCheckEntities,
   crossCheckHeroPool,
   crossCheckNews,
@@ -62,6 +67,7 @@ const problems: Record<string, string[]> = {
   'Vídeos ↔ fichas (videos.json)': [],
   'Slugs reservados': [],
   'Hero de la landing (HERO_POOL)': [],
+  'Ficha fuera del estándar': [],
 };
 
 const NON_LORE_ASSETS = ['/assets/Branding/', '/assets/Universo_Colosos/Esquemas/'];
@@ -73,6 +79,24 @@ const fighterSlugs = new Set<string>();
 const sealedSlugs = new Set<string>();
 const imageSlugs = new Set<string>();
 const entityItems: { slug: string; title: string; aliases?: string[]; related?: string[] }[] = [];
+const standardItems: ArticleStandardInput[] = [];
+
+/** Títulos de los apartados `##` (nunca `###`) del cuerpo, sin mirar dentro de bloques de código ``` / ~~~. */
+function h2Titles(body: string): string[] {
+  const titles: string[] = [];
+  let fence: string | null = null;
+  for (const line of body.split(/\r?\n/)) {
+    const marker = line.match(/^\s*(```+|~~~+)/)?.[1];
+    if (marker) {
+      if (fence === null) fence = marker[0];
+      else if (marker[0] === fence) fence = null;
+      continue;
+    }
+    const heading = fence === null ? line.match(/^##[ \t]+(.+?)[ \t]*#*[ \t]*$/) : null;
+    if (heading) titles.push(heading[1].trim());
+  }
+  return titles;
+}
 
 /** Extrae rutas /assets/... de un texto (MDX o TS). */
 function extractAssets(text: string): string[] {
@@ -99,7 +123,7 @@ function assetExists(assetPath: string): boolean {
 // 1 + 4 (MDX)
 for (const file of mdxFiles) {
   const raw = readFileSync(path.join(CONTENT_DIR, file), 'utf8');
-  const { data } = matter(raw);
+  const { data, content } = matter(raw);
   const parsed = WikiFrontmatterSchema.safeParse(data);
   if (!parsed.success) {
     for (const issue of parsed.error.issues) {
@@ -116,6 +140,16 @@ for (const file of mdxFiles) {
       title: parsed.data.title,
       aliases: parsed.data.aliases,
       related: parsed.data.related,
+    });
+    standardItems.push({
+      slug: file.replace(/\.mdx$/, ''),
+      category: parsed.data.category,
+      status: parsed.data.status,
+      description: parsed.data.description,
+      image: parsed.data.image,
+      imageCaption: parsed.data.imageCaption,
+      infoboxSections: Object.keys(parsed.data.infobox ?? {}).length,
+      h2Titles: h2Titles(content),
     });
   }
   for (const asset of extractAssets(raw)) {
@@ -171,6 +205,9 @@ problems['Slugs reservados'].push(...crossCheckReservedSlugs(slugs), ...crossChe
 
 // 10: expedientes que pueden abrir la landing
 problems['Hero de la landing (HERO_POOL)'].push(...crossCheckHeroPool(HERO_POOL, slugs, imageSlugs, sealedSlugs, assetExists));
+
+// 11: estándar de ficha (descripción, pie de portada, infobox y apartados)
+problems['Ficha fuera del estándar'].push(...checkArticleStandard(standardItems));
 
 // Reporte
 console.log(
