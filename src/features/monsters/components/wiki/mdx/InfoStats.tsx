@@ -29,7 +29,7 @@ export function InfoStats({ stats }: InfoStatsProps) {
       {threat && (
         <div className="flex flex-col gap-1 border-b border-white/5 py-3">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-white/40">
+            <span className="text-xs font-bold uppercase tracking-widest text-white/60">
               Amenaza
             </span>
             <span
@@ -80,7 +80,7 @@ export function InfoStats({ stats }: InfoStatsProps) {
 
       {stats.specialAbilities && stats.specialAbilities.length > 0 && (
         <div className="py-3">
-          <div className="mb-2 text-xs font-bold uppercase tracking-widest text-white/40">
+          <div className="mb-2 text-xs font-bold uppercase tracking-widest text-white/60">
             Habilidades
           </div>
           <div className="flex flex-wrap gap-1.5">

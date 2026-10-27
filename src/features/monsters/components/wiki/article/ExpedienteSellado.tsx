@@ -32,7 +32,7 @@ export async function ExpedienteSellado({ slug }: { slug: string }) {
         {/* Sello decorativo: el texto accesible es el h2 de abajo */}
         <span
           aria-hidden="true"
-          className="order-first inline-block w-fit -rotate-[4deg] select-none rounded-md border-2 border-primary/70 px-3 py-1.5 font-display text-xs font-black uppercase tracking-[0.2em] text-primary/70 md:order-last md:shrink-0"
+          className="order-first inline-block w-fit -rotate-[4deg] select-none rounded-md border-2 border-primary px-3 py-1.5 font-display text-xs font-black uppercase tracking-[0.2em] text-primary md:order-last md:shrink-0"
         >
           Expediente sellado
         </span>
