@@ -70,7 +70,7 @@ Un slug que ya no exista en `fighters` (ficha renombrada o borrada) se omite de 
 
 ## 6. Últimos vídeos
 
-`getChannelVideos()` (destacados + RSS, ya en caché) ordenados por `published` desc; los sin fecha, al final en su orden. Función pura `latestVideos(videos, n)` en `src/features/community/lib/latest-videos.ts`. La sección «Últimos vídeos» (`id="videos"`, acción «Ver el canal ›» externa a `SOCIAL.youtube` de `src/features/marketing/config/social.ts`) pinta hasta 4 `ContentCard` externas en `grid gap-4 sm:grid-cols-2`, `headingLevel={3}`, `meta` = fecha si la hay. Con un solo vídeo (RSS caído y un destacado), una tarjeta `max-w-md` como ahora. `getLatestVideo` sigue para la landing.
+`getChannelVideos()` (destacados + RSS, ya en caché) ordenados por `published` desc; los sin fecha, al final en su orden. Función pura `latestVideos(videos, n)` en `src/features/community/lib/latest-videos.ts`. La sección «Últimos vídeos» (`id="videos"`, acción «Ver el canal ›» externa a `SOCIAL_LINKS.youtube` de `src/features/marketing/config/social.ts`) pinta hasta 4 `ContentCard` externas en `grid gap-4 sm:grid-cols-2`, `headingLevel={3}`, `meta` = fecha si la hay. Con un solo vídeo (RSS caído y un destacado), una tarjeta `max-w-md` como ahora. `getLatestVideo` sigue para la landing.
 
 ## 7. Tu registro
 
