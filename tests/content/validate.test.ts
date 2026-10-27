@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   crossCheckEntities,
   crossCheckNews,
+  crossCheckPollIdSlugs,
   crossCheckPolls,
   crossCheckReservedSlugs,
   crossCheckVideoLinks,
@@ -211,4 +212,12 @@ test('crossCheckReservedSlugs: arena, registro y aleatorio no pueden ser el slug
   assert.match(errors[2], /aleatorio\.mdx.*reservado.*\/wiki\/aleatorio/);
   // Solo el nombre exacto: un slug que lo contiene es válido.
   assert.deepEqual(crossCheckReservedSlugs(['arena-de-colosos', 'registro-de-vuelo', 'el-aleatorio']), []);
+});
+
+test('crossCheckPollIdSlugs: un slug con "-vs-" o acabado en "-vs" rompería el id de la encuesta', () => {
+  assert.deepEqual(crossCheckPollIdSlugs(['the-bloop', 'el-gran-maja', 'vs-inicio', 'canvas-azul', 'versus']), []);
+  const errors = crossCheckPollIdSlugs(['the-bloop', 'bloop-vs-maja', 'colosos-vs']);
+  assert.equal(errors.length, 2);
+  assert.match(errors[0], /^src\/content\/bloop-vs-maja\.mdx: .*-vs-.*encuesta/);
+  assert.match(errors[1], /^src\/content\/colosos-vs\.mdx: /);
 });

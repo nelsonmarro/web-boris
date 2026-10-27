@@ -20,7 +20,8 @@
  *  8. `videos.json` (relaciones vídeo ↔ ficha de «Aparece en») no cumple su esquema (id de YouTube de 11 caracteres,
  *     fichas sin repetir, vídeo sin repetir, `titulo` de 1 a 200 caracteres), nombra una ficha que no existe en
  *     src/content o trae un id que no está en FEATURED_VIDEOS sin `titulo`.
- *  9. Un MDX usa como slug un nombre reservado por una ruta estática (`arena`, `registro`, `aleatorio`).
+ *  9. Un MDX usa como slug un nombre reservado por una ruta estática (`arena`, `registro`, `aleatorio`) o un slug
+ *     que contiene `-vs-` (o acaba en `-vs`), que rompería el id de sus encuestas (`<semana>-<a>-vs-<b>`).
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
@@ -30,6 +31,7 @@ import { readCuratedPolls, readNews, readVideoLinks } from '../src/core/content/
 import {
   crossCheckEntities,
   crossCheckNews,
+  crossCheckPollIdSlugs,
   crossCheckPolls,
   crossCheckReservedSlugs,
   crossCheckVideoLinks,
@@ -156,8 +158,8 @@ problems['Vídeos ↔ fichas (videos.json)'].push(
   ...crossCheckVideoLinks(videoLinks.items, slugs, new Set(FEATURED_VIDEOS.map((v) => v.id))),
 );
 
-// 9: nombres reservados por rutas estáticas
-problems['Slugs reservados'].push(...crossCheckReservedSlugs(slugs));
+// 9: nombres reservados por rutas estáticas y slugs que romperían el id de una encuesta
+problems['Slugs reservados'].push(...crossCheckReservedSlugs(slugs), ...crossCheckPollIdSlugs(slugs));
 
 // Reporte
 console.log(
