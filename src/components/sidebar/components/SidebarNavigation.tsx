@@ -5,7 +5,7 @@ import { SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMe
 import { WIKI_NAVIGATION } from "@/features/monsters/config/wiki-navigation";
 import { RANDOM_ROUTE, REGISTRO_ROUTE } from "@/features/monsters/config/wiki-routes";
 import { SidebarCollapsibleItem } from "./SidebarCollapsibleItem";
-import { Home, Globe, MessageSquare, ListChecks, Shuffle } from "lucide-react";
+import { Home, Globe, MessageSquare, ListChecks, Shuffle, Users } from "lucide-react";
 import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
@@ -44,6 +44,16 @@ export function SidebarNavigation() {
             >
               <Globe className="h-4 w-4 mr-3 text-primary shrink-0" />
               <span className="font-medium text-[13.5px] text-white/80 group-hover:text-white transition-colors">Universos</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton 
+              tooltip="Comunidad" 
+              className="min-h-[36px] h-auto py-2 hover:bg-white/5 transition-all group rounded-md mb-0.5 flex items-center px-4"
+              render={<Link href="/comunidad" />}
+            >
+              <Users className="h-4 w-4 mr-3 text-primary shrink-0" />
+              <span className="font-medium text-[13.5px] text-white/80 group-hover:text-white transition-colors">Comunidad</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
@@ -107,7 +117,7 @@ export function SidebarNavigation() {
           </SidebarGroupLabel>
           <SidebarMenu className="px-2 group-data-[collapsible=icon]:px-0">
             {universe.items.map((item) => (
-              <SidebarCollapsibleItem key={item.title} item={item} />
+              <SidebarCollapsibleItem key={item.title} item={item} groupTitle={universe.title} />
             ))}
           </SidebarMenu>
         </SidebarGroup>
