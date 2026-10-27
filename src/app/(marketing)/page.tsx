@@ -3,6 +3,7 @@ import { pageMetadata, SITE_NAME } from '@/lib/seo';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { HeroAbisal } from '@/features/marketing/sections/HeroAbisal';
+import { UniversesSection } from '@/features/marketing/sections/UniversesSection';
 import { FeaturedCharactersSection } from '@/features/marketing/sections/FeaturedCharactersSection';
 import { FeaturedVideosSection } from '@/features/marketing/sections/FeaturedVideosSection';
 import { CommunityStrip } from '@/features/marketing/sections/CommunityStrip';
@@ -23,6 +24,7 @@ export default function Home() {
       <Navbar />
       <main className="flex-1 flex flex-col relative z-10">
         <HeroAbisal />
+        <UniversesSection />
         <FeaturedCharactersSection />
         <FeaturedVideosSection />
         <CommunityStrip />
