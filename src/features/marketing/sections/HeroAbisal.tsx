@@ -56,9 +56,11 @@ export async function HeroAbisal() {
         aria-hidden="true"
         className="absolute inset-0 -z-10 [mask-image:linear-gradient(to_bottom,black_88%,transparent)]"
       >
-        {/* La toma propia del pool o, si falta, la portada de la ficha (ya filtrada por `coverOf` en el sorteo). */}
+        {/* La toma propia del pool o, si falta, la portada de la ficha (ya filtrada por `coverOf` en el sorteo).
+            En lg+ la imagen empieza en el 28 % y su borde izquierdo se funde con una máscara: el velo de encima
+            (0,9) no basta para ocultar un corte recto. */}
         {hero && (
-          <div className="hero-creature absolute inset-0 lg:left-[28%]">
+          <div className="hero-creature absolute inset-0 lg:left-[28%] lg:[mask-image:linear-gradient(to_right,transparent,black_35%)]">
             <Image
               src={hero.image}
               alt=""
