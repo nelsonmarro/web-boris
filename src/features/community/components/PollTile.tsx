@@ -1,26 +1,17 @@
 'use client';
 
 import * as React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import type { Route } from 'next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { cn } from '@/utils/cn';
 import { PendingLabel } from '@/components/content/PendingLabel';
-import { CategoryPlaceholder, coverOf } from '@/components/content/CategoryPlaceholder';
+import { FighterPortrait, type PollFighter } from './FighterPortrait';
 import { castVote, type CastVoteError } from '../actions/cast-vote';
 import type { PollDef } from '../lib/poll-schedule';
 import type { PollState } from '../types';
 
-export interface PollFighter {
-  slug: string;
-  title: string;
-  image?: string;
-  imagePosition?: string;
-  category?: string;
-  /** `proximamente`: la ficha sigue sellada; si Boris ya la desclasificó viene sin estado. */
-  status?: string;
-}
+export type { PollFighter } from './FighterPortrait';
 
 const QUERY_KEY = ['comunidad', 'encuesta'] as const;
 
@@ -38,40 +29,15 @@ async function fetchPollState(): Promise<PollState> {
   return (await res.json()) as PollState;
 }
 
-/** `pending`: la ficha aún no está desclasificada; el retrato va apagado (en gris), como las tarjetas «Próximamente». */
-function Portrait({ fighter, pending = false }: { fighter: PollFighter; pending?: boolean }) {
-  const cover = coverOf(fighter.image);
-  return (
-    <div
-      className={cn(
-        'relative aspect-square w-full overflow-hidden rounded-2xl border border-white/10 bg-[#00122E]',
-        pending && 'grayscale opacity-70',
-      )}
-    >
-      {cover ? (
-        <Image
-          src={cover}
-          alt=""
-          fill
-          sizes="(min-width: 768px) 300px, 40vw"
-          // Los retratos están en el primer pliegue de /comunidad y uno es el LCP.
-          loading="eager"
-          className="object-cover"
-          style={{ objectPosition: fighter.imagePosition ?? '50% 50%' }}
-        />
-      ) : (
-        <CategoryPlaceholder category={fighter.category} className="[&_span]:hidden" />
-      )}
-    </div>
-  );
-}
-
 export function PollTile({
   initialPoll,
   fighters,
+  nextPoll = null,
 }: {
   initialPoll: PollDef;
   fighters: Record<string, PollFighter>;
+  /** Encuesta de la semana siguiente (`getNextPoll`): adelanto al pie. */
+  nextPoll?: PollDef | null;
 }) {
   const queryClient = useQueryClient();
   const { data: state, isError, fetchStatus, refetch } = useQuery({ queryKey: QUERY_KEY, queryFn: fetchPollState, staleTime: 30_000, retry: 1 });
@@ -111,6 +77,9 @@ export function PollTile({
   const status =
     message ?? (unavailable || paused ? ERROR_COPY['no-disponible'] : loading ? 'Cargando la votación…' : '');
   const headingId = React.useId();
+  // Solo si sigue siendo futura: el lunes la página ISR puede traer como «próxima» la que la API ya da como vigente.
+  const upcoming = nextPoll && nextPoll.week > poll.week ? nextPoll : null;
+  const [nextA, nextB] = upcoming ? [upcoming.a, upcoming.b].map((slug) => fighters[slug]?.title ?? slug) : [];
 
   return (
     <section id="encuesta" aria-labelledby={headingId} className="crystal-surface flex scroll-mt-24 flex-col rounded-2xl p-6 md:p-8">
@@ -118,18 +87,19 @@ export function PollTile({
         {poll.question}
       </h2>
 
+      {/* Los retratos están en el primer pliegue de /comunidad y uno es el LCP: van con `eager`. */}
       {declassify ? (
         <div className="mt-6 grid grid-cols-2 gap-3">
-          <Portrait fighter={sides[0]} pending={isPending(sides[0])} />
-          <Portrait fighter={sides[1]} pending={isPending(sides[1])} />
+          <FighterPortrait fighter={sides[0]} pending={isPending(sides[0])} eager />
+          <FighterPortrait fighter={sides[1]} pending={isPending(sides[1])} eager />
         </div>
       ) : (
         <div className="mt-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <Portrait fighter={sides[0]} />
+          <FighterPortrait fighter={sides[0]} eager />
           <span className="font-display text-2xl font-black italic text-primary" aria-hidden>
             VS
           </span>
-          <Portrait fighter={sides[1]} />
+          <FighterPortrait fighter={sides[1]} eager />
         </div>
       )}
 
@@ -210,6 +180,12 @@ export function PollTile({
           </Link>
           <span className="text-[13px] text-white/60">Tu voto es anónimo.</span>
         </div>
+      )}
+
+      {upcoming && (
+        <p className="mt-4 border-t border-white/10 pt-4 text-[13px] text-white/70">
+          {upcoming.tipo === 'desclasificar' ? `Próxima semana: ¿${nextA} o ${nextB}?` : `Próxima semana: ${nextA} vs ${nextB}`}
+        </p>
       )}
     </section>
   );
