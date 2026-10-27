@@ -38,12 +38,17 @@ export function PollHistoryTiles({ fighters }: { fighters: Fighters }) {
     staleTime: 60_000,
   });
   if (!data) return null;
+  const last = data.lastWeek && fighters[data.lastWeek.a] && fighters[data.lastWeek.b] ? data.lastWeek : null;
+  const palmares = data.palmares.filter((e) => fighters[e.slug]);
+  const pedidos = data.masPedidos.filter((e) => fighters[e.slug]);
+  if (!last && palmares.length === 0 && pedidos.length === 0) return null;
   return (
-    <>
-      {data.lastWeek && <LastWeek result={data.lastWeek} fighters={fighters} />}
-      <Palmares entries={data.palmares} fighters={fighters} />
-      <MasPedidos entries={data.masPedidos} fighters={fighters} />
-    </>
+    // lg+: las secciones que haya se reparten el ancho en una fila; en móvil, una bajo otra.
+    <div className="space-y-14 lg:grid lg:auto-cols-fr lg:grid-flow-col lg:items-start lg:gap-8 lg:space-y-0">
+      {last && <LastWeek result={last} fighters={fighters} />}
+      <Palmares entries={palmares} fighters={fighters} />
+      <MasPedidos entries={pedidos} fighters={fighters} />
+    </div>
   );
 }
 

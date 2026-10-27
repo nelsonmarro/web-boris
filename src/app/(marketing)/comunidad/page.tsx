@@ -20,6 +20,7 @@ import { NewsFeatured } from '@/features/community/components/NewsFeatured';
 import { NewsList } from '@/features/community/components/NewsList';
 import { PollHistoryTiles } from '@/features/community/components/PollHistoryTiles';
 import { PollTile, type PollFighter } from '@/features/community/components/PollTile';
+import { cn } from '@/utils/cn';
 import { formatFecha } from '@/utils/format-date';
 import { youtubeThumbUrl, youtubeWatchUrl } from '@/utils/youtube';
 
@@ -92,9 +93,11 @@ export default async function ComunidadPage() {
     <div className="relative flex min-h-screen flex-col">
       <Navbar />
       <main className="relative z-10 flex-1 pb-16 pt-32">
-        {/* Una columna, ordenada por importancia (spec 2026-10-27 §2). El historial y el registro van bajo el
-            pliegue: se pintan en el cliente y su aparición no mueve lo que se ve al entrar. */}
-        <div className="mx-auto max-w-3xl space-y-14 px-6">
+        {/* Ordenada por importancia (spec 2026-10-27 §2). En escritorio la columna se ensancha y las novedades, la
+            encuesta con la criatura, los vídeos y el historial se reparten en horizontal; en móvil todo sigue en una
+            columna. El historial y el registro van bajo el pliegue: se pintan en el cliente y su aparición no mueve
+            lo que se ve al entrar. */}
+        <div className="mx-auto max-w-6xl space-y-14 px-6">
           <header className="space-y-4">
             <h1 className="page-title text-white">Comunidad</h1>
             <p className="text-lg leading-relaxed text-white/70">{INTRO}</p>
@@ -102,7 +105,8 @@ export default async function ComunidadPage() {
 
           <Section id="novedades" title="Novedades" contained={false}>
             {featuredNews ? (
-              <div className="space-y-6">
+              // Desde md, dos columnas al 50 %: la destacada a la izquierda y las demás a la derecha.
+              <div className={cn('grid gap-6', moreNews.length > 0 ? 'md:grid-cols-2 md:items-start md:gap-8' : 'md:max-w-2xl')}>
                 <NewsFeatured entry={featuredNews} image={newsImage(featuredNews, articlesBySlug)} />
                 {moreNews.length > 0 && <NewsList news={moreNews} />}
               </div>
@@ -111,13 +115,30 @@ export default async function ComunidadPage() {
             )}
           </Section>
 
-          {poll && <PollTile initialPoll={poll} fighters={fighterCards} nextPoll={nextPoll} />}
+          {/* lg+: la encuesta a la izquierda (3/5) y la criatura de la semana a la derecha, como tarjeta. */}
+          <div className="space-y-14 lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start lg:gap-8 lg:space-y-0">
+            {poll && <PollTile initialPoll={poll} fighters={fighterCards} nextPoll={nextPoll} />}
 
-          {creature && (
-            <Section id="criatura-semana" title="Criatura de la semana" contained={false}>
-              <CommunityCreatureRow creature={creature} />
-            </Section>
-          )}
+            {creature && (
+              <Section id="criatura-semana" title="Criatura de la semana" contained={false}>
+                <div className="lg:hidden">
+                  <CommunityCreatureRow creature={creature} />
+                </div>
+                <div className="hidden lg:block">
+                  <ContentCard
+                    href={`/wiki/${creature.slug}`}
+                    title={creature.frontmatter.title}
+                    meta={[creature.frontmatter.category, creature.frontmatter.universe].filter(Boolean).join(' · ')}
+                    image={creature.frontmatter.image}
+                    imagePosition={creature.frontmatter.imagePosition}
+                    category={creature.frontmatter.category}
+                    headingLevel={3}
+                    sizes="(min-width: 1024px) 440px, 100vw"
+                  />
+                </div>
+              </Section>
+            )}
+          </div>
 
           {videos.length > 0 && (
             <Section
@@ -129,10 +150,10 @@ export default async function ComunidadPage() {
               {videos.length === 1 ? (
                 <VideoCard video={videos[0]} sizes="(min-width: 768px) 448px, 100vw" className="max-w-md" />
               ) : (
-                <ul className="grid gap-4 sm:grid-cols-2">
+                <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   {videos.map((video) => (
                     <li key={video.id}>
-                      <VideoCard video={video} sizes="(min-width: 768px) 352px, (min-width: 640px) 50vw, 100vw" />
+                      <VideoCard video={video} sizes="(min-width: 1024px) 272px, (min-width: 640px) 50vw, 100vw" />
                     </li>
                   ))}
                 </ul>
