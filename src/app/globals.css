@@ -57,6 +57,8 @@
 }
 
 :root {
+  /* Ruido fractal de la luz cáustica: lo comparten el fondo de la landing (.caustics-layer) y el hero (.hero-caustics). */
+  --caustic-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.005' numOctaves='3' stitchTiles='stitch' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E");
   --background: oklch(0.2 0.12 250);
   --foreground: oklch(0.98 0.01 240);
   --card: oklch(0.25 0.12 250);
@@ -177,7 +179,7 @@
   /* Floating Caustics Pattern */
   .caustics-layer {
     @apply fixed inset-0 z-[-1] opacity-10 pointer-events-none mix-blend-screen;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.005' numOctaves='3' stitchTiles='stitch' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E");
+    background-image: var(--caustic-noise);
     animation: caustic-flow 60s linear infinite;
   }
 
@@ -322,4 +324,132 @@
     pointer-events: none;
   }
 
+}
+
+/* ---------- Hero abisal (spec 2026-10-27 §5) ----------
+ * Solo CSS: la criatura emerge de la oscuridad y deriva despacio, la luz cáustica se desplaza, suben burbujas y el
+ * texto asciende escalonado (el retardo de cada pieza va en `style`). La imagen se pinta desde el primer frame
+ * (oscura): `filter` no retrasa su carga ni el LCP.
+ * Con `prefers-reduced-motion` todo queda estático: el bloque global acorta duraciones pero no retardos ni
+ * `fill-mode`, así que aquí se quitan las animaciones del todo (si no, el texto seguiría invisible durante su retardo). */
+@layer components {
+  .hero-creature {
+    animation:
+      hero-emerge 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) both,
+      hero-drift 30s ease-in-out 1.6s infinite alternate;
+  }
+
+  .hero-caustics {
+    background-image: var(--caustic-noise);
+    mix-blend-mode: screen;
+    opacity: 0.2; /* bajo los velos: solo asoma donde la imagen se ve */
+    pointer-events: none;
+    animation: caustic-flow 60s linear infinite;
+  }
+
+  /* Posición, tamaño, duración (12–18 s) y retardo (0–9 s) de cada burbuja: `style` en línea. */
+  .hero-bubble {
+    position: absolute;
+    bottom: -1rem;
+    border-radius: 9999px;
+    background: rgb(255 255 255 / 0.25);
+    opacity: 0;
+    pointer-events: none;
+    animation: hero-bubble-rise 15s linear infinite;
+  }
+
+  .hero-rise {
+    animation: hero-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .hero-bob {
+    animation: hero-bob 2s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-creature,
+    .hero-caustics,
+    .hero-rise,
+    .hero-bob {
+      animation: none;
+    }
+
+    .hero-creature {
+      filter: none;
+      transform: none;
+    }
+
+    .hero-bubble {
+      display: none;
+    }
+  }
+}
+
+@keyframes hero-emerge {
+  from {
+    filter: brightness(0.25) blur(14px);
+    transform: scale(1.1);
+  }
+  to {
+    filter: brightness(1) blur(0);
+    transform: scale(1.04);
+  }
+}
+
+@keyframes hero-drift {
+  from {
+    transform: scale(1.04) translate(0, 0);
+  }
+  to {
+    transform: scale(1.08) translate(-1.5%, -1%);
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* La flecha «Sumérgete» sube y baja 6 px. */
+@keyframes hero-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+/* De debajo del hero (88svh) hasta ~el 20 % superior, con un leve vaivén lateral. */
+@keyframes hero-bubble-rise {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  10% {
+    opacity: 1;
+  }
+  25% {
+    transform: translate(4px, -17.5svh);
+  }
+  50% {
+    transform: translate(-4px, -35svh);
+  }
+  75% {
+    transform: translate(4px, -52.5svh);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, -70svh);
+  }
 }
