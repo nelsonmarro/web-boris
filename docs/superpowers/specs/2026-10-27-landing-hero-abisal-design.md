@@ -24,11 +24,24 @@ Se quita `export const revalidate = 3600` de la página: el hero la vuelve diná
 `src/features/marketing/config/hero-pool.ts`:
 
 ```ts
-/** Expedientes que pueden abrir la landing: fichas con arte que luce a pantalla completa. Orden sin importancia. */
-export const HERO_POOL: readonly string[] = ['the-bloop', 'el-gran-maja', 'bogbo', 'vlad-julia', 'phillip-forte'];
+export interface HeroPoolEntry {
+  slug: string;
+  /** Toma propia para el hero (ruta en public/). Si falta, se usa la portada de la ficha. */
+  image?: string;
+  /** `object-position` de esa toma. Si falta, el `imagePosition` de la ficha. */
+  imagePosition?: string;
+}
+export const HERO_POOL: readonly HeroPoolEntry[] = [
+  { slug: 'the-bloop', image: '/assets/Universo_Colosos/The_Bloop/The_Bloop_emergiendo_helicopteros.webp', imagePosition: '50% 40%' },
+  { slug: 'el-gran-maja', image: '/assets/Universo_Colosos/El_Gran_Maja/El_Gran_Maja_superficie_amanecer.webp', imagePosition: '60% 50%' },
+  { slug: 'bogbo', image: '/assets/Universo_Colosos/Bogbo/Bogbo_emergiendo_frontal.webp', imagePosition: '55% 35%' },
+  { slug: 'vlad-julia', image: '/assets/Universo_Colosos/Vlad_Julia/Vlad_Julia_frontal.webp', imagePosition: '50% 50%' },
+];
 ```
 
-Regla: un slug de `HERO_POOL` debe existir como MDX y tener `image`; `check:content` lo comprueba (error si no existe o no tiene `image`). Una ficha sellada (`status: proximamente`) no puede estar en la lista (error).
+Cada entrada lleva su toma y su encuadre propios: las portadas de las fichas son escenas de profundidad oscuras que desaparecen sobre el fondo #00122E. Solo monstruos (Phillip Forte, humano, sale de la lista).
+
+Regla: un slug de `HERO_POOL` debe existir como MDX y no estar sellado (`status: proximamente`), y la entrada necesita imagen: su `image` (que debe existir en `public/`) o, si no la trae, la `image` de la ficha. `check:content` lo comprueba.
 
 ## 4. Elección del monstruo
 

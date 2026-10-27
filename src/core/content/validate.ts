@@ -39,22 +39,28 @@ export function crossCheckPollIdSlugs(slugs: Iterable<string>): string[] {
 }
 
 /**
- * `HERO_POOL` (expedientes que pueden abrir la landing, spec 2026-10-27 §3): cada slug debe existir, tener `image`
- * (el hero la pinta a pantalla completa) y no estar sellado (`status: proximamente`).
+ * `HERO_POOL` (expedientes que pueden abrir la landing, spec 2026-10-27 §3): cada slug debe existir y no estar sellado
+ * (`status: proximamente`), y cada entrada necesita una imagen que el hero pinte a pantalla completa: su toma propia
+ * (`image`, que debe existir en public/: lo dice `assetExists`) o, si no la trae, la `image` de la ficha.
  */
 export function crossCheckHeroPool(
-  pool: readonly string[],
+  pool: readonly { slug: string; image?: string }[],
   articleSlugs: ReadonlySet<string>,
   imageSlugs: ReadonlySet<string>,
   sealedSlugs: ReadonlySet<string>,
+  assetExists: (publicPath: string) => boolean,
 ): string[] {
   const errors: string[] = [];
-  for (const slug of pool) {
+  for (const { slug, image } of pool) {
     if (!articleSlugs.has(slug)) {
       errors.push(`hero-pool.ts: "${slug}" no existe en src/content`);
       continue;
     }
-    if (!imageSlugs.has(slug)) errors.push(`hero-pool.ts: "${slug}" no tiene \`image\` (el hero necesita una portada)`);
+    if (image !== undefined) {
+      if (!assetExists(image)) errors.push(`hero-pool.ts: "${slug}": la imagen ${image} no existe en public/`);
+    } else if (!imageSlugs.has(slug)) {
+      errors.push(`hero-pool.ts: "${slug}" no trae \`image\` y su ficha tampoco (el hero necesita una imagen)`);
+    }
     if (sealedSlugs.has(slug)) {
       errors.push(`hero-pool.ts: "${slug}" es un expediente sellado (status: proximamente) y no puede abrir la landing`);
     }

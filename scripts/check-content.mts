@@ -22,8 +22,9 @@
  *     src/content o trae un id que no está en FEATURED_VIDEOS sin `titulo`.
  *  9. Un MDX usa como slug un nombre reservado por una ruta estática (`arena`, `registro`, `aleatorio`) o un slug
  *     que contiene `-vs-` (o acaba en `-vs`), que rompería el id de sus encuestas (`<semana>-<a>-vs-<b>`).
- * 10. Un slug de HERO_POOL (src/features/marketing/config/hero-pool.ts) no existe en src/content, su ficha no tiene
- *     `image` o está sellada (`status: proximamente`).
+ * 10. Un slug de HERO_POOL (src/features/marketing/config/hero-pool.ts) no existe en src/content o está sellado
+ *     (`status: proximamente`), su toma propia (`image`) no existe en public/, o no trae toma y su ficha no tiene
+ *     `image`.
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
@@ -169,7 +170,7 @@ problems['Vídeos ↔ fichas (videos.json)'].push(
 problems['Slugs reservados'].push(...crossCheckReservedSlugs(slugs), ...crossCheckPollIdSlugs(slugs));
 
 // 10: expedientes que pueden abrir la landing
-problems['Hero de la landing (HERO_POOL)'].push(...crossCheckHeroPool(HERO_POOL, slugs, imageSlugs, sealedSlugs));
+problems['Hero de la landing (HERO_POOL)'].push(...crossCheckHeroPool(HERO_POOL, slugs, imageSlugs, sealedSlugs, assetExists));
 
 // Reporte
 console.log(

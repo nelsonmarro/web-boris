@@ -223,22 +223,38 @@ test('crossCheckPollIdSlugs: un slug con "-vs-" o acabado en "-vs" rompería el 
   assert.match(errors[1], /^src\/content\/colosos-vs\.mdx: /);
 });
 
-test('HERO_POOL: cada slug existe, tiene image y no está sellado', () => {
+test('HERO_POOL: cada slug existe, no está sellado y tiene imagen (toma propia en public/ o la de la ficha)', () => {
+  const existing = new Set(['/assets/the-bloop-hero.webp', '/assets/cael-hero.webp']);
   const errors = crossCheckHeroPool(
-    ['the-bloop', 'no-existe', 'sin-imagen', 'cael-cortes'],
-    new Set(['the-bloop', 'sin-imagen', 'cael-cortes']),
-    new Set(['the-bloop', 'cael-cortes']),
+    [
+      { slug: 'the-bloop', image: '/assets/the-bloop-hero.webp' },
+      { slug: 'no-existe', image: '/assets/the-bloop-hero.webp' },
+      { slug: 'sin-imagen' },
+      { slug: 'toma-rota', image: '/assets/no-esta.webp' },
+      { slug: 'cael-cortes', image: '/assets/cael-hero.webp' },
+    ],
+    new Set(['the-bloop', 'sin-imagen', 'toma-rota', 'cael-cortes']),
+    new Set(['the-bloop', 'toma-rota', 'cael-cortes']),
     new Set(['cael-cortes']),
+    (p) => existing.has(p),
   );
-  assert.equal(errors.length, 3);
+  assert.equal(errors.length, 4);
   assert.match(errors[0], /"no-existe" no existe/);
-  assert.match(errors[1], /"sin-imagen" no tiene `image`/);
-  assert.match(errors[2], /"cael-cortes" es un expediente sellado/);
+  assert.match(errors[1], /"sin-imagen" no trae `image` y su ficha tampoco/);
+  // La ficha sí tiene `image`, pero la toma propia manda: si no existe, es un error.
+  assert.match(errors[2], /"toma-rota": la imagen \/assets\/no-esta\.webp no existe en public\//);
+  assert.match(errors[3], /"cael-cortes" es un expediente sellado/);
 });
 
-test('HERO_POOL válido: sin errores', () => {
+test('HERO_POOL válido: sin errores (sin toma propia basta la image de la ficha)', () => {
   assert.deepEqual(
-    crossCheckHeroPool(['the-bloop', 'el-gran-maja'], ARTICLES, new Set(['the-bloop', 'el-gran-maja']), SEALED),
+    crossCheckHeroPool(
+      [{ slug: 'the-bloop', image: '/assets/the-bloop-hero.webp' }, { slug: 'el-gran-maja' }],
+      ARTICLES,
+      new Set(['the-bloop', 'el-gran-maja']),
+      SEALED,
+      (p) => p === '/assets/the-bloop-hero.webp',
+    ),
     [],
   );
 });

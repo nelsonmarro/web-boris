@@ -1,25 +1,26 @@
-import type { CSSProperties } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import type { Route } from 'next';
-import { ChevronDown } from 'lucide-react';
-import { SearchTrigger } from '@/components/search/SearchTrigger';
-import { coverOf } from '@/components/content/CategoryPlaceholder';
-import { getHeroCreature } from '../data/hero-creature';
+import type { CSSProperties } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import type { Route } from "next";
+import { ChevronDown } from "lucide-react";
+import { SearchTrigger } from "@/components/search/SearchTrigger";
+import { getHeroCreature } from "../data/hero-creature";
 
 /** Burbujas colocadas a mano (spec §5): `left` 8–92 %, 6–14 px, retardo 0–9 s, subida de 12–18 s. */
 const BUBBLES = [
-  { left: '8%', size: 8, delay: 0, duration: 14 },
-  { left: '19%', size: 12, delay: 4.5, duration: 17 },
-  { left: '33%', size: 6, delay: 2, duration: 12 },
-  { left: '51%', size: 10, delay: 7, duration: 16 },
-  { left: '66%', size: 14, delay: 1, duration: 18 },
-  { left: '79%', size: 7, delay: 5.5, duration: 13 },
-  { left: '92%', size: 9, delay: 9, duration: 15 },
+  { left: "8%", size: 8, delay: 0, duration: 14 },
+  { left: "19%", size: 12, delay: 4.5, duration: 17 },
+  { left: "33%", size: 6, delay: 2, duration: 12 },
+  { left: "51%", size: 10, delay: 7, duration: 16 },
+  { left: "66%", size: 14, delay: 1, duration: 18 },
+  { left: "79%", size: 7, delay: 5.5, duration: 13 },
+  { left: "92%", size: 9, delay: 9, duration: 15 },
 ] as const;
 
 /** Retardo de la entrada escalonada (`.hero-rise`). */
-const rise = (seconds: number): CSSProperties => ({ animationDelay: `${seconds}s` });
+const rise = (seconds: number): CSSProperties => ({
+  animationDelay: `${seconds}s`,
+});
 
 /**
  * Primera pantalla de la landing (spec 2026-10-27 §5): un expediente de `HERO_POOL`, distinto en cada visita, emerge de
@@ -28,25 +29,22 @@ const rise = (seconds: number): CSSProperties => ({ animationDelay: `${seconds}s
  * no tocar el contraste calibrado en #66.
  *
  * Contraste (≥ 4.5:1 detrás de todo el texto, sea cual sea la imagen, incluso una de fondo blanco como el boceto de
- * El Gran Majá). Los velos son los del hero anterior (auditoría #66), sin cambios. Las paradas del degradado móvil están
- * en px desde arriba:
- *  - 0–90 px (navbar) y primera línea blanca del h1: alfa 0.70 → sobre blanco puro, blanco ≥ 4.5:1 (necesita ≥ 0.58).
- *  - 170–380 px (línea naranja del h1 y la frase blanca/80): alfa 0.88 → sobre blanco puro, #FF7300 da 4.99:1
- *    (necesita ≥ 0.85) y la frase ≥ 0.66.
- *  - de 380 px a 78 %: hasta #00122E sólido.
- * El contenido va centrado en vertical, pero con el mismo `pt-32`/`md:pt-40` que antes: nunca queda más arriba que
- * cuando estaba anclado arriba, y por debajo de 170 px el velo solo se oscurece.
- * En escritorio el velo es horizontal y el corte depende del breakpoint, porque el `container` mide 1024 px de ancho
- * hasta 1279 px y el h1 (60 px, 797 px de ancho) ocupa más del viewport cuanto menos ancho es este:
- *  - lg (1024–1279 px): el h1 llega al 80 % del ancho a 1024 px (78 % a 1100 px) → 0.92 hasta el 82 %.
- *  - xl (≥ 1280 px): el h1 llega como máximo al 64 % → 0.92 hasta el 60 % y alfa ≥ 0.84 en su último carácter.
- * La capa se desvanece en su borde inferior para fundirse con el fondo fijo del layout en vez de cortarse en seco.
+ * El Gran Majá). A diferencia del hero anterior (#66), aquí la criatura es la protagonista, así que el velo no cubre
+ * todo el hero: solo lo que hay detrás del texto.
+ *  - Banda superior (todos los tamaños): alfa 0.75 en los primeros 90 px (la navbar) y luego se desvanece.
+ *  - Móvil y tablet (< lg): velo base 0.25 sobre toda la imagen (se ve la criatura) y el contenido va al pie del
+ *    hero (`justify-end`) con su propio velo (`before:`), que empieza 10 rem por encima del texto y llega a 0.9 dos
+ *    rem antes de la primera línea: sobre blanco puro, #FF7300 da 4.99:1 con 0.85 y el blanco necesita 0.58.
+ *  - lg y xl: la imagen ocupa el 72 % derecho; el texto, una columna del 52 % del contenedor (termina antes del
+ *    56 % del viewport en cualquier ancho), y el velo horizontal se mantiene en 0.9 hasta el 56 % y cae a 0 en el
+ *    78 %. El h1 baja a 48 px en lg (60 px desde xl) para caber en la columna sin partir «de mis universos».
+ *  - Fundido inferior (lg+): el tercio bajo se funde con el fondo fijo del layout en vez de cortarse en seco.
  * Sin expediente (pool vacío o sin candidatos), el hero se pinta solo con el degradado y sin chip.
  */
 export async function HeroAbisal() {
-  const creature = await getHeroCreature();
+  const hero = await getHeroCreature();
+  const creature = hero?.creature;
   const fm = creature?.frontmatter;
-  const cover = coverOf(fm?.image);
 
   return (
     <section className="relative isolate overflow-hidden">
@@ -54,29 +52,30 @@ export async function HeroAbisal() {
         aria-hidden="true"
         className="absolute inset-0 -z-10 [mask-image:linear-gradient(to_bottom,black_88%,transparent)]"
       >
-        {cover && (
-          <div className="hero-creature absolute inset-0">
+        {/* La toma propia del pool o, si falta, la portada de la ficha (ya filtrada por `coverOf` en el sorteo). */}
+        {hero && (
+          <div className="hero-creature absolute inset-0 lg:left-[28%]">
             <Image
-              src={cover}
+              src={hero.image}
               alt=""
               fill
               sizes="100vw"
               fetchPriority="high"
               loading="eager"
               className="object-cover"
-              style={{ objectPosition: fm?.imagePosition ?? '50% 50%' }}
+              style={{ objectPosition: hero.imagePosition }}
             />
           </div>
         )}
         {/* Luz cáustica DEBAJO de los velos (ruling del controlador): así no toca el contraste calibrado en #66. */}
         <div className="hero-caustics absolute inset-0" />
-        {/* Móvil: el texto ocupa todo el ancho → velo vertical (≥ 0.85 bajo el texto naranja). */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,18,46,0.7)_0,rgba(0,18,46,0.7)_90px,rgba(0,18,46,0.88)_170px,rgba(0,18,46,0.88)_380px,#00122E_78%)] lg:hidden" />
-        {/* lg (1024–1279 px): el h1 llega al 80 % del ancho → 0.92 hasta el 82 %; la criatura queda en el borde derecho. */}
-        <div className="absolute inset-0 hidden bg-[linear-gradient(to_right,rgba(0,18,46,0.94)_0%,rgba(0,18,46,0.92)_82%,rgba(0,18,46,0.45)_100%)] lg:block xl:hidden" />
-        {/* xl (≥ 1280 px): el texto vive en el 60 % izquierdo → velo horizontal; la criatura se ve en el tercio derecho. */}
-        <div className="absolute inset-0 hidden bg-[linear-gradient(to_right,rgba(0,18,46,0.94)_0%,rgba(0,18,46,0.92)_60%,rgba(0,18,46,0.45)_85%,rgba(0,18,46,0.25)_100%)] xl:block" />
-        <div className="absolute inset-x-0 bottom-0 hidden h-1/2 bg-[linear-gradient(to_top,#00122E_0%,rgba(0,18,46,0.8)_45%,transparent_100%)] lg:block" />
+        {/* < lg: velo base ligero; el velo del texto va pegado al contenido (abajo, `before:`). */}
+        <div className="absolute inset-0 bg-[#00122E]/25 lg:hidden" />
+        {/* lg+: el texto vive en la columna izquierda → velo horizontal ≥ 0.85 hasta el 56 %; la criatura, a la derecha. */}
+        <div className="absolute inset-0 hidden bg-[linear-gradient(to_right,rgba(0,18,46,0.94)_0%,rgba(0,18,46,0.9)_56%,rgba(0,18,46,0.5)_65%,rgba(0,18,46,0.12)_78%,transparent_100%)] lg:block" />
+        {/* Banda superior: la navbar siempre sobre fondo oscuro. */}
+        <div className="absolute inset-x-0 top-0 h-56 bg-[linear-gradient(to_bottom,rgba(0,18,46,0.75)_0,rgba(0,18,46,0.75)_90px,transparent_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 hidden h-1/3 bg-[linear-gradient(to_top,#00122E_0%,rgba(0,18,46,0.6)_50%,transparent_100%)] lg:block" />
         {BUBBLES.map((b) => (
           <span
             key={b.left}
@@ -92,32 +91,46 @@ export async function HeroAbisal() {
         ))}
       </div>
 
-      <div className="container mx-auto flex min-h-[88svh] flex-col justify-center px-6 pb-24 pt-32 md:pt-40 short-screen:pb-10 short-screen:pt-28">
-        <h1 className="page-title hero-rise" style={rise(0.25)}>
-          Explora la inmensidad <span className="block italic text-primary">de mis universos</span>
-        </h1>
-        <p className="hero-rise mt-4 text-lg text-white/80" style={rise(0.4)}>
-          Todo el lore oficial de BorisaoBlois en un solo archivo.
-        </p>
-        <div className="hero-rise mt-6 max-w-xl" style={rise(0.55)}>
-          <SearchTrigger variant="hero" />
+      <div className="relative flex min-h-[88svh] flex-col justify-end lg:justify-center">
+        {/* < lg: velo pegado al bloque de texto (10 rem por encima → 0.9 a 2 rem de la primera línea). */}
+        <div className="container relative mx-auto flex flex-col px-6 pb-24 pt-32 before:absolute before:-inset-x-[100vw] before:-top-40 before:bottom-0 before:-z-10 before:bg-[linear-gradient(to_bottom,transparent_0,rgba(0,18,46,0.9)_8rem,rgba(0,18,46,0.92)_100%)] md:pt-40 lg:max-w-none lg:before:hidden short-screen:pb-10 short-screen:pt-28">
+          <div className="lg:max-w-[52%]">
+            <h1
+              className="hero-rise font-display-wide break-words hyphens-auto text-3xl font-bold leading-[1.05] tracking-tight text-white md:text-5xl xl:text-6xl"
+              style={rise(0.25)}
+            >
+              Explora la inmensidad{" "}
+              <span className="block italic text-primary">
+                de mis universos
+              </span>
+            </h1>
+            <p
+              className="hero-rise mt-4 text-lg text-white/80"
+              style={rise(0.4)}
+            >
+              Todo el lore oficial de BorisaoBlois en un solo archivo.
+            </p>
+            <div className="hero-rise mt-6 max-w-xl" style={rise(0.55)}>
+              <SearchTrigger variant="hero" />
+            </div>
+            {creature && fm && (
+              <Link
+                href={`/wiki/${creature.slug}` as Route}
+                className="hero-rise mt-4 inline-flex min-h-11 items-center self-start rounded-full border border-white/15 bg-[#061a2e]/90 px-4 text-sm text-white transition-colors hover:border-primary/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none"
+                style={rise(0.7)}
+              >
+                <span>
+                  En pantalla: <strong className="font-bold">{fm.title}</strong>{" "}
+                  · Ver expediente <span aria-hidden="true">›</span>
+                </span>
+              </Link>
+            )}
+          </div>
         </div>
-        {creature && fm && (
-          <Link
-            href={`/wiki/${creature.slug}` as Route}
-            className="hero-rise mt-4 inline-flex min-h-11 items-center self-start rounded-full border border-white/15 bg-[#061a2e]/90 px-4 text-sm text-white transition-colors hover:border-primary/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none"
-            style={rise(0.7)}
-          >
-            <span>
-              En pantalla: <strong className="font-bold">{fm.title}</strong> · Ver expediente{' '}
-              <span aria-hidden="true">›</span>
-            </span>
-          </Link>
-        )}
       </div>
 
-      {/* «Sumérgete»: baja a los universos. Oculta en escritorio bajo (short-screen), donde no cabe sin pisar el chip. */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-6 flex justify-center short-screen:hidden">
+      {/* «Sumérgete»: baja a los universos. El contenido deja `pb-24`, así que nunca lo pisa. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-6 flex justify-center">
         <a
           href="#universos"
           className="hero-rise pointer-events-auto inline-flex min-h-11 min-w-11 flex-col items-center justify-center gap-1 rounded-sm px-3 text-[11px] font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none"
