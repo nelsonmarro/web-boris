@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   crossCheckEntities,
+  crossCheckHeroPool,
   crossCheckNews,
   crossCheckPollIdSlugs,
   crossCheckPolls,
@@ -220,4 +221,24 @@ test('crossCheckPollIdSlugs: un slug con "-vs-" o acabado en "-vs" rompería el 
   assert.equal(errors.length, 2);
   assert.match(errors[0], /^src\/content\/bloop-vs-maja\.mdx: .*-vs-.*encuesta/);
   assert.match(errors[1], /^src\/content\/colosos-vs\.mdx: /);
+});
+
+test('HERO_POOL: cada slug existe, tiene image y no está sellado', () => {
+  const errors = crossCheckHeroPool(
+    ['the-bloop', 'no-existe', 'sin-imagen', 'cael-cortes'],
+    new Set(['the-bloop', 'sin-imagen', 'cael-cortes']),
+    new Set(['the-bloop', 'cael-cortes']),
+    new Set(['cael-cortes']),
+  );
+  assert.equal(errors.length, 3);
+  assert.match(errors[0], /"no-existe" no existe/);
+  assert.match(errors[1], /"sin-imagen" no tiene `image`/);
+  assert.match(errors[2], /"cael-cortes" es un expediente sellado/);
+});
+
+test('HERO_POOL válido: sin errores', () => {
+  assert.deepEqual(
+    crossCheckHeroPool(['the-bloop', 'el-gran-maja'], ARTICLES, new Set(['the-bloop', 'el-gran-maja']), SEALED),
+    [],
+  );
 });

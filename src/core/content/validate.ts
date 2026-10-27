@@ -39,6 +39,30 @@ export function crossCheckPollIdSlugs(slugs: Iterable<string>): string[] {
 }
 
 /**
+ * `HERO_POOL` (expedientes que pueden abrir la landing, spec 2026-10-27 §3): cada slug debe existir, tener `image`
+ * (el hero la pinta a pantalla completa) y no estar sellado (`status: proximamente`).
+ */
+export function crossCheckHeroPool(
+  pool: readonly string[],
+  articleSlugs: ReadonlySet<string>,
+  imageSlugs: ReadonlySet<string>,
+  sealedSlugs: ReadonlySet<string>,
+): string[] {
+  const errors: string[] = [];
+  for (const slug of pool) {
+    if (!articleSlugs.has(slug)) {
+      errors.push(`hero-pool.ts: "${slug}" no existe en src/content`);
+      continue;
+    }
+    if (!imageSlugs.has(slug)) errors.push(`hero-pool.ts: "${slug}" no tiene \`image\` (el hero necesita una portada)`);
+    if (sealedSlugs.has(slug)) {
+      errors.push(`hero-pool.ts: "${slug}" es un expediente sellado (status: proximamente) y no puede abrir la landing`);
+    }
+  }
+  return errors;
+}
+
+/**
  * `duelo`: a y b deben existir y tener stats (la Arena). `desclasificar`: a y b deben existir y, mientras la
  * votación es de una semana estrictamente futura respecto a `now`, estar sellados (`status: proximamente`). En la
  * semana actual y las pasadas basta con que existan: que Boris desclasifique una ficha es justo el resultado esperado.
