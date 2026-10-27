@@ -16,7 +16,8 @@ export function SidebarBranding() {
           <Image src="/assets/Branding/logo.webp" alt="" width={32} height={32} className="rounded-full" />
         </div>
         <div className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:sr-only">
-          <span className="truncate text-base font-bold uppercase italic tracking-tight text-white">
+          {/* `pr-[0.15em]`: la cursiva inclina la última «S» fuera de la caja que recorta `truncate`. */}
+          <span className="truncate pr-[0.15em] text-base font-bold uppercase italic tracking-tight text-white">
             Borisao<span className="text-primary">Blois</span>
           </span>
           <span className="eyebrow truncate text-white/60">Wiki oficial</span>

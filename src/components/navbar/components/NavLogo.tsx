@@ -40,7 +40,9 @@ export function NavLogo({ hideLogoOnDesktop, size = 'md' }: NavLogoProps) {
       <span
         className={cn(
           "font-bold tracking-tight text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] uppercase italic",
-          "min-w-0 truncate",
+          // `truncate` recorta lo que sobresale de la caja, y la cursiva inclina la última «S» fuera de ella: el
+          // relleno derecho le deja sitio.
+          "min-w-0 truncate pr-[0.15em]",
           compact ? "text-lg" : "text-base sm:text-2xl"
         )}
       >
