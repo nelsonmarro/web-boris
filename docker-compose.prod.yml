@@ -1,0 +1,49 @@
+# Producción en el VPS (ver docs/deploy/vps.md). Siempre con:
+#   docker compose --env-file .env.production -f docker-compose.prod.yml <orden>
+# La app solo escucha en 127.0.0.1:3131: la expone el nginx del VPS (TLS, X-Real-IP). Postgres no publica puertos.
+name: web-boris-prod
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      target: runner
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+    image: web-boris-app
+    restart: unless-stopped
+    env_file: .env.production
+    ports:
+      - '127.0.0.1:3131:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  migrate:
+    build:
+      context: .
+      target: migrate
+    image: web-boris-migrate
+    env_file: .env.production
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles: [tools]
+
+volumes:
+  pgdata:

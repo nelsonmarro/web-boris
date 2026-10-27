@@ -24,6 +24,8 @@ make db-shell     # psql (user: root, db: webboris)
 npx prisma generate / migrate dev / studio
 ```
 
+Producción (VPS de Hostinger, Docker Compose detrás del nginx del servidor): `docker-compose.prod.yml`, `Dockerfile` (Next `standalone` con `NEXT_OUTPUT=standalone`) y `deploy/` (`setup-vps.sh` la primera vez, `deploy.sh` para actualizar). Guía en `docs/deploy/vps.md`. La imagen copia `src/content` porque las fichas se leen del disco al revalidar.
+
 Validación: `npm run lint`, `npm test` (node:test sobre `tests/**/*.test.ts`), `npm run check:content` y `npm run build` (parsea todos los MDX y chequea tipos). El CI ejecuta los cuatro.
 
 ## Stack
