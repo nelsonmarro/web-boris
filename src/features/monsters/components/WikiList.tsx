@@ -239,7 +239,7 @@ export function WikiList({ options }: WikiListProps) {
             <Button
               type="button"
               onClick={() => (staleVersion ? window.location.reload() : void refetch())}
-              className="h-11 rounded-xl px-6 font-bold"
+              className="h-11 rounded-xl px-6 font-bold text-[#00122E]"
             >
               {staleVersion ? 'Recargar' : 'Reintentar'}
             </Button>

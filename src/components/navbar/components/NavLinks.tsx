@@ -16,9 +16,11 @@ const NAV_LINKS = [
 interface NavLinksProps {
   /** Se llama tras pulsar cualquier enlace (el menú móvil lo usa para cerrar el panel). */
   onNavigate?: () => void;
+  /** Ningún enlace aparece activo (la 404: el servidor no conoce la URL pedida). */
+  noActive?: boolean;
 }
 
-export function NavLinks({ onNavigate }: NavLinksProps = {}) {
+export function NavLinks({ onNavigate, noActive = false }: NavLinksProps = {}) {
   const pathname = usePathname();
   const [activeHash, setActiveHash] = React.useState("");
 
@@ -92,6 +94,7 @@ export function NavLinks({ onNavigate }: NavLinksProps = {}) {
   };
 
   const isLinkActive = (href: string) => {
+    if (noActive) return false;
     if (href === "/") return pathname === "/" && activeHash === "";
     if (href === "/wiki") return pathname.startsWith("/wiki");
     if (href.startsWith("/#")) {

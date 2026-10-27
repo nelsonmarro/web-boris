@@ -29,7 +29,7 @@ export default function Error({
           Puede ser un corte de conexión pasajero. Prueba de nuevo; si sigue igual, recarga la página.
         </p>
         <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
-          <button type="button" onClick={() => unstable_retry()} className={`${BTN} bg-primary text-white hover:bg-primary/90`}>
+          <button type="button" onClick={() => unstable_retry()} className={`${BTN} bg-primary text-[#00122E] hover:bg-primary/90`}>
             Reintentar
           </button>
           <button

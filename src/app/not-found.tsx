@@ -19,7 +19,7 @@ const LINK =
 export default function NotFound() {
   return (
     <div className="relative flex min-h-screen flex-col bg-[#00122E]">
-      <Navbar />
+      <Navbar noActive />
       <main className="relative z-10 flex flex-1 items-center justify-center px-6 pb-10 pt-32">
         <div className="crystal-surface w-full max-w-xl space-y-6 rounded-3xl bg-[#061a2e] p-8 text-center sm:p-12">
           <p className="text-6xl font-black text-primary" aria-hidden="true">
@@ -32,7 +32,7 @@ export default function NotFound() {
           </p>
           <SearchTrigger variant="hero" placeholder="Busca una ficha" className="mx-auto" />
           <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
-            <Link href="/" className={`${LINK} bg-primary text-white hover:bg-primary/90`}>
+            <Link href="/" className={`${LINK} bg-primary text-[#00122E] hover:bg-primary/90`}>
               Inicio
             </Link>
             <Link href="/wiki" className={`${LINK} border border-white/15 text-white/80 hover:text-primary`}>

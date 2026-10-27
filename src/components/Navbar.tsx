@@ -17,9 +17,11 @@ import {
 
 interface NavbarProps {
   hideLogoOnDesktop?: boolean;
+  /** Sin enlace activo: la 404 se prerrenderiza como `/_not-found` pero el cliente ve la URL real (#418). */
+  noActive?: boolean;
 }
 
-export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
+export default function Navbar({ hideLogoOnDesktop = false, noActive = false }: NavbarProps) {
   const [scrolled, setScrolled] = React.useState(false);
   // Sheet controlado: los enlaces de ancla no desmontan el panel, hay que cerrarlo a mano.
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -66,7 +68,7 @@ export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
             hideLogoOnDesktop && 'md:gap-1',
           )}
         >
-          <NavLinks />
+          <NavLinks noActive={noActive} />
           <NavActions />
           {/* Búsqueda global: la barra completa solo cabe desde xl (por debajo, menú + lupa). */}
           <SearchTrigger variant="pill" className="ml-2" />
@@ -86,6 +88,10 @@ export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
             <SheetContent
               side="right"
               className="bg-[#001226] border-l border-white/10 p-0 w-[80%] max-w-[300px]"
+              // Cualquier enlace del panel (logo, enlaces, Versus) lo cierra.
+              onClick={(e) => {
+                if ((e.target as HTMLElement).closest('a')) setMenuOpen(false);
+              }}
             >
               <SheetHeader className="p-8 border-b border-white/5">
                 <SheetTitle className="text-left">
@@ -93,7 +99,7 @@ export default function Navbar({ hideLogoOnDesktop = false }: NavbarProps) {
                 </SheetTitle>
               </SheetHeader>
               <div className="flex flex-col p-6 space-y-2">
-                <NavLinks onNavigate={() => setMenuOpen(false)} />
+                <NavLinks noActive={noActive} onNavigate={() => setMenuOpen(false)} />
                 <div className="pt-6 mt-4 border-t border-white/5">
                   <NavActions />
                 </div>
