@@ -177,20 +177,13 @@
   }
 
   /* Floating Caustics Pattern */
+  /* Estática a propósito: animarla obligaba a Firefox a recomponer la mezcla (`mix-blend-mode`) a pantalla
+     completa en cada frame (19 fps en la landing); quieta, la misma capa cuesta casi nada. */
   .caustics-layer {
     @apply fixed inset-0 z-[-1] opacity-10 pointer-events-none mix-blend-screen;
     background-image: var(--caustic-noise);
-    animation: caustic-flow 60s linear infinite;
   }
 
-  @keyframes caustic-flow {
-    from {
-      transform: scale(1) rotate(0deg);
-    }
-    to {
-      transform: scale(1.5) rotate(5deg);
-    }
-  }
 
   .glass-reflection {
     @apply absolute inset-0 pointer-events-none z-0 opacity-20;
@@ -328,17 +321,17 @@
 
 /* ---------- Hero abisal (spec 2026-10-27 §5) ----------
  * Solo CSS y solo `transform`/`opacity` (lo mueve el compositor, sin repintar): la criatura emerge de la oscuridad
- * (un velo opaco que se disuelve, sin `filter`/`blur`) y deriva despacio, suben burbujas y el texto asciende
+ * (un velo opaco que se disuelve, sin `filter`/`blur`) y se queda quieta, suben burbujas y el texto asciende
  * escalonado (el retardo de cada pieza va en `style`). La imagen se pinta desde el primer frame: el velo no retrasa
  * su carga ni el LCP.
  * Con `prefers-reduced-motion` todo queda estático: el bloque global acorta duraciones pero no retardos ni
  * `fill-mode`, así que aquí se quitan las animaciones del todo (si no, el texto seguiría invisible durante su retardo). */
 @layer components {
+  /* Sin deriva continua: escalar la imagen a pantalla completa durante 30 s hacía que Firefox la volviera a
+     rasterizar en cada frame (de ~150 a ~55 fps). Emerge en 1,1 s y se queda quieta. */
   .hero-creature {
     will-change: transform;
-    animation:
-      hero-emerge 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both,
-      hero-drift 30s ease-in-out 1.1s infinite alternate;
+    animation: hero-emerge 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
 
   .hero-emerge-veil {
@@ -404,14 +397,6 @@
   }
 }
 
-@keyframes hero-drift {
-  from {
-    transform: scale(1.04) translate(0, 0);
-  }
-  to {
-    transform: scale(1.08) translate(-1.5%, -1%);
-  }
-}
 
 @keyframes hero-rise {
   from {
