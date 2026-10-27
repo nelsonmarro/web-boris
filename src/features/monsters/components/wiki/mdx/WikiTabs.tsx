@@ -43,12 +43,12 @@ export function WikiTabs({ defaultValue, children, className }: WikiTabsProps) {
         className,
       )}
     >
-      <Tabs.List className="relative flex flex-wrap gap-1 border-b border-white/10 bg-black/20 px-2 pt-2">
+      <Tabs.List className="relative flex flex-nowrap gap-1 overflow-x-auto border-b border-white/10 bg-black/20 px-2 pt-2">
         {tabs.map((tab) => (
           <Tabs.Tab
             key={tab.props.value}
             value={tab.props.value}
-            className="relative z-10 rounded-t-lg px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white/50 outline-none focus-visible:outline-hidden transition-colors hover:text-white/80 focus-visible:ring-2 focus-visible:ring-primary/40 data-[active]:text-primary data-[selected]:text-primary"
+            className="relative z-10 min-h-11 shrink-0 whitespace-nowrap rounded-t-lg px-2.5 py-2.5 text-[11px] font-bold uppercase tracking-[0.08em] sm:px-4 sm:tracking-[0.18em] text-white/50 outline-none focus-visible:outline-hidden transition-colors hover:text-white/80 focus-visible:ring-2 focus-visible:ring-primary/40 data-[active]:text-primary data-[selected]:text-primary"
           >
             {tab.props.label}
           </Tabs.Tab>

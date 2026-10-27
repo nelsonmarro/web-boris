@@ -1,15 +1,18 @@
 import { cache } from 'react';
 import type { Metadata } from 'next';
+import { pageMetadata } from '@/lib/seo';
 import VersusArena from '@/features/monsters/components/VersusArena';
 import { getContentRepository } from '@/core/content';
 import { toSummary } from '@/core/types/wiki';
 import { hasStats } from '@/features/monsters/lib/stats';
+import { resolvePair } from '@/features/monsters/components/arena/resolve-pair';
 import { computeMatchup, type Fighter } from '@/features/monsters/lib/arena';
 
-const DEFAULT_METADATA: Metadata = {
+const DEFAULT_METADATA: Metadata = pageMetadata({
   title: 'Versus Arena | Wiki BorisaoBlois',
   description: 'Enfrenta a los colosos de BorisaoBlois y compara su escala real.',
-};
+  path: '/wiki/arena',
+});
 
 type ArenaSearchParams = { [key: string]: string | string[] | undefined };
 
@@ -36,25 +39,24 @@ export async function generateMetadata({ searchParams }: ArenaPageProps): Promis
   const params = await searchParams;
   const slugA = firstValue(params.a);
   const slugB = firstValue(params.b);
-  if (!slugA || !slugB || slugA === slugB) return DEFAULT_METADATA;
+  // Sin parámetros, la página base. Con cualquiera, se resuelve igual que el cliente (B por defecto,
+  // slug antiguo, inválidos) para que el título y la vista previa describan lo que se muestra.
+  if (!slugA && !slugB) return DEFAULT_METADATA;
 
   const fighters = await getFighters();
-  const a = fighters.find((f) => f.slug === slugA);
-  const b = fighters.find((f) => f.slug === slugB);
+  const pair = resolvePair(fighters.map((f) => f.slug), slugA, slugB);
+  const a = fighters.find((f) => f.slug === pair.slugA);
+  const b = fighters.find((f) => f.slug === pair.slugB);
   if (!a || !b) return DEFAULT_METADATA;
 
   const nameA = a.frontmatter.title;
   const nameB = b.frontmatter.title;
   const pctA = Math.round(computeMatchup(a.frontmatter.stats, b.frontmatter.stats).probA * 100);
+  const url = `/wiki/arena?a=${a.slug}&b=${b.slug}`;
   const title = `${nameA} vs ${nameB} | Versus Arena`;
   const description = `${nameA} tiene un ${pctA}% de probabilidad de ganarle a ${nameB} (${100 - pctA}% para ${nameB}) según sus registros biométricos. Simula tu propio enfrentamiento en la Versus Arena.`;
 
-  return {
-    title,
-    description,
-    openGraph: { title, description },
-    twitter: { title, description },
-  };
+  return pageMetadata({ title, description, path: url });
 }
 
 export default async function WikiArenaPage() {

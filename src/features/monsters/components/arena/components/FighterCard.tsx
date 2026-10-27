@@ -35,7 +35,7 @@ export function FighterCard({ fighter, side, score, winner }: FighterCardProps) 
     >
       <div className="relative aspect-[16/10] w-full bg-black/40">
         {cover ? (
-          <Image src={cover} alt={fm.title} fill sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover" style={{ objectPosition: fm.imagePosition ?? '50% 50%' }} />
+          <Image src={cover} alt={fm.title} fill loading="eager" fetchPriority="high" sizes="(min-width: 1024px) 33vw, 100vw" className="object-cover" style={{ objectPosition: fm.imagePosition ?? '50% 50%' }} />
         ) : (
           <CategoryPlaceholder category={fm.category} />
         )}
