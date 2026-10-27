@@ -1,5 +1,6 @@
 import type { Metadata, Route } from 'next';
 import Link from 'next/link';
+import { pageMetadata } from '@/lib/seo';
 import { Section } from '@/components/content';
 import { getEntityIndex } from '@/core/content/entities';
 import { registroEntries, registroSlugs } from '@/core/search/registro';
@@ -9,11 +10,12 @@ import { RegistroProgress } from '@/features/monsters/components/wiki/registro/R
 /** Los expedientes se leen de los MDX; se revalida cada hora. El progreso del fan se pinta en el navegador. */
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Registro del archivo | Wiki BorisaoBlois',
   description:
     'Lleva la cuenta de los expedientes del archivo de BorisaoBlois que has abierto. El registro se guarda solo en tu navegador.',
-};
+  path: '/wiki/registro',
+});
 
 const TEXT_LINK =
   'inline-flex min-h-11 items-center rounded-sm text-white/80 transition-colors hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none';
