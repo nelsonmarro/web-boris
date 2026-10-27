@@ -26,9 +26,7 @@ Seis auditores recorrieron la web en producción con Playwright: 8 viewports, ax
 - Los módulos puros (`src/core/**`, `src/features/community/lib/**`) usan solo imports relativos `.ts`.
 - Sin dependencias nuevas.
 - **Cada tarea toca solo sus archivos:** la lista de cada una es exclusiva, porque se ejecutan en paralelo.
-- Los implementadores no hacen commit ni `npm run build`. Verifican con `npm test`, `npm run lint` y `npx tsc --noEmit`, y prueban en el navegador contra `http://localhost:3131`. Ese servidor es el build de `main`: **no refleja sus cambios**, así que para probarlos usan `next dev` en un puerto propio (abajo).
-- Puertos de `next dev` para probar: T1 4101, T2 4102, T3 4103, T4 4104, T5 4105, T6 4106, T7 4107, T8 4108. Se arranca con `npx next dev -p <puerto>` y se para al terminar, matando su PID. `DATABASE_URL` a `localhost:5433`, como en `.env` pero con ese puerto (Postgres ya está en marcha).
-
+- Los implementadores no hacen commit, ni `npm run build`, ni `next dev`: ocho dev servers en el mismo directorio chocarían por el bloqueo de `.next`. Verifican con `npm test`, `npm run lint` y `npx tsc --noEmit`, y leyendo el código. El servidor de `http://localhost:3131` es el build de `main` sin sus cambios: sirve para reproducir el fallo original, no para probar el arreglo. El controlador compila todo junto y repite los scripts de Playwright de los auditores (`scratchpad/pw/a*-*.mjs`) como prueba de regresión.
 ---
 
 ### Task 1: Formulario de contacto (A1-1 crítica, A1-4)
