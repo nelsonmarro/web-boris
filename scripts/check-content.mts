@@ -22,6 +22,9 @@
  *     src/content o trae un id que no está en FEATURED_VIDEOS sin `titulo`.
  *  9. Un MDX usa como slug un nombre reservado por una ruta estática (`arena`, `registro`, `aleatorio`) o un slug
  *     que contiene `-vs-` (o acaba en `-vs`), que rompería el id de sus encuestas (`<semana>-<a>-vs-<b>`).
+ * 10. Un slug de HERO_POOL (src/features/marketing/config/hero-pool.ts) no existe en src/content o está sellado
+ *     (`status: proximamente`), su toma propia (`image`) no existe en public/, o no trae toma y su ficha no tiene
+ *     `image`.
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
@@ -30,6 +33,7 @@ import { WikiFrontmatterSchema } from '../src/core/types/wiki.ts';
 import { readCuratedPolls, readNews, readVideoLinks } from '../src/core/content/readers.ts';
 import {
   crossCheckEntities,
+  crossCheckHeroPool,
   crossCheckNews,
   crossCheckPollIdSlugs,
   crossCheckPolls,
@@ -38,6 +42,7 @@ import {
 } from '../src/core/content/validate.ts';
 // Solo datos, sin dependencias de servidor: se pueden leer desde el script.
 import { FEATURED_VIDEOS } from '../src/features/marketing/config/videos.ts';
+import { HERO_POOL } from '../src/features/marketing/config/hero-pool.ts';
 
 const ROOT = process.cwd();
 const CONTENT_DIR = path.join(ROOT, 'src', 'content');
@@ -56,6 +61,7 @@ const problems: Record<string, string[]> = {
   'Apodos y relacionados': [],
   'Vídeos ↔ fichas (videos.json)': [],
   'Slugs reservados': [],
+  'Hero de la landing (HERO_POOL)': [],
 };
 
 const NON_LORE_ASSETS = ['/assets/Branding/', '/assets/Universo_Colosos/Esquemas/'];
@@ -65,6 +71,7 @@ const slugs = new Set(mdxFiles.map((f) => f.replace(/\.mdx$/, '')));
 const universesWithArticles = new Set<string>();
 const fighterSlugs = new Set<string>();
 const sealedSlugs = new Set<string>();
+const imageSlugs = new Set<string>();
 const entityItems: { slug: string; title: string; aliases?: string[]; related?: string[] }[] = [];
 
 /** Extrae rutas /assets/... de un texto (MDX o TS). */
@@ -103,6 +110,7 @@ for (const file of mdxFiles) {
     const stats = parsed.data.stats;
     if (stats && Object.keys(stats).length > 0) fighterSlugs.add(file.replace(/\.mdx$/, ''));
     if (parsed.data.status === 'proximamente') sealedSlugs.add(file.replace(/\.mdx$/, ''));
+    if (parsed.data.image) imageSlugs.add(file.replace(/\.mdx$/, ''));
     entityItems.push({
       slug: file.replace(/\.mdx$/, ''),
       title: parsed.data.title,
@@ -160,6 +168,9 @@ problems['Vídeos ↔ fichas (videos.json)'].push(
 
 // 9: nombres reservados por rutas estáticas y slugs que romperían el id de una encuesta
 problems['Slugs reservados'].push(...crossCheckReservedSlugs(slugs), ...crossCheckPollIdSlugs(slugs));
+
+// 10: expedientes que pueden abrir la landing
+problems['Hero de la landing (HERO_POOL)'].push(...crossCheckHeroPool(HERO_POOL, slugs, imageSlugs, sealedSlugs, assetExists));
 
 // Reporte
 console.log(
