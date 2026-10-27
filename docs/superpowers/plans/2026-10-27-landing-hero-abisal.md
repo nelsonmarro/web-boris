@@ -1021,7 +1021,7 @@ for i in 1 2 3; do
   curl -s --retry 60 --retry-connrefused --retry-delay 1 http://localhost:3132/ \
     | grep -o 'En pantalla: <strong[^>]*>[^<]*' | sed 's/.*>//'
 done
-kill $SERVER; pkill -f 'next dev -p 3132' || true
+kill $SERVER; kill $(lsof -t -i:3132) 2>/dev/null || true
 ```
 
 Expected: tres líneas `Bogbo`.
