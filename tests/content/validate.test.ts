@@ -4,6 +4,7 @@ import {
   checkArticleStandard,
   crossCheckEntities,
   crossCheckHeroPool,
+  crossCheckStartHere,
   crossCheckNews,
   crossCheckPollIdSlugs,
   crossCheckPolls,
@@ -326,4 +327,12 @@ test('checkArticleStandard: los índices (Directorio / Categoría) y las sellada
   );
   // Sin categoría no es un índice: se le exige el estándar.
   assert.equal(checkArticleStandard([bare]).length, 3);
+});
+
+test('START_HERE: cada slug existe y no está sellado', () => {
+  const errors = crossCheckStartHere(['the-bloop', 'no-existe', 'cael-cortes'], new Set([...ARTICLES, 'cael-cortes']), new Set(['cael-cortes']));
+  assert.equal(errors.length, 2);
+  assert.match(errors[0], /"no-existe" no existe/);
+  assert.match(errors[1], /"cael-cortes" es un expediente sellado/);
+  assert.deepEqual(crossCheckStartHere(['the-bloop', 'el-gran-maja'], ARTICLES, SEALED), []);
 });

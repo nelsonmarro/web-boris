@@ -69,6 +69,20 @@ export function crossCheckHeroPool(
   return errors;
 }
 
+/** `START_HERE` («Empieza por aquí» de /wiki, spec 2026-10-29 §C): cada slug debe existir y no estar sellado. */
+export function crossCheckStartHere(
+  slugsList: readonly string[],
+  articleSlugs: ReadonlySet<string>,
+  sealedSlugs: ReadonlySet<string>,
+): string[] {
+  const errors: string[] = [];
+  for (const slug of slugsList) {
+    if (!articleSlugs.has(slug)) errors.push(`start-here.ts: "${slug}" no existe en src/content`);
+    else if (sealedSlugs.has(slug)) errors.push(`start-here.ts: "${slug}" es un expediente sellado (status: proximamente)`);
+  }
+  return errors;
+}
+
 /**
  * `duelo`: a y b deben existir y tener stats (la Arena). `desclasificar`: a y b deben existir y, mientras la
  * votación es de una semana estrictamente futura respecto a `now`, estar sellados (`status: proximamente`). En la

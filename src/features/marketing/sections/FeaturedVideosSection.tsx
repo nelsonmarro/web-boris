@@ -1,16 +1,17 @@
 import { ContentCard, Section } from '@/components/content';
 import { youtubeThumbUrl, youtubeWatchUrl } from '@/utils/youtube';
-import { getLatestVideo } from '@/features/community/data/latest-video';
 import { cn } from '@/utils/cn';
 import { SOCIAL_LINKS } from '../config/social';
 import { FEATURED_VIDEOS } from '../config/videos';
+import { getLandingLatestVideo } from '../data/landing-latest-video';
+import { LANDING_SECTION } from './landing-rhythm';
 
 /** Cabecera común a la sección y a su esqueleto: el h2 y el ancla `#videos` existen desde el primer byte. */
 const SECTION = {
   id: 'videos',
   title: 'Vídeos',
   action: { href: SOCIAL_LINKS.youtube, label: 'Ver canal', external: true },
-  className: 'scroll-mt-24',
+  className: LANDING_SECTION,
 } as const;
 
 interface VideoCard {
@@ -21,7 +22,8 @@ interface VideoCard {
 
 /** Último vídeo del canal (RSS) y los tres que indicó Boris, sin duplicados y como mucho cuatro. Miniaturas, sin embeber nada. */
 export async function FeaturedVideosSection() {
-  const latest = await getLatestVideo();
+  // La misma lectura que el botón «Ver el último vídeo» del hero (`cache` por petición).
+  const latest = await getLandingLatestVideo();
 
   const cards: VideoCard[] = [];
   // «Último vídeo» solo si viene del feed; el respaldo es uno de la lista de Boris y lleva su propia etiqueta.

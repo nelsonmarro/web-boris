@@ -15,6 +15,7 @@ import { ArticleImagesProvider } from '@/features/monsters/components/wiki/mdx/A
 import { MarkSeen } from '@/features/monsters/components/wiki/article/MarkSeen';
 import { EntityPreview } from '@/features/monsters/components/wiki/article/EntityPreview';
 import { ApareceEn } from '@/features/monsters/components/wiki/article/ApareceEn';
+import { ArticleVideo } from '@/features/monsters/components/wiki/article/ArticleVideo';
 import { ArticleNeighbors } from '@/features/monsters/components/wiki/article/ArticleNeighbors';
 import { getVideosForSlug } from '@/features/community/data/channel-videos';
 
@@ -91,6 +92,9 @@ export default async function WikiArticlePage({ params }: Props) {
           hasStats={withStats}
           imageInBody={imageInBody}
         />
+
+        {/* El primer vídeo de la ficha, justo bajo la cabecera (embed ligero: nada de YouTube hasta el clic). */}
+        <ArticleVideo videos={videos} />
 
         <ArticleImagesProvider>
           <WikiArticleContent

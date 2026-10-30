@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { Suspense, type CSSProperties } from "react";
 import Image from "next/image";
 import { IMAGE_QUALITY } from "@/utils/image";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import { SearchTrigger } from "@/components/search/SearchTrigger";
 import { getHeroCreature } from "../data/hero-creature";
 import { HERO_POOL } from "../config/hero-pool";
 import { heroEntry } from "../lib/hero-pick";
+import { HeroActionsFallback, HeroLatestVideoActions } from "./HeroActions";
 
 /** Burbujas colocadas a mano (spec §5): `left` 8–92 %, 6–14 px, retardo 0–9 s, subida de 12–18 s. */
 const BUBBLES = [
@@ -124,16 +125,24 @@ export async function HeroAbisal() {
               className="hero-rise mt-4 text-lg text-white/80"
               style={rise(0.2)}
             >
-              Todo el lore oficial de BorisaoBlois en un solo archivo.
+              La wiki oficial de los universos animados que BorisaoBlois cuenta en YouTube.
             </p>
             <div className="hero-rise mt-6 max-w-xl" style={rise(0.3)}>
               <SearchTrigger variant="hero" />
+            </div>
+            {/* Salidas a YouTube (UX fase 1 §A.1). El RSS nunca bloquea el hero: hasta que llega (o si falla), el
+                primario lleva a la pestaña «Vídeos» del canal. La animación va en este contenedor, fuera del
+                `<Suspense>`, para que el cambio del respaldo al enlace definitivo no la repita. */}
+            <div className="hero-rise mt-4" style={rise(0.35)}>
+              <Suspense fallback={<HeroActionsFallback />}>
+                <HeroLatestVideoActions />
+              </Suspense>
             </div>
             {creature && fm && (
               <Link
                 href={`/wiki/${creature.slug}` as Route}
                 className="hero-rise mt-4 inline-flex min-h-11 items-center self-start rounded-full border border-white/15 bg-[#061a2e]/90 px-4 text-sm text-white transition-colors hover:border-primary/40 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none"
-                style={rise(0.4)}
+                style={rise(0.45)}
               >
                 <span>
                   En pantalla: <strong className="font-bold">{fm.title}</strong>{" "}
@@ -145,10 +154,10 @@ export async function HeroAbisal() {
         </div>
       </div>
 
-      {/* «Sumérgete»: baja a los universos. El contenido deja `pb-24`, así que nunca lo pisa. */}
+      {/* «Sumérgete»: baja a la sección siguiente (Vídeos). El contenido deja `pb-20`, así que nunca lo pisa. */}
       <div className="pointer-events-none absolute inset-x-0 bottom-6 flex justify-center">
         <a
-          href="#universos"
+          href="#videos"
           className="hero-rise pointer-events-auto inline-flex min-h-11 min-w-11 flex-col items-center justify-center gap-1 rounded-sm px-3 text-[11px] font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none"
           style={rise(0.8)}
         >

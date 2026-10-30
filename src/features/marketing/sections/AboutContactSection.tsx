@@ -18,10 +18,14 @@ const TEXT_LINK =
 const BUTTON =
   'inline-flex min-h-11 items-center rounded-full border border-white/15 bg-[#061a2e] px-5 text-sm font-semibold text-white transition-colors hover:border-primary/40 hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none';
 
-/** "Sobre Boris" (datos del autor) y el formulario de contacto, a dos columnas desde lg (spec #55 §3.5). */
+/**
+ * "Sobre Boris" (datos del autor) y el formulario de contacto, a dos columnas desde lg (spec #55 §3.5). Sin
+ * «Biografía: Próximamente» (UX fase 1 §A.4): vuelve cuando Boris mande la suya. Sin relleno inferior: el pie ya
+ * trae su propio margen (`mt-20 pt-20`) y sumados dejaban un hueco de 256 px en escritorio.
+ */
 export function AboutContactSection() {
   return (
-    <Section title="Sobre Boris">
+    <Section title="Sobre Boris" contained={false} className="container mx-auto px-6 pt-12 md:pt-14">
       <div className="grid gap-12 lg:grid-cols-2">
         <div className="space-y-6">
           <div className="flex items-center gap-4">
@@ -65,10 +69,6 @@ export function AboutContactSection() {
               </li>
             ))}
           </ul>
-
-          <p className="flex items-center gap-2 text-white/70">
-            Biografía: <PendingLabel />
-          </p>
 
           <p className="flex flex-wrap items-center gap-x-2 text-white/70">
             Canal:

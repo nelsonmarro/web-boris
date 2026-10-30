@@ -39,6 +39,7 @@ import {
   checkArticleStandard,
   crossCheckEntities,
   crossCheckHeroPool,
+  crossCheckStartHere,
   crossCheckNews,
   crossCheckPollIdSlugs,
   crossCheckPolls,
@@ -47,6 +48,7 @@ import {
 } from '../src/core/content/validate.ts';
 // Solo datos, sin dependencias de servidor: se pueden leer desde el script.
 import { FEATURED_VIDEOS } from '../src/features/marketing/config/videos.ts';
+import { START_HERE } from '../src/features/monsters/config/start-here.ts';
 import { HERO_POOL } from '../src/features/marketing/config/hero-pool.ts';
 
 const ROOT = process.cwd();
@@ -68,6 +70,7 @@ const problems: Record<string, string[]> = {
   'Slugs reservados': [],
   'Hero de la landing (HERO_POOL)': [],
   'Ficha fuera del estándar': [],
+  'Empieza por aquí (START_HERE)': [],
 };
 
 const NON_LORE_ASSETS = ['/assets/Branding/', '/assets/Universo_Colosos/Esquemas/'];
@@ -208,6 +211,9 @@ problems['Hero de la landing (HERO_POOL)'].push(...crossCheckHeroPool(HERO_POOL,
 
 // 11: estándar de ficha (descripción, pie de portada, infobox y apartados)
 problems['Ficha fuera del estándar'].push(...checkArticleStandard(standardItems));
+
+// 12: fichas de «Empieza por aquí»
+problems['Empieza por aquí (START_HERE)'].push(...crossCheckStartHere(START_HERE, slugs, sealedSlugs));
 
 // Reporte
 console.log(

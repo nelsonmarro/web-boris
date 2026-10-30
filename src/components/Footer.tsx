@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Mail } from "lucide-react";
 import { YoutubeIcon } from "@/features/marketing/components/icons/YoutubeIcon";
-import { SOCIAL_LINKS, CONTACT_EMAIL, YOUTUBE_HANDLE } from "@/features/marketing/config/social";
+import { SOCIAL_LINKS, CONTACT_EMAIL, YOUTUBE_HANDLE, YOUTUBE_SUBSCRIBE_URL } from "@/features/marketing/config/social";
 import { UNIVERSES } from "@/features/marketing/config/universes";
 
 const NAV_LINKS = [
@@ -94,6 +94,17 @@ export default function Footer() {
                   <YoutubeIcon className="w-5 h-5 text-primary" />
                 </div>
                 <span className="min-w-0 text-sm font-bold tracking-tight [overflow-wrap:anywhere]">{YOUTUBE_HANDLE}</span>
+                <span className="sr-only"> (se abre en YouTube)</span>
+              </a>
+              {/* Junto al canal (UX fase 1 §A.7): abre directamente el diálogo de suscripción de YouTube. */}
+              <a
+                href={YOUTUBE_SUBSCRIBE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center rounded-full border border-primary/40 px-5 text-sm font-bold text-primary transition-colors hover:bg-primary hover:text-[#00122E] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none"
+              >
+                Suscríbete
+                <span className="sr-only"> (se abre en YouTube)</span>
               </a>
             </div>
           </div>

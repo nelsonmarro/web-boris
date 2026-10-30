@@ -2,6 +2,7 @@ import { ContentCard, Section } from '@/components/content';
 import { getContentRepository } from '@/core/content';
 import { UNIVERSES } from '../config/universes';
 import { countByUniverse, expedientesLabel } from '../lib/universe-counts';
+import { LANDING_SECTION } from './landing-rhythm';
 
 /**
  * Puerta de entrada al archivo por universo (spec 2026-10-27 §6): sinopsis canónica de Boris y cuántos expedientes
@@ -12,10 +13,10 @@ export async function UniversesSection() {
   const countOf = countByUniverse(articles);
 
   return (
-    <Section id="universos" title="Explora los universos" className="scroll-mt-24">
+    <Section id="universos" title="Explora los universos" className={LANDING_SECTION}>
       <p className="-mt-4 mb-8 max-w-2xl text-white/70">Cada universo tiene sus propias reglas, criaturas y misterios.</p>
       <div className="grid gap-4 md:grid-cols-2 md:gap-6">
-        {UNIVERSES.map((u, i) => (
+        {UNIVERSES.map((u) => (
           <ContentCard
             key={u.id}
             href={u.universeKey ? `/wiki?universe=${encodeURIComponent(u.universeKey)}#catalogo` : undefined}
@@ -28,9 +29,8 @@ export async function UniversesSection() {
             pending={u.comingSoon}
             aspect="video"
             headingLevel={3}
+            // Sin `eager`: desde UX fase 1 los universos van tras «Vídeos», lejos de la primera pantalla.
             sizes="(min-width: 768px) 50vw, 100vw"
-            // Si el hero sale sin imagen, la primera tarjeta puede ser el LCP en móvil.
-            eager={i === 0}
           />
         ))}
       </div>
