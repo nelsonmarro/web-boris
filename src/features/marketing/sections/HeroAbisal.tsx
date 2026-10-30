@@ -6,6 +6,8 @@ import type { Route } from "next";
 import { ChevronDown } from "lucide-react";
 import { SearchTrigger } from "@/components/search/SearchTrigger";
 import { getHeroCreature } from "../data/hero-creature";
+import { HERO_POOL } from "../config/hero-pool";
+import { heroEntry } from "../lib/hero-pick";
 
 /** Burbujas colocadas a mano (spec §5): `left` 8–92 %, 6–14 px, retardo 0–9 s, subida de 12–18 s. */
 const BUBBLES = [
@@ -70,8 +72,13 @@ export async function HeroAbisal() {
               quality={IMAGE_QUALITY}
               fetchPriority="high"
               loading="eager"
-              className="object-cover"
-              style={{ objectPosition: hero.imagePosition }}
+              className="object-cover [object-position:var(--hero-pos)] lg:[object-position:var(--hero-pos-lg)]"
+              style={
+                {
+                  '--hero-pos': hero.imagePosition,
+                  '--hero-pos-lg': heroEntry(HERO_POOL, hero.creature.slug)?.imagePositionLg ?? hero.imagePosition,
+                } as CSSProperties
+              }
             />
           </div>
         )}

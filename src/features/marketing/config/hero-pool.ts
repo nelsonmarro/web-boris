@@ -5,6 +5,11 @@ export interface HeroPoolEntry {
   image?: string;
   /** `object-position` de esa toma. Si falta, el `imagePosition` de la ficha. */
   imagePosition?: string;
+  /**
+   * `object-position` en lg+, donde la imagen ocupa el 72 % derecho y su borde izquierdo queda bajo el velo del
+   * texto: sirve para correr al sujeto hacia la derecha. Si falta, el mismo `imagePosition`.
+   */
+  imagePositionLg?: string;
 }
 
 /**
@@ -32,5 +37,12 @@ export const HERO_POOL: readonly HeroPoolEntry[] = [
     slug: 'vlad-julia',
     image: '/assets/Universo_Colosos/Vlad_Julia/Vlad_Julia_frontal.webp',
     imagePosition: '50% 50%',
+  },
+  {
+    slug: 'slowdown-criyonte',
+    image: '/assets/Universo_Colosos/Slowdown_Criyonte/Slowdown_Criyonte.webp',
+    imagePosition: '35% 55%',
+    // En escritorio, con 35 % la cabeza caía bajo el velo del texto.
+    imagePositionLg: '0% 55%',
   },
 ];

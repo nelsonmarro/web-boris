@@ -41,6 +41,8 @@ const nextConfig: NextConfig = {
     return [
       // Slug canónico de Criyonte: el enlace antiguo sigue funcionando.
       { source: '/wiki/slowdown-criyote', destination: '/wiki/slowdown-criyonte', permanent: true },
+      // Boris (27/10/2026): la especie de El Gran Majá es Cranioplanus risus, no Supperbial anguilla.
+      { source: '/wiki/supperbial-anguilla', destination: '/wiki/cranioplanus-risus', permanent: true },
     ];
   },
 };
