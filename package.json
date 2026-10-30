@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "check:content": "node --experimental-strip-types --no-warnings scripts/check-content.mts",
+    "sync:canal": "node --experimental-strip-types --no-warnings scripts/sync-channel.mts",
     "test": "node --experimental-strip-types --no-warnings --test 'tests/**/*.test.ts'"
   },
   "dependencies": {

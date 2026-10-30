@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import { useMemo } from 'react';
-import { progress } from '@/core/search/registro';
-import { useSeen } from '@/features/monsters/store/registro-store';
-import { ExpedienteAleatorioLink } from './ExpedienteAleatorioLink';
+import { useMemo } from "react";
+import { progress } from "@/core/search/registro";
+import { rangoDeRegistro } from "@/core/search/rango";
+import { useSeen } from "@/features/monsters/store/registro-store";
+import { ExpedienteAleatorioLink } from "./ExpedienteAleatorioLink";
 
 interface RegistroProgressProps {
   /** Slugs de las fichas que cuentan para el progreso (ni sellados ni índices): `registroSlugs(entries)`. */
@@ -17,6 +18,7 @@ interface RegistroProgressProps {
 export function RegistroProgress({ slugs }: RegistroProgressProps) {
   const entries = useMemo(() => slugs.map((slug) => ({ slug })), [slugs]);
   const { opened, total } = progress(entries, useSeen());
+  const rango = rangoDeRegistro(opened, total);
   const percent = total > 0 ? Math.round((opened / total) * 100) : 0;
 
   return (
@@ -26,15 +28,40 @@ export function RegistroProgress({ slugs }: RegistroProgressProps) {
         <p className="min-h-7 text-lg text-white">
           {opened > 0 ? (
             <>
-              Has abierto <strong className="font-black tabular-nums">{opened}</strong> de{' '}
-              <strong className="font-black tabular-nums">{total}</strong> expedientes
+              Has abierto{" "}
+              <strong className="font-black tabular-nums">{opened}</strong> de{" "}
+              <strong className="font-black tabular-nums">{total}</strong>{" "}
+              expedientes
             </>
           ) : (
-            'Abre expedientes para completar tu registro'
+            "Abre expedientes para completar tu registro"
           )}
         </p>
         <ExpedienteAleatorioLink />
       </div>
+      {/* Línea de altura fija: el rango aparece al hidratar sin mover la barra. */}
+      <p className="mt-1 min-h-6 text-sm text-white/70">
+        {opened > 0 ? (
+          rango.siguiente ? (
+            <>
+              Rango:{" "}
+              <strong className="font-bold text-white">
+                {rango.actual.nombre}
+              </strong>{" "}
+              · {rango.siguiente.nombre} en{" "}
+              <span className="tabular-nums">{rango.siguiente.faltan}</span>{" "}
+              {rango.siguiente.faltan === 1 ? "expediente" : "expedientes"}
+            </>
+          ) : (
+            <>
+              Rango:{" "}
+              <strong className="font-bold text-white">
+                {rango.actual.nombre}
+              </strong>
+            </>
+          )
+        ) : null}
+      </p>
       <div
         role="meter"
         aria-label="Expedientes abiertos"

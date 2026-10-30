@@ -1,5 +1,6 @@
 import { cache } from 'react';
-import type { Metadata } from 'next';
+import type { Metadata, Route } from 'next';
+import Link from 'next/link';
 import { pageMetadata } from '@/lib/seo';
 import VersusArena from '@/features/monsters/components/VersusArena';
 import { getContentRepository } from '@/core/content';
@@ -7,6 +8,7 @@ import { toSummary } from '@/core/types/wiki';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { resolvePair } from '@/features/monsters/components/arena/resolve-pair';
 import { computeMatchup, type Fighter } from '@/features/monsters/lib/arena';
+import { TAMANOS_ROUTE } from '@/core/search/wiki-routes';
 
 const DEFAULT_METADATA: Metadata = pageMetadata({
   title: 'Versus Arena | Wiki BorisaoBlois',
@@ -61,5 +63,18 @@ export async function generateMetadata({ searchParams }: ArenaPageProps): Promis
 
 export default async function WikiArenaPage() {
   const fighters = await getFighters();
-  return <VersusArena fighters={fighters} />;
+  return (
+    <>
+      <VersusArena fighters={fighters} />
+      {/* Juego de tamaños (spec UX fase 2 §4): un enlace discreto bajo la Arena. */}
+      <p className="wiki-container pb-10">
+        <Link
+          href={TAMANOS_ROUTE as Route}
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm text-[12px] font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none"
+        >
+          ¿Quién mide más? Pon a prueba tu ojo <span aria-hidden="true">›</span>
+        </Link>
+      </p>
+    </>
+  );
 }

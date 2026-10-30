@@ -19,7 +19,10 @@
  *     misma o a una ficha inexistente.
  *  8. `videos.json` (relaciones vídeo ↔ ficha de «Aparece en») no cumple su esquema (id de YouTube de 11 caracteres,
  *     fichas sin repetir, vídeo sin repetir, `titulo` de 1 a 200 caracteres), nombra una ficha que no existe en
- *     src/content o trae un id que no está en FEATURED_VIDEOS sin `titulo`.
+ *     src/content o trae un id que no está en FEATURED_VIDEOS ni en canal.json sin `titulo`. `canal.json` (la
+ *     instantánea del canal de `npm run sync:canal`) no cumple el suyo: id de 11 caracteres, `titulo`, `tipo`
+ *     `video` o `short`, `orden` entero positivo y sin repetir dentro de su tipo, `fecha` (opcional) YYYY-MM-DD que
+ *     exista y ningún vídeo repetido.
  *  9. Un MDX usa como slug un nombre reservado por una ruta estática (`arena`, `registro`, `aleatorio`) o un slug
  *     que contiene `-vs-` (o acaba en `-vs`), que rompería el id de sus encuestas (`<semana>-<a>-vs-<b>`).
  * 10. Un slug de HERO_POOL (src/features/marketing/config/hero-pool.ts) no existe en src/content o está sellado
@@ -34,6 +37,7 @@ import path from 'node:path';
 import matter from 'gray-matter';
 import { WikiFrontmatterSchema } from '../src/core/types/wiki.ts';
 import { readCuratedPolls, readNews, readVideoLinks } from '../src/core/content/readers.ts';
+import { readCanal } from '../src/features/community/lib/canal.ts';
 import {
   type ArticleStandardInput,
   checkArticleStandard,
@@ -196,11 +200,13 @@ problems['Comunidad (novedades / encuestas)'].push(
 // 7: apodos y related
 problems['Apodos y relacionados'].push(...crossCheckEntities(entityItems));
 
-// 8: vídeos ↔ fichas
+// 8: vídeos ↔ fichas y la instantánea del canal
+const canal = readCanal(path.join(CONTENT_DIR, 'canal.json'));
 const videoLinks = readVideoLinks(path.join(CONTENT_DIR, 'videos.json'));
 problems['Vídeos ↔ fichas (videos.json)'].push(
+  ...canal.errors,
   ...videoLinks.errors,
-  ...crossCheckVideoLinks(videoLinks.items, slugs, new Set(FEATURED_VIDEOS.map((v) => v.id))),
+  ...crossCheckVideoLinks(videoLinks.items, slugs, new Set([...FEATURED_VIDEOS, ...canal.items].map((v) => v.id))),
 );
 
 // 9: nombres reservados por rutas estáticas y slugs que romperían el id de una encuesta

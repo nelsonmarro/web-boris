@@ -4,8 +4,9 @@ import * as React from "react";
 import { SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
 import { WIKI_NAVIGATION } from "@/features/monsters/config/wiki-navigation";
 import { RANDOM_ROUTE, REGISTRO_ROUTE } from "@/features/monsters/config/wiki-routes";
+import { ESCALA_ROUTE, TAMANOS_ROUTE } from "@/core/search/wiki-routes";
 import { SidebarCollapsibleItem } from "./SidebarCollapsibleItem";
-import { Home, Globe, MessageSquare, ListChecks, Shuffle, Users } from "lucide-react";
+import { Home, Globe, MessageSquare, ListChecks, Shuffle, Users, Ruler, Scale, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
@@ -14,9 +15,33 @@ import { cn } from "@/utils/cn";
 const ARCHIVO_ITEM =
   "min-h-11 h-auto py-2 hover:bg-white/5 transition-all group rounded-md mb-0.5 flex items-center px-4 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:mb-1";
 
+/** Enlace de «Tu archivo» con estado activo (marca naranja, `aria-current`), también en el menú plegado a iconos. */
+function ArchivoLink({ href, label, icon: Icon, active }: { href: string; label: string; icon: LucideIcon; active: boolean }) {
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        tooltip={label}
+        className={cn(ARCHIVO_ITEM, active && "bg-primary/10 text-primary hover:bg-primary/15")}
+        render={<Link href={href as Route} aria-label={label} aria-current={active ? "page" : undefined} />}
+      >
+        <Icon className={cn(
+          "h-4 w-4 mr-3 shrink-0 transition-colors group-data-[collapsible=icon]:mr-0 group-data-[collapsible=icon]:size-5",
+          active ? "text-primary" : "text-primary/60 group-hover:text-primary"
+        )} />
+        <span className={cn(
+          "font-semibold text-[13.5px] transition-colors group-data-[collapsible=icon]:hidden",
+          active ? "text-primary" : "text-white/80 group-hover:text-white"
+        )}>
+          {label}
+        </span>
+        {active && <div className="absolute left-0 w-1 h-4 bg-primary rounded-r-full shadow-[0_0_10px_rgba(255,115,0,0.5)] group-data-[collapsible=icon]:hidden" />}
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
 export function SidebarNavigation() {
   const pathname = usePathname();
-  const registroActive = pathname === REGISTRO_ROUTE;
 
   return (
     <SidebarContent className="relative z-10 py-4 scrollbar-none group-data-[collapsible=icon]:overflow-y-auto group-data-[collapsible=icon]:overflow-x-hidden group-data-[collapsible=icon]:py-2 group-data-[collapsible=icon]:[mask-image:linear-gradient(to_bottom,transparent,black_16px,black_calc(100%-16px),transparent)]">
@@ -75,25 +100,7 @@ export function SidebarNavigation() {
           Tu archivo
         </SidebarGroupLabel>
         <SidebarMenu className="px-2 group-data-[collapsible=icon]:px-0">
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip="Registro del archivo"
-              className={cn(ARCHIVO_ITEM, registroActive && "bg-primary/10 text-primary hover:bg-primary/15")}
-              render={<Link href={REGISTRO_ROUTE} aria-label="Registro del archivo" aria-current={registroActive ? "page" : undefined} />}
-            >
-              <ListChecks className={cn(
-                "h-4 w-4 mr-3 shrink-0 transition-colors group-data-[collapsible=icon]:mr-0 group-data-[collapsible=icon]:size-5",
-                registroActive ? "text-primary" : "text-primary/60 group-hover:text-primary"
-              )} />
-              <span className={cn(
-                "font-semibold text-[13.5px] transition-colors group-data-[collapsible=icon]:hidden",
-                registroActive ? "text-primary" : "text-white/80 group-hover:text-white"
-              )}>
-                Registro del archivo
-              </span>
-              {registroActive && <div className="absolute left-0 w-1 h-4 bg-primary rounded-r-full shadow-[0_0_10px_rgba(255,115,0,0.5)] group-data-[collapsible=icon]:hidden" />}
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          <ArchivoLink href={REGISTRO_ROUTE} label="Registro del archivo" icon={ListChecks} active={pathname === REGISTRO_ROUTE} />
           <SidebarMenuItem>
             {/* /wiki/aleatorio es un route handler que redirige: `prefetch={false}` es obligatorio (una precarga guardaría un único destino). */}
             <SidebarMenuButton
@@ -107,6 +114,8 @@ export function SidebarNavigation() {
               </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
+          <ArchivoLink href={ESCALA_ROUTE} label="Escala de tamaños" icon={Ruler} active={pathname === ESCALA_ROUTE} />
+          <ArchivoLink href={TAMANOS_ROUTE} label="¿Quién mide más?" icon={Scale} active={pathname === TAMANOS_ROUTE} />
         </SidebarMenu>
       </SidebarGroup>
 

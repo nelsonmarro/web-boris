@@ -38,8 +38,13 @@ export const metadata: Metadata = pageMetadata({
   path: '/comunidad',
 });
 
-const videoDate = (published?: string) =>
-  published && !Number.isNaN(Date.parse(published)) ? formatFecha(new Date(published)) : undefined;
+/** La fecha solo si se conoce (RSS o `canal.json`); si no, «Short» para los Shorts y nada para los demás. */
+const videoMeta = ({ published, tipo }: ChannelVideo) =>
+  published && !Number.isNaN(Date.parse(published))
+    ? `${tipo === 'short' ? 'Short · ' : ''}${formatFecha(new Date(published))}`
+    : tipo === 'short'
+      ? 'Short'
+      : undefined;
 
 function VideoCard({ video, sizes, className }: { video: ChannelVideo; sizes: string; className?: string }) {
   return (
@@ -47,7 +52,7 @@ function VideoCard({ video, sizes, className }: { video: ChannelVideo; sizes: st
       external
       href={youtubeWatchUrl(video.id)}
       title={video.title}
-      meta={videoDate(video.published)}
+      meta={videoMeta(video)}
       image={youtubeThumbUrl(video.id)}
       headingLevel={3}
       sizes={sizes}

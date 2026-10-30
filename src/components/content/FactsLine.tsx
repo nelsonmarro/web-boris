@@ -1,10 +1,11 @@
+import type { ReactNode } from 'react';
 import type { ThreatTone } from '@/features/monsters/lib/stats';
 import { cn } from '@/utils/cn';
 
 const TONE: Record<ThreatTone, string> = { green: 'text-emerald-300', amber: 'text-amber-300', red: 'text-red-300' };
 
-/** Datos clave en una línea, sin caja (spec #55 §5). `note`: aclaración breve tras el valor, en tono secundario. */
-export function FactsLine({ items }: { items: { label: string; value: string; tone?: ThreatTone; note?: string }[] }) {
+/** Datos clave en una línea, sin caja (spec #55 §5). `note`: aclaración breve tras el valor, en tono secundario (texto o un enlace). */
+export function FactsLine({ items }: { items: { label: string; value: string; tone?: ThreatTone; note?: ReactNode }[] }) {
   if (items.length === 0) return null;
   return (
     <dl className="flex flex-wrap gap-x-8 gap-y-3">

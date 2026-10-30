@@ -38,7 +38,7 @@ const rise = (seconds: number): CSSProperties => ({
  * El Gran Majá). A diferencia del hero anterior (#66), aquí la criatura es la protagonista, así que el velo no cubre
  * todo el hero: solo lo que hay detrás del texto.
  *  - Banda superior (todos los tamaños): alfa 0.6 en los primeros 80 px (la navbar, que ya lleva su cristal) y se desvanece a 10 rem.
- *  - Móvil y tablet (< lg): hero de 100svh, velo base 0.25 sobre toda la imagen (se ve la criatura) y el contenido
+ *  - El hero ocupa siempre la pantalla entera (100svh). Móvil y tablet (< lg): velo base 0.25 sobre toda la imagen (se ve la criatura) y el contenido
  *    al pie (`justify-end`) con su propio velo (`before:`), transparente en el borde superior del bloque, 0.6 en la
  *    primera línea blanca del h1 (necesita 0.58) y 0.88 en la línea naranja (sobre blanco puro, #FF7300 da 4.99:1
  *    con 0.85). Por debajo, 0.92.
@@ -107,7 +107,7 @@ export async function HeroAbisal() {
         ))}
       </div>
 
-      <div className="relative flex min-h-[100svh] flex-col justify-end lg:min-h-[88svh] lg:justify-center">
+      <div className="relative flex min-h-[100svh] flex-col justify-end lg:justify-center">
         {/* < lg: velo pegado al bloque de texto: empieza transparente en el borde del bloque (8 rem sobre el h1, su `pt-32`),
             0.6 en la primera línea blanca (necesita 0.58) y 0.88 en la línea naranja (necesita 0.85). */}
         <div className="container relative mx-auto flex flex-col px-6 pb-20 pt-32 before:absolute before:-inset-x-[100vw] before:top-0 before:bottom-0 before:-z-10 before:bg-[linear-gradient(to_bottom,transparent_0,rgba(0,18,46,0.6)_8rem,rgba(0,18,46,0.88)_13rem,rgba(0,18,46,0.92)_100%)] md:pt-40 lg:max-w-none lg:before:hidden short-screen:pb-10 short-screen:pt-28">
@@ -127,6 +127,15 @@ export async function HeroAbisal() {
             >
               La wiki oficial de los universos animados que BorisaoBlois cuenta en YouTube.
             </p>
+            {/* Entrada discreta a la guía del recién llegado (UX fase 2 §1). Va en el bloque del texto, sobre el velo
+                calibrado; en móvil el bloque está pegado al pie (`justify-end`), así que no empuja los botones hacia abajo. */}
+            <Link
+              href="/empieza-aqui"
+              className="hero-rise mt-1 inline-flex min-h-11 items-center gap-1 self-start rounded-sm text-sm font-semibold text-white/80 underline decoration-primary/70 underline-offset-4 transition-colors hover:text-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none"
+              style={rise(0.25)}
+            >
+              ¿Nuevo? Empieza aquí <span aria-hidden="true">›</span>
+            </Link>
             <div className="hero-rise mt-6 max-w-xl" style={rise(0.3)}>
               <SearchTrigger variant="hero" />
             </div>

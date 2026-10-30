@@ -31,3 +31,9 @@ test('misma fecha: se respeta el orden de entrada; no muta la lista', () => {
   assert.deepEqual(latestVideos(same, 4).map((x) => x.id), ['xxxxxxxxxxx', 'yyyyyyyyyyy']);
   assert.deepEqual(same, copy);
 });
+
+test('canal.json sin fechas: por orden dentro de cada tipo, tras los fechados y antes de los destacados sin fecha', () => {
+  const c = (id: string, tipo: 'video' | 'short', orden: number) => ({ id, title: id, tipo, orden });
+  const videos = [v('destacado00'), c('videouno000', 'video', 1), c('shortuno000', 'short', 1), c('videodos000', 'video', 2)];
+  assert.deepEqual(latestVideos(videos, 4).map((x) => x.id), ['videodos000', 'videouno000', 'shortuno000', 'destacado00']);
+});

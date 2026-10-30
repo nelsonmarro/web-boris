@@ -40,7 +40,7 @@ export function HeroActionsFallback() {
   return <HeroActions videoHref={latestVideoHref(null, SOCIAL_LINKS.youtube)} />;
 }
 
-/** Con el último vídeo del feed (la misma lectura que la sección «Vídeos», `getLandingLatestVideo`). */
+/** Con el último vídeo (RSS o `canal.json`; la misma lectura que la sección «Vídeos», `getLandingLatestVideo`). */
 export async function HeroLatestVideoActions() {
   const latest = await getLandingLatestVideo();
   return <HeroActions videoHref={latestVideoHref(latest, SOCIAL_LINKS.youtube)} />;
