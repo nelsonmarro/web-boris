@@ -57,6 +57,8 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
               { title: "Slowdown Criyonte", url: "/wiki/slowdown-criyonte" },
               { title: "Vlad Julia", url: "/wiki/vlad-julia" },
               { title: "Le'Mug", url: "/wiki/le-mug" },
+              { title: "Luque", url: "/wiki/luque" },
+              { title: "Luddada", url: "/wiki/luddada" },
               { title: "Porcia la gris", url: "/wiki/porcia-la-gris" },
             ]
           },

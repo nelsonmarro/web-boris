@@ -4,7 +4,11 @@ export interface FeaturedCharacterDef {
   description: string;
 }
 
-/** Copys de Boris en "Requerimientos Pagina" → "Descripciones Personajes". No parafrasear. */
+/**
+ * Copys de Boris en "Requerimientos Pagina" → "Descripciones Personajes". No parafrasear.
+ * Donde contradicen a "Frases y descripciones" (27/10/2026), manda el documento: El Gran Majá es un
+ * «pez anguiliforme» (un ejemplar, no una especie) y apareció en 2021 (7 de diciembre).
+ */
 export const FEATURED_CHARACTERS: readonly FeaturedCharacterDef[] = [
   {
     slug: 'the-bloop',
@@ -16,7 +20,7 @@ export const FEATURED_CHARACTERS: readonly FeaturedCharacterDef[] = [
     slug: 'el-gran-maja',
     name: 'El Gran Majá',
     description:
-      'Especie de anguila, de comportamiento hostil con los humanos. Apareció por primera vez en el año 2022. Es el único miembro conocido de la especie Cranioplanus risus. Por sus características y naturaleza se trata de un depredador.',
+      'Pez anguiliforme, de comportamiento hostil con los humanos. Apareció por primera vez en el año 2021. Es el único miembro conocido de la especie Cranioplanus risus. Por sus características y naturaleza se trata de un depredador.',
   },
   {
     slug: 'phillip-forte',

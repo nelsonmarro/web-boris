@@ -1,7 +1,8 @@
 /**
  * Universos narrativos de Boris tal como los describe él.
- * Fuentes: "Requerimientos Pagina" (Colosos, Capitán de Galeón, Ellos llegaron) y
- * "Frases y descripciones" (La Hecatombe del Lapeón). Textos copiados sin parafrasear.
+ * Fuentes: "Frases y descripciones" (Colosos, Capitán de Galeón y La Hecatombe del Lapeón; su
+ * «Descripción de cada universo» manda sobre el PDF) y "Requerimientos Pagina" (Ellos Llegaron,
+ * que el documento no describe). Textos copiados sin parafrasear.
  */
 export interface UniverseDef {
   /** Slug estable para keys y anclas. */
@@ -31,7 +32,7 @@ export const UNIVERSES: readonly UniverseDef[] = [
     image: '/assets/Universo_Colosos/The_Bloop/The_Bloop_fauces.webp',
     imagePosition: '35% 30%',
     description:
-      'Bestias colosales se muestran ante la humanidad. El contacto con los humanos remece el curso del ecosistema. Sus historias, sus acciones y su presencia afectan la vida como se conoce. Y una anguila monstruosa angustia al hombre. Siempre hay algo más detrás de un monstruo abisal, una historia, una mente, una conciencia y una consecuencia…',
+      'Una historia ambientada en la era contemporánea. Un mundo cuyos océanos albergan formas de vida espectaculares, gigantescas, monstruosas. El papel de las bestias que merodean por cada rincón oculto del planeta define el rumbo de la historia de la vida en su más amplio concepto y también el destino de la humanidad. ¿Puede el ser humano adaptarse a animales con un peso tan grande en la cámara de la existencia? ¿Pueden vivir de la forma en la que se han acostumbrado? Podrán ver las batallas colosales más impresionantes, o protagonizar sus propios enfrentamientos con tal de defender lo que les interesa. Sea como sea, la presencia de los Colosos no puede ni podrá ser ignorada.',
   },
   {
     id: 'capitan-de-galeon',
@@ -41,7 +42,7 @@ export const UNIVERSES: readonly UniverseDef[] = [
     image: '/assets/Universo_Capitán_de_Galeón/Borisao/Borisao_2_F_(1).webp',
     imagePosition: '50% 45%',
     description:
-      'La historia que comienza con un capitán inglés, mortificado por una tragedia, y obligado a mezclarse con un mundo ajeno a los humanos pero que, tarde o temprano, los involucrará de manera peligrosa. El cran de piel blanca y cola de escorpión espera y su palabra es casi inexpugnable. El mar albergará batallas entre grandes navíos, capitanes excéntricos y piratas; quién sabe si otros elementos enigmáticos también protagonicen los encuentros bélicos.',
+      'Ambientado en la era náutica del siglo XVIII, un capitán inglés goza de un prestigio y fama que lo llenan de orgullo. Pero un súbito fracaso amenaza todo cuanto ha logrado, y por todos los medios busca mantener la buena opinión de la Corona y la Marina. Arrastrado por esta empresa, no repara en ir tan lejos como puede, retando sus propios principios, descubriendo eventos y un ser que va más allá de la comprensión humana con tal de cumplir con su objetivo.',
   },
   {
     id: 'ellos-llegaron',
