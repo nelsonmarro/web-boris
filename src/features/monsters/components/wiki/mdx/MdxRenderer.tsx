@@ -114,7 +114,8 @@ const components = {
     ...props
   }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { 'data-entity-pending'?: string }) => {
     const pending = props['data-entity-pending'] === 'true';
-    if (href.startsWith('/') && !href.startsWith('//')) {
+    // `//host` y `/\host` son externos: el navegador trata la barra invertida como `/`.
+    if (href.startsWith('/') && !href.startsWith('//') && !href.startsWith('/\\')) {
       return (
         <Link
           href={href as Route}

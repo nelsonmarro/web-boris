@@ -10,11 +10,8 @@ const nextConfig: NextConfig = {
   images: {
     // Calidades permitidas en `/_next/image`: 75 (por defecto de next/image) y 85 (`IMAGE_QUALITY`, la de todo el sitio).
     qualities: [75, 85],
+    // Solo las miniaturas de YouTube: cada host de aquí puede servirse desde `/_next/image` con nuestro origen.
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'placehold.co',
-      },
       {
         protocol: 'https',
         hostname: 'i.ytimg.com',

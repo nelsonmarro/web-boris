@@ -5,8 +5,10 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: rootpassword
       POSTGRES_DB: webboris
+    # Solo en 127.0.0.1: un puerto publicado por Docker salta el cortafuegos del sistema, y con `0.0.0.0` cualquiera
+    # en la misma red entraba como superusuario con esta contraseña de desarrollo.
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
