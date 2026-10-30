@@ -1,28 +1,59 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
+import type { Route } from 'next';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Swords, Scale, Crosshair, Shuffle, Share2 } from 'lucide-react';
+import { Swords, Scale, Crosshair, Shuffle, Share2, Vote } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArticleStatCard } from '@/features/monsters/components/article/components/ArticleStatCard';
 import { computeMatchup, radarValues, type Fighter } from '@/features/monsters/lib/arena';
+import { findCanonBattle, findCanonFact } from '@/features/monsters/lib/arena-battle';
+import { isoWeekKey } from '@/core/content/iso-week';
 import { FighterCard } from './FighterCard';
 import { RadarChart } from './RadarChart';
+import { BattlePanel } from './BattlePanel';
 import { resolvePair } from '../resolve-pair';
+
+/** Duelo de la votación semanal (`getWeeklyPoll`, tipo `duelo`) y su semana ISO. */
+export interface WeeklyDuel {
+  a: string;
+  b: string;
+  week: string;
+}
 
 interface ArenaSimulatorProps {
   fighters: Fighter[];
+  weeklyDuel: WeeklyDuel | null;
 }
+
+const noopSubscribe = () => () => {};
+
+/**
+ * La página es ISR: si la sirve una copia de la semana anterior, la banda del duelo no debe aparecer. El servidor
+ * confía en la encuesta que le pasaron; el navegador lo comprueba con su reloj.
+ */
+function useIsCurrentWeek(week: string | undefined): boolean {
+  return React.useSyncExternalStore(
+    noopSubscribe,
+    () => !week || isoWeekKey(new Date()) === week,
+    () => true,
+  );
+}
+
+const COMMUNITY_LINK =
+  'inline-flex min-h-11 items-center gap-1.5 rounded-sm text-[12px] font-bold uppercase tracking-wider text-primary transition-colors hover:text-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none';
 
 const triggerClass =
   'h-12 data-[size=default]:h-12 w-full rounded-xl border-white/15 bg-[#061a2e] px-4 text-sm font-semibold text-white focus-visible:ring-4 focus-visible:ring-primary/20';
 const contentClass = 'bg-[#061a2e] border-white/10 text-white min-w-[240px]';
 
 
-export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
+export function ArenaSimulator({ fighters, weeklyDuel }: ArenaSimulatorProps) {
+  const currentWeek = useIsCurrentWeek(weeklyDuel?.week);
   // La URL es la fuente de verdad (?a=<slug>&b=<slug>): un enfrentamiento se comparte copiando el enlace.
   // Valores ausentes o inválidos caen en los dos primeros combatientes.
   const pathname = usePathname();
@@ -78,6 +109,8 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
     } else writePair(slugA, v);
   };
 
+  const titleOf = React.useCallback((slug: string) => fighters.find((f) => f.slug === slug)?.frontmatter.title, [fighters]);
+
   const fighterItems = React.useMemo(
     () => Object.fromEntries(fighters.map((f) => [f.slug, f.frontmatter.title])),
     [fighters],
@@ -95,6 +128,12 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
   }
 
   const matchup = computeMatchup(a.frontmatter.stats, b.frontmatter.stats);
+  const canonBattle = findCanonBattle(a.slug, b.slug);
+  const canonFact = canonBattle ? null : findCanonFact(a.slug, b.slug);
+  const isWeeklyDuel =
+    !!weeklyDuel &&
+    currentWeek &&
+    ((weeklyDuel.a === a.slug && weeklyDuel.b === b.slug) || (weeklyDuel.a === b.slug && weeklyDuel.b === a.slug));
   const pctA = Math.round(matchup.probA * 100);
   const aWins = matchup.probA >= 0.5;
   const favorite = aWins ? a : b;
@@ -179,11 +218,25 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
         </label>
       </div>
 
+      {isWeeklyDuel && (
+        <p className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-xl border border-primary/40 bg-[#061a2e] px-4 py-2">
+          <span className="flex items-center gap-2 text-sm font-bold text-white">
+            <Vote className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+            Este es el duelo de la semana
+          </span>
+          <Link href={'/comunidad' as Route} className={COMMUNITY_LINK}>
+            Vota en Comunidad <span aria-hidden="true">›</span>
+          </Link>
+        </p>
+      )}
+
+      <BattlePanel key={`${a.slug}|${b.slug}`} a={a} b={b} canonBattle={canonBattle} canonFact={canonFact} titleOf={titleOf} />
+
       {/* Probability bar */}
-      <div className="glass-liquid rounded-2xl border-white/10 p-6">
+      <div className="glass-liquid rounded-2xl border-white/10 p-4 sm:p-6">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 font-mono text-xs font-bold uppercase tracking-widest">
           <span className="min-w-0 break-words text-primary">{a.frontmatter.title} · {pctA}%</span>
-          <span className="flex items-center gap-2 text-white/60"><Swords className="h-4 w-4" /> Probabilidad</span>
+          <span className="flex items-center gap-2 text-white/60"><Swords className="h-4 w-4" aria-hidden="true" /> Probabilidad esperada</span>
           <span className="min-w-0 break-words text-cyan-300">{100 - pctA}% · {b.frontmatter.title}</span>
         </div>
         <div className="relative h-3 overflow-hidden rounded-full bg-cyan-400/30">
@@ -195,7 +248,7 @@ export function ArenaSimulator({ fighters }: ArenaSimulatorProps) {
           />
         </div>
         <p className="mt-4 text-sm text-white/70">
-          <span className="font-bold text-white">{favorite.frontmatter.title}</span> parte como favorito. Factor decisivo:{' '}
+          Según el índice de combate, <span className="font-bold text-white">{favorite.frontmatter.title}</span> parte como favorito. Factor decisivo:{' '}
           <span className="font-bold text-primary">{matchup.decisiveAxis.label}</span> (
           {matchup.decisiveAxis.delta > 0 ? '+' : ''}{Math.round(matchup.decisiveAxis.delta)} a favor de{' '}
           {matchup.decisiveAxis.delta >= 0 ? a.frontmatter.title : b.frontmatter.title}).

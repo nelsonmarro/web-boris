@@ -1,4 +1,3 @@
-import { cache } from 'react';
 import type { Metadata, Route } from 'next';
 import Link from 'next/link';
 import { pageMetadata } from '@/lib/seo';
@@ -6,66 +5,45 @@ import VersusArena from '@/features/monsters/components/VersusArena';
 import { getContentRepository } from '@/core/content';
 import { toSummary } from '@/core/types/wiki';
 import { hasStats } from '@/features/monsters/lib/stats';
-import { resolvePair } from '@/features/monsters/components/arena/resolve-pair';
-import { computeMatchup, type Fighter } from '@/features/monsters/lib/arena';
-import { TAMANOS_ROUTE } from '@/core/search/wiki-routes';
+import type { Fighter } from '@/features/monsters/lib/arena';
+import { ARENA_ROUTE, TAMANOS_ROUTE } from '@/core/search/wiki-routes';
+import { getWeeklyPoll } from '@/features/community/data/weekly-poll';
+import type { WeeklyDuel } from '@/features/monsters/components/arena/components/ArenaSimulator';
 
-const DEFAULT_METADATA: Metadata = pageMetadata({
+/**
+ * Estática con ISR (1 h, como las fichas: la banda del duelo de la semana cambia el lunes). El par (`?a=&b=`), el
+ * combate, las predicciones y el torneo viven en el cliente: nada de `searchParams` en el servidor, que volvería la
+ * página dinámica. El título del par lo pone el cliente; la vista previa al compartir es la tarjeta estática de
+ * `opengraph-image.tsx`.
+ */
+export const revalidate = 3600;
+
+export const metadata: Metadata = pageMetadata({
   title: 'Versus Arena | Wiki BorisaoBlois',
-  description: 'Enfrenta a los colosos de BorisaoBlois y compara su escala real.',
-  path: '/wiki/arena',
+  description:
+    'Enfrenta a los colosos de BorisaoBlois en combates por asaltos, apuesta por tu favorito, monta un torneo rápido y compara su escala real.',
+  path: ARENA_ROUTE,
+  // La imagen para compartir es `opengraph-image.tsx` de esta ruta: no se pisa.
+  fileImage: true,
 });
 
-type ArenaSearchParams = { [key: string]: string | string[] | undefined };
-
-interface ArenaPageProps {
-  searchParams: Promise<ArenaSearchParams>;
-}
-
-// generateMetadata y la página comparten la lectura de los MDX dentro de la misma petición.
-const getFighters = cache(async (): Promise<Fighter[]> => {
+async function getFighters(): Promise<Fighter[]> {
   const articles = await getContentRepository().getArticles();
   return articles
     .filter((a) => hasStats(a.frontmatter))
     .map(toSummary)
     .filter((s): s is Fighter => !!s.frontmatter.stats)
     .sort((a, b) => (b.frontmatter.stats.length ?? 0) - (a.frontmatter.stats.length ?? 0));
-});
-
-/** `?a=` / `?b=` pueden venir repetidos; se usa el primer valor. */
-function firstValue(value: string | string[] | undefined): string | undefined {
-  return Array.isArray(value) ? value[0] : value;
-}
-
-export async function generateMetadata({ searchParams }: ArenaPageProps): Promise<Metadata> {
-  const params = await searchParams;
-  const slugA = firstValue(params.a);
-  const slugB = firstValue(params.b);
-  // Sin parámetros, la página base. Con cualquiera, se resuelve igual que el cliente (B por defecto,
-  // slug antiguo, inválidos) para que el título y la vista previa describan lo que se muestra.
-  if (!slugA && !slugB) return DEFAULT_METADATA;
-
-  const fighters = await getFighters();
-  const pair = resolvePair(fighters.map((f) => f.slug), slugA, slugB);
-  const a = fighters.find((f) => f.slug === pair.slugA);
-  const b = fighters.find((f) => f.slug === pair.slugB);
-  if (!a || !b) return DEFAULT_METADATA;
-
-  const nameA = a.frontmatter.title;
-  const nameB = b.frontmatter.title;
-  const pctA = Math.round(computeMatchup(a.frontmatter.stats, b.frontmatter.stats).probA * 100);
-  const url = `/wiki/arena?a=${a.slug}&b=${b.slug}`;
-  const title = `${nameA} vs ${nameB} | Versus Arena`;
-  const description = `${nameA} tiene un ${pctA}% de probabilidad de ganarle a ${nameB} (${100 - pctA}% para ${nameB}) según sus registros biométricos. Simula tu propio enfrentamiento en la Versus Arena.`;
-
-  return pageMetadata({ title, description, path: url });
 }
 
 export default async function WikiArenaPage() {
-  const fighters = await getFighters();
+  const [fighters, { poll }] = await Promise.all([getFighters(), getWeeklyPoll()]);
+  // Solo una votación de tipo `duelo` es un enfrentamiento de la Arena (`desclasificar` es de expedientes sellados).
+  const weeklyDuel: WeeklyDuel | null = poll?.tipo === 'duelo' ? { a: poll.a, b: poll.b, week: poll.week } : null;
+
   return (
     <>
-      <VersusArena fighters={fighters} />
+      <VersusArena fighters={fighters} weeklyDuel={weeklyDuel} />
       {/* Juego de tamaños (spec UX fase 2 §4): un enlace discreto bajo la Arena. */}
       <p className="wiki-container pb-10">
         <Link
