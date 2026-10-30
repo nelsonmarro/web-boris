@@ -68,7 +68,8 @@ export default function RootLayout({
             <SearchPaletteHost />
           </Providers>
         </TooltipProvider>
-        <Toaster position="bottom-right" richColors />
+        {/* Sin `richColors`: el verde de éxito de sonner sobre su fondo claro no llega a 4.5:1; los colores de marca sí. */}
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );
