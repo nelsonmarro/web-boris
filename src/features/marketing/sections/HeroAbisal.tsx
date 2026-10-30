@@ -7,6 +7,7 @@ import { ChevronDown } from "lucide-react";
 import { SearchTrigger } from "@/components/search/SearchTrigger";
 import { getHeroCreature } from "../data/hero-creature";
 import { HERO_POOL } from "../config/hero-pool";
+import { BORIS_FRASE } from "../config/boris";
 import { heroEntry } from "../lib/hero-pick";
 import { HeroActionsFallback, HeroLatestVideoActions } from "./HeroActions";
 
@@ -127,6 +128,16 @@ export async function HeroAbisal() {
             >
               La wiki oficial de los universos animados que BorisaoBlois cuenta en YouTube.
             </p>
+            {/* Frase principal de Boris (`config/boris.ts`), solo si la ha mandado. Va en la misma columna de texto, sobre
+                el velo calibrado (#66), con el mismo blanco/80 que el subtítulo; sin ella no se pinta nada. */}
+            {BORIS_FRASE && (
+              <figure className="hero-rise mt-3 max-w-xl border-l-2 border-primary/70 pl-3" style={rise(0.22)}>
+                <blockquote className="text-base italic leading-snug text-white/80">
+                  <p>«{BORIS_FRASE}»</p>
+                </blockquote>
+                <figcaption className="mt-1 text-xs font-semibold text-white/70">BorisaoBlois</figcaption>
+              </figure>
+            )}
             {/* Entrada discreta a la guía del recién llegado (UX fase 2 §1). Va en el bloque del texto, sobre el velo
                 calibrado; en móvil el bloque está pegado al pie (`justify-end`), así que no empuja los botones hacia abajo. */}
             <Link

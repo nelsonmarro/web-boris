@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { pageMetadata } from '@/lib/seo';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { getContentRepository } from '@/core/content';
 import { getEntityIndex } from '@/core/content/entities';
 import { normalize } from '@/core/search/entity-index';
 import { getChannelVideos, getVideosBySlug } from '@/features/community/data/channel-videos';
@@ -33,13 +34,20 @@ const fechaOf = (published?: string) =>
   published && !Number.isNaN(Date.parse(published)) ? formatFecha(new Date(published)) : undefined;
 
 export default async function VideosPage() {
-  const [videos, bySlug, index] = await Promise.all([getChannelVideos(), getVideosBySlug(), getEntityIndex()]);
+  const [videos, bySlug, index, storyOrder] = await Promise.all([
+    getChannelVideos(),
+    getVideosBySlug(),
+    getEntityIndex(),
+    getContentRepository().getStoryOrder(),
+  ]);
   const universeOf = (slug: string) => index.bySlug.get(slug)?.universe;
   const universeOrder = UNIVERSES.flatMap((u) => (u.universeKey ? [u.universeKey] : []));
 
   const grouped = groupVideosByUniverse(videos, bySlug, universeOf, universeOrder, VIDEO_UNIVERSE_KEYWORDS);
   const groups: ArchiveGroup[] = grouped.map((group) => {
     const def = UNIVERSES.find((u) => u.universeKey === group.universe);
+    // «Orden de la historia» (`orden-historia.json`): solo los universos para los que Boris lo ha mandado.
+    const story = group.universe === null ? undefined : storyOrder.find((e) => e.universo === group.universe);
     return {
       id: group.universe === null ? 'otros-videos' : (def?.id ?? normalize(group.universe).replace(/ /g, '-')),
       title: group.universe === null ? 'Otros vídeos' : (def?.title ?? group.universe),
@@ -53,6 +61,7 @@ export default async function VideosPage() {
         orden: video.orden,
         fichas: video.fichas.map((slug) => ({ slug, title: index.bySlug.get(slug)?.title ?? slug })),
       })),
+      ...(story ? { story: story.ids, ...(story.nota ? { storyNote: story.nota } : {}) } : {}),
     };
   });
   // Sin `canal.json` y con el RSS caído solo quedan los destacados, sin fecha ni tipo.

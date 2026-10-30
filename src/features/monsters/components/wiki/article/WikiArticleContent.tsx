@@ -14,7 +14,9 @@ import type { EntityIndex } from '@/core/search/entity-index';
 import { sectionCompleteness } from '@/core/search/section-completeness';
 import { isIndexCategory } from '@/core/search/catalog';
 import { hasStats } from '@/features/monsters/lib/stats';
-import { extractHeadings } from '@/utils/headings';
+import { appendHeading, extractHeadings } from '@/utils/headings';
+import { ArticleFaq } from '@/features/monsters/components/wiki/article/ArticleFaq';
+import { FAQ_ID, FAQ_TITLE } from '@/features/monsters/lib/faq';
 
 /** Título de la sección automática de la ficha lateral. */
 const EXPEDIENTE = 'Expediente';
@@ -59,7 +61,9 @@ export function WikiArticleContent({ frontmatter, content, slug, entityIndex }: 
   const showStats = hasStats(frontmatter);
   const isIndex = isIndexCategory(frontmatter.category);
   const showRail = !isIndex || hasInfobox || showStats;
-  const headings = extractHeadings(content);
+  const hasFaq = !!frontmatter.faq && frontmatter.faq.length > 0;
+  // Las preguntas frecuentes van al final del cuerpo y entran en el índice (no cuentan para `ArchivoMeter`).
+  const headings = hasFaq ? appendHeading(extractHeadings(content), FAQ_ID, FAQ_TITLE) : extractHeadings(content);
   const sealed = frontmatter.status === 'proximamente';
   // El medidor es solo para las fichas abiertas con apartados pendientes; las selladas llevan el expediente.
   // El medidor es de fichas: un índice (Directorio/Categoría) con un apartado pendiente no es un expediente a medias.
@@ -120,6 +124,7 @@ export function WikiArticleContent({ frontmatter, content, slug, entityIndex }: 
               <MdxRenderer content={content} entityIndex={entityIndex} slug={slug} />
               {/* Artículo sin lore canónico: lo conocido primero, luego el expediente sellado */}
               {sealed && <ExpedienteSellado slug={slug} />}
+              <ArticleFaq faq={frontmatter.faq} />
             </div>
 
             {/* Clearfix to ensure container wraps floated elements */}

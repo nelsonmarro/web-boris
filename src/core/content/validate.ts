@@ -3,7 +3,7 @@ import { isoWeekKey } from './iso-week.ts';
 import { normalize } from '../search/entity-index.ts';
 import { RESERVED_SLUGS, STATIC_WIKI_ROUTES } from '../search/wiki-routes.ts';
 import { isIndexCategory } from '../search/catalog.ts';
-import type { CuratedPoll, NewsEntry, VideoLink } from './schemas.ts';
+import type { CuratedPoll, NewsEntry, StoryOrderEntry, VideoLink } from './schemas.ts';
 
 /** Rutas propias (no MDX) a las que puede enlazar una novedad. */
 const STATIC_ROUTES: ReadonlySet<string> = new Set(['/', '/wiki', '/comunidad', ...STATIC_WIKI_ROUTES]);
@@ -218,6 +218,54 @@ export function checkArticleStandard(articles: readonly ArticleStandardInput[]):
     const sections = a.h2Titles.filter((t) => !isReferencias(t)).length;
     if (sections < 2) {
       errors.push(`${file}: tiene ${sections} apartado(s) \`##\` sin contar Referencias; el estándar pide al menos 2 (los vacíos llevan <Proximamente />)`);
+    }
+  }
+  return errors;
+}
+
+const isPreguntasFrecuentes = (title: string) =>
+  title
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase() === 'preguntas frecuentes';
+
+/**
+ * `faq` del frontmatter: la ficha pinta su propia sección «Preguntas frecuentes» al final del cuerpo. Si el MDX ya tiene
+ * un apartado `## Preguntas frecuentes`, saldría dos veces (y con el mismo ancla): se pide usar solo el frontmatter.
+ * (Que cada pregunta y respuesta no esté vacía, y que no haya más de 10, lo valida `FaqSchema`.)
+ */
+export function checkFaqSection(
+  articles: readonly { slug: string; faqCount: number; h2Titles: readonly string[] }[],
+): string[] {
+  const errors: string[] = [];
+  for (const a of articles) {
+    if (a.faqCount > 0 && a.h2Titles.some(isPreguntasFrecuentes)) {
+      errors.push(
+        `src/content/${a.slug}.mdx: tiene \`faq\` en el frontmatter y además un apartado «## Preguntas frecuentes»; deja solo el \`faq\``,
+      );
+    }
+  }
+  return errors;
+}
+
+/**
+ * `orden-historia.json`: cada `universo` debe ser un universo con fichas (`universeKey` de `universes.ts`) y cada id,
+ * un vídeo de `canal.json` (la instantánea del canal: el orden de la historia solo puede usar vídeos que existen).
+ */
+export function crossCheckStoryOrder(
+  entries: readonly StoryOrderEntry[],
+  universeKeys: ReadonlySet<string>,
+  canalIds: ReadonlySet<string>,
+): string[] {
+  const errors: string[] = [];
+  for (const e of entries) {
+    if (!universeKeys.has(e.universo)) {
+      errors.push(`orden-historia.json: "${e.universo}" no es un universo de universes.ts (universeKey)`);
+    }
+    for (const id of e.ids) {
+      if (!canalIds.has(id)) errors.push(`orden-historia.json ${e.universo}: el vídeo ${id} no está en canal.json`);
     }
   }
   return errors;

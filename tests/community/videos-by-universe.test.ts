@@ -6,6 +6,8 @@ import {
   isFeedMissing,
   parseVideoOrder,
   sortVideosByDate,
+  storyOrderVideos,
+  storyStarts,
   universeFromTitle,
   universeOfVideo,
 } from '../../src/features/community/lib/videos-by-universe.ts';
@@ -251,4 +253,43 @@ test('displayVideoTitle: quita los hashtags y los separadores que quedan colgand
   assert.equal(displayVideoTitle('Colosos 3: Tráiler Oficial'), 'Colosos 3: Tráiler Oficial');
   assert.equal(displayVideoTitle('C# en 4K'), 'C# en 4K');
   assert.equal(displayVideoTitle('#shorts'), '#shorts');
+});
+
+test('parseVideoOrder: «historia» solo si algún universo tiene orden de la historia', () => {
+  assert.equal(parseVideoOrder('historia'), 'antiguos');
+  assert.equal(parseVideoOrder('historia', false), 'antiguos');
+  assert.equal(parseVideoOrder('historia', true), 'historia');
+  assert.equal(parseVideoOrder('recientes', true), 'recientes');
+  assert.equal(parseVideoOrder(null, true), 'antiguos');
+});
+
+test('storyOrderVideos: primero la lista de Boris (aunque un vídeo esté en otro grupo), luego el resto del grupo', () => {
+  const v = (id: string) => ({ id, title: id });
+  const group = [v('a'), v('b'), v('c')];
+  const lookup = new Map([...group, v('x')].map((x) => [x.id, x]));
+  assert.deepEqual(
+    storyOrderVideos(group, ['c', 'x', 'falta', 'a'], lookup).map((x) => x.id),
+    ['c', 'x', 'a', 'b'],
+  );
+  assert.deepEqual(storyOrderVideos(group, [], lookup).map((x) => x.id), ['a', 'b', 'c']);
+  assert.deepEqual(group.map((x) => x.id), ['a', 'b', 'c']);
+});
+
+test('storyStarts: el primer vídeo de cada universo, en el orden de los universos', () => {
+  assert.deepEqual(storyStarts([], ['Colosos']), []);
+  assert.deepEqual(
+    storyStarts(
+      [
+        { universo: 'Otro', ids: ['o1'] },
+        { universo: 'Ellos Llegaron', ids: ['e1', 'e2'], nota: 'Nota' },
+        { universo: 'Colosos', ids: ['c1'] },
+      ],
+      ['Colosos', 'Capitán de Galeón', 'Ellos Llegaron'],
+    ),
+    [
+      { universo: 'Colosos', id: 'c1' },
+      { universo: 'Ellos Llegaron', id: 'e1', nota: 'Nota' },
+      { universo: 'Otro', id: 'o1' },
+    ],
+  );
 });

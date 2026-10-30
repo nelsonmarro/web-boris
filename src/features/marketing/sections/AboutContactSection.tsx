@@ -6,6 +6,7 @@ import { PendingLabel, Section } from '@/components/content';
 import { ContactForm } from '../components/contact/ContactForm';
 import { SOCIAL_LINKS, YOUTUBE_HANDLE, CONTACT_EMAIL } from '../config/social';
 import { UNIVERSES } from '../config/universes';
+import { BORIS_BIO, BORIS_PAIS } from '../config/boris';
 
 const listFormat = new Intl.ListFormat('es', { style: 'long', type: 'conjunction' });
 
@@ -20,7 +21,8 @@ const BUTTON =
 
 /**
  * "Sobre Boris" (datos del autor) y el formulario de contacto, a dos columnas desde lg (spec #55 §3.5). Sin
- * «Biografía: Próximamente» (UX fase 1 §A.4): vuelve cuando Boris mande la suya. Sin relleno inferior: el pie ya
+ * «Biografía: Próximamente» (UX fase 1 §A.4): la biografía y el país salen de `config/boris.ts` y solo aparecen cuando
+ * Boris los manda (mientras valgan `null`, no se pinta nada). Sin relleno inferior: el pie ya
  * trae su propio margen (`mt-20 pt-20`) y sumados dejaban un hueco de 256 px en escritorio.
  */
 export function AboutContactSection() {
@@ -41,6 +43,9 @@ export function AboutContactSection() {
               BorisaoBlois
             </h3>
           </div>
+
+          {/* Biografía y país: solo con el texto que mande Boris (`config/boris.ts`); mientras falten, nada. */}
+          {BORIS_BIO && <p className="text-base leading-relaxed text-white/80">{BORIS_BIO}</p>}
 
           <p className="text-base leading-relaxed text-white/70">
             Autor de los universos narrativos {listFormat.format(published.map((u) => u.title))}.
@@ -69,6 +74,12 @@ export function AboutContactSection() {
               </li>
             ))}
           </ul>
+
+          {BORIS_PAIS && (
+            <p className="text-white/70">
+              País: <span className="font-semibold text-white">{BORIS_PAIS}</span>
+            </p>
+          )}
 
           <p className="flex flex-wrap items-center gap-x-2 text-white/70">
             Canal:
