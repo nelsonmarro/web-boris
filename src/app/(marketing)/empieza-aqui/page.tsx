@@ -11,6 +11,9 @@ import { YOUTUBE_SUBSCRIBE_URL } from '@/features/marketing/config/social';
 import { countByUniverse, expedientesLabel } from '@/features/marketing/lib/universe-counts';
 import { GLOSSARY, GUIDE } from '@/features/marketing/sections/start/start-guide';
 import { START_HERE } from '@/features/monsters/config/start-here';
+import { getCanal } from '@/features/community/data/channel-videos';
+import { displayVideoTitle, storyStarts } from '@/features/community/lib/videos-by-universe';
+import { youtubeThumbUrl, youtubeWatchUrl } from '@/utils/youtube';
 
 const INTRO_DESCRIPTION =
   'Qué son los universos de BorisaoBlois, por dónde empezar a leer, dónde ver sus vídeos y cómo usar el archivo.';
@@ -23,6 +26,8 @@ export const metadata: Metadata = pageMetadata({
 
 /** `/videos` la construye otra página de la fase 2; con `typedRoutes`, un string sin tipar evita atar este enlace a ella. */
 const VIDEOS_ROUTE: string = '/videos';
+/** `/videos` en «Orden de la historia» (solo existe si hay `orden-historia.json`). */
+const STORY_ORDER_ROUTE = '/videos?orden=historia';
 
 const BUTTON =
   'inline-flex min-h-11 items-center justify-center rounded-full px-6 text-sm font-bold transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#00122E] motion-reduce:transition-none';
@@ -36,12 +41,25 @@ const TEXT_LINK =
  */
 export default async function EmpiezaAquiPage() {
   const repo = getContentRepository();
-  const [articles, starters] = await Promise.all([
+  const [articles, starters, storyOrder] = await Promise.all([
     repo.getArticles(),
     Promise.all(START_HERE.map((slug) => repo.getArticle(slug))),
+    repo.getStoryOrder(),
   ]);
   const countOf = countByUniverse(articles);
   const firstFiles = starters.filter((a) => a !== null);
+  // «Empieza por este vídeo»: el primero del orden de la historia de cada universo (`orden-historia.json`). Sin archivo
+  // no hay sección. El título sale de `canal.json` (check:content exige que cada id esté ahí).
+  const canalTitle = new Map(getCanal().map((v) => [v.id, v.titulo]));
+  const firstVideos = storyStarts(
+    storyOrder,
+    UNIVERSES.flatMap((u) => (u.universeKey ? [u.universeKey] : [])),
+  ).flatMap((start) => {
+    const title = canalTitle.get(start.id);
+    if (!title) return [];
+    const universe = UNIVERSES.find((u) => u.universeKey === start.universo)?.title ?? start.universo;
+    return [{ ...start, title: displayVideoTitle(title), universe }];
+  });
 
   return (
     <div className="relative flex min-h-screen flex-col">
@@ -100,6 +118,35 @@ export default async function EmpiezaAquiPage() {
                       titleLines={2}
                       sizes="(min-width: 1024px) 216px, (min-width: 640px) 33vw, 50vw"
                       className="[&_h3]:text-base"
+                    />
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          )}
+
+          {firstVideos.length > 0 && (
+            <Section
+              id="primer-video"
+              title="Empieza por este vídeo"
+              action={{ href: STORY_ORDER_ROUTE, label: 'Ver todo' }}
+              contained={false}
+            >
+              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {firstVideos.map((video) => (
+                  <li key={video.universo}>
+                    <ContentCard
+                      href={youtubeWatchUrl(video.id)}
+                      external
+                      title={video.title}
+                      meta={video.universe}
+                      description={video.nota}
+                      lines={3}
+                      image={youtubeThumbUrl(video.id)}
+                      aspect="video"
+                      headingLevel={3}
+                      titleLines={2}
+                      sizes="(min-width: 1024px) 368px, (min-width: 640px) 50vw, 100vw"
                     />
                   </li>
                 ))}

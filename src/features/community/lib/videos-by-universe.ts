@@ -15,15 +15,65 @@ export interface DatedVideo {
   orden?: number;
 }
 
-/** «Ver en orden» (los más antiguos primero, por defecto) o «Más recientes primero». */
-export type VideoOrder = 'antiguos' | 'recientes';
+/**
+ * «Ver en orden» (los más antiguos primero, por defecto), «Más recientes primero» u «Orden de la historia» (el de
+ * `orden-historia.json`; solo existe si Boris lo ha mandado para algún universo).
+ */
+export type VideoOrder = 'antiguos' | 'recientes' | 'historia';
 
 /** Parámetro de la URL del selector de orden: `/videos?orden=recientes`. */
 export const ORDER_PARAM = 'orden';
 
-/** Cualquier valor que no sea `recientes` (o ninguno) es el orden por defecto. */
-export const parseVideoOrder = (value: string | null | undefined): VideoOrder =>
-  value === 'recientes' ? 'recientes' : 'antiguos';
+/**
+ * Cualquier valor desconocido (o ninguno) es el orden por defecto. `historia` solo vale si algún universo tiene orden
+ * de la historia (`hasStory`); si no, un enlace viejo a `?orden=historia` cae en el orden por defecto.
+ */
+export const parseVideoOrder = (value: string | null | undefined, hasStory = false): VideoOrder =>
+  value === 'recientes' ? 'recientes' : value === 'historia' && hasStory ? 'historia' : 'antiguos';
+
+/**
+ * «Orden de la historia» de un universo: primero los vídeos de `ids` en ese orden (de `lookup`, el índice de todos los
+ * vídeos de la página, porque uno de la lista puede haber caído en otro grupo; los que no estén se saltan), y después
+ * el resto del grupo en su orden actual, sin repetir. No muta nada.
+ */
+export function storyOrderVideos<T extends { id: string }>(
+  group: readonly T[],
+  ids: readonly string[],
+  lookup: ReadonlyMap<string, T>,
+): T[] {
+  const story = ids.flatMap((id) => {
+    const video = lookup.get(id);
+    return video ? [video] : [];
+  });
+  const inStory = new Set(story.map((v) => v.id));
+  return [...story, ...group.filter((v) => !inStory.has(v.id))];
+}
+
+/** Lo que `/empieza-aqui` necesita de cada entrada de `orden-historia.json`. */
+export interface StoryStart {
+  universo: string;
+  /** El primer vídeo de la lista: «Empieza por este vídeo». */
+  id: string;
+  nota?: string;
+}
+
+/**
+ * El primer vídeo de cada universo con orden de la historia, en el orden de `universeOrder` (los universos que no
+ * figuran van detrás, en el orden del archivo). Vacío si nadie ha mandado ninguno.
+ */
+export function storyStarts(
+  entries: readonly { universo: string; ids: readonly string[]; nota?: string }[],
+  universeOrder: readonly string[],
+): StoryStart[] {
+  const rank = (universe: string) => {
+    const i = universeOrder.indexOf(universe);
+    return i === -1 ? universeOrder.length : i;
+  };
+  return entries
+    .filter((e) => e.ids.length > 0)
+    .map((e) => ({ universo: e.universo, id: e.ids[0], ...(e.nota ? { nota: e.nota } : {}) }))
+    .sort((a, b) => rank(a.universo) - rank(b.universo));
+}
 
 /** Fecha en ms, o `null` si falta o no es válida. */
 const timeOf = (video: DatedVideo) => {

@@ -1,16 +1,19 @@
 /**
- * Lectura de novedades, duelos curados y relaciones vídeo ↔ ficha desde el disco. Puro (lo usan check:content,
- * el repositorio de archivos y los tests): solo imports relativos con extensión .ts.
+ * Lectura de novedades, duelos curados, relaciones vídeo ↔ ficha y orden de la historia desde el disco. Puro (lo usan
+ * check:content, el repositorio de archivos y los tests): solo imports relativos con extensión .ts.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
+import type { z } from 'zod';
 import {
   CuratedPollsSchema,
   NewsEntrySchema,
+  StoryOrderSchema,
   VideoLinksSchema,
   type CuratedPoll,
   type NewsEntry,
+  type StoryOrderEntry,
   type VideoLink,
 } from './schemas.ts';
 
@@ -57,7 +60,8 @@ export function readNews(dir: string): ReadResult<NewsEntry> {
   return { items, errors };
 }
 
-export function readCuratedPolls(file: string): ReadResult<CuratedPoll> {
+/** Lee y valida un JSON de src/content. Si no existe, lista vacía y sin errores; con errores, ninguna entrada. */
+function readJsonList<T>(file: string, schema: z.ZodType<T[]>): ReadResult<T> {
   if (!fs.existsSync(file)) return { items: [], errors: [] };
   const name = path.basename(file);
   let json: unknown;
@@ -66,7 +70,7 @@ export function readCuratedPolls(file: string): ReadResult<CuratedPoll> {
   } catch (error) {
     return { items: [], errors: [`${name}: JSON inválido — ${(error as Error).message}`] };
   }
-  const parsed = CuratedPollsSchema.safeParse(json);
+  const parsed = schema.safeParse(json);
   if (!parsed.success) {
     return {
       items: [],
@@ -76,21 +80,10 @@ export function readCuratedPolls(file: string): ReadResult<CuratedPoll> {
   return { items: parsed.data, errors: [] };
 }
 
-export function readVideoLinks(file: string): ReadResult<VideoLink> {
-  if (!fs.existsSync(file)) return { items: [], errors: [] };
-  const name = path.basename(file);
-  let json: unknown;
-  try {
-    json = JSON.parse(fs.readFileSync(file, 'utf8'));
-  } catch (error) {
-    return { items: [], errors: [`${name}: JSON inválido — ${(error as Error).message}`] };
-  }
-  const parsed = VideoLinksSchema.safeParse(json);
-  if (!parsed.success) {
-    return {
-      items: [],
-      errors: parsed.error.issues.map((i) => `${name}: ${i.path.join('.') || '(raíz)'} — ${i.message}`),
-    };
-  }
-  return { items: parsed.data, errors: [] };
-}
+export const readCuratedPolls = (file: string): ReadResult<CuratedPoll> => readJsonList(file, CuratedPollsSchema);
+
+export const readVideoLinks = (file: string): ReadResult<VideoLink> => readJsonList(file, VideoLinksSchema);
+
+/** `orden-historia.json` (opcional): sin el archivo, ningún universo tiene «Orden de la historia». */
+export const readStoryOrder = (file: string): ReadResult<StoryOrderEntry> => readJsonList(file, StoryOrderSchema);
+

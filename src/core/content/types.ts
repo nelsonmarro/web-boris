@@ -1,5 +1,5 @@
 import type { WikiArticle } from '@/core/types/wiki';
-import type { CuratedPoll, NewsEntry, VideoLink } from './schemas';
+import type { CuratedPoll, NewsEntry, StoryOrderEntry, VideoLink } from './schemas';
 
 /**
  * Fuente de contenido de la web. Hoy la implementa `fileContentRepository` (archivos en src/content);
@@ -15,4 +15,6 @@ export interface ContentRepository {
   getCuratedPolls(): Promise<CuratedPoll[]>;
   /** Relaciones manuales vídeo ↔ ficha (`videos.json`); las del título se calculan aparte (`linkVideos`). */
   getVideoLinks(): Promise<VideoLink[]>;
+  /** Orden de la historia por universo (`orden-historia.json`, opcional): vacío mientras Boris no lo mande. */
+  getStoryOrder(): Promise<StoryOrderEntry[]>;
 }

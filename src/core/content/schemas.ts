@@ -103,3 +103,34 @@ export const VideoLinksSchema = z.array(VideoLinkSchema).superRefine((links, ctx
 });
 
 export type VideoLink = z.infer<typeof VideoLinkSchema>;
+
+/**
+ * `orden-historia.json` (opcional): el orden en que Boris recomienda ver los vídeos de cada universo. Solo lo que él
+ * mande: sin el archivo (o sin entrada para un universo), `/videos` y `/empieza-aqui` no cambian. `universo` es el valor
+ * exacto de `universe:` del frontmatter (el `universeKey` de `universes.ts`); `ids`, los vídeos en ese orden (el
+ * primero es «Empieza por este vídeo»); `nota`, una aclaración corta de Boris, opcional.
+ */
+export const StoryOrderEntrySchema = z.object({
+  universo: z.string().trim().min(1, { message: 'indica el universo' }),
+  ids: z
+    .array(z.string().regex(YOUTUBE_ID_REGEX, { message: 'id de YouTube inválido (11 caracteres [A-Za-z0-9_-])' }))
+    .min(1, { message: 'indica al menos un vídeo' })
+    .superRefine((ids, ctx) => {
+      const seen = new Set<string>();
+      ids.forEach((id, i) => {
+        if (seen.has(id)) ctx.addIssue({ code: 'custom', message: `vídeo repetido: ${id}`, path: [i] });
+        seen.add(id);
+      });
+    }),
+  nota: z.string().trim().min(1).max(200).optional(),
+});
+
+export const StoryOrderSchema = z.array(StoryOrderEntrySchema).superRefine((entries, ctx) => {
+  const seen = new Set<string>();
+  entries.forEach((e, i) => {
+    if (seen.has(e.universo)) ctx.addIssue({ code: 'custom', message: `universo repetido: ${e.universo}`, path: [i, 'universo'] });
+    seen.add(e.universo);
+  });
+});
+
+export type StoryOrderEntry = z.infer<typeof StoryOrderEntrySchema>;

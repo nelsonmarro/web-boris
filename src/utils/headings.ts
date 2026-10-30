@@ -50,3 +50,12 @@ export function extractHeadings(content: string): WikiHeading[] {
 
   return headings;
 }
+
+/**
+ * Añade al final un apartado `##` que la ficha pinta fuera del MDX (las preguntas frecuentes), con la numeración que le
+ * toca, para que entre en el índice y en el chip de sección.
+ */
+export function appendHeading(headings: readonly WikiHeading[], id: string, text: string): WikiHeading[] {
+  const h2 = headings.filter((h) => h.level === 2).length + 1;
+  return [...headings, { id, text, level: 2, numbering: `${h2}.` }];
+}

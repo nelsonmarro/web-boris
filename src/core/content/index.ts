@@ -7,4 +7,4 @@ export function getContentRepository(): ContentRepository {
 }
 
 export type { ContentRepository } from './types';
-export type { CuratedPoll, NewsEntry, VideoLink } from './schemas';
+export type { CuratedPoll, NewsEntry, StoryOrderEntry, VideoLink } from './schemas';

@@ -4,11 +4,12 @@ import { WikiArticleHeader } from '@/features/monsters/components/wiki/article/W
 import { WikiArticleContent } from '@/features/monsters/components/wiki/article/WikiArticleContent';
 import { WikiArticleFooter } from '@/features/monsters/components/wiki/article/WikiArticleFooter';
 import type { Metadata } from 'next';
-import { pageMetadata } from '@/lib/seo';
+import { pageMetadata, SITE_URL } from '@/lib/seo';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { getRelatedArticles } from '@/features/monsters/lib/related';
 import { getEntityIndex, getMentionGraph } from '@/core/content/entities';
-import { extractHeadings } from '@/utils/headings';
+import { appendHeading, extractHeadings } from '@/utils/headings';
+import { FAQ_ID, FAQ_TITLE, faqJsonLd, serializeJsonLd } from '@/features/monsters/lib/faq';
 import { ArticleProgress } from '@/features/monsters/components/wiki/article/ArticleProgress';
 import { SectionChip } from '@/features/monsters/components/wiki/article/SectionChip';
 import { ArticleImagesProvider } from '@/features/monsters/components/wiki/mdx/ArticleImages';
@@ -72,9 +73,13 @@ export default async function WikiArticlePage({ params }: Props) {
   // La portada sube a la cabecera; si el MDX ya la usa en el cuerpo, la cabecera no la repite.
   const imageInBody = !!frontmatter.image && content.includes(frontmatter.image);
   const withStats = hasStats(frontmatter);
+  // Preguntas frecuentes (solo si la ficha trae `faq`): datos estructurados `FAQPage` y su entrada en el chip de sección.
+  const faqLd = faqJsonLd(frontmatter.faq, `${SITE_URL}/wiki/${slug}`);
+  const headings = faqLd ? appendHeading(extractHeadings(content), FAQ_ID, FAQ_TITLE) : extractHeadings(content);
 
   return (
     <div className="w-full min-h-screen bg-[#0a2339]">
+      {faqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqLd) }} />}
       <article className="w-full">
         <ArticleProgress />
         {/* El registro solo cuenta expedientes abiertos: un expediente sellado no cuenta (ver `registroSlugs`). */}
@@ -108,7 +113,7 @@ export default async function WikiArticlePage({ params }: Props) {
         </ArticleImagesProvider>
 
         {/* Después del cuerpo y antes del pie: el orden de tabulación sigue el de lectura. Es `fixed`, no ocupa lugar. */}
-        <SectionChip headings={extractHeadings(content)} />
+        <SectionChip headings={headings} />
         <EntityPreview />
 
         {/* Bloque de cierre: `SectionChip` se oculta al llegar al primer `[data-related]`, así que es uno solo. */}

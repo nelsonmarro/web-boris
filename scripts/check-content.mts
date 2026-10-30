@@ -31,16 +31,24 @@
  * 11. Una ficha que no es índice (Directorio/Categoría) ni está sellada (`status: proximamente`) no cumple el estándar
  *     (spec 2026-10-27 «fichas estándar» §4): le falta `description`, `imageCaption` teniendo `image`, una sección
  *     propia en el `infobox` o dos apartados `##` (sin contar Referencias; los `##` de bloques de código no cuentan).
+ * 12. Un slug de START_HERE no existe o está sellado.
+ * 13. Las preguntas frecuentes (`faq` del frontmatter) tienen una pregunta o respuesta vacía, más de 10 entradas o una
+ *     pregunta repetida (lo dice el esquema, en «Frontmatter inválido»), o la ficha trae además un apartado
+ *     «## Preguntas frecuentes» en el cuerpo.
+ * 14. `orden-historia.json` (opcional) no cumple su esquema (universo sin repetir, ids de YouTube sin repetir, `nota`
+ *     de hasta 200 caracteres), nombra un universo que no es un `universeKey` de universes.ts o un vídeo que no está
+ *     en canal.json.
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { WikiFrontmatterSchema } from '../src/core/types/wiki.ts';
-import { readCuratedPolls, readNews, readVideoLinks } from '../src/core/content/readers.ts';
+import { readCuratedPolls, readNews, readStoryOrder, readVideoLinks } from '../src/core/content/readers.ts';
 import { readCanal } from '../src/features/community/lib/canal.ts';
 import {
   type ArticleStandardInput,
   checkArticleStandard,
+  checkFaqSection,
   crossCheckEntities,
   crossCheckHeroPool,
   crossCheckStartHere,
@@ -48,6 +56,7 @@ import {
   crossCheckPollIdSlugs,
   crossCheckPolls,
   crossCheckReservedSlugs,
+  crossCheckStoryOrder,
   crossCheckVideoLinks,
 } from '../src/core/content/validate.ts';
 // Solo datos, sin dependencias de servidor: se pueden leer desde el script.
@@ -75,6 +84,8 @@ const problems: Record<string, string[]> = {
   'Hero de la landing (HERO_POOL)': [],
   'Ficha fuera del estándar': [],
   'Empieza por aquí (START_HERE)': [],
+  'Preguntas frecuentes (faq)': [],
+  'Orden de la historia (orden-historia.json)': [],
 };
 
 const NON_LORE_ASSETS = ['/assets/Branding/', '/assets/Universo_Colosos/Esquemas/'];
@@ -87,6 +98,7 @@ const sealedSlugs = new Set<string>();
 const imageSlugs = new Set<string>();
 const entityItems: { slug: string; title: string; aliases?: string[]; related?: string[] }[] = [];
 const standardItems: ArticleStandardInput[] = [];
+const faqItems: { slug: string; faqCount: number; h2Titles: string[] }[] = [];
 
 /** Títulos de los apartados `##` (nunca `###`) del cuerpo, sin mirar dentro de bloques de código ``` / ~~~. */
 function h2Titles(body: string): string[] {
@@ -158,6 +170,7 @@ for (const file of mdxFiles) {
       infoboxSections: Object.keys(parsed.data.infobox ?? {}).length,
       h2Titles: h2Titles(content),
     });
+    faqItems.push({ slug: file.replace(/\.mdx$/, ''), faqCount: parsed.data.faq?.length ?? 0, h2Titles: h2Titles(content) });
   }
   for (const asset of extractAssets(raw)) {
     if (!assetExists(asset)) problems['Assets inexistentes'].push(`${file}: ${asset}`);
@@ -178,7 +191,9 @@ for (const slug of [...navSlugs].sort()) {
 
 // 3 + 4 (universes.ts)
 const uniSrc = readFileSync(UNIVERSES_FILE, 'utf8');
+const universeKeys = new Set<string>();
 for (const m of uniSrc.matchAll(/universeKey:\s*['"]([^'"]+)['"]/g)) {
+  universeKeys.add(m[1]);
   if (!universesWithArticles.has(m[1])) {
     problems['Universo sin artículos'].push(`universeKey "${m[1]}" no tiene ningún artículo con ese \`universe:\``);
   }
@@ -220,6 +235,16 @@ problems['Ficha fuera del estándar'].push(...checkArticleStandard(standardItems
 
 // 12: fichas de «Empieza por aquí»
 problems['Empieza por aquí (START_HERE)'].push(...crossCheckStartHere(START_HERE, slugs, sealedSlugs));
+
+// 13: preguntas frecuentes (el esquema ya valida cada entrada; aquí, que no se repita la sección en el cuerpo)
+problems['Preguntas frecuentes (faq)'].push(...checkFaqSection(faqItems));
+
+// 14: orden de la historia por universo (opcional)
+const storyOrder = readStoryOrder(path.join(CONTENT_DIR, 'orden-historia.json'));
+problems['Orden de la historia (orden-historia.json)'].push(
+  ...storyOrder.errors,
+  ...crossCheckStoryOrder(storyOrder.items, universeKeys, new Set(canal.items.map((v) => v.id))),
+);
 
 // Reporte
 console.log(
