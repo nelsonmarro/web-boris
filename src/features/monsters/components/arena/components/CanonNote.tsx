@@ -51,7 +51,7 @@ export function CanonBadge({ kind }: { kind: 'battle' | 'fact' }) {
     <span
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.14em]',
-        kind === 'battle' ? 'border-primary/50 bg-primary/15 text-primary' : 'border-cyan-400/40 bg-cyan-400/10 text-cyan-200',
+        kind === 'battle' ? 'border-primary/60 bg-[#00122E] text-primary' /* fondo sólido: el naranja sobre su propio tinte no llegaba a 4.5:1 */ : 'border-cyan-400/40 bg-cyan-400/10 text-cyan-200',
       )}
     >
       <Icon className="h-3.5 w-3.5" aria-hidden="true" />
