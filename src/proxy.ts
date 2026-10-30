@@ -4,7 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 // Auth.js v5 (NextAuth) proxy handler for Next.js App Router
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default auth((req: NextRequest & { auth: any }) => {
-  const isLoggedIn = !!req.auth;
+  // Solo una sesión con usuario cuenta: ante un error de configuración (o una cookie `callback-url` inválida),
+  // Auth.js deja en `req.auth` un objeto de error, y `!!req.auth` daba por buena la sesión (fail open).
+  const isLoggedIn = !!req.auth?.user;
   const { nextUrl } = req;
 
   // Protected routes example

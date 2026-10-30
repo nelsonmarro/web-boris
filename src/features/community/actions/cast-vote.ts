@@ -57,15 +57,22 @@ export async function castVote(input: { pollId: string; option: string }): Promi
       select: { id: true },
     });
     if (!already) {
-      const fromNetwork = await prisma.pollVote.count({ where: { pollId: poll.id, ipHash } });
-      if (fromNetwork >= MAX_VOTES_PER_IP) {
-        return { ok: false, error: 'limite', state: await loadOpenState(poll, voterKey) };
-      }
+      const pollId = poll.id;
+      let overLimit = false;
       try {
-        await prisma.pollVote.create({ data: { pollId: poll.id, option, voterKey, ipHash } });
+        // Recuento e inserción en una transacción con un bloqueo por encuesta y red: sin él, muchas peticiones en
+        // paralelo (sin cookie, cada una un votante nuevo) leían todas un recuento < MAX_VOTES_PER_IP y entraban todas.
+        overLimit = await prisma.$transaction(async (tx) => {
+          await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtextextended(${`${pollId}:${ipHash}`}, 0))`;
+          const fromNetwork = await tx.pollVote.count({ where: { pollId, ipHash } });
+          if (fromNetwork >= MAX_VOTES_PER_IP) return true;
+          await tx.pollVote.create({ data: { pollId, option, voterKey, ipHash } });
+          return false;
+        });
       } catch (error) {
         if (!isUniqueViolation(error)) throw error; // doble clic: el primer voto ya entró
       }
+      if (overLimit) return { ok: false, error: 'limite', state: await loadOpenState(poll, voterKey) };
     }
     return { ok: true, state: await loadOpenState(poll, voterKey) };
   } catch (error) {

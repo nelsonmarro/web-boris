@@ -12,3 +12,4 @@ conductor
 coverage
 *.log
 tsconfig.tsbuildinfo
+*.sql
