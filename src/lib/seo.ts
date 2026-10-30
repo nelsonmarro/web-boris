@@ -18,18 +18,24 @@ interface PageMetadataInput {
   description?: string;
   /** Ruta canónica, p. ej. `/wiki/registro`. */
   path: string;
-  /** Imagen propia (portada de la ficha); si falta, la imagen por defecto. */
+  /** Imagen propia; si falta, la imagen por defecto. */
   image?: string;
+  /**
+   * La ruta tiene su propio `opengraph-image` (las fichas): no se fija ninguna imagen. Next solo usa el archivo si la
+   * página no define `openGraph.images`, y `twitter:image` hereda la de Open Graph si falta `twitter.images`.
+   */
+  fileImage?: boolean;
 }
 
 /** `title`, `description`, `alternates.canonical`, Open Graph y Twitter de una página, con la misma forma en todas. */
-export function pageMetadata({ title, description, path, image }: PageMetadataInput): Metadata {
-  const images = image ? [{ url: image }] : DEFAULT_OG_IMAGES;
+export function pageMetadata({ title, description, path, image, fileImage = false }: PageMetadataInput): Metadata {
+  // Sin la clave `images` (ni siquiera `undefined`): Next comprueba `hasOwnProperty('images')`.
+  const images = fileImage ? {} : { images: image ? [{ url: image }] : DEFAULT_OG_IMAGES };
   return {
     title,
     description,
     alternates: { canonical: path },
-    openGraph: { type: 'website', siteName: SITE_NAME, locale: 'es_ES', title, description, url: path, images },
-    twitter: { card: 'summary_large_image', title, description, images },
+    openGraph: { type: 'website', siteName: SITE_NAME, locale: 'es_ES', title, description, url: path, ...images },
+    twitter: { card: 'summary_large_image', title, description, ...images },
   };
 }

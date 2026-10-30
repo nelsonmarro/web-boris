@@ -1,11 +1,15 @@
-'use client';
+"use client";
 
-import { useMemo } from 'react';
-import Link from 'next/link';
-import { progress } from '@/core/search/registro';
-import { REGISTRO_ROUTE } from '@/features/monsters/config/wiki-routes';
-import { useRegistroHydrated, useSeen } from '@/features/monsters/store/registro-store';
-import { REGISTRO_TEXT_LINK } from './ExpedienteAleatorioLink';
+import { useMemo } from "react";
+import Link from "next/link";
+import { progress } from "@/core/search/registro";
+import { rangoDeRegistro } from "@/core/search/rango";
+import { REGISTRO_ROUTE } from "@/features/monsters/config/wiki-routes";
+import {
+  useRegistroHydrated,
+  useSeen,
+} from "@/features/monsters/store/registro-store";
+import { REGISTRO_TEXT_LINK } from "./ExpedienteAleatorioLink";
 
 interface RegistroLinkProps {
   /** Slugs de las fichas que cuentan para el progreso (ni sellados ni índices): `registroSlugs(entries)`. */
@@ -21,15 +25,21 @@ export function RegistroLink({ slugs }: RegistroLinkProps) {
   const entries = useMemo(() => slugs.map((slug) => ({ slug })), [slugs]);
   const hydrated = useRegistroHydrated();
   const { opened, total } = progress(entries, useSeen());
+  const rango = rangoDeRegistro(opened, total).actual.nombre;
   return (
     <Link href={REGISTRO_ROUTE} className={REGISTRO_TEXT_LINK}>
       <span aria-hidden="true">Tu registro ·</span>
       <span aria-hidden="true" className="tabular-nums">
         {opened}/{total}
       </span>
+      {hydrated && opened > 0 ? (
+        <span aria-hidden="true">· {rango}</span>
+      ) : null}
       <span aria-hidden="true">›</span>
       <span className="sr-only">
-        {hydrated ? `Tu registro: ${opened} de ${total} expedientes abiertos` : 'Tu registro del archivo'}
+        {hydrated
+          ? `Tu registro: ${opened} de ${total} expedientes abiertos, rango ${rango}`
+          : "Tu registro del archivo"}
       </span>
     </Link>
   );

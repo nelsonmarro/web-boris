@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { IMAGE_QUALITY } from '@/utils/image';
 import Link from 'next/link';
 import type { Route } from 'next';
+import type { ReactNode } from 'react';
 import { Swords } from 'lucide-react';
 import { FactsLine } from '@/components/content';
 import { isIndexCategory } from '@/core/search/catalog';
@@ -11,6 +12,8 @@ import { blueWhales } from '@/features/monsters/lib/scale';
 import { SOCIAL_LINKS } from '@/features/marketing/config/social';
 import { cn } from '@/utils/cn';
 import { coverOf } from '@/components/content/CategoryPlaceholder';
+import { ESCALA_ROUTE } from '@/core/search/wiki-routes';
+import { formatMeters, infoboxLength, parseCanonicalLength } from '@/features/monsters/lib/size-references';
 import { WikiBreadcrumbs } from './WikiBreadcrumbs';
 import { WikiArticleActions } from './WikiArticleActions';
 import { ProximamenteChip } from '../mdx/Proximamente';
@@ -30,6 +33,8 @@ interface WikiArticleHeaderProps {
   /** Entradilla (frontmatter `description`). */
   description?: string;
   stats?: WikiFrontmatter['stats'];
+  /** Infobox: su `Longitud` da la precisión canónica («más de 500 metros», «~300 metros»). */
+  infobox?: WikiFrontmatter['infobox'];
   /** El artículo tiene datos de ficha (`hasStats(frontmatter)` en la página); sin ellos no hay línea de datos. */
   hasStats: boolean;
   /** La portada ya aparece en el cuerpo del MDX: la cabecera no la repite. */
@@ -37,15 +42,30 @@ interface WikiArticleHeaderProps {
 }
 
 /** Longitud · Amenaza · Peso, en ese orden y sin los que falten. */
-function buildFacts(stats: NonNullable<WikiFrontmatter['stats']>) {
-  const facts: { label: string; value: string; tone?: ThreatTone; note?: string }[] = [];
+function buildFacts(stats: NonNullable<WikiFrontmatter['stats']>, infobox?: WikiFrontmatter['infobox']) {
+  const facts: { label: string; value: string; tone?: ThreatTone; note?: ReactNode }[] = [];
   if (stats.length !== undefined) {
     // Escala para el recién llegado (spec UX fase 1 §B3): solo desde 60 m.
     const whales = blueWhales(stats.length);
+    // Precisión como la escribe el canon: «más de 500 m» (Vlad Julia), «≈ 300 m»; si el infobox da otro número, exacta.
+    const canon = parseCanonicalLength(infoboxLength(infobox) ?? '');
+    const precision = canon && canon.meters === stats.length ? canon.precision : 'exact';
     facts.push({
       label: 'Longitud',
-      value: `${stats.length.toLocaleString('es-ES')} m`,
-      note: whales === null ? undefined : `≈ ${whales} ballenas azules`,
+      value: formatMeters({ meters: stats.length, precision }),
+      // Enlaza a la escala de tamaños (spec UX fase 2 §3), donde se ve frente a las demás y a referencias reales.
+      note:
+        whales === null ? undefined : (
+          <Link
+            href={ESCALA_ROUTE as Route}
+            className="rounded-sm underline decoration-white/30 underline-offset-4 transition-colors hover:text-primary hover:decoration-primary focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none"
+          >
+            {precision === 'atLeast'
+              ? `más de ${Math.floor(stats.length / 30)}` // cota inferior: no se redondea hacia arriba
+              : `≈ ${whales}`}{' '}
+            ballenas azules
+          </Link>
+        ),
     });
   }
   const threat = getThreatLevel(stats.hostility);
@@ -65,13 +85,14 @@ export function WikiArticleHeader({
   imageCaption,
   description,
   stats,
+  infobox,
   hasStats,
   imageInBody = false,
 }: WikiArticleHeaderProps) {
   // Las páginas índice (Directorio, Categoría) no llevan portada: su `image` es solo la miniatura del menú.
   const isIndex = isIndexCategory(category);
   const cover = !imageInBody && !isIndex ? coverOf(image) : undefined;
-  const facts = hasStats && stats ? buildFacts(stats) : [];
+  const facts = hasStats && stats ? buildFacts(stats, infobox) : [];
 
   return (
     <header className="relative z-20 border-b border-white/10">

@@ -7,6 +7,7 @@ import { UNIVERSES } from "@/features/marketing/config/universes";
 
 const NAV_LINKS = [
   { label: "Inicio", href: "/" },
+  { label: "Empieza aquí", href: "/empieza-aqui" },
   { label: "La Wiki", href: "/wiki" },
   { label: "Universos", href: "/#universos" },
   { label: "Comunidad", href: "/comunidad" },

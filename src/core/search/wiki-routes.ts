@@ -8,9 +8,14 @@ export const REGISTRO_ROUTE = '/wiki/registro';
 export const RANDOM_ROUTE = '/wiki/aleatorio';
 
 /** Rutas estáticas de la wiki: una ficha MDX no puede ocupar su lugar. */
-export const STATIC_WIKI_ROUTES = [ARENA_ROUTE, REGISTRO_ROUTE, RANDOM_ROUTE] as const;
+/** Escala de tamaños: los colosos con longitud conocida frente a referencias reales (fase 2 UX). */
+export const ESCALA_ROUTE = '/wiki/escala';
+/** Juego «¿Quién es más grande?» (fase 2 UX). */
+export const TAMANOS_ROUTE = '/wiki/tamanos';
 
-/** Slugs que ningún MDX puede usar, porque la ruta estática de igual nombre ganaría (`arena`, `registro`, `aleatorio`). */
+export const STATIC_WIKI_ROUTES = [ARENA_ROUTE, REGISTRO_ROUTE, RANDOM_ROUTE, ESCALA_ROUTE, TAMANOS_ROUTE] as const;
+
+/** Slugs que ningún MDX puede usar, porque la ruta estática de igual nombre ganaría (`arena`, `registro`, `aleatorio`, `escala`, `tamanos`). */
 export const RESERVED_SLUGS: readonly string[] = STATIC_WIKI_ROUTES.map((route) => route.slice('/wiki/'.length));
 
 /** URL interna de una ficha: el slug va en el grupo 1; admite `/`, `?` o `#` detrás. */

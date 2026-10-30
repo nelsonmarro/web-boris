@@ -45,7 +45,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       article.frontmatter.description ||
       `Explora el lore de ${article.frontmatter.title} en el universo de BorisaoBlois.`,
     path: `/wiki/${slug}`,
-    image: article.frontmatter.image,
+    // La imagen para compartir es la de `opengraph-image.tsx` (portada, título y datos), no la portada suelta.
+    fileImage: true,
   });
 }
 
@@ -89,6 +90,7 @@ export default async function WikiArticlePage({ params }: Props) {
           imageCaption={frontmatter.imageCaption}
           description={frontmatter.description}
           stats={frontmatter.stats}
+          infobox={frontmatter.infobox}
           hasStats={withStats}
           imageInBody={imageInBody}
         />
