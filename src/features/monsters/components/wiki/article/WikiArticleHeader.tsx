@@ -7,6 +7,8 @@ import { FactsLine } from '@/components/content';
 import { isIndexCategory } from '@/core/search/catalog';
 import type { WikiFrontmatter } from '@/core/types/wiki';
 import { getThreatLevel, type ThreatTone } from '@/features/monsters/lib/stats';
+import { blueWhales } from '@/features/monsters/lib/scale';
+import { SOCIAL_LINKS } from '@/features/marketing/config/social';
 import { cn } from '@/utils/cn';
 import { coverOf } from '@/components/content/CategoryPlaceholder';
 import { WikiBreadcrumbs } from './WikiBreadcrumbs';
@@ -36,9 +38,15 @@ interface WikiArticleHeaderProps {
 
 /** Longitud · Amenaza · Peso, en ese orden y sin los que falten. */
 function buildFacts(stats: NonNullable<WikiFrontmatter['stats']>) {
-  const facts: { label: string; value: string; tone?: ThreatTone }[] = [];
+  const facts: { label: string; value: string; tone?: ThreatTone; note?: string }[] = [];
   if (stats.length !== undefined) {
-    facts.push({ label: 'Longitud', value: `${stats.length.toLocaleString('es-ES')} m` });
+    // Escala para el recién llegado (spec UX fase 1 §B3): solo desde 60 m.
+    const whales = blueWhales(stats.length);
+    facts.push({
+      label: 'Longitud',
+      value: `${stats.length.toLocaleString('es-ES')} m`,
+      note: whales === null ? undefined : `≈ ${whales} ballenas azules`,
+    });
   }
   const threat = getThreatLevel(stats.hostility);
   if (threat) facts.push({ label: 'Amenaza', value: threat.label, tone: threat.tone });
@@ -61,7 +69,8 @@ export function WikiArticleHeader({
   imageInBody = false,
 }: WikiArticleHeaderProps) {
   // Las páginas índice (Directorio, Categoría) no llevan portada: su `image` es solo la miniatura del menú.
-  const cover = !imageInBody && !isIndexCategory(category) ? coverOf(image) : undefined;
+  const isIndex = isIndexCategory(category);
+  const cover = !imageInBody && !isIndex ? coverOf(image) : undefined;
   const facts = hasStats && stats ? buildFacts(stats) : [];
 
   return (
@@ -97,6 +106,23 @@ export function WikiArticleHeader({
             <h1 className="page-title">{title}</h1>
             {status === 'proximamente' && <ProximamenteChip />}
           </div>
+
+          {/* Contexto para quien llega desde un buscador (spec UX fase 1 §B1): de qué serie sale esto y dónde verla. */}
+          {!isIndex && (
+            <p className="text-sm leading-relaxed text-white/70">
+              Expediente del universo <em className="font-semibold text-white/85">{universe}</em>, una serie
+              de BorisaoBlois ·{' '}
+              <a
+                href={SOCIAL_LINKS.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="whitespace-nowrap font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary rounded-sm"
+              >
+                Ver en YouTube<span aria-hidden="true"> ›</span>
+                <span className="sr-only"> (se abre en YouTube)</span>
+              </a>
+            </p>
+          )}
 
           <FactsLine items={facts} />
 

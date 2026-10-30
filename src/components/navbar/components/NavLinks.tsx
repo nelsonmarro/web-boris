@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/utils/cn";
+import { activeSpyHash, type SpySection } from "../lib/scroll-spy";
 
 const NAV_LINKS = [
   { name: "Inicio", href: "/" },
@@ -12,6 +13,10 @@ const NAV_LINKS = [
   { name: "Comunidad", href: "/comunidad" },
   { name: "Contacto", href: "/#contacto" },
 ];
+
+/** Anclas de la portada que tienen enlace en la navbar, y la línea de lectura (px bajo el borde superior). */
+const SPY_IDS = ["universos", "contacto"] as const;
+const SPY_LINE = 200;
 
 interface NavLinksProps {
   /** Se llama tras pulsar cualquier enlace (el menú móvil lo usa para cerrar el panel). */
@@ -40,16 +45,18 @@ export function NavLinks({ onNavigate, noActive = false }: NavLinksProps = {}) {
         return;
       }
 
-      // La última sección cuyo borde superior ya pasó la línea de lectura.
-      // No se exige que su borde inferior siga a la vista: al final de la página
-      // «contacto» queda por encima de la línea y debe seguir activa.
-      let currentSection = "";
-      for (const id of ["universos", "contacto"]) {
-        const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top <= 200) {
-          currentSection = `#${id}`;
-        }
+      // La sección que cruza la línea de lectura (UX fase 1 §A.6). Sobre Vídeos o Personajes, que no tienen enlace,
+      // queda «Inicio» (la página en la que se está); antes «Universos» seguía activo hasta llegar a «Contacto».
+      // «Contacto» abarca toda la sección «Sobre Boris», de la que es la columna derecha en escritorio.
+      const sections: SpySection[] = [];
+      for (const id of SPY_IDS) {
+        const anchor = document.getElementById(id);
+        const box = (id === "contacto" ? anchor?.closest("section") : anchor) ?? anchor;
+        if (!box) continue;
+        const { top, bottom } = box.getBoundingClientRect();
+        sections.push({ hash: `#${id}`, top, bottom });
       }
+      const currentSection = activeSpyHash(sections, SPY_LINE);
       setActiveHash((prev) => (prev === currentSection ? prev : currentSection));
     };
 

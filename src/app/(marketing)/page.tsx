@@ -13,7 +13,8 @@ import { AboutContactSection } from '@/features/marketing/sections/AboutContactS
 // Sin `revalidate`: la landing es dinámica porque el hero sortea un expediente en cada visita (`connection()` en
 // `getHeroCreature`). Los artículos salen de `getAllArticles` (memoizado por proceso en producción) y el RSS de vídeos,
 // de la caché de `fetch` (1 h). Con esa caché fría (cada despliegue o reinicio) el feed puede tardar unos 6 s: por eso
-// `FeaturedVideosSection` va en `<Suspense>` y el hero y los universos se envían sin esperarlo.
+// `FeaturedVideosSection` va en `<Suspense>` y el resto de la página se envía sin esperarlo; el botón «Ver el último
+// vídeo» del hero, también (con la pestaña «Vídeos» del canal como respaldo), y ambos comparten la lectura del feed.
 
 export const metadata: Metadata = pageMetadata({
   title: SITE_NAME,
@@ -27,11 +28,12 @@ export default function Home() {
       <Navbar />
       <main className="flex-1 flex flex-col relative z-10">
         <HeroAbisal />
-        <UniversesSection />
-        <FeaturedCharactersSection />
+        {/* Orden de UX fase 1 §A.2: los vídeos, justo tras el hero (antes estaban en la 5.ª pantalla del móvil). */}
         <Suspense fallback={<FeaturedVideosSkeleton />}>
           <FeaturedVideosSection />
         </Suspense>
+        <UniversesSection />
+        <FeaturedCharactersSection />
         <CommunityStrip />
         <AboutContactSection />
       </main>

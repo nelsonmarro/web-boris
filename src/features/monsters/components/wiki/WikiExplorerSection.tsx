@@ -5,6 +5,7 @@ import { getFilterOptions } from '@/features/monsters/actions/get-wiki-articles'
 import { getEntityIndex } from '@/core/content/entities';
 import { registroSlugs } from '@/core/search/registro';
 import { RegistroLink } from '@/features/monsters/components/wiki/registro/RegistroLink';
+import { StartHere } from '@/features/monsters/components/wiki/StartHere';
 import { ExpedienteAleatorioLink } from '@/features/monsters/components/wiki/registro/ExpedienteAleatorioLink';
 
 /**
@@ -42,6 +43,7 @@ export async function WikiExplorerSection() {
           <ExpedienteAleatorioLink />
         </div>
       </header>
+      <StartHere />
       {/* useSearchParams exige un límite de Suspense para no des-optimizar la página estática. */}
       <Suspense fallback={<WikiListFallback />}>
         <WikiList options={options} />

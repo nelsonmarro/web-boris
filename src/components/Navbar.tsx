@@ -41,21 +41,24 @@ export default function Navbar({ hideLogoOnDesktop = false, noActive = false }: 
           'md:px-0 md:py-0 md:relative md:top-auto md:left-auto md:right-auto',
       )}
     >
+      {/* Con scroll, barra sólida (`#00122E` al 95 %) y sin `backdrop-filter`: el cristal se aclaraba sobre imágenes
+          claras (el boceto de El Gran Majá) y un desenfoque de 120 px a todo el ancho costaba frames en Firefox
+          (UX fase 1 §A.6). El cristal (`glass-liquid`) queda para la píldora de arriba del todo. */}
       <div
         className={cn(
-          'transition-all duration-700 flex items-center justify-between glass-liquid',
+          'transition-all duration-700 flex items-center justify-between',
           scrolled
-            ? 'w-full max-w-full rounded-none px-4 sm:px-6 md:px-12 py-4 sm:py-5 bg-black/80 backdrop-blur-[120px] border-b border-white/10 shadow-[0_30px_90px_rgba(0,0,0,0.9)]'
-            : 'max-w-7xl mx-auto rounded-full px-3 sm:px-6 md:px-8 py-3 bg-black/10 border-white/10 border-refractive shadow-[0_20px_50px_rgba(0,0,0,0.5)]',
+            ? 'w-full max-w-full rounded-none px-4 sm:px-6 md:px-12 py-4 sm:py-5 bg-[#00122E]/95 border-b border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)]'
+            : 'glass-liquid max-w-7xl mx-auto rounded-full px-3 sm:px-6 md:px-8 py-3 bg-black/10 border-white/10 border-refractive shadow-[0_20px_50px_rgba(0,0,0,0.5)]',
           hideLogoOnDesktop &&
             'md:bg-transparent md:border-none md:shadow-none md:px-0 md:py-0 md:w-full',
         )}
       >
         {/* Shine and Reflection layers */}
-        {!hideLogoOnDesktop && (
+        {!hideLogoOnDesktop && !scrolled && (
           <>
             <div className="glass-shine opacity-10" />
-            {!scrolled && <div className="glass-reflection" />}
+            <div className="glass-reflection" />
           </>
         )}
 
