@@ -5,7 +5,10 @@
  */
 
 /** Slugs antiguos que aún circulan en enlaces compartidos (?a=/?b=) → slug canónico actual. */
-export const LEGACY_SLUGS: Record<string, string> = { 'slowdown-criyote': 'slowdown-criyonte' };
+export const LEGACY_SLUGS: Record<string, string> = {
+  'slowdown-criyote': 'slowdown-criyonte',
+  'supperbial-anguilla': 'cranioplanus-risus',
+};
 
 export function resolvePair(
   slugs: readonly string[],

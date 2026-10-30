@@ -76,7 +76,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
         icon: Microscope,
         items: [
           { title: "Especies identificadas", url: "/wiki/especies" },
-          { title: "Supperbial anguilla", url: "/wiki/supperbial-anguilla" },
+          { title: "Cranioplanus risus", url: "/wiki/cranioplanus-risus" },
           { title: "Labodotype macrostoma", url: "/wiki/labodotype-macrostoma" },
           { title: "Kaiserosteus loricatus", url: "/wiki/kaiserosteus-loricatus" },
           { title: "Garddiodon typus", url: "/wiki/garddiodon-typus" },

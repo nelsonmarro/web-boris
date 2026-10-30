@@ -16,7 +16,7 @@ export const FEATURED_CHARACTERS: readonly FeaturedCharacterDef[] = [
     slug: 'el-gran-maja',
     name: 'El Gran Majá',
     description:
-      'Especie de anguila, de comportamiento hostil con los humanos. Apareció por primera vez en el año 2022. Es el único miembro conocido de la especie Supperbial anguilla. Por sus características y naturaleza se trata de un depredador.',
+      'Especie de anguila, de comportamiento hostil con los humanos. Apareció por primera vez en el año 2022. Es el único miembro conocido de la especie Cranioplanus risus. Por sus características y naturaleza se trata de un depredador.',
   },
   {
     slug: 'phillip-forte',
