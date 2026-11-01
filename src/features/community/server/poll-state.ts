@@ -25,6 +25,16 @@ export async function loadOpenState(poll: PollDef, voterKey: string | null): Pro
   return { status: 'open', poll, myOption: mine?.option ?? null, ...computeTally([poll.a, poll.b], counts) };
 }
 
+/**
+ * Anonimiza los votos de las encuestas cerradas: borra el hash de red (solo sirve para el tope de la encuesta vigente)
+ * y cambia la clave del votante por el id de la fila (único, así que la restricción `(pollId, voterKey)` se mantiene).
+ * El recuento por opción, que es lo que usa el historial, no cambia. Con la base y `VOTE_SECRET` a la vez, un hash de
+ * IPv4 se podía revertir probando las 2^32 direcciones; vaciado, ya no hay nada que revertir.
+ */
+export async function anonymizeClosedPolls(currentPollId: string): Promise<number> {
+  return prisma.$executeRaw`UPDATE "PollVote" SET "ipHash" = '', "voterKey" = "id" WHERE "pollId" <> ${currentPollId} AND "ipHash" <> ''`;
+}
+
 export function isUniqueViolation(error: unknown): boolean {
   return error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002';
 }

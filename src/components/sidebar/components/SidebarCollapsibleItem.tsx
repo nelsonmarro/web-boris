@@ -33,12 +33,13 @@ export function SidebarCollapsibleItem({ item, groupTitle }: { item: NavItem; gr
   ) ?? false;
 
   const [isOpen, setIsOpen] = React.useState(isChildActive);
-
-  React.useEffect(() => {
-    if (isChildActive) {
-      setIsOpen(true);
-    }
-  }, [isChildActive]);
+  // Al navegar a un hijo, el grupo se abre. Se ajusta durante el render (patrón de React para estado derivado de
+  // props), no en un efecto: así no hay un render intermedio con el grupo cerrado.
+  const [wasChildActive, setWasChildActive] = React.useState(isChildActive);
+  if (isChildActive !== wasChildActive) {
+    setWasChildActive(isChildActive);
+    if (isChildActive) setIsOpen(true);
+  }
 
   if (!item.items || item.items.length === 0) {
     return (
@@ -111,12 +112,11 @@ function SidebarSubItem({ item }: { item: NavItem }) {
   const isDeepChildActive = item.items?.some(deep => pathname === deep.url) ?? false;
 
   const [isOpen, setIsOpen] = React.useState(isDeepChildActive);
-
-  React.useEffect(() => {
-    if (isDeepChildActive) {
-      setIsOpen(true);
-    }
-  }, [isDeepChildActive]);
+  const [wasDeepChildActive, setWasDeepChildActive] = React.useState(isDeepChildActive);
+  if (isDeepChildActive !== wasDeepChildActive) {
+    setWasDeepChildActive(isDeepChildActive);
+    if (isDeepChildActive) setIsOpen(true);
+  }
 
   if (!item.items || item.items.length === 0) {
     return (
