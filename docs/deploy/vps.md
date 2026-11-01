@@ -32,7 +32,9 @@ Vista previa para Boris en `https://borisaoblois.82-25-95-39.sslip.io`, desplega
 cd /srv/web-boris && deploy/deploy.sh
 ```
 
-`deploy.sh` hace `git pull --ff-only`, construye, migra (`migrate` es un servicio del perfil `tools`), reinicia la app y espera a que `http://127.0.0.1:3131/` responda 200. Añadir o cambiar una ficha MDX exige este paso: `[slug]` tiene `dynamicParams = false`.
+`deploy.sh` hace `git pull --ff-only` (y se relanza si el pull trae otra versión de sí mismo), construye, guarda una copia de la base (`deploy/backup.sh`), migra (`migrate` es un servicio del perfil `tools` y usa el superusuario), ajusta el usuario de la app (`deploy/db-app-role.sh`), reinicia la app y espera a que `http://127.0.0.1:3131/` responda 200. Añadir o cambiar una ficha MDX exige este paso: `[slug]` tiene `dynamicParams = false`.
+
+**Usuario de base de datos de la app.** La app no usa el superusuario de Postgres (`POSTGRES_USER`), sino `webboris_app`, que solo lee y escribe filas del esquema `public`: no puede crear ni borrar tablas, crear usuarios, leer ficheros ni ejecutar programas. La primera vez, `db-app-role.sh` genera su contraseña en el servidor y reescribe `.env.production` (sigue con permisos 600): `DATABASE_URL` pasa a `webboris_app` y la URL del superusuario queda en `ADMIN_DATABASE_URL`, que solo recibe `migrate`. El contenedor de la app recibe vacías `POSTGRES_PASSWORD` y `ADMIN_DATABASE_URL`.
 
 ## Comprobaciones tras desplegar
 
@@ -43,7 +45,16 @@ cd /srv/web-boris && deploy/deploy.sh
 
 ## Operación
 
-- **Copia de la base:** `docker compose --env-file .env.production -f docker-compose.prod.yml exec db pg_dump -U webboris webboris > backup.sql`.
+- **Copias de la base:** `deploy/backup.sh` guarda un `pg_dump -Fc` en `/var/backups/web-boris` (carpeta 700, ficheros 600, fuera del repo) y conserva las 14 más recientes. Lo ejecuta `deploy.sh` antes de cada migración y, a diario, un temporizador de systemd que se instala una vez:
+
+  ```bash
+  cp deploy/systemd/web-boris-backup.{service,timer} /etc/systemd/system/
+  systemctl daemon-reload && systemctl enable --now web-boris-backup.timer
+  systemctl list-timers web-boris-backup.timer   # próxima ejecución
+  ```
+
+  Restaurar una copia: `docker compose --env-file .env.production -f docker-compose.prod.yml exec -T db pg_restore -U webboris -d webboris --clean --if-exists < /var/backups/web-boris/<fichero>.dump`. Las copias viven en el mismo VPS: para sobrevivir a la pérdida del servidor, bájalas de vez en cuando (`scp root@82.25.95.39:/var/backups/web-boris/*.dump .`).
+- **nginx:** el vhost del repo lleva `server_tokens off;` y `add_header Strict-Transport-Security "max-age=31536000" always;`. En un VPS instalado antes del 2026-11-01, añade esas dos líneas a mano en `/etc/nginx/sites-enabled/web-boris.conf` (dentro del bloque `server` del 443 que creó certbot) y ejecuta `nginx -t && systemctl reload nginx`.
 - **`VOTE_SECRET`:** rotarlo solo en lunes. Cambiarlo a mitad de semana deja volver a votar esa semana.
 - **Dominio definitivo:**
   1. Cambia `NEXT_PUBLIC_SITE_URL` y `AUTH_URL` en `.env.production` y ejecuta `deploy/deploy.sh`. `NEXT_PUBLIC_*` se incrusta en el build, por eso hay que reconstruir.
