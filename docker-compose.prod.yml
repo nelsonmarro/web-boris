@@ -28,6 +28,11 @@ services:
     image: web-boris-app
     restart: unless-stopped
     env_file: .env.production
+    # La app se conecta con el usuario de privilegios mínimos (DATABASE_URL, deploy/db-app-role.sh): las credenciales
+    # del superusuario no entran en su entorno.
+    environment:
+      POSTGRES_PASSWORD: ''
+      ADMIN_DATABASE_URL: ''
     ports:
       - '127.0.0.1:3131:3000'
     depends_on:
@@ -40,6 +45,9 @@ services:
       target: migrate
     image: web-boris-migrate
     env_file: .env.production
+    # Las migraciones crean y alteran tablas: van con el superusuario (antes de db-app-role.sh, DATABASE_URL lo es).
+    environment:
+      DATABASE_URL: ${ADMIN_DATABASE_URL:-${DATABASE_URL}}
     depends_on:
       db:
         condition: service_healthy

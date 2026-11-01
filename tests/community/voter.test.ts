@@ -14,7 +14,13 @@ test('el hash de IP cambia por encuesta y nunca contiene la IP', () => {
   const h1 = ipHashFor(SECRET, '203.0.113.7', 'poll-1');
   assert.notEqual(h1, ipHashFor(SECRET, '203.0.113.7', 'poll-2'));
   assert.equal(h1.includes('203.0.113.7'), false);
-  assert.notEqual(voterKeyFor(SECRET, 'abc'), voterKeyFor(SECRET, 'abd'));
+  assert.notEqual(voterKeyFor(SECRET, 'abc', 'poll-1'), voterKeyFor(SECRET, 'abd', 'poll-1'));
+});
+
+test('la clave del votante cambia por encuesta: sus votos de semanas distintas no se pueden enlazar', () => {
+  assert.equal(voterKeyFor(SECRET, 'abc', 'poll-1'), voterKeyFor(SECRET, 'abc', 'poll-1'));
+  assert.notEqual(voterKeyFor(SECRET, 'abc', 'poll-1'), voterKeyFor(SECRET, 'abc', 'poll-2'));
+  assert.notEqual(voterKeyFor(SECRET, 'abc', 'poll-1'), ipHashFor(SECRET, 'abc', 'poll-1'));
 });
 
 test('clientIp: X-Real-IP, luego el último salto de X-Forwarded-For, luego "desconocida"', () => {

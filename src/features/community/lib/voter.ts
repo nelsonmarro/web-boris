@@ -12,7 +12,9 @@ export function hmac(secret: string, value: string): string {
   return createHmac('sha256', secret).update(value).digest('hex');
 }
 
-export const voterKeyFor = (secret: string, voterId: string): string => hmac(secret, voterId);
+/** Clave del votante en una encuesta: lleva el id de la encuesta para que sus votos de semanas distintas no se enlacen. */
+export const voterKeyFor = (secret: string, voterId: string, pollId: string): string =>
+  hmac(secret, `voter|${voterId}|${pollId}`);
 
 export const ipHashFor = (secret: string, ip: string, pollId: string): string => hmac(secret, `${ip}|${pollId}`);
 

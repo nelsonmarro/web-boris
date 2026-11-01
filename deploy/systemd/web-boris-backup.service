@@ -1,0 +1,8 @@
+[Unit]
+Description=Copia diaria de la base de web-boris
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/srv/web-boris/deploy/backup.sh

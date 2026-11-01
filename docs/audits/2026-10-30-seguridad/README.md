@@ -23,12 +23,17 @@ locales (Postgres desechable y `next start` con claves falsas). Sin acceso a pro
 | `/\host` tratado como enlace interno en el MDX | Baja | Externo |
 | Volcados `*.sql` podían entrar en la imagen | Baja | `.dockerignore` |
 
+## Corregido después (PR `fix/seguridad-pendientes`, 2026-11-01)
+
+- Usuario de Postgres con privilegios mínimos para la app (`deploy/db-app-role.sh`); el superusuario solo para `migrate`.
+- Copias automáticas (`deploy/backup.sh` antes de migrar y temporizador diario).
+- Privacidad de votos: `voterKey` por encuesta y anonimización de las encuestas cerradas.
+- nginx: `server_tokens off` y HSTS en el vhost del repo (en el VPS se añaden a mano).
+- `eslint-plugin-react-hooks` 7.1 sin override.
+
 ## Pendiente (requiere el VPS o una decisión)
 
 - Revocar en Resend la clave antigua que pasó por el chat (si sigue activa) y usar una nueva también en local.
-- Rol de Postgres con privilegios mínimos para la app (hoy usa el superusuario del contenedor): `database.md` §A1.
-- Copias de seguridad automáticas de la base (hoy el volumen es la única copia).
-- Vaciar `ipHash` al cerrar cada encuesta y meter el id de la encuesta en `voterKey` (privacidad).
-- nginx: `server_tokens off`, `default_server` de cierre y HSTS cuando haya dominio definitivo.
+- nginx: aplicar en el VPS `server_tokens off` y HSTS; valorar un `default_server` de cierre (afecta a los demás sitios del VPS).
 - Quitar el cableado de Auth.js sin uso (no hay proveedores ni páginas protegidas) o, si se usa, comprobar `auth()` en el servidor.
 - Borrar la rama remota `add-claude-github-actions-*` (flujos con secretos sin fusionar).

@@ -3,7 +3,7 @@
 import { randomUUID } from 'node:crypto';
 import { cookies, headers } from 'next/headers';
 import { prisma } from '@/lib/prisma';
-import { getActivePoll, isUniqueViolation, loadOpenState } from '../server/poll-state';
+import { anonymizeClosedPolls, getActivePoll, isUniqueViolation, loadOpenState } from '../server/poll-state';
 import {
   MAX_VOTES_PER_IP,
   VOTER_COOKIE,
@@ -48,7 +48,7 @@ export async function castVote(input: { pollId: string; option: string }): Promi
         path: '/',
       });
     }
-    const voterKey = voterKeyFor(secret, voterId);
+    const voterKey = voterKeyFor(secret, voterId, poll.id);
     const requestHeaders = await headers();
     const ipHash = ipHashFor(secret, networkOf(clientIp((name) => requestHeaders.get(name))), poll.id);
 
@@ -73,6 +73,8 @@ export async function castVote(input: { pollId: string; option: string }): Promi
         if (!isUniqueViolation(error)) throw error; // doble clic: el primer voto ya entró
       }
       if (overLimit) return { ok: false, error: 'limite', state: await loadOpenState(poll, voterKey) };
+      // Tras un voto nuevo, de paso: las encuestas ya cerradas no necesitan ni el hash de red ni la clave del votante.
+      await anonymizeClosedPolls(pollId).catch((error) => console.error('[comunidad] no se anonimizaron los votos cerrados:', error));
     }
     return { ok: true, state: await loadOpenState(poll, voterKey) };
   } catch (error) {

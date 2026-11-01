@@ -7,10 +7,19 @@ cd "$(dirname "$0")/.."
 [[ -f .env.production ]] || { echo "Falta .env.production: ejecuta antes deploy/init-env.sh <host>." >&2; exit 1; }
 compose() { docker compose --env-file .env.production -f docker-compose.prod.yml "$@"; }
 
+BEFORE="$(git rev-parse HEAD)"
 git pull --ff-only
+# Si el pull trae otra versión de este script, se relanza: bash seguiría ejecutando la que ya tenía cargada.
+if [[ -z "${DEPLOY_REEXEC:-}" ]] && ! git diff --quiet "$BEFORE" HEAD -- deploy/deploy.sh; then
+  DEPLOY_REEXEC=1 exec deploy/deploy.sh
+fi
 compose build app migrate
 compose up -d db
+# Copia antes de migrar: si una migración sale mal, se restaura esta (deploy/backup.sh).
+deploy/backup.sh
 compose run --rm migrate
+# La app usa un usuario sin privilegios de administración; la primera vez lo crea y reescribe .env.production.
+deploy/db-app-role.sh
 compose up -d app
 
 # Espera a que el servidor responda (máx. 60 s).

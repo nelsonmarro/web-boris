@@ -59,8 +59,5 @@
     "shadcn": "^4.23.0",
     "tailwindcss": "^4",
     "typescript": "^5"
-  },
-  "overrides": {
-    "eslint-plugin-react-hooks": "7.0.1"
   }
 }

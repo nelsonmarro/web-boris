@@ -13,7 +13,7 @@ export async function GET() {
     const secret = voteSecret();
     if (poll && secret) {
       const voterId = (await cookies()).get(VOTER_COOKIE)?.value;
-      state = await loadOpenState(poll, voterId ? voterKeyFor(secret, voterId) : null);
+      state = await loadOpenState(poll, voterId ? voterKeyFor(secret, voterId, poll.id) : null);
     }
   } catch (error) {
     console.error('[comunidad] no se pudo leer la encuesta:', error);
