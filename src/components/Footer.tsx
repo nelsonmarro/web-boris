@@ -115,11 +115,9 @@ export default function Footer() {
                © {new Date().getFullYear()} BorisaoBlois. Todos los derechos reservados.
              </p>
              {/* Créditos (petición de Boris): él es el autor de las obras; Nelson Marro, quien hizo la web. */}
-             <p className="text-center text-[11px] text-white/60 uppercase font-bold tracking-wider @xl:text-right">
-               Historias, universos y personajes: <span className="text-white/80">BorisaoBlois</span>
-               <span aria-hidden="true"> · </span>
-               <br className="@xl:hidden" />
-               Página creada por <span className="text-white/80">Nelson Marro</span>
+             <p className="self-start text-[11px] text-white/60 uppercase font-bold tracking-wider @xl:self-auto @xl:text-right">
+               <span className="block">Autor de las obras: <span className="text-white/80">BorisaoBlois</span></span>
+               <span className="block">Página creada por <span className="text-white/80">Nelson Marro</span></span>
              </p>
           </div>
         </div>
