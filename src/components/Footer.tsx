@@ -114,8 +114,12 @@ export default function Footer() {
              <p className="text-xs text-white/60 font-bold uppercase tracking-wider">
                © {new Date().getFullYear()} BorisaoBlois. Todos los derechos reservados.
              </p>
-             <p className="text-[11px] text-white/60 uppercase font-bold tracking-wider">
-               Universos narrativos originales de BorisaoBlois
+             {/* Créditos (petición de Boris): él es el autor de las obras; Nelson Marro, quien hizo la web. */}
+             <p className="text-center text-[11px] text-white/60 uppercase font-bold tracking-wider @xl:text-right">
+               Historias, universos y personajes: <span className="text-white/80">BorisaoBlois</span>
+               <span aria-hidden="true"> · </span>
+               <br className="@xl:hidden" />
+               Página creada por <span className="text-white/80">Nelson Marro</span>
              </p>
           </div>
         </div>
