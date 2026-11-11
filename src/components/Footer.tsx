@@ -14,6 +14,11 @@ const NAV_LINKS = [
   { label: "Versus Arena", href: "/wiki/arena" },
 ] as const;
 
+// Perfiles de quien hizo la web, junto a su crédito.
+const CREATOR_LINKS = [
+  { label: "GitHub", href: "https://github.com/nelsonmarro" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/nelson-marro-torres-95649b250/" },
+] as const;
 
 export default function Footer() {
   return (
@@ -118,6 +123,20 @@ export default function Footer() {
              <p className="self-start text-[11px] text-white/60 uppercase font-bold tracking-wider @xl:self-auto @xl:text-right">
                <span className="block">Autor de las obras: <span className="text-white/80">BorisaoBlois</span></span>
                <span className="block">Página creada por <span className="text-white/80">Nelson Marro</span></span>
+               <span className="mt-1 flex gap-4 @xl:justify-end">
+                 {CREATOR_LINKS.map(({ label, href }) => (
+                   <a
+                     key={href}
+                     href={href}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="inline-flex min-h-6 items-center text-white/80 underline-offset-4 transition-colors hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none"
+                   >
+                     {label}
+                     <span className="sr-only"> de Nelson Marro (se abre en una pestaña nueva)</span>
+                   </a>
+                 ))}
+               </span>
              </p>
           </div>
         </div>
