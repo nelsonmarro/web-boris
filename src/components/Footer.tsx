@@ -2,6 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Mail } from "lucide-react";
 import { YoutubeIcon } from "@/features/marketing/components/icons/YoutubeIcon";
+import { GithubIcon } from "@/features/marketing/components/icons/GithubIcon";
+import { LinkedinIcon } from "@/features/marketing/components/icons/LinkedinIcon";
 import { SOCIAL_LINKS, CONTACT_EMAIL, YOUTUBE_HANDLE, YOUTUBE_SUBSCRIBE_URL } from "@/features/marketing/config/social";
 import { UNIVERSES } from "@/features/marketing/config/universes";
 
@@ -16,8 +18,8 @@ const NAV_LINKS = [
 
 // Perfiles de quien hizo la web, junto a su crédito.
 const CREATOR_LINKS = [
-  { label: "GitHub", href: "https://github.com/nelsonmarro" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/nelson-marro-torres-95649b250/" },
+  { label: "GitHub", href: "https://github.com/nelsonmarro", Icon: GithubIcon },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/nelson-marro-torres-95649b250/", Icon: LinkedinIcon },
 ] as const;
 
 export default function Footer() {
@@ -124,14 +126,15 @@ export default function Footer() {
                <span className="block">Autor de las obras: <span className="text-white/80">BorisaoBlois</span></span>
                <span className="block">Página creada por <span className="text-white/80">Nelson Marro</span></span>
                <span className="mt-1 flex gap-4 @xl:justify-end">
-                 {CREATOR_LINKS.map(({ label, href }) => (
+                 {CREATOR_LINKS.map(({ label, href, Icon }) => (
                    <a
                      key={href}
                      href={href}
                      target="_blank"
                      rel="noopener noreferrer"
-                     className="inline-flex min-h-6 items-center text-white/80 underline-offset-4 transition-colors hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none"
+                     className="inline-flex min-h-6 items-center gap-1.5 text-white/80 underline-offset-4 transition-colors hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none"
                    >
+                     <Icon className="h-4 w-4 shrink-0" />
                      {label}
                      <span className="sr-only"> de Nelson Marro (se abre en una pestaña nueva)</span>
                    </a>
