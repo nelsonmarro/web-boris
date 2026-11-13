@@ -18,6 +18,7 @@ export const LIST_TITLES: Record<ListKey, string> = {
   videos: 'Vídeos de cada ficha',
   storyOrder: 'Orden de la historia',
   startHere: 'Empieza por aquí',
+  navigation: 'Menú lateral',
 };
 
 const fromFiles: Record<ListKey, () => Promise<unknown[]>> = {
@@ -26,6 +27,7 @@ const fromFiles: Record<ListKey, () => Promise<unknown[]>> = {
   videos: () => fileContentRepository.getVideoLinks(),
   storyOrder: () => fileContentRepository.getStoryOrder(),
   startHere: () => fileContentRepository.getStartHere(),
+  navigation: () => fileContentRepository.getNavigation(),
 };
 
 export interface ListVersionItem {

@@ -6,8 +6,9 @@ import { Sidebar, useSidebar } from '@/components/ui/sidebar';
 import { SidebarBranding } from './sidebar/components/SidebarBranding';
 import { SidebarNavigation } from './sidebar/components/SidebarNavigation';
 import { SidebarActionGroup } from './sidebar/components/SidebarActionGroup';
+import type { NavGroup } from '@/core/content/navigation';
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ navigation, ...props }: React.ComponentProps<typeof Sidebar> & { navigation: NavGroup[] }) {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
 
@@ -30,7 +31,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         className="relative z-10 flex h-full flex-col"
       >
         <SidebarBranding />
-        <SidebarNavigation />
+        <SidebarNavigation navigation={navigation} />
         <SidebarActionGroup />
       </nav>
     </Sidebar>

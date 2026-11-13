@@ -1,4 +1,5 @@
 import type { WikiArticle } from '@/core/types/wiki';
+import type { NavGroup } from './navigation';
 import type { CuratedPoll, NewsEntry, StoryOrderEntry, VideoLink } from './schemas';
 
 /**
@@ -19,4 +20,6 @@ export interface ContentRepository {
   getStoryOrder(): Promise<StoryOrderEntry[]>;
   /** Fichas de «Empieza por aquí», en orden (`START_HERE` o lo publicado en el panel). */
   getStartHere(): Promise<string[]>;
+  /** Menú lateral de la wiki (`WIKI_NAVIGATION` o lo publicado en el panel). */
+  getNavigation(): Promise<NavGroup[]>;
 }

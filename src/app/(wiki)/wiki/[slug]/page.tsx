@@ -67,7 +67,8 @@ export default async function WikiArticlePage({ params }: Props) {
   }
 
   const { frontmatter, content } = article;
-  const related = getRelatedArticles(slug, await getContentRepository().getArticles(), 4, await getMentionGraph());
+  const repo = getContentRepository();
+  const related = getRelatedArticles(slug, await repo.getArticles(), 4, await getMentionGraph(), await repo.getNavigation());
   const entityIndex = await getEntityIndex();
   const videos = await getVideosForSlug(slug);
   // La portada sube a la cabecera; si el MDX ya la usa en el cuerpo, la cabecera no la repite.

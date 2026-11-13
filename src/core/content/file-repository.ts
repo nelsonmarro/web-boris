@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { getAllArticles } from '@/utils/mdx';
 import { START_HERE } from '@/features/monsters/config/start-here';
+import { WIKI_NAVIGATION } from '@/features/monsters/config/wiki-navigation';
 import { readCuratedPolls, readNews, readStoryOrder, readVideoLinks } from './readers';
 import type { ContentRepository } from './types';
 
@@ -45,5 +46,9 @@ export const fileContentRepository: ContentRepository = {
 
   async getStartHere() {
     return [...START_HERE];
+  },
+
+  async getNavigation() {
+    return WIKI_NAVIGATION;
   },
 };

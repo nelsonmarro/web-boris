@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import type { Route } from 'next';
 import { groupLabel, navNeighbors } from '@/core/search/nav-neighbors';
-import { WIKI_NAVIGATION } from '@/features/monsters/config/wiki-navigation';
+import { getContentRepository } from '@/core/content';
 
 interface ArticleNeighborsProps {
-  /** Slug de la ficha que se lee; sus vecinos salen del menú lateral (`WIKI_NAVIGATION`). */
+  /** Slug de la ficha que se lee; sus vecinos salen del menú lateral (`getNavigation()`). */
   slug: string;
 }
 
@@ -20,8 +20,8 @@ const TITLE =
  *
  * El orden del DOM es el de lectura (anterior, siguiente); `flex-col-reverse` solo cambia el orden visual del móvil.
  */
-export function ArticleNeighbors({ slug }: ArticleNeighborsProps) {
-  const neighbors = navNeighbors(slug, WIKI_NAVIGATION);
+export async function ArticleNeighbors({ slug }: ArticleNeighborsProps) {
+  const neighbors = navNeighbors(slug, await getContentRepository().getNavigation());
   if (!neighbors || (!neighbors.prev && !neighbors.next)) return null;
   const { group, prev, next } = neighbors;
 

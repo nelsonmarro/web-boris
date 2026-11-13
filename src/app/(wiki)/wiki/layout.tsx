@@ -10,8 +10,9 @@ import { NavActions } from '@/components/navbar/components/NavActions';
 import Link from 'next/link';
 import Footer from '@/components/Footer';
 import { SearchTrigger } from '@/components/search/SearchTrigger';
+import { getContentRepository } from '@/core/content';
 
-export default function WikiLayout({
+export default async function WikiLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -19,7 +20,7 @@ export default function WikiLayout({
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-[#0a2339] relative z-0">
-        <AppSidebar />
+        <AppSidebar navigation={await getContentRepository().getNavigation()} />
         <SidebarInset className="flex flex-col min-w-0 bg-transparent overflow-x-clip">
           <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-2 bg-[#061a2e] border-b border-white/5 px-4 sm:px-6 shadow-sm">
             <div className="flex items-center gap-2">

@@ -80,4 +80,5 @@ export const cmsContentRepository: ContentRepository = {
   getVideoLinks: () => list('videos', () => fileContentRepository.getVideoLinks()),
   getStoryOrder: () => list('storyOrder', () => fileContentRepository.getStoryOrder()),
   getStartHere: () => list('startHere', () => fileContentRepository.getStartHere()),
+  getNavigation: () => list('navigation', () => fileContentRepository.getNavigation()),
 };

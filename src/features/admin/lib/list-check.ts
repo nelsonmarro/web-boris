@@ -3,6 +3,7 @@ import { LIST_SCHEMAS, type ListKey } from '../../../core/content/lists.ts';
 import type { CuratedPoll, NewsEntry, StoryOrderEntry, VideoLink } from '../../../core/content/schemas.ts';
 import { crossCheckNews, crossCheckPolls, crossCheckStartHere, crossCheckStoryOrder, crossCheckVideoLinks } from '../../../core/content/validate.ts';
 import { isoWeekKey } from '../../../core/content/iso-week.ts';
+import { navigationProblems, type NavGroup } from '../../../core/content/navigation.ts';
 
 export interface ListContext {
   slugs: ReadonlySet<string>;
@@ -77,6 +78,9 @@ export function checkList(key: ListKey, value: unknown, ctx: ListContext): { val
       break;
     case 'startHere':
       errors = crossCheckStartHere(data as string[], ctx.slugs, ctx.sealedSlugs);
+      break;
+    case 'navigation':
+      errors = navigationProblems(data as NavGroup[], ctx.slugs);
       break;
   }
   return errors.length ? { errors: [...new Set(errors.map(plain))] } : { value: data };
