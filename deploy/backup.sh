@@ -23,6 +23,8 @@ if [[ -z "$(compose ps -q db 2>/dev/null)" ]]; then
 fi
 
 umask 077
+# Si algo falla a medias, no deja `.part` sueltos (la rotación no los ve y se acumularían).
+trap 'rm -f -- "${FILE:-}.part" "${MEDIA_FILE:-}.part"' EXIT
 mkdir -p "$DEST"
 chmod 700 "$DEST"
 FILE="$DEST/webboris-$(date -u +%Y%m%dT%H%M%SZ).dump"
