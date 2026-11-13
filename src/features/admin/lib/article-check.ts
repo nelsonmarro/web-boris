@@ -8,6 +8,7 @@ import { h2Titles } from '../../../core/content/h2-titles.ts';
 import { checkArticleStandard, crossCheckEntities } from '../../../core/content/validate.ts';
 import { isIndexCategory } from '../../../core/search/catalog.ts';
 import { remarkSafeMdx, type MdxIssue } from '../../../utils/remark-safe-mdx.ts';
+import { isMediaPath } from '../../../core/content/media-path.ts';
 
 export interface ArticleCheck {
   /** Impiden publicar. */
@@ -98,7 +99,7 @@ export function entityProblems(slug: string, data: ArticleData, others: readonly
     );
 }
 
-/** Todas las comprobaciones antes de publicar. `assetExists` dice si una ruta `/assets/…` existe en `public/`. */
+/** Todas las comprobaciones antes de publicar. `assetExists` dice si una imagen (`/assets/…` o `/media/…`) existe. */
 export async function checkArticle(
   slug: string,
   data: ArticleData,
@@ -109,10 +110,10 @@ export async function checkArticle(
   errors.push(...(await checkMdxBody(data.content, options.components)));
   errors.push(...standardProblems(data));
   errors.push(...entityProblems(slug, data, options.others));
-  const images = [data.frontmatter.image, ...data.content.matchAll(/\/assets\/[^"'`<>\s)]+/g).map((match) => match[0])];
+  const images = [data.frontmatter.image, ...data.content.matchAll(/\/(?:assets|media)\/[^"'`<>\s)]+/g).map((match) => match[0])];
   for (const image of images) {
     if (!image) continue;
-    if (!image.startsWith('/assets/')) errors.push(`La imagen «${image}» debe estar en la biblioteca de la web (empezar por /assets/).`);
+    if (!image.startsWith('/assets/') && !isMediaPath(image)) errors.push(`La imagen «${image}» debe ser de la biblioteca de la web.`);
     else if (!options.assetExists(image)) errors.push(`La imagen «${image}» no existe.`);
   }
   return { errors: [...new Set(errors)] };

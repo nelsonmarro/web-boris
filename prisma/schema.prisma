@@ -57,6 +57,26 @@ model User {
   auditLogs      AdminAuditLog[]
   cmsDocuments   CmsDocument[]
   cmsVersions    CmsVersion[]
+  mediaAssets    MediaAsset[]
+}
+
+/// Imagen subida desde el panel (spec CMS §4.6). El archivo, ya recodificado a WebP, vive en `MEDIA_DIR` y se sirve
+/// en `/media/<filename>`; `filename` sale del hash del contenido, así que una misma imagen no se guarda dos veces.
+model MediaAsset {
+  id           String   @id @default(cuid())
+  filename     String   @unique
+  /// Nombre del archivo que se subió (solo para reconocerlo en la biblioteca).
+  originalName String
+  /// Texto alternativo por defecto al insertarla.
+  alt          String   @default("")
+  width        Int
+  height       Int
+  bytes        Int
+  createdAt    DateTime @default(now())
+  uploadedById String?
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
 }
 
 /// Contenido editado en el panel (spec CMS §3). Es una capa encima de los archivos de `src/content`: lo publicado

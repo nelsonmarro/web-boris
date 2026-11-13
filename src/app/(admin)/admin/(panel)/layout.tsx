@@ -12,6 +12,14 @@ export default async function AdminPanelLayout({ children }: { children: React.R
           <Link href="/admin" className="text-lg font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
             Panel de la wiki
           </Link>
+          <nav aria-label="Secciones del panel" className="flex flex-wrap gap-4 text-sm font-semibold">
+            <Link href="/admin/fichas" className="text-white/80 underline-offset-4 hover:text-primary hover:underline">
+              Fichas
+            </Link>
+            <Link href="/admin/imagenes" className="text-white/80 underline-offset-4 hover:text-primary hover:underline">
+              Imágenes
+            </Link>
+          </nav>
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-sm text-white/70">{admin.name ?? admin.email}</span>
             <Button asChild variant="outline" size="sm">

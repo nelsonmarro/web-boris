@@ -7,6 +7,8 @@ import { getContentRepository } from '@/core/content';
 import { ArticleDataSchema, type ArticleData } from '@/core/content/overlay';
 import { COMPONENT_NAMES } from '@/features/monsters/components/wiki/mdx/MdxRenderer';
 import { checkArticle, type ArticleCheck } from '../lib/article-check';
+import { isMediaPath, MEDIA_PREFIX } from '@/core/content/media-path';
+import { mediaExists } from './media';
 
 export const ARTICLE_KIND = 'article';
 /** Marca de concurrencia de una ficha que aún no tiene documento en la base. */
@@ -14,8 +16,9 @@ export const NEW_TOKEN = 'nuevo';
 
 const PUBLIC_DIR = path.join(process.cwd(), 'public');
 
-/** ¿Existe `/assets/…` en `public/`? Sin salir de `public/assets` (nada de `..`). */
+/** ¿Existe la imagen? `/media/…` en la biblioteca subida, o `/assets/…` en `public/` (sin salir de `public/assets`). */
 export function assetExists(asset: string): boolean {
+  if (isMediaPath(asset)) return mediaExists(asset.slice(MEDIA_PREFIX.length));
   if (!asset.startsWith('/assets/') || asset.includes('..') || asset.includes('\0')) return false;
   let decoded = asset;
   try {

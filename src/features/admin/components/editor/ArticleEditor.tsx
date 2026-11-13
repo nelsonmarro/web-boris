@@ -13,6 +13,7 @@ import { InfoboxEditor } from './InfoboxEditor';
 import { FaqEditor } from './FaqEditor';
 import { RelatedEditor, type ArticleOption } from './RelatedEditor';
 import { BodyEditor } from './BodyEditor';
+import { MediaPicker } from './MediaPicker';
 
 interface Props {
   slug: string;
@@ -67,6 +68,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
   const [result, setResult] = useState<ArticleActionResult | null>(null);
   const [note, setNote] = useState('');
   const [pending, startTransition] = useTransition();
+  const [pickingCover, setPickingCover] = useState(false);
 
   const payload = useMemo(() => JSON.stringify(fromForm(form)), [form]);
   const dirty = payload !== saved;
@@ -245,13 +247,34 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
       </Section>
 
       <Section title="Portada">
-        <TextField
-          label="Imagen de portada"
-          value={form.image}
-          placeholder="/assets/Universo_Colosos/…/Imagen.webp"
-          hint="Ruta de una imagen de la web. Sin portada, se muestra el dibujo de su categoría."
-          onChange={(value) => set('image', value)}
+        <div className="flex flex-wrap items-start gap-4">
+          {form.image ? (
+            // eslint-disable-next-line @next/next/no-img-element -- miniatura del panel
+            <img src={form.image} alt="" className="aspect-video w-48 rounded-xl border border-white/15 object-cover" />
+          ) : (
+            <div className="flex aspect-video w-48 items-center justify-center rounded-xl border border-dashed border-white/25 text-sm text-white/60">Sin portada</div>
+          )}
+          <div className="flex flex-wrap gap-2">
+            <button type="button" className={SMALL_BUTTON} onClick={() => setPickingCover(true)}>
+              {form.image ? 'Cambiar portada' : 'Elegir portada'}
+            </button>
+            {form.image ? (
+              <button type="button" className={SMALL_BUTTON} onClick={() => set('image', '')}>
+                Quitar portada
+              </button>
+            ) : null}
+          </div>
+        </div>
+        <MediaPicker
+          open={pickingCover}
+          onClose={() => setPickingCover(false)}
+          onSelect={(image) => {
+            set('image', image.path);
+            if (!form.imageCaption.trim()) set('imageCaption', image.alt);
+            setPickingCover(false);
+          }}
         />
+        <p className={HINT}>Sin portada, la web muestra el dibujo de su categoría.</p>
         <TextField label="Pie de la portada" value={form.imageCaption} maxLength={300} onChange={(value) => set('imageCaption', value)} />
         <TextField
           label="Encuadre (opcional)"

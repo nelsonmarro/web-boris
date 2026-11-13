@@ -93,9 +93,10 @@ llano («Falta el apartado Alimentación») e historial con «Restaurar».
    dinámicas y revalidación.
 3. **Editor de fichas**: lista, formulario, cuerpo, validación al publicar, vista previa, publicar, historial, retirar y
    recuperar versiones; control de ediciones simultáneas. Fuera: cambiar la dirección (slug) de una ficha.
-4. **Imágenes**: subida, recodificación, biblioteca y selector.
+4. **Imágenes**: subida (route handler con sesión y `Origin` propio), recodificación con sharp, biblioteca con texto
+   alternativo y borrado solo de las que no se usan, y selector en el editor. Las imágenes viven en el volumen `media`.
 5. **Resto del contenido**: novedades, votaciones, vídeos, orden de la historia, menú lateral, «Empieza por aquí».
-6. **Operación**: copias (base + imágenes), exportar a archivos, guía para Boris y despliegue.
+6. **Operación**: copias (base + volumen `media` de imágenes, que hoy no se copia), exportar a archivos, guía para Boris y despliegue.
 
 ## 8. Pruebas
 

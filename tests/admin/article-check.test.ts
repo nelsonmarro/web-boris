@@ -83,6 +83,11 @@ test('checkArticle: imágenes fuera de la biblioteca o inexistentes, y slug no v
   const external = { ...complete, frontmatter: { ...complete.frontmatter, image: 'https://example.com/a.png' } };
   const outside = await checkArticle('criatura', external, { others: [], components: COMPONENTS, assetExists: () => true });
   assert.ok(outside.errors.some((e) => e.includes('biblioteca')));
+  // Las subidas desde el panel (`/media/<hash>.webp`) valen; una ruta parecida pero manipulada, no.
+  const media = { ...complete, frontmatter: { ...complete.frontmatter, image: '/media/0123456789abcdef0123456789abcdef.webp' } };
+  assert.deepEqual((await checkArticle('criatura', media, { others: [], components: COMPONENTS, assetExists: () => true })).errors, []);
+  const fake = { ...complete, frontmatter: { ...complete.frontmatter, image: '/media/../../etc/passwd' } };
+  assert.ok((await checkArticle('criatura', fake, { others: [], components: COMPONENTS, assetExists: () => true })).errors.some((e) => e.includes('biblioteca')));
   assert.deepEqual((await checkArticle('criatura', complete, { others: [], components: COMPONENTS, assetExists: () => true })).errors, []);
 });
 
