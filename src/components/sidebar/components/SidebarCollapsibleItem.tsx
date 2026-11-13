@@ -17,10 +17,12 @@ import {
   CollapsibleContent, 
   CollapsibleTrigger 
 } from "@/components/ui/collapsible";
-import { NavItem } from "@/features/monsters/config/wiki-navigation";
+import type { NavItem } from "@/core/content/navigation";
+import { NAV_ICON_COMPONENTS } from "../nav-icons";
 import { cn } from "@/utils/cn";
 
 export function SidebarCollapsibleItem({ item, groupTitle }: { item: NavItem; groupTitle?: string }) {
+  const Icon = item.icon ? NAV_ICON_COMPONENTS[item.icon] : null;
   const pathname = usePathname();
   const { state, isMobile, setOpen } = useSidebar();
   // Nombre único: dos fichas se llaman «Historia» (una por universo) y en el rail de iconos serían indistinguibles.
@@ -52,8 +54,8 @@ export function SidebarCollapsibleItem({ item, groupTitle }: { item: NavItem; gr
           )}
           render={<Link href={item.url as React.ComponentProps<typeof Link>['href']} aria-label={`Ir a ${fullName}`} title={fullName} />}
         >
-          {item.icon && (
-            <item.icon className={cn(
+          {Icon && (
+            <Icon className={cn(
               "h-4 w-4 mr-3 shrink-0 transition-colors group-data-[collapsible=icon]:mr-0 group-data-[collapsible=icon]:size-5",
               isActive ? "text-primary" : "text-primary/60 group-hover:text-primary"
             )} />
@@ -91,7 +93,7 @@ export function SidebarCollapsibleItem({ item, groupTitle }: { item: NavItem; gr
           className="min-h-[36px] h-auto py-2 hover:bg-white/5 transition-all rounded-md px-4 flex items-center group mb-0 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:mb-1"
         />
       }>
-        {item.icon && <item.icon className="h-4 w-4 mr-3 text-primary/60 group-hover:text-primary shrink-0 transition-colors group-data-[collapsible=icon]:mr-0 group-data-[collapsible=icon]:size-5" />}
+        {Icon && <Icon className="h-4 w-4 mr-3 text-primary/60 group-hover:text-primary shrink-0 transition-colors group-data-[collapsible=icon]:mr-0 group-data-[collapsible=icon]:size-5" />}
         <span className="font-semibold text-[13.5px] text-white/80 group-hover:text-white transition-colors group-data-[collapsible=icon]:hidden">{item.title}</span>
         <ChevronRight className="ml-auto h-3 w-3 transition-transform duration-300 text-white/20 group-data-[state=open]/collapsible:rotate-90 group-data-[state=open]/collapsible:text-primary shrink-0 group-data-[collapsible=icon]:hidden" />
       </CollapsibleTrigger>

@@ -1,42 +1,25 @@
-import { 
-  BookOpen, 
-  Skull, 
-  Microscope, 
-  Ghost, 
-  CarFront, 
-  Shield, 
-  Swords, 
-  Book, 
-  Ship, 
-  Monitor,
-  LucideIcon
-} from "lucide-react";
+/**
+ * Menú lateral de la wiki tal como viene en los archivos (el panel /admin puede publicar otro por encima: se lee con
+ * `getContentRepository().getNavigation()`). Los iconos van por nombre (`NAV_ICON_NAMES`). Puro: sin alias `@/`.
+ * `check:content` busca aquí los `url: "/wiki/<slug>"`: mantén ese formato.
+ */
+import type { NavGroup } from '../../../core/content/navigation.ts';
 
-export interface NavItem {
-  title: string;
-  url: string;
-  icon?: LucideIcon;
-  items?: NavItem[];
-}
+export type { NavGroup, NavItem } from '../../../core/content/navigation.ts';
 
-interface UniverseNav {
-  title: string;
-  items: NavItem[];
-}
-
-export const WIKI_NAVIGATION: UniverseNav[] = [
+export const WIKI_NAVIGATION: NavGroup[] = [
   {
     title: "UNIVERSO COLOSOS",
     items: [
       {
         title: "Wiki",
         url: "/wiki",
-        icon: Monitor,
+        icon: "monitor",
       },
       {
         title: "Libros",
         url: "#",
-        icon: BookOpen,
+        icon: "book-open",
         items: [
           { title: "Libros del universo Colosos", url: "/wiki/libros-colosos" },
           { title: "El Destello de los Colosos", url: "/wiki/el-destello-de-los-colosos" },
@@ -45,7 +28,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
       {
         title: "Personajes",
         url: "#",
-        icon: Skull,
+        icon: "skull",
         items: [
           { 
             title: "Animales", 
@@ -75,7 +58,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
       {
         title: "Especies",
         url: "#",
-        icon: Microscope,
+        icon: "microscope",
         items: [
           { title: "Especies identificadas", url: "/wiki/especies" },
           { title: "Cranioplanus risus", url: "/wiki/cranioplanus-risus" },
@@ -89,7 +72,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
       {
         title: "Categorías",
         url: "#",
-        icon: Ghost,
+        icon: "ghost",
         items: [
           { title: "Categorías de monstruos", url: "/wiki/categorias-monstruos" },
           { title: "Colosos", url: "/wiki/colosos" },
@@ -100,7 +83,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
       {
         title: "Vehículos",
         url: "#",
-        icon: CarFront,
+        icon: "car-front",
         items: [
           { title: "Vehículos y tecnología", url: "/wiki/vehiculos" },
           { title: "Aodos AY01", url: "/wiki/aodos-ay01" },
@@ -110,7 +93,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
       {
         title: "Organizaciones",
         url: "#",
-        icon: Shield,
+        icon: "shield",
         items: [
           { title: "Todas las organizaciones", url: "/wiki/organizaciones" },
           { title: "IPCARO", url: "/wiki/ipcaro" },
@@ -121,7 +104,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
       {
         title: "Versus",
         url: "/wiki/arena",
-        icon: Swords,
+        icon: "swords",
       },
     ],
   },
@@ -131,17 +114,17 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
       {
         title: "Historia",
         url: "/wiki/capitan-de-galeon",
-        icon: Book,
+        icon: "book",
       },
       {
         title: "Navíos",
         url: "/wiki/navios-galeon",
-        icon: Ship,
+        icon: "ship",
       },
       {
         title: "Piratas",
         url: "/wiki/piratas-galeon",
-        icon: Skull,
+        icon: "skull",
       },
     ],
   },
@@ -151,12 +134,12 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
       {
         title: "El Ángel",
         url: "/wiki/el-angel",
-        icon: Ghost,
+        icon: "ghost",
       },
       {
         title: "Cronología WWII",
         url: "/wiki/cronologia-wwii",
-        icon: Book,
+        icon: "book",
       },
     ],
   },
@@ -166,7 +149,7 @@ export const WIKI_NAVIGATION: UniverseNav[] = [
       {
         title: "Historia",
         url: "/wiki/la-hecatombe-del-lapeon",
-        icon: Book,
+        icon: "book",
       },
     ],
   },

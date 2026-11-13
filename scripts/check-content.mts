@@ -4,7 +4,8 @@
  *
  * Falla (exit 1) si:
  *  1. Algún MDX de src/content no cumple WikiFrontmatterSchema.
- *  2. Algún `url: "/wiki/<slug>"` de wiki-navigation.ts no tiene su .mdx ni ruta estática.
+ *  2. El menú (`WIKI_NAVIGATION`) no cumple su esquema, enlaza a una ficha que no existe, repite una ficha o tiene un
+ *     grupo (`#`) sin entradas.
  *  3. Algún `universeKey` de universes.ts no tiene al menos un artículo.
  *  4. Alguna ruta /assets/... referenciada en MDX o universes.ts no existe en public/.
  *  5. Algún MDX usa el logo (Branding/) o el esquema del sitio (Esquemas/) como imagen:
@@ -60,6 +61,8 @@ import {
   crossCheckVideoLinks,
 } from '../src/core/content/validate.ts';
 import { h2Titles } from '../src/core/content/h2-titles.ts';
+import { NavigationSchema, navigationProblems, navSlugs } from '../src/core/content/navigation.ts';
+import { WIKI_NAVIGATION } from '../src/features/monsters/config/wiki-navigation.ts';
 // Solo datos, sin dependencias de servidor: se pueden leer desde el script.
 import { FEATURED_VIDEOS } from '../src/features/marketing/config/videos.ts';
 import { START_HERE } from '../src/features/monsters/config/start-here.ts';
@@ -67,9 +70,7 @@ import { HERO_POOL } from '../src/features/marketing/config/hero-pool.ts';
 
 const ROOT = process.cwd();
 const CONTENT_DIR = path.join(ROOT, 'src', 'content');
-const NAV_FILE = path.join(ROOT, 'src', 'features', 'monsters', 'config', 'wiki-navigation.ts');
 const UNIVERSES_FILE = path.join(ROOT, 'src', 'features', 'marketing', 'config', 'universes.ts');
-const WIKI_APP_DIR = path.join(ROOT, 'src', 'app', '(wiki)', 'wiki');
 const PUBLIC_DIR = path.join(ROOT, 'public');
 
 const problems: Record<string, string[]> = {
@@ -162,16 +163,15 @@ for (const file of mdxFiles) {
   }
 }
 
-// 2: navegación
-const navSrc = readFileSync(NAV_FILE, 'utf8');
-const navSlugs = new Set<string>();
-for (const m of navSrc.matchAll(/url:\s*["']\/wiki\/([^"'#?]+)["']/g)) navSlugs.add(m[1]);
-if (navSlugs.size === 0) problems['Navegación sin artículo'].push('no se encontraron entradas de navegación — ¿cambió el formato de wiki-navigation.ts?');
-for (const slug of [...navSlugs].sort()) {
-  // Válido si hay MDX o una ruta estática propia (p. ej. /wiki/arena → app/(wiki)/wiki/arena/page.tsx).
-  const hasStaticRoute = existsSync(path.join(WIKI_APP_DIR, slug, 'page.tsx'));
-  if (!slugs.has(slug) && !hasStaticRoute) problems['Navegación sin artículo'].push(`/wiki/${slug} → falta src/content/${slug}.mdx (ni ruta estática en app/(wiki)/wiki/${slug})`);
+// 2: navegación (el menú de los archivos; uno publicado en el panel lo comprueba el propio panel al publicar)
+const navErrors = NavigationSchema.safeParse(WIKI_NAVIGATION);
+if (!navErrors.success) {
+  for (const issue of navErrors.error.issues) problems['Navegación sin artículo'].push(`wiki-navigation.ts ${issue.path.join('.')}: ${issue.message}`);
 }
+// Las rutas estáticas (`/wiki/arena`, `/wiki/registro`…) no son fichas: valen aunque no haya MDX.
+const navSlugSet = navSlugs(WIKI_NAVIGATION);
+for (const problem of navigationProblems(WIKI_NAVIGATION, slugs)) problems['Navegación sin artículo'].push(problem);
+const navSlugsCount = navSlugSet.size;
 
 // 3 + 4 (universes.ts)
 const uniSrc = readFileSync(UNIVERSES_FILE, 'utf8');
@@ -232,7 +232,7 @@ problems['Orden de la historia (orden-historia.json)'].push(
 
 // Reporte
 console.log(
-  `check:content — ${mdxFiles.length} artículos, ${navSlugs.size} entradas de navegación, ${universesWithArticles.size} universos con contenido`,
+  `check:content — ${mdxFiles.length} artículos, ${navSlugsCount} fichas en el menú, ${universesWithArticles.size} universos con contenido`,
 );
 let total = 0;
 for (const [title, list] of Object.entries(problems)) {

@@ -75,3 +75,12 @@ test('newsId: fecha y título sin tildes ni signos', () => {
   assert.equal(newsId('2026-11-12', '¡Llega Colosos 3: el tráiler!'), '2026-11-12-llega-colosos-3-el-trailer');
   assert.equal(newsId('2026-11-12', '¿?'), '2026-11-12-novedad');
 });
+
+test('menú: esquema y fichas que existan, sin repetir', () => {
+  const ok = [{ title: 'COLOSOS', items: [{ title: 'Wiki', url: '/wiki', icon: 'monitor' }, { title: 'The Bloop', url: '/wiki/the-bloop' }] }];
+  assert.ok('value' in checkList('navigation', ok, ctx));
+  const bad = checkList('navigation', [{ title: 'COLOSOS', items: [{ title: 'Nadie', url: '/wiki/nadie' }, { title: 'TB', url: '/wiki/the-bloop' }, { title: 'TB2', url: '/wiki/the-bloop' }] }], ctx);
+  assert.ok('errors' in bad && bad.errors.length === 2, JSON.stringify(bad));
+  const outside = checkList('navigation', [{ title: 'X', items: [{ title: 'Fuera', url: 'https://evil.example' }] }], ctx);
+  assert.ok('errors' in outside && outside.errors[0].startsWith('Universo «X»:'), JSON.stringify(outside));
+});

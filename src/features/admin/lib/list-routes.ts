@@ -7,6 +7,7 @@ export const LIST_ROUTES: Record<string, ListKey> = {
   videos: 'videos',
   'orden-historia': 'storyOrder',
   'empieza-aqui': 'startHere',
+  menu: 'navigation',
 };
 
 export const LIST_DESCRIPTIONS: Record<ListKey, string> = {
@@ -15,4 +16,5 @@ export const LIST_DESCRIPTIONS: Record<ListKey, string> = {
   videos: 'Qué fichas salen en cada vídeo («Aparece en»).',
   storyOrder: 'En qué orden ver los vídeos de cada universo.',
   startHere: 'Las fichas que ve primero quien llega nuevo.',
+  navigation: 'El menú lateral de la wiki: orden, grupos e iconos. Una ficha nueva sale en él cuando la añades aquí.',
 };

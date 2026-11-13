@@ -3,6 +3,7 @@ import { LIST_SCHEMAS, type ListKey } from '../../../core/content/lists.ts';
 import type { CuratedPoll, NewsEntry, StoryOrderEntry, VideoLink } from '../../../core/content/schemas.ts';
 import { crossCheckNews, crossCheckPolls, crossCheckStartHere, crossCheckStoryOrder, crossCheckVideoLinks } from '../../../core/content/validate.ts';
 import { isoWeekKey } from '../../../core/content/iso-week.ts';
+import { navigationProblems, type NavGroup } from '../../../core/content/navigation.ts';
 
 export interface ListContext {
   slugs: ReadonlySet<string>;
@@ -58,7 +59,14 @@ export function lockedPollProblems(next: readonly CuratedPoll[], current: readon
 export function checkList(key: ListKey, value: unknown, ctx: ListContext): { value: unknown[] } | { errors: string[] } {
   const parsed = LIST_SCHEMAS[key].safeParse(value);
   if (!parsed.success) {
-    return { errors: [...new Set(parsed.error.issues.map((issue) => `Fila ${typeof issue.path[0] === 'number' ? issue.path[0] + 1 : '?'}: ${issue.message}`))] };
+    // En el menú, el primer índice es el universo; en el resto de listas, la fila.
+    const where = (path: PropertyKey[]) => {
+      const n = typeof path[0] === 'number' ? path[0] + 1 : '?';
+      if (key !== 'navigation') return `Fila ${n}`;
+      const title = Array.isArray(value) ? (value[Number(path[0])] as { title?: unknown } | undefined)?.title : undefined;
+      return typeof title === 'string' && title.trim() ? `Universo «${title.trim()}»` : `Universo ${n}`;
+    };
+    return { errors: [...new Set(parsed.error.issues.map((issue) => `${where(issue.path)}: ${issue.message}`))] };
   }
   const data = parsed.data as unknown[];
   let errors: string[] = [];
@@ -77,6 +85,9 @@ export function checkList(key: ListKey, value: unknown, ctx: ListContext): { val
       break;
     case 'startHere':
       errors = crossCheckStartHere(data as string[], ctx.slugs, ctx.sealedSlugs);
+      break;
+    case 'navigation':
+      errors = navigationProblems(data as NavGroup[], ctx.slugs);
       break;
   }
   return errors.length ? { errors: [...new Set(errors.map(plain))] } : { value: data };

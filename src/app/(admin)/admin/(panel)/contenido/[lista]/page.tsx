@@ -15,6 +15,8 @@ import { PollsEditor } from '@/features/admin/components/lists/PollsEditor';
 import { VideosEditor } from '@/features/admin/components/lists/VideosEditor';
 import { StoryOrderEditor } from '@/features/admin/components/lists/StoryOrderEditor';
 import { StartHereEditor } from '@/features/admin/components/lists/StartHereEditor';
+import { NavigationEditor } from '@/features/admin/components/lists/NavigationEditor';
+import type { NavGroup } from '@/core/content/navigation';
 
 export const metadata: Metadata = { title: 'Contenido' };
 
@@ -77,6 +79,7 @@ export default async function AdminListPage({ params, searchParams }: Props) {
       {key === 'videos' ? <VideosEditor key={editorKey} {...common} initial={state.value as VideoLink[]} /> : null}
       {key === 'storyOrder' ? <StoryOrderEditor key={editorKey} {...common} initial={state.value as StoryOrderEntry[]} /> : null}
       {key === 'startHere' ? <StartHereEditor key={editorKey} {...common} initial={state.value as string[]} /> : null}
+      {key === 'navigation' ? <NavigationEditor key={editorKey} {...common} initial={state.value as NavGroup[]} /> : null}
 
       <section aria-labelledby="historial" className="space-y-4 rounded-2xl border border-white/10 bg-[#061a2e]/60 p-5 @2xl:p-6">
         <h2 id="historial" className="text-xl font-bold text-white">

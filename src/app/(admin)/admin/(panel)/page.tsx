@@ -12,7 +12,7 @@ const SECTIONS: readonly { title: string; text: string; href?: Route }[] = [
   { title: 'Imágenes', text: 'Subir arte y elegir portadas.', href: '/admin/imagenes' },
   { title: 'Novedades y votaciones', text: 'Lo que aparece en la página de Comunidad.', href: '/admin/contenido/novedades' as Route },
   { title: 'Vídeos y orden de la historia', text: 'Relacionar vídeos con fichas, el orden de la historia y «Empieza por aquí».', href: '/admin/contenido' },
-  { title: 'Menú lateral', text: 'Ordenar el menú de la wiki y añadir las fichas nuevas.' },
+  { title: 'Menú lateral', text: 'Ordenar el menú de la wiki y añadir las fichas nuevas.', href: '/admin/contenido/menu' as Route },
 ];
 
 const ACTIVITY: Record<string, string> = {

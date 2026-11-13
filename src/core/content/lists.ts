@@ -1,13 +1,14 @@
 /**
  * Listas del contenido que se editan en el panel (spec CMS §7, fase 5): novedades, votaciones, vídeos ↔ fichas, orden
- * de la historia y «Empieza por aquí». Cada una es un `CmsDocument` con `kind: 'list'` y su clave; lo publicado
+ * de la historia, «Empieza por aquí» y el menú lateral. Cada una es un `CmsDocument` con `kind: 'list'` y su clave; lo publicado
  * sustituye entera a la lista de los archivos. Puro: imports relativos con `.ts`.
  */
 import { z } from 'zod';
 import { CuratedPollsSchema, NewsEntrySchema, StoryOrderSchema, VideoLinksSchema } from './schemas.ts';
+import { NavigationSchema } from './navigation.ts';
 
 export const LIST_KIND = 'list';
-export const LIST_KEYS = ['news', 'polls', 'videos', 'storyOrder', 'startHere'] as const;
+export const LIST_KEYS = ['news', 'polls', 'videos', 'storyOrder', 'startHere', 'navigation'] as const;
 export type ListKey = (typeof LIST_KEYS)[number];
 export const isListKey = (value: unknown): value is ListKey => typeof value === 'string' && (LIST_KEYS as readonly string[]).includes(value);
 
@@ -44,6 +45,7 @@ export const LIST_SCHEMAS = {
   videos: VideoLinksSchema.pipe(z.array(z.any()).max(MAX_ITEMS)),
   storyOrder: StoryOrderSchema.pipe(z.array(z.any()).max(MAX_ITEMS)),
   startHere: StartHereSchema,
+  navigation: NavigationSchema,
 } satisfies Record<ListKey, z.ZodType>;
 
 /**

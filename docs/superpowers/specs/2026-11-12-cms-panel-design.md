@@ -97,7 +97,8 @@ llano («Falta el apartado Alimentación») e historial con «Restaurar».
    alternativo y borrado solo de las que no se usan, y selector en el editor. Las imágenes viven en el volumen `media`.
 5. **Resto del contenido** (5a): novedades, votaciones, vídeos, orden de la historia y «Empieza por aquí», como listas
    que se publican enteras con historial (sin borrador; las votaciones pasadas y la actual quedan bloqueadas).
-   (5b): el menú lateral, que hoy es código y debe pasar a datos.
+   (5b): el menú lateral pasa a datos (iconos por nombre) y es la sexta lista; lo leen el menú, «Anterior / Siguiente»
+   y los relacionados desde el repositorio, y el editor avisa de las fichas que no salen en él.
 6. **Operación**: copias (base + volumen `media` de imágenes, que hoy no se copia), exportar a archivos, guía para Boris y despliegue.
 
 ## 8. Pruebas
