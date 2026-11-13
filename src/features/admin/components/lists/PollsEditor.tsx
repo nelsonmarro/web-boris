@@ -7,6 +7,8 @@ import { addWeeks } from '@/core/content/iso-week';
 import { ListShell } from './ListShell';
 import { RowControls } from './row-controls';
 import type { ListEditorProps } from './types';
+import { useUndo } from '../UndoProvider';
+import { WeekStartLocal } from '../LocalTime';
 import { FIELD, HINT, LABEL, SMALL_BUTTON } from '../editor/field-styles';
 
 interface Row {
@@ -30,6 +32,7 @@ export function PollsEditor({ path, token, initial, articles, currentWeek }: Lis
   const [rows, setRows] = useState<Row[]>(() =>
     initial.map((poll) => ({ semana: poll.semana, tipo: poll.tipo, a: poll.a, b: poll.b, pregunta: poll.pregunta ?? '', locked: poll.semana <= currentWeek })),
   );
+  const offerUndo = useUndo();
   const update = (index: number, patch: Partial<Row>) => setRows((current) => current.map((row, i) => (i === index ? { ...row, ...patch } : row)));
   const latest = rows.reduce((max, row) => (row.semana > max ? row.semana : max), currentWeek);
   const titleOf = (slug: string) => articles.find((a) => a.slug === slug)?.title ?? slug;
@@ -66,7 +69,7 @@ export function PollsEditor({ path, token, initial, articles, currentWeek }: Lis
                     <label className="block space-y-1">
                       <span className={LABEL}>Semana</span>
                       <input type="week" className={FIELD} value={row.semana} min={nextWeek(currentWeek)} onChange={(event) => update(index, { semana: event.target.value })} />
-                      <span className={`block ${HINT}`}>Formato: {nextWeek(currentWeek)}. Empieza el lunes a las 00:00 UTC.</span>
+                      <span className={`block ${HINT}`}>Formato: {nextWeek(currentWeek)}. Empieza el lunes a las 00:00 UTC<WeekStartLocal />.</span>
                     </label>
                     <label className="block space-y-1">
                       <span className={LABEL}>Tipo</span>
@@ -93,7 +96,11 @@ export function PollsEditor({ path, token, initial, articles, currentWeek }: Lis
                     <span className={LABEL}>Pregunta (opcional)</span>
                     <input className={FIELD} value={row.pregunta} maxLength={80} placeholder="¿Quién ganaría?" onChange={(event) => update(index, { pregunta: event.target.value })} />
                   </label>
-                  <RowControls index={index} count={rows.length} label={`la votación de ${row.semana}`} onRemove={() => setRows((current) => current.filter((_, i) => i !== index))} />
+                  <RowControls index={index} count={rows.length} label={`la votación de ${row.semana}`} onRemove={() => {
+                      const before = rows;
+                      setRows((current) => current.filter((_, i) => i !== index));
+                      offerUndo(`Votación de ${row.semana} quitada.`, () => setRows(before));
+                    }} />
                 </>
               )}
             </li>

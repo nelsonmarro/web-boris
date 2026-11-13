@@ -3,6 +3,7 @@
 import { Plus, Trash2 } from 'lucide-react';
 import type { InfoSectionForm } from './form-model';
 import { DANGER_BUTTON, FIELD, HINT, SMALL_BUTTON } from './field-styles';
+import { useUndo } from '../UndoProvider';
 
 interface Props {
   value: InfoSectionForm[];
@@ -11,6 +12,7 @@ interface Props {
 
 /** Ficha lateral: secciones (p. ej. «Información Biológica») con pares dato / valor. */
 export function InfoboxEditor({ value, onChange }: Props) {
+  const offerUndo = useUndo();
   const update = (index: number, section: InfoSectionForm) => onChange(value.map((item, i) => (i === index ? section : item)));
   return (
     <div className="space-y-4">
@@ -32,7 +34,11 @@ export function InfoboxEditor({ value, onChange }: Props) {
                 onChange={(event) => update(sectionIndex, { ...section, title: event.target.value })}
               />
             </label>
-            <button type="button" className={DANGER_BUTTON} onClick={() => onChange(value.filter((_, i) => i !== sectionIndex))}>
+            <button type="button" className={DANGER_BUTTON} onClick={() => {
+                onChange(value.filter((_, i) => i !== sectionIndex));
+                offerUndo(`Sección «${section.title || sectionIndex + 1}» quitada.`, () => onChange(value));
+              }}
+            >
               <Trash2 aria-hidden="true" className="size-4" />
               Quitar sección<span className="sr-only"> {section.title}</span>
             </button>

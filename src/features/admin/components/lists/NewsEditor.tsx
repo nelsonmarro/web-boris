@@ -6,6 +6,7 @@ import type { NewsEntry } from '@/core/content/schemas';
 import { newsId, NEWS_ID } from '@/core/content/lists';
 import { ListShell } from './ListShell';
 import { RowControls } from './row-controls';
+import { useUndo } from '../UndoProvider';
 import type { ListEditorProps } from './types';
 import { FIELD, HINT, LABEL, SMALL_BUTTON } from '../editor/field-styles';
 
@@ -26,6 +27,7 @@ function toValue(rows: Row[]): NewsEntry[] {
 
 export function NewsEditor({ path, token, initial, articles }: ListEditorProps<NewsEntry>) {
   const listId = useId();
+  const offerUndo = useUndo();
   const [rows, setRows] = useState<Row[]>(() => initial.map((entry) => ({ ...entry })));
   const update = (index: number, patch: Partial<Row>) => setRows((current) => current.map((row, i) => (i === index ? { ...row, ...patch } : row)));
 
@@ -68,7 +70,11 @@ export function NewsEditor({ path, token, initial, articles }: ListEditorProps<N
               <span className={LABEL}>Enlace</span>
               <input className={FIELD} list={listId} value={row.enlace} placeholder="/wiki/the-bloop o https://youtu.be/…" onChange={(event) => update(index, { enlace: event.target.value })} />
             </label>
-            <RowControls index={index} count={rows.length} label={`la novedad «${row.titulo || index + 1}»`} onRemove={() => setRows((current) => current.filter((_, i) => i !== index))} />
+            <RowControls index={index} count={rows.length} label={`la novedad «${row.titulo || index + 1}»`} onRemove={() => {
+                const before = rows;
+                setRows((current) => current.filter((_, i) => i !== index));
+                offerUndo(`Novedad «${row.titulo || index + 1}» quitada.`, () => setRows(before));
+              }} />
           </li>
         ))}
       </ol>

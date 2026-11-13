@@ -5,6 +5,7 @@ import { requireAdmin } from '../server/require-admin';
 import { audit } from '../server/audit';
 import { deleteUpload, listRepoAssets, listUploads, type LibraryImage } from '../server/media';
 import { prisma } from '@/lib/prisma';
+import { MEDIA_PREFIX, isMediaPath } from '@/core/content/media-path';
 
 export interface Library {
   uploads: LibraryImage[];
@@ -36,5 +37,13 @@ export async function updateMediaAltAction(id: string, alt: string): Promise<{ o
   await requireAdmin();
   if (typeof id !== 'string' || typeof alt !== 'string') return { ok: false };
   await prisma.mediaAsset.updateMany({ where: { id }, data: { alt: alt.trim().slice(0, 300) } });
+  return { ok: true };
+}
+
+/** Recuerda la descripción de una imagen subida (por su ruta `/media/…`) para la próxima vez que se elija. */
+export async function rememberMediaAltAction(path: string, alt: string): Promise<{ ok: boolean }> {
+  await requireAdmin();
+  if (typeof path !== 'string' || typeof alt !== 'string' || !isMediaPath(path)) return { ok: false };
+  await prisma.mediaAsset.updateMany({ where: { filename: path.slice(MEDIA_PREFIX.length) }, data: { alt: alt.trim().slice(0, 300) } });
   return { ok: true };
 }

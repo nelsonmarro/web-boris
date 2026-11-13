@@ -7,6 +7,7 @@ import { ListShell } from './ListShell';
 import { RowControls } from './row-controls';
 import { VideoPicker } from './VideoPicker';
 import type { ListEditorProps } from './types';
+import { useUndo } from '../UndoProvider';
 import { FIELD, HINT, LABEL } from '../editor/field-styles';
 
 const toValue = (rows: VideoLink[]): VideoLink[] =>
@@ -15,6 +16,7 @@ const toValue = (rows: VideoLink[]): VideoLink[] =>
 export function VideosEditor({ path, token, initial, articles, videos }: ListEditorProps<VideoLink>) {
   const [rows, setRows] = useState<VideoLink[]>(() => initial.map((row) => ({ ...row, fichas: [...row.fichas] })));
   const update = (index: number, patch: Partial<VideoLink>) => setRows((current) => current.map((row, i) => (i === index ? { ...row, ...patch } : row)));
+  const offerUndo = useUndo();
   const known = new Map(videos.map((video) => [video.id, video.titulo]));
   const options = articles.map(({ slug, title }) => ({ slug, title }));
 
@@ -47,7 +49,11 @@ export function VideosEditor({ path, token, initial, articles, videos }: ListEdi
               </label>
             ) : null}
             <RelatedEditor slug="" value={row.fichas} options={options} hint="" addLabel="Añadir ficha que sale en el vídeo" onChange={(fichas) => update(index, { fichas })} />
-            <RowControls index={index} count={rows.length} label={`el vídeo ${known.get(row.id) ?? row.id}`} onRemove={() => setRows((current) => current.filter((_, i) => i !== index))} />
+            <RowControls index={index} count={rows.length} label={`el vídeo ${known.get(row.id) ?? row.id}`} onRemove={() => {
+                const before = rows;
+                setRows((current) => current.filter((_, i) => i !== index));
+                offerUndo(`Vídeo «${known.get(row.id) ?? row.titulo ?? row.id}» quitado.`, () => setRows(before));
+              }} />
           </li>
         ))}
       </ol>

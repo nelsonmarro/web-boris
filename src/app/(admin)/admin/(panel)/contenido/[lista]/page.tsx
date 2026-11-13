@@ -7,7 +7,8 @@ import { isoWeekKey } from '@/core/content/iso-week';
 import type { CuratedPoll, NewsEntry, StoryOrderEntry, VideoLink } from '@/core/content/schemas';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { LIST_TITLES, loadList, videoOptions } from '@/features/admin/server/lists';
-import { LIST_DESCRIPTIONS, LIST_ROUTES } from '@/features/admin/lib/list-routes';
+import { LIST_DESCRIPTIONS, LIST_PUBLIC_PATHS, LIST_ROUTES } from '@/features/admin/lib/list-routes';
+import { LocalTime } from '@/features/admin/components/LocalTime';
 import { UNIVERSE_OPTIONS } from '@/features/admin/lib/universe-options';
 import { SMALL_BUTTON } from '@/features/admin/components/editor/field-styles';
 import { NewsEditor } from '@/features/admin/components/lists/NewsEditor';
@@ -19,8 +20,6 @@ import { NavigationEditor } from '@/features/admin/components/lists/NavigationEd
 import type { NavGroup } from '@/core/content/navigation';
 
 export const metadata: Metadata = { title: 'Contenido' };
-
-const dateTime = new Intl.DateTimeFormat('es', { dateStyle: 'long', timeStyle: 'short', timeZone: 'UTC' });
 
 interface Props {
   params: Promise<{ lista: string }>;
@@ -60,7 +59,11 @@ export default async function AdminListPage({ params, searchParams }: Props) {
         <p className="text-white/80">{LIST_DESCRIPTIONS[key]}</p>
         {publicada ? (
           <p role="status" className="rounded-xl border border-emerald-400/40 bg-emerald-500/10 p-3 text-white">
-            Publicado. Ya se ve en la web.
+            Publicado. Ya se ve en la web:{' '}
+            <a href={LIST_PUBLIC_PATHS[key]} target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-4 hover:text-primary">
+              verlo<span className="sr-only"> (se abre en una pestaña nueva)</span>
+            </a>
+            .
           </p>
         ) : null}
         {state.restoring ? (
@@ -97,13 +100,13 @@ export default async function AdminListPage({ params, searchParams }: Props) {
                     {item.note ? ` — ${item.note}` : ''}
                   </p>
                   <p className="text-sm text-white/70">
-                    <time dateTime={item.createdAt}>{dateTime.format(new Date(item.createdAt))} UTC</time>
+                    <LocalTime iso={item.createdAt} />
                     {item.author ? ` · ${item.author}` : ''}
                   </p>
                 </div>
                 {index > 0 ? (
                   <Link href={`${path}?version=${item.id}` as Route} className={SMALL_BUTTON}>
-                    Cargar esta versión<span className="sr-only"> del {dateTime.format(new Date(item.createdAt))}</span>
+                    Cargar esta versión<span className="sr-only"> del <LocalTime iso={item.createdAt} /></span>
                   </Link>
                 ) : null}
               </li>

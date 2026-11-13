@@ -20,7 +20,7 @@ export interface MediaItem {
 
 const kb = (bytes: number) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.round(bytes / 1024)} KB`);
 
-/** Biblioteca de imágenes subidas: subir varias a la vez, texto alternativo, copiar la ruta y borrar las que no se usan. */
+/** Biblioteca de imágenes subidas: subir varias a la vez, descripción, copiar la ruta y borrar las que no se usan. */
 export function MediaLibrary({ items }: { items: MediaItem[] }) {
   const router = useRouter();
   const [status, setStatus] = useState('');
@@ -75,11 +75,12 @@ export function MediaLibrary({ items }: { items: MediaItem[] }) {
                   {item.width}×{item.height} px · {kb(item.bytes)}
                 </p>
                 <label className="block space-y-1">
-                  <span className="block text-sm font-bold text-white">Texto alternativo por defecto</span>
+                  <span className="block text-sm font-bold text-white">Descripción de la imagen</span>
                   <input
                     className={FIELD}
                     defaultValue={item.alt}
                     maxLength={300}
+                    placeholder="Qué se ve en ella"
                     onBlur={(event) => {
                       if (event.target.value !== item.alt) startTransition(() => void updateMediaAltAction(item.id, event.target.value));
                     }}

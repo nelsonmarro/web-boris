@@ -52,10 +52,11 @@ export async function saveUpload(input: Buffer, originalName: string, userId: st
     throw error;
   }
   const name = path.basename(originalName).replace(/[^\p{L}\p{N} ._()-]/gu, '').slice(0, 120) || 'imagen';
-  const alt = name.replace(/\.[a-z0-9]+$/i, '').replace(/[_-]+/g, ' ').trim();
   const asset = await prisma.mediaAsset.upsert({
     where: { filename: image.filename },
-    create: { filename: image.filename, originalName: name, alt, width: image.width, height: image.height, bytes: image.data.length, uploadedById: userId },
+    // Sin texto alternativo: el nombre del archivo («IMG_2034», «Foto del móvil») no describe la imagen y acababa en la
+    // web. Se pide una descripción al elegirla (`MediaPicker`).
+    create: { filename: image.filename, originalName: name, alt: '', width: image.width, height: image.height, bytes: image.data.length, uploadedById: userId },
     update: {},
   });
   return { path: `${MEDIA_PREFIX}${asset.filename}`, alt: asset.alt, width: asset.width, height: asset.height, name: asset.originalName };
@@ -91,7 +92,7 @@ export function listRepoAssets(): LibraryImage[] {
         const rel = `/${path.relative(root, full).split(path.sep).join('/')}`;
         // Ni el logo ni los esquemas del sitio sirven como imagen de una ficha (regla de check:content).
         if (/\/(Branding|Esquemas)\//.test(rel)) continue;
-        found.push({ path: rel, alt: entry.name.replace(IMAGE_EXTENSION, '').replace(/[_-]+/g, ' '), name: rel.replace('/assets/', '') });
+        found.push({ path: rel, alt: '', name: rel.replace('/assets/', '') });
       }
     }
   };

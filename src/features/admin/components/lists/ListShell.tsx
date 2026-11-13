@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import type { ListKey } from '@/core/content/lists';
 import { publishList, type ListActionResult } from '../../actions/lists';
 import { FIELD } from '../editor/field-styles';
+import { canonicalJson } from '../../lib/canonical-json';
 
 interface Props {
   listKey: ListKey;
@@ -24,7 +25,8 @@ export function ListShell({ listKey, path, token, initial, value, children }: Pr
   const [note, setNote] = useState('');
   const [result, setResult] = useState<ListActionResult | null>(null);
   const [pending, startTransition] = useTransition();
-  const dirty = JSON.stringify(value) !== JSON.stringify(initial);
+  // Canónico: las claves de lo publicado llegan de la base en otro orden (jsonb) y no son cambios.
+  const dirty = canonicalJson(value) !== canonicalJson(initial);
 
   useEffect(() => {
     if (!dirty) return;

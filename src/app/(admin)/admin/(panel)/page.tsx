@@ -1,13 +1,13 @@
 import type { Metadata, Route } from 'next';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
-import { formatFecha } from '@/utils/format-date';
+import { LocalTime } from '@/features/admin/components/LocalTime';
 import { requireAdmin } from '@/features/admin/server/require-admin';
 
 export const metadata: Metadata = { title: 'Inicio' };
 
-/** Lo que el panel permitirá editar; cada bloque se activa en su fase (spec CMS §7). */
-const SECTIONS: readonly { title: string; text: string; href?: Route }[] = [
+/** Lo que se edita desde el panel. */
+const SECTIONS: readonly { title: string; text: string; href: Route }[] = [
   { title: 'Fichas de la wiki', text: 'Crear y editar expedientes: texto, ficha lateral, imágenes y datos de la Arena.', href: '/admin/fichas' },
   { title: 'Imágenes', text: 'Subir arte y elegir portadas.', href: '/admin/imagenes' },
   { title: 'Novedades y votaciones', text: 'Lo que aparece en la página de Comunidad.', href: '/admin/contenido/novedades' as Route },
@@ -52,22 +52,18 @@ export default async function AdminHomePage() {
 
       <section aria-labelledby="secciones">
         <h2 id="secciones" className="mb-4 text-xl font-bold text-white">
-          Qué podrás editar
+          Qué puedes editar
         </h2>
         <ul className="grid gap-4 @2xl:grid-cols-2">
           {SECTIONS.map((section) => (
             <li key={section.title} className="crystal-surface rounded-2xl p-5 hover:border-primary/40">
               <h3 className="font-bold text-white">
-                {section.href ? (
-                  <Link href={section.href} className="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                    {section.title}
-                  </Link>
-                ) : (
-                  section.title
-                )}
+                <Link href={section.href} className="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  {section.title}
+                </Link>
               </h3>
               <p className="mt-1 text-white/80">{section.text}</p>
-              <p className={`mt-3 text-sm font-semibold ${section.href ? 'text-primary' : 'text-white/60'}`}>{section.href ? 'Abrir' : 'En preparación'}</p>
+              <p className="mt-3 text-sm font-semibold text-primary">Abrir</p>
             </li>
           ))}
         </ul>
@@ -84,9 +80,9 @@ export default async function AdminHomePage() {
                 {ACTIVITY[entry.action] ?? entry.action}
                 {entry.action.startsWith('article.') && entry.target ? <span className="text-white/70"> · {entry.target.split(' ')[0]}</span> : null}
               </span>
-              <time dateTime={entry.createdAt.toISOString()} className="text-sm text-white/70">
-                {formatFecha(entry.createdAt)} · {entry.createdAt.toISOString().slice(11, 16)} UTC
-              </time>
+              <span className="text-sm text-white/70">
+                <LocalTime iso={entry.createdAt.toISOString()} />
+              </span>
             </li>
           ))}
         </ul>

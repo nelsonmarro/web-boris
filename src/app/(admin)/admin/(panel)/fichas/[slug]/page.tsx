@@ -9,10 +9,9 @@ import { DANGER_BUTTON, SMALL_BUTTON } from '@/features/admin/components/editor/
 import { ARTICLE_CATEGORIES } from '@/features/admin/lib/article-template';
 import { UNIVERSE_OPTIONS } from '@/features/admin/lib/universe-options';
 import { isValidSlug } from '@/core/content/overlay';
+import { LocalTime } from '@/features/admin/components/LocalTime';
 
 export const metadata: Metadata = { title: 'Editar ficha' };
-
-const dateTime = new Intl.DateTimeFormat('es', { dateStyle: 'long', timeStyle: 'short', timeZone: 'UTC' });
 
 export default async function EditArticlePage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ restaurada?: string; publicada?: string }> }) {
   await requireAdmin();
@@ -52,7 +51,11 @@ export default async function EditArticlePage({ params, searchParams }: { params
         ) : null}
         {publicada ? (
           <p role="status" className="rounded-xl border border-emerald-400/40 bg-emerald-500/10 p-3 text-white">
-            Publicada. Ya se ve en la web.
+            Publicada. Ya se ve en la web:{' '}
+            <a href={`/wiki/${slug}`} target="_blank" rel="noopener noreferrer" className="font-semibold underline underline-offset-4 hover:text-primary">
+              ver la ficha<span className="sr-only"> (se abre en una pestaña nueva)</span>
+            </a>
+            .
           </p>
         ) : null}
         {restaurada ? (
@@ -91,14 +94,14 @@ export default async function EditArticlePage({ params, searchParams }: { params
                     {version.note && !version.isDeletion ? ` — ${version.note}` : ''}
                   </p>
                   <p className="text-sm text-white/70">
-                    <time dateTime={version.createdAt}>{dateTime.format(new Date(version.createdAt))} UTC</time>
+                    <LocalTime iso={version.createdAt} />
                     {version.author ? ` · ${version.author}` : ''}
                   </p>
                 </div>
                 {!version.isDeletion ? (
                   <form action={restoreArticleVersion.bind(null, slug, version.id)}>
                     <button type="submit" className={SMALL_BUTTON}>
-                      Recuperar en el borrador<span className="sr-only"> la versión del {dateTime.format(new Date(version.createdAt))}</span>
+                      Recuperar en el borrador<span className="sr-only"> la versión del <LocalTime iso={version.createdAt} /></span>
                     </button>
                   </form>
                 ) : null}

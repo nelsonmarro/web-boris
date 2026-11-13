@@ -18,3 +18,13 @@ export const LIST_DESCRIPTIONS: Record<ListKey, string> = {
   startHere: 'Las fichas que ve primero quien llega nuevo.',
   navigation: 'El menú lateral de la wiki: orden, grupos e iconos. Una ficha nueva sale en él cuando la añades aquí.',
 };
+
+/** Dónde se ve cada lista en la web, para el enlace «Ver en la web» tras publicar. */
+export const LIST_PUBLIC_PATHS: Record<ListKey, string> = {
+  news: '/comunidad',
+  polls: '/comunidad',
+  videos: '/videos',
+  storyOrder: '/videos?orden=historia',
+  startHere: '/wiki',
+  navigation: '/wiki',
+};

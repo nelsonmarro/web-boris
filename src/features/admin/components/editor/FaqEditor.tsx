@@ -4,6 +4,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { FAQ_MAX } from '@/core/types/wiki';
 import type { FaqForm } from './form-model';
 import { DANGER_BUTTON, FIELD, HINT, SMALL_BUTTON } from './field-styles';
+import { useUndo } from '../UndoProvider';
 
 interface Props {
   value: FaqForm[];
@@ -12,6 +13,7 @@ interface Props {
 
 /** Preguntas frecuentes de la ficha (solo respuestas de Boris). */
 export function FaqEditor({ value, onChange }: Props) {
+  const offerUndo = useUndo();
   const update = (index: number, item: FaqForm) => onChange(value.map((current, i) => (i === index ? item : current)));
   return (
     <div className="space-y-4">
@@ -27,7 +29,11 @@ export function FaqEditor({ value, onChange }: Props) {
             <span className="block text-sm font-bold text-white">Respuesta</span>
             <textarea className={`${FIELD} min-h-24`} value={item.respuesta} maxLength={3000} onChange={(event) => update(index, { ...item, respuesta: event.target.value })} />
           </label>
-          <button type="button" className={DANGER_BUTTON} onClick={() => onChange(value.filter((_, i) => i !== index))}>
+          <button type="button" className={DANGER_BUTTON} onClick={() => {
+              onChange(value.filter((_, i) => i !== index));
+              offerUndo(`Pregunta ${index + 1} quitada.`, () => onChange(value));
+            }}
+          >
             <Trash2 aria-hidden="true" className="size-4" />
             Quitar la pregunta {index + 1}
           </button>

@@ -14,6 +14,7 @@ import { FaqEditor } from './FaqEditor';
 import { RelatedEditor, type ArticleOption } from './RelatedEditor';
 import { BodyEditor } from './BodyEditor';
 import { MediaPicker } from './MediaPicker';
+import { errorTarget, type ArticleField, type ErrorTarget } from '../../lib/error-target';
 
 interface Props {
   slug: string;
@@ -25,9 +26,30 @@ interface Props {
   articles: ArticleOption[];
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+const fieldId = (field: ArticleField) => `campo-${field}`;
+
+/** Lleva al campo de un error: lo centra, le da el foco y, en el texto, selecciona la línea que dice el error. */
+function goTo(target: ErrorTarget) {
+  const element = document.getElementById(fieldId(target.field));
+  if (!element) return;
+  const controls = 'input, textarea, select, button';
+  // Un marcador sin controles (ficha lateral, relacionadas…) lleva al primero de su sección.
+  const focusable = element.matches(controls) ? element : (element.querySelector<HTMLElement>(controls) ?? element.parentElement?.querySelector<HTMLElement>(controls));
+  element.scrollIntoView({ block: 'center' });
+  focusable?.focus({ preventScroll: true });
+  if (target.line && element instanceof HTMLTextAreaElement) {
+    const lines = element.value.split('\n');
+    const line = Math.min(target.line, lines.length);
+    const start = lines.slice(0, line - 1).reduce((total, text) => total + text.length + 1, 0);
+    element.setSelectionRange(start, start + lines[line - 1].length);
+    const lineHeight = parseFloat(getComputedStyle(element).lineHeight) || 24;
+    element.scrollTop = Math.max(0, (line - 3) * lineHeight);
+  }
+}
+
+function Section({ title, children, invalid }: { title: string; children: React.ReactNode; invalid?: boolean }) {
   return (
-    <section className="space-y-4 rounded-2xl border border-white/10 bg-[#061a2e]/60 p-5 @2xl:p-6">
+    <section className={`space-y-4 rounded-2xl border bg-[#061a2e]/60 p-5 @2xl:p-6 ${invalid ? 'border-red-400/60' : 'border-white/10'}`}>
       <h2 className="text-xl font-bold text-white">{title}</h2>
       {children}
     </section>
@@ -35,6 +57,8 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 function TextField(props: {
+  id?: string;
+  invalid?: boolean;
   label: string;
   value: string;
   onChange: (value: string) => void;
@@ -44,15 +68,13 @@ function TextField(props: {
   placeholder?: string;
   inputMode?: 'decimal' | 'numeric' | 'text';
 }) {
-  const { label, value, onChange, hint, multiline, maxLength = 500, placeholder, inputMode } = props;
+  const { id, invalid, label, value, onChange, hint, multiline, maxLength = 500, placeholder, inputMode } = props;
+  const common = { id, value, maxLength, placeholder, 'aria-invalid': invalid || undefined, onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange(event.target.value) };
+  const border = invalid ? 'border-red-400' : '';
   return (
     <label className="block space-y-1">
       <span className={LABEL}>{label}</span>
-      {multiline ? (
-        <textarea className={`${FIELD} min-h-24`} value={value} maxLength={maxLength} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} />
-      ) : (
-        <input className={FIELD} value={value} maxLength={maxLength} placeholder={placeholder} inputMode={inputMode} onChange={(event) => onChange(event.target.value)} />
-      )}
+      {multiline ? <textarea className={`${FIELD} min-h-24 ${border}`} {...common} /> : <input className={`${FIELD} ${border}`} inputMode={inputMode} {...common} />}
       {hint ? <span className={`block ${HINT}`}>{hint}</span> : null}
     </label>
   );
@@ -71,6 +93,10 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
   const [pickingCover, setPickingCover] = useState(false);
 
   const payload = useMemo(() => JSON.stringify(fromForm(form)), [form]);
+  // Errores de publicar con el campo al que se refieren, para llevar a él y marcarlo.
+  const errors = useMemo(() => (result && !result.ok ? (result.errors ?? []).map((message) => ({ message, target: errorTarget(message, form.image) })) : []), [result, form.image]);
+  const invalid = new Set(errors.flatMap(({ target }) => (target ? [target.field] : [])));
+  const field = (key: ArticleField) => ({ id: fieldId(key), invalid: invalid.has(key) });
   const dirty = payload !== saved;
   // Un aviso de éxito se va en cuanto se vuelve a editar; uno de error se queda hasta cerrarlo o corregir y reintentar.
   const edited = () => setResult((current) => (current?.ok ? null : current));
@@ -172,13 +198,23 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
                   Cerrar<span className="sr-only"> el aviso</span>
                 </button>
               </div>
-              {result.errors?.length ? (
+              {errors.length ? (
                 <ul className="list-disc space-y-1 pl-5 text-white/90">
-                  {result.errors.map((error) => (
-                    <li key={error}>{error}</li>
+                  {errors.map(({ message, target }) => (
+                    <li key={message}>
+                      {target ? (
+                        <button type="button" className="text-left underline underline-offset-4 hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" onClick={() => goTo(target)}>
+                          {message}
+                          <span className="sr-only"> (ir al campo)</span>
+                        </button>
+                      ) : (
+                        message
+                      )}
+                    </li>
                   ))}
                 </ul>
               ) : null}
+              {errors.some(({ target }) => target) ? <p className={HINT}>Pulsa un aviso para ir a su campo.</p> : null}
             </div>
           ) : null}
         </div>
@@ -204,11 +240,11 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
       </div>
 
       <Section title="Datos básicos">
-        <TextField label="Título" value={form.title} maxLength={200} onChange={(value) => set('title', value)} />
+        <TextField {...field('title')} label="Título" value={form.title} maxLength={200} onChange={(value) => set('title', value)} />
         <div className="grid gap-4 @2xl:grid-cols-2">
           <label className="block space-y-1">
             <span className={LABEL}>Universo</span>
-            <select className={FIELD} value={form.universe} onChange={(event) => set('universe', event.target.value)}>
+            <select id={fieldId('universe')} className={FIELD} value={form.universe} onChange={(event) => set('universe', event.target.value)}>
               {universeOptions.map((universe) => (
                 <option key={universe} value={universe}>
                   {universe}
@@ -218,7 +254,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
           </label>
           <label className="block space-y-1">
             <span className={LABEL}>Categoría</span>
-            <select className={FIELD} value={form.category} onChange={(event) => set('category', event.target.value)}>
+            <select id={fieldId('category')} className={FIELD} value={form.category} onChange={(event) => set('category', event.target.value)}>
               <option value="">Sin categoría</option>
               {categoryOptions.map((category) => (
                 <option key={category} value={category}>
@@ -229,6 +265,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
           </label>
         </div>
         <TextField
+          {...field('description')}
           label="Descripción corta"
           value={form.description}
           multiline
@@ -247,8 +284,8 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
         </label>
       </Section>
 
-      <Section title="Portada">
-        <div className="flex flex-wrap items-start gap-4">
+      <Section title="Portada" invalid={invalid.has('image')}>
+        <div id={fieldId('image')} className="flex flex-wrap items-start gap-4">
           {form.image ? (
             // eslint-disable-next-line @next/next/no-img-element -- miniatura del panel
             <img src={form.image} alt="" className="aspect-video w-48 rounded-xl border border-white/15 object-cover" />
@@ -271,13 +308,15 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
           onClose={() => setPickingCover(false)}
           onSelect={(image) => {
             set('image', image.path);
+            // La descripción que se acaba de escribir sirve de primer pie; nunca el nombre del archivo.
             if (!form.imageCaption.trim()) set('imageCaption', image.alt);
             setPickingCover(false);
           }}
         />
         <p className={HINT}>Sin portada, la web muestra el dibujo de su categoría.</p>
-        <TextField label="Pie de la portada" value={form.imageCaption} maxLength={300} onChange={(value) => set('imageCaption', value)} />
+        <TextField {...field('imageCaption')} label="Pie de la portada" value={form.imageCaption} maxLength={300} onChange={(value) => set('imageCaption', value)} />
         <TextField
+          {...field('imagePosition')}
           label="Encuadre (opcional)"
           value={form.imagePosition}
           maxLength={40}
@@ -287,16 +326,18 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
         />
       </Section>
 
-      <Section title="Ficha lateral">
+      <Section title="Ficha lateral" invalid={invalid.has('infobox')}>
+        <div id={fieldId('infobox')} />
         <InfoboxEditor value={form.infobox} onChange={(value) => set('infobox', value)} />
       </Section>
 
-      <Section title="Texto">
-        <BodyEditor value={form.content} onChange={(value) => set('content', value)} />
+      <Section title="Texto" invalid={invalid.has('content')}>
+        <BodyEditor {...field('content')} articles={articles} value={form.content} onChange={(value) => set('content', value)} />
       </Section>
 
-      <Section title="Apodos y fichas relacionadas">
+      <Section title="Apodos y fichas relacionadas" invalid={invalid.has('aliases') || invalid.has('related')}>
         <TextField
+          {...field('aliases')}
           label="Apodos"
           value={form.aliases}
           multiline
@@ -304,15 +345,17 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
           hint="Uno por línea. Solo apodos que Boris use: la búsqueda y los enlaces automáticos los reconocen."
           onChange={(value) => set('aliases', value)}
         />
+        <div id={fieldId('related')} />
         <RelatedEditor slug={slug} value={form.related} options={articles} onChange={(value) => set('related', value)} />
       </Section>
 
-      <Section title="Preguntas frecuentes">
+      <Section title="Preguntas frecuentes" invalid={invalid.has('faq')}>
+        <div id={fieldId('faq')} />
         <FaqEditor value={form.faq} onChange={(value) => set('faq', value)} />
       </Section>
 
-      <Section title="Datos de la Arena">
-        <p className={HINT}>Opcionales. Con ellos la criatura puede combatir en la Arena.</p>
+      <Section title="Datos de la Arena" invalid={invalid.has('stats')}>
+        <p id={fieldId('stats')} className={HINT}>Opcionales. Con ellos la criatura puede combatir en la Arena.</p>
         <div className="grid gap-4 @2xl:grid-cols-2">
           <TextField label="Longitud (metros)" value={form.stats.length} inputMode="decimal" maxLength={12} onChange={(value) => setStat('length', value)} />
           <TextField label="Peso" value={form.stats.weight} maxLength={60} placeholder="20,000 toneladas" onChange={(value) => setStat('weight', value)} />

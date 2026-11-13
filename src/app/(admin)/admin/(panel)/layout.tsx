@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { logoutAction } from '@/features/admin/actions/session';
 import { requireAdmin } from '@/features/admin/server/require-admin';
+import { UndoProvider } from '@/features/admin/components/UndoProvider';
 
 export default async function AdminPanelLayout({ children }: { children: React.ReactNode }) {
   const admin = await requireAdmin();
@@ -41,7 +42,9 @@ export default async function AdminPanelLayout({ children }: { children: React.R
           </div>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-6xl px-4 py-10">{children}</main>
+      <main className="mx-auto w-full max-w-6xl px-4 py-10">
+        <UndoProvider>{children}</UndoProvider>
+      </main>
     </>
   );
 }
