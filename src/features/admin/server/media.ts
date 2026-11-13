@@ -1,5 +1,6 @@
 import 'server-only';
 import fs from 'node:fs/promises';
+import { randomBytes } from 'node:crypto';
 import { existsSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { Prisma } from '@prisma/client';
@@ -39,11 +40,16 @@ export async function saveUpload(input: Buffer, originalName: string, userId: st
   const image = await processImage(input);
   const file = mediaFilePath(image.filename)!;
   await fs.mkdir(mediaDir(), { recursive: true });
+  // A un temporal y luego `rename` (atómico): nunca hay un archivo a medias con el nombre definitivo, ni para la web
+  // ni para la copia de seguridad (`deploy/backup.sh`, que ignora los `.tmp-*`). Si ya existía, tenía este mismo
+  // contenido (el nombre es su hash) y sustituirlo no cambia nada.
+  const temporary = `${file}.tmp-${randomBytes(6).toString('hex')}`;
+  await fs.writeFile(temporary, image.data, { flag: 'wx', mode: 0o644 });
   try {
-    // `wx`: no sobrescribe; un archivo con ese nombre ya tiene este mismo contenido.
-    await fs.writeFile(file, image.data, { flag: 'wx', mode: 0o644 });
+    await fs.rename(temporary, file);
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
+    await fs.rm(temporary, { force: true });
+    throw error;
   }
   const name = path.basename(originalName).replace(/[^\p{L}\p{N} ._()-]/gu, '').slice(0, 120) || 'imagen';
   const alt = name.replace(/\.[a-z0-9]+$/i, '').replace(/[_-]+/g, ' ').trim();

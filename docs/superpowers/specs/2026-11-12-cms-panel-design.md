@@ -99,7 +99,8 @@ llano («Falta el apartado Alimentación») e historial con «Restaurar».
    que se publican enteras con historial (sin borrador; las votaciones pasadas y la actual quedan bloqueadas).
    (5b): el menú lateral pasa a datos (iconos por nombre) y es la sexta lista; lo leen el menú, «Anterior / Siguiente»
    y los relacionados desde el repositorio, y el editor avisa de las fichas que no salen en él.
-6. **Operación**: copias (base + volumen `media` de imágenes, que hoy no se copia), exportar a archivos, guía para Boris y despliegue.
+6. **Operación**: copias (base + volumen `media`), guía para Boris en `/admin/ayuda`, ensayo de despliegue completo
+   con la imagen de producción (encontró y corrigió la espera a Postgres y el 403 de la subida tras el proxy), exportar a archivos, guía para Boris y despliegue.
 
 ## 8. Pruebas
 
