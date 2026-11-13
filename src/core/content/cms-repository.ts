@@ -3,50 +3,81 @@ import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 import { fileContentRepository } from './file-repository';
 import { overlayArticles, type ArticleDoc } from './overlay';
+import { LIST_KIND, isListKey, overlayList, type ListKey } from './lists';
 import type { ContentRepository } from './types';
 
 /** Lo publicado en el panel se relee como mucho cada `TTL_MS`; publicar lo vacía al momento (`invalidateCmsCache`). */
 const TTL_MS = 30_000;
+
+interface CmsSnapshot {
+  articles: ArticleDoc[];
+  lists: Partial<Record<ListKey, unknown>>;
+}
+
 // En `globalThis` y no en una variable del módulo: Next empaqueta las páginas y los route handlers por separado, cada
 // uno con su copia de este módulo, y `invalidateCmsCache` (desde una acción o una ruta) debe vaciar la de todos.
-const store = globalThis as unknown as { __wbCmsDocs?: { at: number; docs: ArticleDoc[] } | null };
+// `__wbCmsGen` cuenta los vaciados: una lectura que empezó antes de publicar no puede guardar lo antiguo después.
+const store = globalThis as unknown as { __wbCms?: { at: number; snapshot: CmsSnapshot } | null; __wbCmsGen?: number };
 
 /** Olvida lo leído de la base: la siguiente lectura va a por lo recién publicado. */
 export function invalidateCmsCache(): void {
-  store.__wbCmsDocs = null;
+  store.__wbCms = null;
+  store.__wbCmsGen = (store.__wbCmsGen ?? 0) + 1;
 }
 
+const EMPTY: CmsSnapshot = { articles: [], lists: {} };
+
 /**
- * Documentos de fichas tocados en el panel. Si la base no responde devuelve una lista vacía (la web sigue con los
- * archivos) y no reintenta hasta pasado `TTL_MS`, para no esperar el tiempo límite de conexión en cada página.
+ * Lo publicado en el panel (fichas y listas), en una sola consulta. Si la base no responde devuelve vacío (la web sigue
+ * con los archivos) y no reintenta hasta pasado `TTL_MS`, para no esperar el tiempo límite de conexión en cada página.
  */
-async function articleDocs(): Promise<ArticleDoc[]> {
-  const memo = store.__wbCmsDocs;
-  if (memo && Date.now() - memo.at < TTL_MS) return memo.docs;
-  let docs: ArticleDoc[] = [];
+async function snapshot(): Promise<CmsSnapshot> {
+  const memo = store.__wbCms;
+  if (memo && Date.now() - memo.at < TTL_MS) return memo.snapshot;
+  const generation = store.__wbCmsGen ?? 0;
+  let result = EMPTY;
   try {
-    docs = await prisma.cmsDocument.findMany({
-      where: { kind: 'article', OR: [{ deleted: true }, { publishedAt: { not: null } }] },
-      select: { key: true, published: true, deleted: true },
+    const docs = await prisma.cmsDocument.findMany({
+      where: { kind: { in: ['article', LIST_KIND] }, OR: [{ deleted: true }, { publishedAt: { not: null } }] },
+      select: { kind: true, key: true, published: true, deleted: true },
     });
+    const lists: CmsSnapshot['lists'] = {};
+    for (const doc of docs) if (doc.kind === LIST_KIND && isListKey(doc.key) && !doc.deleted) lists[doc.key] = doc.published;
+    result = { articles: docs.filter((doc) => doc.kind === 'article'), lists };
   } catch (error) {
     console.error('[content:cms] la base no responde; se sirven los archivos:', error instanceof Error ? error.message.split('\n')[0] : error);
   }
-  store.__wbCmsDocs = { at: Date.now(), docs };
-  return docs;
+  // Si se publicó mientras se leía, lo leído puede ser anterior: se usa para esta petición, pero no se guarda.
+  if ((store.__wbCmsGen ?? 0) === generation) store.__wbCms = { at: Date.now(), snapshot: result };
+  return result;
 }
 
+const logError = (message: string) => console.error(`[content:cms] ${message}`);
+
 const getArticles = cache(async () => {
-  const [files, docs] = await Promise.all([fileContentRepository.getArticles(), articleDocs()]);
-  if (docs.length === 0) return files;
-  return overlayArticles(files, docs, (message) => console.error(`[content:cms] ${message}`));
+  const [files, { articles }] = await Promise.all([fileContentRepository.getArticles(), snapshot()]);
+  if (articles.length === 0) return files;
+  return overlayArticles(files, articles, logError);
 });
 
-/** Contenido de los archivos con lo publicado en el panel por encima (spec CMS §3). Hoy solo las fichas. */
+/** Una lista con lo publicado en el panel por encima de la de los archivos. */
+async function list<T>(key: ListKey, fromFiles: () => Promise<T[]>): Promise<T[]> {
+  const [files, { lists }] = await Promise.all([fromFiles(), snapshot()]);
+  return overlayList(key, files, lists[key], logError);
+}
+
+/** Contenido de los archivos con lo publicado en el panel por encima (spec CMS §3). */
 export const cmsContentRepository: ContentRepository = {
-  ...fileContentRepository,
   getArticles,
   async getArticle(slug) {
     return (await getArticles()).find((article) => article.slug === slug) ?? null;
   },
+  async getNews(limit) {
+    const items = (await list('news', () => fileContentRepository.getNews())).toSorted((x, y) => y.fecha.localeCompare(x.fecha) || x.id.localeCompare(y.id));
+    return limit === undefined ? items : items.slice(0, limit);
+  },
+  getCuratedPolls: () => list('polls', () => fileContentRepository.getCuratedPolls()),
+  getVideoLinks: () => list('videos', () => fileContentRepository.getVideoLinks()),
+  getStoryOrder: () => list('storyOrder', () => fileContentRepository.getStoryOrder()),
+  getStartHere: () => list('startHere', () => fileContentRepository.getStartHere()),
 };

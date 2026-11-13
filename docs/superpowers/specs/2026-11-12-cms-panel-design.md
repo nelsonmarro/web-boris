@@ -95,7 +95,9 @@ llano («Falta el apartado Alimentación») e historial con «Restaurar».
    recuperar versiones; control de ediciones simultáneas. Fuera: cambiar la dirección (slug) de una ficha.
 4. **Imágenes**: subida (route handler con sesión y `Origin` propio), recodificación con sharp, biblioteca con texto
    alternativo y borrado solo de las que no se usan, y selector en el editor. Las imágenes viven en el volumen `media`.
-5. **Resto del contenido**: novedades, votaciones, vídeos, orden de la historia, menú lateral, «Empieza por aquí».
+5. **Resto del contenido** (5a): novedades, votaciones, vídeos, orden de la historia y «Empieza por aquí», como listas
+   que se publican enteras con historial (sin borrador; las votaciones pasadas y la actual quedan bloqueadas).
+   (5b): el menú lateral, que hoy es código y debe pasar a datos.
 6. **Operación**: copias (base + volumen `media` de imágenes, que hoy no se copia), exportar a archivos, guía para Boris y despliegue.
 
 ## 8. Pruebas

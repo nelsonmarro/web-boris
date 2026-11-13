@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { getAllArticles } from '@/utils/mdx';
+import { START_HERE } from '@/features/monsters/config/start-here';
 import { readCuratedPolls, readNews, readStoryOrder, readVideoLinks } from './readers';
 import type { ContentRepository } from './types';
 
@@ -40,5 +41,9 @@ export const fileContentRepository: ContentRepository = {
     const { items, errors } = readStoryOrder(path.join(CONTENT_DIR, 'orden-historia.json'));
     logErrors('orden-historia', errors);
     return items;
+  },
+
+  async getStartHere() {
+    return [...START_HERE];
   },
 };

@@ -19,6 +19,9 @@ export default async function AdminPanelLayout({ children }: { children: React.R
             <Link href="/admin/imagenes" className="text-white/80 underline-offset-4 hover:text-primary hover:underline">
               Imágenes
             </Link>
+            <Link href="/admin/contenido" className="text-white/80 underline-offset-4 hover:text-primary hover:underline">
+              Contenido
+            </Link>
           </nav>
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-sm text-white/70">{admin.name ?? admin.email}</span>

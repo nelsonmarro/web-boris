@@ -17,4 +17,6 @@ export interface ContentRepository {
   getVideoLinks(): Promise<VideoLink[]>;
   /** Orden de la historia por universo (`orden-historia.json`, opcional): vacío mientras Boris no lo mande. */
   getStoryOrder(): Promise<StoryOrderEntry[]>;
+  /** Fichas de «Empieza por aquí», en orden (`START_HERE` o lo publicado en el panel). */
+  getStartHere(): Promise<string[]>;
 }
