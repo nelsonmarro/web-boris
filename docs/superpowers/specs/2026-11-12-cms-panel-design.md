@@ -73,6 +73,10 @@ web pública nunca depende de que la base esté viva.
 para lo que no exista, de modo que una ficha nueva sale sin reconstruir. La vista previa (`/admin/.../vista-previa`)
 renderiza el borrador con el mismo `MdxRenderer` y solo con sesión.
 
+El build no se conecta a la base: las páginas salen de él solo con los archivos. Por eso `deploy/deploy.sh` llama al
+terminar a `POST /api/cms/revalidate` (con `AUTH_SECRET`, desde dentro del contenedor), que las regenera con lo
+publicado. La lectura de la base se guarda 30 s en memoria y se vacía al publicar.
+
 ## 6. Experiencia de Boris
 
 Panel en español con la estética de la web: lista de fichas (estado: publicada / borrador / con cambios sin

@@ -26,6 +26,10 @@ compose up -d app
 for _ in $(seq 1 30); do
   if code="$(curl -fsS -o /dev/null -w '%{http_code}' http://127.0.0.1:3131/)" && [[ "$code" == 200 ]]; then
     echo "App en marcha: http://127.0.0.1:3131/ responde 200 ($(git rev-parse --short HEAD))."
+    # Las páginas salen del build solo con los archivos: se regeneran con lo publicado en el panel /admin.
+    # El secreto no sale del contenedor (lo lee de su entorno) ni aparece en la línea de órdenes.
+    compose exec -T app node -e "fetch('http://127.0.0.1:3000/api/cms/revalidate',{method:'POST',headers:{authorization:'Bearer '+process.env.AUTH_SECRET}}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status)})" \
+      || echo "Aviso: no se pudo regenerar el contenido del panel; lo publicado volverá a verse en menos de una hora." >&2
     docker image prune -f >/dev/null
     exit 0
   fi
