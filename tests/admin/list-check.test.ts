@@ -81,5 +81,6 @@ test('menú: esquema y fichas que existan, sin repetir', () => {
   assert.ok('value' in checkList('navigation', ok, ctx));
   const bad = checkList('navigation', [{ title: 'COLOSOS', items: [{ title: 'Nadie', url: '/wiki/nadie' }, { title: 'TB', url: '/wiki/the-bloop' }, { title: 'TB2', url: '/wiki/the-bloop' }] }], ctx);
   assert.ok('errors' in bad && bad.errors.length === 2, JSON.stringify(bad));
-  assert.ok('errors' in checkList('navigation', [{ title: 'X', items: [{ title: 'Fuera', url: 'https://evil.example' }] }], ctx));
+  const outside = checkList('navigation', [{ title: 'X', items: [{ title: 'Fuera', url: 'https://evil.example' }] }], ctx);
+  assert.ok('errors' in outside && outside.errors[0].startsWith('Universo «X»:'), JSON.stringify(outside));
 });

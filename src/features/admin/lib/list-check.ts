@@ -59,7 +59,14 @@ export function lockedPollProblems(next: readonly CuratedPoll[], current: readon
 export function checkList(key: ListKey, value: unknown, ctx: ListContext): { value: unknown[] } | { errors: string[] } {
   const parsed = LIST_SCHEMAS[key].safeParse(value);
   if (!parsed.success) {
-    return { errors: [...new Set(parsed.error.issues.map((issue) => `Fila ${typeof issue.path[0] === 'number' ? issue.path[0] + 1 : '?'}: ${issue.message}`))] };
+    // En el menú, el primer índice es el universo; en el resto de listas, la fila.
+    const where = (path: PropertyKey[]) => {
+      const n = typeof path[0] === 'number' ? path[0] + 1 : '?';
+      if (key !== 'navigation') return `Fila ${n}`;
+      const title = Array.isArray(value) ? (value[Number(path[0])] as { title?: unknown } | undefined)?.title : undefined;
+      return typeof title === 'string' && title.trim() ? `Universo «${title.trim()}»` : `Universo ${n}`;
+    };
+    return { errors: [...new Set(parsed.error.issues.map((issue) => `${where(issue.path)}: ${issue.message}`))] };
   }
   const data = parsed.data as unknown[];
   let errors: string[] = [];

@@ -75,7 +75,7 @@ export function ListShell({ listKey, path, token, initial, value, children }: Pr
       </div>
       <label className="flex max-w-xl flex-col gap-1 text-sm text-white/80 @lg:flex-row @lg:items-center @lg:gap-2">
         <span className="shrink-0">Nota del cambio (opcional):</span>
-        <input className={`${FIELD} py-1.5`} value={note} maxLength={200} placeholder="p. ej. Añado la votación de diciembre" onChange={(event) => setNote(event.target.value)} />
+        <input className={`${FIELD} py-1.5`} value={note} maxLength={200} placeholder="p. ej. Qué cambias y por qué" onChange={(event) => setNote(event.target.value)} />
       </label>
       {children}
     </div>

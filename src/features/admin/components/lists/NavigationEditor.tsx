@@ -141,7 +141,7 @@ export function NavigationEditor({ path, token, initial, articles }: ListEditorP
       {nav.map((group, g) => (
         <section key={g} aria-label={group.title || `Universo ${g + 1}`} className="space-y-3 rounded-2xl border border-white/10 p-5">
           <div className="flex flex-wrap items-end gap-3">
-            <label className="min-w-0 flex-1 space-y-1">
+            <label className="min-w-0 basis-full space-y-1 @lg:basis-auto @lg:flex-1">
               <span className={LABEL}>Universo</span>
               <input
                 className={`${FIELD} font-bold uppercase`}
