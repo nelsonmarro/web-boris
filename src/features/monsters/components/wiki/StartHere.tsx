@@ -2,13 +2,12 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 import { ContentCard } from '@/components/content/ContentCard';
 import { getContentRepository } from '@/core/content';
-import { START_HERE } from '@/features/monsters/config/start-here';
 import { StartHereGate } from './StartHereGate';
 
 /** Fila «Empieza por aquí» (spec 2026-10-29 §C): fichas estrella con portada, encima del explorador. */
 export async function StartHere() {
   const repo = getContentRepository();
-  const found = await Promise.all(START_HERE.map((slug) => repo.getArticle(slug)));
+  const found = await Promise.all((await repo.getStartHere()).map((slug) => repo.getArticle(slug)));
   const articles = found.filter((a) => a !== null);
   if (articles.length === 0) return null;
 

@@ -16,7 +16,8 @@ export type AuditAction =
   | 'article.undelete'
   | 'article.restore-version'
   | 'media.upload'
-  | 'media.delete';
+  | 'media.delete'
+  | 'list.publish';
 
 /** Apunta una acción del panel. Nunca lanza: un fallo del registro no debe tumbar la acción que lo provoca. */
 export async function audit(action: AuditAction, data: { userId?: string | null; target?: string; ipHash?: string | null } = {}): Promise<void> {

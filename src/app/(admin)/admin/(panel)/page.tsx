@@ -10,8 +10,9 @@ export const metadata: Metadata = { title: 'Inicio' };
 const SECTIONS: readonly { title: string; text: string; href?: Route }[] = [
   { title: 'Fichas de la wiki', text: 'Crear y editar expedientes: texto, ficha lateral, imágenes y datos de la Arena.', href: '/admin/fichas' },
   { title: 'Imágenes', text: 'Subir arte y elegir portadas.', href: '/admin/imagenes' },
-  { title: 'Novedades y votaciones', text: 'Lo que aparece en la página de Comunidad.' },
-  { title: 'Vídeos y menú', text: 'Relacionar vídeos con fichas y ordenar el menú lateral.' },
+  { title: 'Novedades y votaciones', text: 'Lo que aparece en la página de Comunidad.', href: '/admin/contenido/novedades' as Route },
+  { title: 'Vídeos y orden de la historia', text: 'Relacionar vídeos con fichas, el orden de la historia y «Empieza por aquí».', href: '/admin/contenido' },
+  { title: 'Menú lateral', text: 'Ordenar el menú de la wiki y añadir las fichas nuevas.' },
 ];
 
 const ACTIVITY: Record<string, string> = {
@@ -30,6 +31,7 @@ const ACTIVITY: Record<string, string> = {
   'article.restore-version': 'Versión recuperada en el borrador',
   'media.upload': 'Imagen subida',
   'media.delete': 'Imagen borrada',
+  'list.publish': 'Lista publicada',
 };
 
 export default async function AdminHomePage() {

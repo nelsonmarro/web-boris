@@ -17,7 +17,7 @@ interface Props {
 }
 
 /** Fichas relacionadas, en el orden en que deben salir. Se eligen por su nombre. */
-export function RelatedEditor({ slug, value, options, onChange }: Props) {
+export function RelatedEditor({ slug, value, options, onChange, hint = 'Si no eliges ninguna, la web las calcula sola (por menciones, menú y categoría).', addLabel = 'Añadir ficha relacionada' }: Props & { hint?: string; addLabel?: string }) {
   const listId = useId();
   const [query, setQuery] = useState('');
   const titleOf = (target: string) => options.find((option) => option.slug === target)?.title ?? target;
@@ -39,7 +39,7 @@ export function RelatedEditor({ slug, value, options, onChange }: Props) {
 
   return (
     <div className="space-y-3">
-      <p className={HINT}>Si no eliges ninguna, la web las calcula sola (por menciones, menú y categoría).</p>
+      {hint ? <p className={HINT}>{hint}</p> : null}
       {value.length > 0 ? (
         <ol className="space-y-2">
           {value.map((target, index) => (
@@ -65,7 +65,7 @@ export function RelatedEditor({ slug, value, options, onChange }: Props) {
       ) : null}
       <div className="flex flex-wrap items-end gap-2">
         <label className="min-w-0 flex-1 space-y-1">
-          <span className="block text-sm font-bold text-white">Añadir ficha relacionada</span>
+          <span className="block text-sm font-bold text-white">{addLabel}</span>
           <input
             className={FIELD}
             list={listId}

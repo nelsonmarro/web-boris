@@ -20,3 +20,12 @@ export function isoWeekKey(date: Date): string {
 export function isoWeekNumber(date: Date): number {
   return Number(isoWeekKey(date).slice(-2));
 }
+
+/** Semana ISO `week` (`YYYY-Www`) desplazada `n` semanas, p. ej. `addWeeks('2026-W52', 1)` = `'2026-W53'` o `'2027-W01'`. */
+export function addWeeks(week: string, n: number): string {
+  const [year, number] = week.split('-W').map(Number);
+  const jan4 = Date.UTC(year, 0, 4);
+  // El lunes de la semana 1 es el de la semana que contiene el 4 de enero.
+  const mondayWeek1 = jan4 - ((new Date(jan4).getUTCDay() + 6) % 7) * DAY_MS;
+  return isoWeekKey(new Date(mondayWeek1 + (number - 1 + n) * 7 * DAY_MS));
+}
