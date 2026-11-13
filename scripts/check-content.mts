@@ -59,6 +59,7 @@ import {
   crossCheckStoryOrder,
   crossCheckVideoLinks,
 } from '../src/core/content/validate.ts';
+import { h2Titles } from '../src/core/content/h2-titles.ts';
 // Solo datos, sin dependencias de servidor: se pueden leer desde el script.
 import { FEATURED_VIDEOS } from '../src/features/marketing/config/videos.ts';
 import { START_HERE } from '../src/features/monsters/config/start-here.ts';
@@ -99,23 +100,6 @@ const imageSlugs = new Set<string>();
 const entityItems: { slug: string; title: string; aliases?: string[]; related?: string[] }[] = [];
 const standardItems: ArticleStandardInput[] = [];
 const faqItems: { slug: string; faqCount: number; h2Titles: string[] }[] = [];
-
-/** Títulos de los apartados `##` (nunca `###`) del cuerpo, sin mirar dentro de bloques de código ``` / ~~~. */
-function h2Titles(body: string): string[] {
-  const titles: string[] = [];
-  let fence: string | null = null;
-  for (const line of body.split(/\r?\n/)) {
-    const marker = line.match(/^\s*(```+|~~~+)/)?.[1];
-    if (marker) {
-      if (fence === null) fence = marker[0];
-      else if (marker[0] === fence) fence = null;
-      continue;
-    }
-    const heading = fence === null ? line.match(/^##[ \t]+(.+?)[ \t]*#*[ \t]*$/) : null;
-    if (heading) titles.push(heading[1].trim());
-  }
-  return titles;
-}
 
 /** Extrae rutas /assets/... de un texto (MDX o TS). */
 function extractAssets(text: string): string[] {

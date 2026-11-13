@@ -91,7 +91,8 @@ llano («Falta el apartado Alimentación») e historial con «Restaurar».
    `/admin/login`, alta por consola, esqueleto del panel y auditoría.
 2. **Contenido en la base**: `CmsDocument`/`CmsVersion`, `CmsContentRepository`, endurecimiento del MDX, páginas
    dinámicas y revalidación.
-3. **Editor de fichas**: lista, formulario, cuerpo, validación al guardar, vista previa, publicar, historial.
+3. **Editor de fichas**: lista, formulario, cuerpo, validación al publicar, vista previa, publicar, historial, retirar y
+   recuperar versiones; control de ediciones simultáneas. Fuera: cambiar la dirección (slug) de una ficha.
 4. **Imágenes**: subida, recodificación, biblioteca y selector.
 5. **Resto del contenido**: novedades, votaciones, vídeos, orden de la historia, menú lateral, «Empieza por aquí».
 6. **Operación**: copias (base + imágenes), exportar a archivos, guía para Boris y despliegue.
