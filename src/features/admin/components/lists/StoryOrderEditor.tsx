@@ -6,6 +6,7 @@ import { ListShell } from './ListShell';
 import { moved, RowControls } from './row-controls';
 import { VideoPicker } from './VideoPicker';
 import type { ListEditorProps } from './types';
+import { useUndo } from '../UndoProvider';
 import { FIELD, HINT, LABEL } from '../editor/field-styles';
 
 type Draft = Record<string, { ids: string[]; nota: string }>;
@@ -23,6 +24,7 @@ export function StoryOrderEditor({ path, token, initial, videos, universes }: Li
       return [universo, { ids: [...(entry?.ids ?? [])], nota: entry?.nota ?? '' }];
     })),
   );
+  const offerUndo = useUndo();
   const titleOf = (id: string) => videos.find((video) => video.id === id)?.titulo ?? id;
   const set = (universo: string, patch: Partial<Draft[string]>) => setDraft((current) => ({ ...current, [universo]: { ...current[universo], ...patch } }));
   const value = toValue(universes, draft);
@@ -52,7 +54,10 @@ export function StoryOrderEditor({ path, token, initial, videos, universes }: Li
                     count={ids.length}
                     label={titleOf(id)}
                     onMove={(delta) => set(universo, { ids: moved(ids, index, delta) })}
-                    onRemove={() => set(universo, { ids: ids.filter((item) => item !== id) })}
+                    onRemove={() => {
+                      set(universo, { ids: ids.filter((item) => item !== id) });
+                      offerUndo(`«${titleOf(id)}» quitado del orden.`, () => set(universo, { ids }));
+                    }}
                   />
                 </li>
               ))}

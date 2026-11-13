@@ -2,11 +2,18 @@
 
 import { useRef, useState } from 'react';
 import { MediaPicker } from './MediaPicker';
+import { ArticleLinkPicker } from './ArticleLinkPicker';
+import type { ArticleOption } from './RelatedEditor';
 import { FIELD, HINT, SMALL_BUTTON } from './field-styles';
 
 interface Props {
   value: string;
   onChange: (next: string) => void;
+  /** Fichas a las que se puede enlazar. */
+  articles: ArticleOption[];
+  /** Id del área de texto (para llevar a ella desde un error). */
+  id?: string;
+  invalid?: boolean;
 }
 
 interface Snippet {
@@ -22,7 +29,6 @@ const SNIPPETS: Snippet[] = [
   { label: 'Subapartado', template: '### $', placeholder: 'Título', block: true },
   { label: 'Negrita', template: '**$**', placeholder: 'texto' },
   { label: 'Cursiva', template: '_$_', placeholder: 'texto' },
-  { label: 'Enlace a ficha', template: '[$](/wiki/direccion-de-la-ficha)', placeholder: 'texto del enlace' },
   { label: 'Imagen pendiente', template: '<WikiImage alt="$" caption="Pie de foto" />', placeholder: 'Qué mostrará la imagen', block: true },
   { label: 'Cita', template: '<WikiQuote author="Quién lo dice">\n$\n</WikiQuote>', placeholder: 'Texto de la cita', block: true },
   { label: 'Aviso', template: '<AbyssalAlert variant="warning" title="Título del aviso">\n$\n</AbyssalAlert>', placeholder: 'Texto del aviso', block: true },
@@ -30,17 +36,19 @@ const SNIPPETS: Snippet[] = [
 ];
 
 /** Texto de la ficha (Markdown con los bloques de la wiki) y botones para insertar cada bloque donde está el cursor. */
-export function BodyEditor({ value, onChange }: Props) {
+export function BodyEditor({ value, onChange, articles, id, invalid }: Props) {
   const area = useRef<HTMLTextAreaElement>(null);
   const [picking, setPicking] = useState(false);
+  const [linking, setLinking] = useState(false);
   // Dónde estaba el cursor al abrir el selector (el diálogo se lleva el foco).
   const cursor = useRef<[number, number]>([0, 0]);
 
-  const insert = (snippet: Snippet, at?: [number, number]) => {
+  /** `text` sustituye a lo seleccionado (si no se da, se usa la selección o el texto de ejemplo). */
+  const insert = (snippet: Snippet, at?: [number, number], override?: string) => {
     const textarea = area.current;
     if (!textarea) return;
     const [start, end] = at ?? [textarea.selectionStart, textarea.selectionEnd];
-    const selected = value.slice(start, end) || snippet.placeholder;
+    const selected = override ?? (value.slice(start, end) || snippet.placeholder);
     let text = snippet.template.replace('$', selected);
     // Un bloque va en su propio párrafo: línea en blanco antes y después.
     if (snippet.block) {
@@ -74,6 +82,17 @@ export function BodyEditor({ value, onChange }: Props) {
         >
           Imagen
         </button>
+        <button
+          type="button"
+          className={SMALL_BUTTON}
+          onClick={() => {
+            const textarea = area.current;
+            cursor.current = textarea ? [textarea.selectionStart, textarea.selectionEnd] : [value.length, value.length];
+            setLinking(true);
+          }}
+        >
+          Enlace a ficha
+        </button>
         {SNIPPETS.map((snippet) => (
           <button key={snippet.label} type="button" className={SMALL_BUTTON} onClick={() => insert(snippet)}>
             {snippet.label}
@@ -85,16 +104,38 @@ export function BodyEditor({ value, onChange }: Props) {
         onClose={() => setPicking(false)}
         onSelect={(image) => {
           setPicking(false);
-          // Comillas fuera del texto alternativo: el atributo es literal y no puede romperse.
+          // Comillas fuera de la descripción: el atributo es literal y no puede romperse.
           const alt = image.alt.replace(/["<>{}]/g, '').trim() || 'Imagen';
           insert({ label: 'Imagen', template: `<WikiImage src="${image.path}" alt="$" caption="Pie de foto" align="right" />`, placeholder: alt, block: true }, cursor.current);
+        }}
+      />
+      <ArticleLinkPicker
+        open={linking}
+        articles={articles}
+        onClose={() => setLinking(false)}
+        onSelect={(article) => {
+          setLinking(false);
+          const [start, end] = cursor.current;
+          // El texto seleccionado se convierte en el enlace. Sin selección (o solo espacios), se inserta el título de
+          // la ficha tras el cursor, sin borrar nada.
+          const raw = value.slice(start, end);
+          const selected = raw.replace(/[[\]]/g, '').trim();
+          const link = { label: 'Enlace', template: `[$](/wiki/${article.slug})`, placeholder: '' };
+          if (selected && !raw.includes('\n')) {
+            // Los espacios de los bordes de la selección se quedan fuera del enlace.
+            const from = start + (raw.length - raw.trimStart().length);
+            const to = end - (raw.length - raw.trimEnd().length);
+            insert(link, [from, to], selected);
+          } else insert(link, [end, end], article.title);
         }}
       />
       <label className="block space-y-1">
         <span className="block text-sm font-bold text-white">Texto de la ficha</span>
         <textarea
           ref={area}
-          className={`${FIELD} min-h-[32rem] font-mono text-[15px] leading-relaxed`}
+          id={id}
+          aria-invalid={invalid || undefined}
+          className={`${FIELD} min-h-[32rem] font-mono text-[15px] leading-relaxed ${invalid ? 'border-red-400' : ''}`}
           value={value}
           spellCheck
           lang="es"

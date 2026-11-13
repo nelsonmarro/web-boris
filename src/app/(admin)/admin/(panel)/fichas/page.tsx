@@ -5,17 +5,23 @@ import { requireAdmin } from '@/features/admin/server/require-admin';
 import { listArticles } from '@/features/admin/server/articles';
 import { DraftBadge, StatusBadge } from '@/features/admin/components/StatusBadge';
 import { FIELD } from '@/features/admin/components/editor/field-styles';
+import { searchArticles } from '@/features/admin/lib/panel-search';
+import { getContentRepository } from '@/core/content';
+import { MAX_QUERY_LENGTH } from '@/core/search/search';
 
 export const metadata: Metadata = { title: 'Fichas' };
-
-const normalize = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 export default async function AdminArticlesPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   await requireAdmin();
   const { q = '' } = await searchParams;
-  const query = normalize(typeof q === 'string' ? q.slice(0, 100) : '');
-  const all = await listArticles();
-  const articles = query ? all.filter((article) => normalize(`${article.title} ${article.slug} ${article.universe}`).includes(query)) : all;
+  const query = typeof q === 'string' ? q.slice(0, MAX_QUERY_LENGTH) : '';
+  const [all, published] = await Promise.all([listArticles(), getContentRepository().getArticles()]);
+  // Misma búsqueda que la wiki: palabras en cualquier orden, apodos y erratas.
+  const aliases = new Map(published.map((article) => [article.slug, article.frontmatter.aliases ?? []]));
+  const articles = searchArticles(
+    all.map((article) => ({ ...article, aliases: aliases.get(article.slug) })),
+    query,
+  );
 
   return (
     <div className="space-y-6">
@@ -28,7 +34,7 @@ export default async function AdminArticlesPage({ searchParams }: { searchParams
       <form role="search" className="flex flex-wrap items-end gap-3">
         <label className="min-w-0 flex-1 space-y-1">
           <span className="block text-sm font-bold text-white">Buscar</span>
-          <input name="q" defaultValue={q} className={FIELD} placeholder="Nombre, dirección o universo" />
+          <input name="q" defaultValue={q} className={FIELD} maxLength={MAX_QUERY_LENGTH} placeholder="Nombre, apodo, dirección o universo" />
         </label>
         <Button type="submit" variant="outline" size="sm">
           Buscar

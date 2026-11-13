@@ -6,7 +6,7 @@
  */
 
 interface Attribute { type: string; name?: string; value?: unknown }
-interface Node { type: string; name?: string | null; url?: string; value?: string; attributes?: Attribute[]; children?: Node[] }
+interface Node { type: string; name?: string | null; url?: string; value?: string; attributes?: Attribute[]; children?: Node[]; position?: { start?: { line?: number } } }
 
 /** Etiquetas HTML que puede llevar una ficha. Nada que cargue o ejecute contenido ajeno (`script`, `iframe`, `style`…). */
 export const SAFE_HTML_TAGS: ReadonlySet<string> = new Set([
@@ -32,6 +32,8 @@ export function isSafeUrl(url: string): boolean {
 export interface MdxIssue {
   /** Qué se quitó, en lenguaje llano (se enseña a quien edita). */
   message: string;
+  /** Línea del texto donde aparece por primera vez, si se sabe (para llevar a ella desde el panel). */
+  line?: number;
 }
 
 const JSX_TYPES = new Set(['mdxJsxFlowElement', 'mdxJsxTextElement']);
@@ -43,11 +45,14 @@ const CODE_TYPES = new Set(['mdxjsEsm', 'mdxFlowExpression', 'mdxTextExpression'
  */
 export function sanitizeMdxTree(tree: Node, components: ReadonlySet<string>): MdxIssue[] {
   const issues: MdxIssue[] = [];
+  let current: Node | undefined;
   const report = (message: string) => {
-    if (!issues.some((issue) => issue.message === message)) issues.push({ message });
+    const line = current?.position?.start?.line;
+    if (!issues.some((issue) => issue.message === message)) issues.push(line ? { message, line } : { message });
   };
 
   const clean = (node: Node): boolean => {
+    current = node;
     if (CODE_TYPES.has(node.type)) {
       report(node.type === 'mdxjsEsm' ? 'Las líneas «import» y «export» no están permitidas.' : 'Las llaves { } con código no están permitidas.');
       return false;

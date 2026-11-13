@@ -1,12 +1,57 @@
 'use client';
 
-import { useActionState } from 'react';
+import { startTransition, useActionState, useState } from 'react';
+import { Copy, Download, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { completeSetupAction, type SetupState } from '../actions/setup';
 import { logoutAction } from '../actions/session';
 import { AdminField } from './AdminField';
+import { SMALL_BUTTON } from './editor/field-styles';
 
 const INITIAL: SetupState = {};
+
+/** Copiar, descargar o imprimir los códigos de recuperación: se muestran una sola vez. */
+function RecoveryCodeActions({ codes }: { codes: string[] }) {
+  const [status, setStatus] = useState('');
+  const text = `Códigos de recuperación del panel de la wiki de BorisaoBlois\nCada uno sirve una sola vez en lugar del código de 6 dígitos.\n\n${codes.join('\n')}\n`;
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setStatus('Copiados. Pégalos en un lugar seguro.');
+    } catch {
+      setStatus('No se pudieron copiar: descárgalos o apúntalos a mano.');
+    }
+  };
+  const download = () => {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
+    link.download = 'codigos-recuperacion-wiki-borisaoblois.txt';
+    link.click();
+    URL.revokeObjectURL(link.href);
+    setStatus('Descargados. Guarda el archivo en un lugar seguro.');
+  };
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap gap-2">
+        <button type="button" className={SMALL_BUTTON} onClick={copy}>
+          <Copy aria-hidden="true" className="size-4" />
+          Copiar
+        </button>
+        <button type="button" className={SMALL_BUTTON} onClick={download}>
+          <Download aria-hidden="true" className="size-4" />
+          Descargar
+        </button>
+        <button type="button" className={SMALL_BUTTON} onClick={() => window.print()}>
+          <Printer aria-hidden="true" className="size-4" />
+          Imprimir
+        </button>
+      </div>
+      <p role="status" className="min-h-5 text-sm text-white/80">
+        {status}
+      </p>
+    </div>
+  );
+}
 
 export function SetupForm({ secret, qrDataUrl }: { secret: string; qrDataUrl: string }) {
   const [state, action, pending] = useActionState(completeSetupAction, INITIAL);
@@ -26,6 +71,7 @@ export function SetupForm({ secret, qrDataUrl }: { secret: string; qrDataUrl: st
             <li key={code}>{code}</li>
           ))}
         </ul>
+        <RecoveryCodeActions codes={state.recoveryCodes} />
         <form action={logoutAction}>
           <Button type="submit" className="w-full">
             Ya los guardé: entrar al panel
@@ -36,8 +82,16 @@ export function SetupForm({ secret, qrDataUrl }: { secret: string; qrDataUrl: st
     );
   }
 
+  // Se envía a mano (y no con `action=`) para que React no vacíe el formulario: si el código falla, las dos
+  // contraseñas siguen escritas.
+  const submit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    startTransition(() => action(data));
+  };
+
   return (
-    <form action={action} className="space-y-8">
+    <form onSubmit={submit} className="space-y-8">
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-white">1. Elige tu contraseña</h2>
         <AdminField

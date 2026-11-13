@@ -8,6 +8,7 @@ import { addItem, canHaveChildren, destinations, moveItem, pathKey, removeItem, 
 import { ListShell } from './ListShell';
 import { RowControls } from './row-controls';
 import type { ListEditorProps } from './types';
+import { useUndo } from '../UndoProvider';
 import { FIELD, HINT, LABEL, SMALL_BUTTON } from '../editor/field-styles';
 
 const DEPTH_STYLE = ['border-white/15 bg-[#061a2e]/80', 'border-white/10 bg-[#061a2e]/50', 'border-white/10 bg-transparent'];
@@ -15,6 +16,7 @@ const DEPTH_STYLE = ['border-white/15 bg-[#061a2e]/80', 'border-white/10 bg-[#06
 export function NavigationEditor({ path, token, initial, articles }: ListEditorProps<NavGroup>) {
   const listId = useId();
   const [nav, setNav] = useState<NavGroup[]>(() => structuredClone(initial));
+  const offerUndo = useUndo();
   const titleOf = (slug: string) => articles.find((a) => a.slug === slug)?.title ?? slug;
   const missing = unlistedSlugs(nav, articles.map((a) => a.slug));
   const targets = destinations(nav);
@@ -69,8 +71,9 @@ export function NavigationEditor({ path, token, initial, articles }: ListEditorP
             label={label}
             onMove={(delta) => setNav((n) => moveItem(n, itemPath, delta))}
             onRemove={() => {
-              if (item.items?.length && !window.confirm(`¿Quitar «${label}» y todo lo que tiene dentro?`)) return;
+              const before = nav;
               setNav((n) => removeItem(n, itemPath));
+              offerUndo(item.items?.length ? `«${label}» quitado del menú, con todo lo que tenía dentro.` : `«${label}» quitado del menú.`, () => setNav(before));
             }}
           />
           {canHaveChildren(itemPath) ? (
@@ -163,8 +166,9 @@ export function NavigationEditor({ path, token, initial, articles }: ListEditorP
                 })
               }
               onRemove={() => {
-                if (!window.confirm(`¿Quitar el universo «${group.title}» del menú, con todas sus entradas?`)) return;
+                const before = nav;
                 setNav((n) => n.filter((_, i) => i !== g));
+                offerUndo(`Universo «${group.title}» quitado del menú, con todas sus entradas.`, () => setNav(before));
               }}
             />
           </div>

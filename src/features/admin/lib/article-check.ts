@@ -55,7 +55,7 @@ export async function checkMdxBody(content: string, components: ReadonlySet<stri
     const reason = (error as { reason?: string }).reason ?? (error instanceof Error ? error.message : String(error));
     return [`Texto de la ficha${place ? ` (línea ${place})` : ''}: ${reason}. Revisa que cada etiqueta < > esté bien cerrada.`];
   }
-  return issues.map((issue) => `Texto de la ficha: ${issue.message}`);
+  return issues.map((issue) => `Texto de la ficha${issue.line ? ` (línea ${issue.line})` : ''}: ${issue.message}`);
 }
 
 /** Estándar de ficha (mismas reglas que `checkArticleStandard`), explicado. */
