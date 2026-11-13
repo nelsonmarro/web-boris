@@ -9,14 +9,12 @@ export default auth((req: NextRequest & { auth: any }) => {
   const isLoggedIn = !!req.auth?.user;
   const { nextUrl } = req;
 
-  // El acceso al panel es la única página de /admin que se ve sin sesión.
-  const isLogin = nextUrl.pathname === "/admin/login";
-  const isProtected = nextUrl.pathname.startsWith("/admin") ||
+  // Protected routes example
+  const isProtected = nextUrl.pathname.startsWith("/admin") || 
                       nextUrl.pathname.startsWith("/settings");
 
-  // Solo redirige: quien protege de verdad es `requireAdmin()` en cada página y en cada acción del panel.
-  if (isProtected && !isLogin && !isLoggedIn) {
-    return Response.redirect(new URL("/admin/login", nextUrl));
+  if (isProtected && !isLoggedIn) {
+    return Response.redirect(new URL("/api/auth/signin", nextUrl));
   }
   
   return NextResponse.next();
