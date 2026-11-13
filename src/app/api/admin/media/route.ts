@@ -2,6 +2,7 @@ import { currentAdmin } from '@/features/admin/server/require-admin';
 import { saveUpload } from '@/features/admin/server/media';
 import { audit } from '@/features/admin/server/audit';
 import { ImageRejected, MAX_UPLOAD_BYTES } from '@/features/admin/lib/image-processing';
+import { isSameOrigin } from '@/features/admin/lib/same-origin';
 
 /** Margen de la petición multipart sobre el archivo (cabeceras y límites del formulario). */
 const OVERHEAD = 64 * 1024;
@@ -11,11 +12,10 @@ const json = (body: unknown, status = 200) => Response.json(body, { status, head
 /**
  * Subida de una imagen al panel (un archivo por petición, campo `file`). Es un route handler y no una server action
  * para no subir el límite de tamaño de todas las acciones del sitio. Exige sesión de administración completa y que
- * la petición venga de la propia web (`Origin`), porque va con la cookie de sesión.
+ * la petición venga de la propia web (`isSameOrigin`), porque va con la cookie de sesión.
  */
 export async function POST(request: Request): Promise<Response> {
-  const origin = request.headers.get('origin');
-  if (!origin || origin !== new URL(request.url).origin) return json({ error: 'Origen no permitido.' }, 403);
+  if (!isSameOrigin(request.headers.get('origin'), request.headers, process.env, request.url)) return json({ error: 'Origen no permitido.' }, 403);
   const admin = await currentAdmin();
   if (!admin?.ready) return json({ error: 'Tu sesión ha caducado. Vuelve a entrar.' }, 401);
 
