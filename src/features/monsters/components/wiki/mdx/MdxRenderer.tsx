@@ -6,6 +6,7 @@ import Link from 'next/link';
 import type { Route } from 'next';
 import { rehypeHeadingIds } from '@/utils/rehype-heading-ids';
 import { remarkEntityLinks } from '@/utils/remark-entity-links';
+import { remarkSafeMdx } from '@/utils/remark-safe-mdx';
 import { cn } from '@/utils/cn';
 import type { EntityIndex } from '@/core/search/entity-index';
 
@@ -143,6 +144,9 @@ const components = {
   },
 };
 
+/** Componentes que una ficha puede usar (los registrados arriba con nombre en mayúscula). */
+const COMPONENT_NAMES: ReadonlySet<string> = new Set(Object.keys(components).filter((name) => /^[A-Z]/.test(name)));
+
 interface MdxRendererProps {
   content: string;
   /** Con índice, la 1.ª mención de cada entidad en la prosa se enlaza a su ficha (spec Ola B §5). */
@@ -158,9 +162,15 @@ export function MdxRenderer({ content, entityIndex, slug }: MdxRendererProps) {
         source={content}
         components={components}
         options={{
+          // El contenido puede venir del panel (base de datos): se compila sin código (spec CMS §4.5).
+          disableImports: true,
+          disableExports: true,
           mdxOptions: {
             rehypePlugins: [rehypeHeadingIds],
-            remarkPlugins: entityIndex ? [[remarkEntityLinks, { index: entityIndex, self: slug }]] : [],
+            remarkPlugins: [
+              [remarkSafeMdx, { components: COMPONENT_NAMES }],
+              ...(entityIndex ? [[remarkEntityLinks, { index: entityIndex, self: slug }] as [typeof remarkEntityLinks, { index: EntityIndex; self?: string }]] : []),
+            ],
           },
         }}
       />
