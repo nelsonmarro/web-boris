@@ -14,7 +14,9 @@ if [[ -z "${DEPLOY_REEXEC:-}" ]] && ! git diff --quiet "$BEFORE" HEAD -- deploy/
   DEPLOY_REEXEC=1 exec deploy/deploy.sh
 fi
 compose build app migrate
-compose up -d db
+# `--wait`: espera al healthcheck (pg_isready). Sin él, la copia de abajo arrancaba antes que Postgres y el despliegue
+# se cortaba en la primera instalación o cuando el contenedor de la base se recreaba.
+compose up -d --wait db
 # Copia antes de migrar: si una migración sale mal, se restaura esta (deploy/backup.sh).
 deploy/backup.sh
 compose run --rm migrate
