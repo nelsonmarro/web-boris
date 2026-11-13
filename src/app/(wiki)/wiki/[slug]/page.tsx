@@ -22,9 +22,9 @@ import { getVideosForSlug } from '@/features/community/data/channel-videos';
 
 // ISR: la encuesta de la semana (expediente sellado) y los vídeos del canal ("Aparece en") cambian con el tiempo.
 export const revalidate = 3600;
-// Todos los MDX se generan en el build (`generateStaticParams`): un slug desconocido responde un 404 real, no un 200 con
-// la página not-found (el `loading.tsx` de la wiki empieza a emitir antes de `notFound()`).
-export const dynamicParams = false;
+// Las fichas de los archivos salen del build (`generateStaticParams`); una creada en el panel se genera en su primera
+// visita. Un slug que no existe responde 404 (`notFound()`).
+export const dynamicParams = true;
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -67,7 +67,8 @@ export default async function WikiArticlePage({ params }: Props) {
   }
 
   const { frontmatter, content } = article;
-  const related = getRelatedArticles(slug, await getContentRepository().getArticles(), 4, await getMentionGraph());
+  const repo = getContentRepository();
+  const related = getRelatedArticles(slug, await repo.getArticles(), 4, await getMentionGraph(), await repo.getNavigation());
   const entityIndex = await getEntityIndex();
   const videos = await getVideosForSlug(slug);
   // La portada sube a la cabecera; si el MDX ya la usa en el cuerpo, la cabecera no la repite.

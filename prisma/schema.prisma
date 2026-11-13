@@ -42,6 +42,106 @@ model User {
   accounts      Account[]
   sessions      Session[]
   pollVotes     PollVote[]
+
+  // Acceso al panel /admin (spec CMS §4). Una cuenta sin `role` no entra; se crean con `npm run admin:create`.
+  role           String?
+  passwordHash   String?
+  /// Secreto TOTP cifrado (AES-256-GCM, `secret-box`). Vale como segundo factor solo con `totpEnabledAt`.
+  totpSecret     String?
+  totpEnabledAt  DateTime?
+  /// Último paso TOTP aceptado: un código no sirve dos veces.
+  totpLastStep   Int       @default(0)
+  /// Sube al cambiar la contraseña o el 2FA: invalida las sesiones emitidas antes.
+  sessionVersion Int       @default(0)
+  recoveryCodes  AdminRecoveryCode[]
+  auditLogs      AdminAuditLog[]
+  cmsDocuments   CmsDocument[]
+  cmsVersions    CmsVersion[]
+  mediaAssets    MediaAsset[]
+}
+
+/// Imagen subida desde el panel (spec CMS §4.6). El archivo, ya recodificado a WebP, vive en `MEDIA_DIR` y se sirve
+/// en `/media/<filename>`; `filename` sale del hash del contenido, así que una misma imagen no se guarda dos veces.
+model MediaAsset {
+  id           String   @id @default(cuid())
+  filename     String   @unique
+  /// Nombre del archivo que se subió (solo para reconocerlo en la biblioteca).
+  originalName String
+  /// Texto alternativo por defecto al insertarla.
+  alt          String   @default("")
+  width        Int
+  height       Int
+  bytes        Int
+  createdAt    DateTime @default(now())
+  uploadedById String?
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+}
+
+/// Contenido editado en el panel (spec CMS §3). Es una capa encima de los archivos de `src/content`: lo publicado
+/// aquí gana al archivo; sin fila, vale el archivo. `kind` + `key` identifican el documento (`article` + slug).
+model CmsDocument {
+  id          String    @id @default(cuid())
+  kind        String
+  key         String
+  /// Borrador en curso (aún no visible en la web). `null` si no hay cambios sin publicar.
+  draft       Json?
+  /// Lo que ve la web. `null` si nunca se publicó.
+  published   Json?
+  /// Oculta el documento (también el archivo de base, si lo hay).
+  deleted     Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  updatedById String?
+  updatedBy   User?     @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+  versions    CmsVersion[]
+
+  @@unique([kind, key])
+  @@index([kind, deleted])
+}
+
+/// Historial: una fila por publicación (o borrado), para poder restaurar.
+model CmsVersion {
+  id         String      @id @default(cuid())
+  documentId String
+  /// Lo publicado en ese momento; `null` si la versión es un borrado.
+  data       Json?
+  note       String?
+  createdAt  DateTime    @default(now())
+  authorId   String?
+  author     User?       @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  document   CmsDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId, createdAt])
+}
+
+/// Código de recuperación del 2FA: de un solo uso; solo se guarda su hash.
+model AdminRecoveryCode {
+  id        String    @id @default(cuid())
+  userId    String
+  codeHash  String
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, codeHash])
+}
+
+/// Rastro del panel: entradas, fallos, publicaciones… `ipHash` es un HMAC de la red, nunca la IP.
+model AdminAuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  target    String?
+  ipHash    String?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([action, ipHash, createdAt])
+  @@index([action, userId, createdAt])
 }
 
 model VerificationToken {

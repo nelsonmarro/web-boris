@@ -10,7 +10,6 @@ import { UNIVERSES } from '@/features/marketing/config/universes';
 import { YOUTUBE_SUBSCRIBE_URL } from '@/features/marketing/config/social';
 import { countByUniverse, expedientesLabel } from '@/features/marketing/lib/universe-counts';
 import { GLOSSARY, GUIDE } from '@/features/marketing/sections/start/start-guide';
-import { START_HERE } from '@/features/monsters/config/start-here';
 import { getCanal } from '@/features/community/data/channel-videos';
 import { displayVideoTitle, storyStarts } from '@/features/community/lib/videos-by-universe';
 import { youtubeThumbUrl, youtubeWatchUrl } from '@/utils/youtube';
@@ -43,7 +42,7 @@ export default async function EmpiezaAquiPage() {
   const repo = getContentRepository();
   const [articles, starters, storyOrder] = await Promise.all([
     repo.getArticles(),
-    Promise.all(START_HERE.map((slug) => repo.getArticle(slug))),
+    Promise.all((await repo.getStartHere()).map((slug) => repo.getArticle(slug))),
     repo.getStoryOrder(),
   ]);
   const countOf = countByUniverse(articles);

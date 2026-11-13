@@ -33,6 +33,10 @@ services:
     environment:
       POSTGRES_PASSWORD: ''
       ADMIN_DATABASE_URL: ''
+      # Imágenes subidas desde el panel /admin (fuera de la imagen: sobreviven a cada despliegue).
+      MEDIA_DIR: /app/media
+    volumes:
+      - media:/app/media
     ports:
       - '127.0.0.1:3131:3000'
     depends_on:
@@ -55,3 +59,4 @@ services:
 
 volumes:
   pgdata:
+  media:

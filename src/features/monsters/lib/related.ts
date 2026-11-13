@@ -1,4 +1,4 @@
-import { WIKI_NAVIGATION, type NavItem } from '@/features/monsters/config/wiki-navigation';
+import { WIKI_NAVIGATION, type NavGroup, type NavItem } from '@/features/monsters/config/wiki-navigation';
 import { toSummary, type WikiArticle, type WikiArticleSummary } from '@/core/types/wiki';
 import { buildEntityIndex } from '@/core/search/entity-index';
 import { buildMentionGraph, type MentionGraph } from '@/core/search/mention-graph';
@@ -11,7 +11,7 @@ const slugFromUrl = (url: string): string | null =>
   url.startsWith('/wiki/') ? url.slice('/wiki/'.length) : null;
 
 /** Devuelve las urls hermanas (mismo padre en la navegación) del slug dado. */
-function findNavSiblings(slug: string): string[] {
+function findNavSiblings(slug: string, nav: readonly NavGroup[]): string[] {
   const target = `/wiki/${slug}`;
 
   const walk = (items: NavItem[]): string[] | null => {
@@ -27,7 +27,7 @@ function findNavSiblings(slug: string): string[] {
     return null;
   };
 
-  for (const group of WIKI_NAVIGATION) {
+  for (const group of nav) {
     const found = walk(group.items);
     if (found) return found;
   }
@@ -47,6 +47,8 @@ export function getRelatedArticles(
   all: WikiArticle[],
   max = 4,
   graph?: MentionGraph,
+  /** Menú lateral (para los hermanos de la ficha): el que ve la web; por defecto, el de los archivos. */
+  nav: readonly NavGroup[] = WIKI_NAVIGATION,
 ): WikiArticleSummary[] {
   const bySlug = new Map(all.map((article) => [article.slug, article]));
   const current = bySlug.get(slug);
@@ -59,7 +61,7 @@ export function getRelatedArticles(
     slug,
     curated: current.frontmatter.related,
     graph: mentions,
-    siblings: findNavSiblings(slug)
+    siblings: findNavSiblings(slug, nav)
       .map(slugFromUrl)
       .filter((s): s is string => !!s),
     sameCategory: category

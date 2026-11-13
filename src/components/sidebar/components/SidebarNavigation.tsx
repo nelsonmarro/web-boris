@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
-import { WIKI_NAVIGATION } from "@/features/monsters/config/wiki-navigation";
+import type { NavGroup } from "@/core/content/navigation";
 import { RANDOM_ROUTE, REGISTRO_ROUTE } from "@/features/monsters/config/wiki-routes";
 import { ESCALA_ROUTE, TAMANOS_ROUTE } from "@/core/search/wiki-routes";
 import { SidebarCollapsibleItem } from "./SidebarCollapsibleItem";
@@ -40,7 +40,8 @@ function ArchivoLink({ href, label, icon: Icon, active }: { href: string; label:
   );
 }
 
-export function SidebarNavigation() {
+/** `navigation`: el menú que ve la web (lo lee el layout de la wiki del repositorio de contenido). */
+export function SidebarNavigation({ navigation }: { navigation: NavGroup[] }) {
   const pathname = usePathname();
 
   return (
@@ -119,7 +120,7 @@ export function SidebarNavigation() {
         </SidebarMenu>
       </SidebarGroup>
 
-      {WIKI_NAVIGATION.map((universe) => (
+      {navigation.map((universe) => (
         <SidebarGroup key={universe.title} className="mb-2">
           <SidebarGroupLabel className="text-primary font-bold tracking-wider text-[11px] uppercase mb-2 px-6 group-data-[collapsible=icon]:hidden">
             {universe.title}

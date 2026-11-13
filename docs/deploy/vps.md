@@ -32,7 +32,7 @@ Vista previa para Boris en `https://borisaoblois.82-25-95-39.sslip.io`, desplega
 cd /srv/web-boris && deploy/deploy.sh
 ```
 
-`deploy.sh` hace `git pull --ff-only` (y se relanza si el pull trae otra versión de sí mismo), construye, guarda una copia de la base (`deploy/backup.sh`), migra (`migrate` es un servicio del perfil `tools` y usa el superusuario), ajusta el usuario de la app (`deploy/db-app-role.sh`), reinicia la app y espera a que `http://127.0.0.1:3131/` responda 200. Añadir o cambiar una ficha MDX exige este paso: `[slug]` tiene `dynamicParams = false`.
+`deploy.sh` hace `git pull --ff-only` (y se relanza si el pull trae otra versión de sí mismo), construye, guarda una copia de la base (`deploy/backup.sh`), migra (`migrate` es un servicio del perfil `tools` y usa el superusuario), ajusta el usuario de la app (`deploy/db-app-role.sh`), reinicia la app, espera a que `http://127.0.0.1:3131/` responda 200 y regenera las páginas con lo publicado en el panel `/admin` (el build solo conoce los archivos). Espera a que Postgres esté listo (`up -d --wait db`) antes de la copia. Añadir o cambiar una ficha MDX del repositorio exige este paso; lo que se publica en el panel no.
 
 **Usuario de base de datos de la app.** La app no usa el superusuario de Postgres (`POSTGRES_USER`), sino `webboris_app`, que solo lee y escribe filas del esquema `public`: no puede crear ni borrar tablas, crear usuarios, leer ficheros ni ejecutar programas. La primera vez, `db-app-role.sh` genera su contraseña en el servidor y reescribe `.env.production` (sigue con permisos 600): `DATABASE_URL` pasa a `webboris_app` y la URL del superusuario queda en `ADMIN_DATABASE_URL`, que solo recibe `migrate`. El contenedor de la app recibe vacías `POSTGRES_PASSWORD` y `ADMIN_DATABASE_URL`.
 
@@ -45,7 +45,7 @@ cd /srv/web-boris && deploy/deploy.sh
 
 ## Operación
 
-- **Copias de la base:** `deploy/backup.sh` guarda un `pg_dump -Fc` en `/var/backups/web-boris` (carpeta 700, ficheros 600, fuera del repo) y conserva las 14 más recientes. Lo ejecuta `deploy.sh` antes de cada migración y, a diario, un temporizador de systemd que se instala una vez:
+- **Copias de la base y de las imágenes del panel:** `deploy/backup.sh` guarda un `pg_dump -Fc` en `/var/backups/web-boris` (carpeta 700, ficheros 600, fuera del repo) y conserva las 14 más recientes. También guarda las imágenes subidas desde el panel (`media-<fecha>-<firma>.tar.gz`), pero solo cuando cambian: cada imagen se llama como el hash de su contenido, así que si la lista de nombres no cambia, la última copia sigue valiendo. Lo ejecuta `deploy.sh` antes de cada migración y, a diario, un temporizador de systemd que se instala una vez:
 
   ```bash
   cp deploy/systemd/web-boris-backup.{service,timer} /etc/systemd/system/
@@ -53,10 +53,41 @@ cd /srv/web-boris && deploy/deploy.sh
   systemctl list-timers web-boris-backup.timer   # próxima ejecución
   ```
 
-  Restaurar una copia: `docker compose --env-file .env.production -f docker-compose.prod.yml exec -T db pg_restore -U webboris -d webboris --clean --if-exists < /var/backups/web-boris/<fichero>.dump`. Las copias viven en el mismo VPS: para sobrevivir a la pérdida del servidor, bájalas de vez en cuando (`scp root@82.25.95.39:/var/backups/web-boris/*.dump .`).
+  Restaurar una copia: `docker compose --env-file .env.production -f docker-compose.prod.yml exec -T db pg_restore -U webboris -d webboris --clean --if-exists < /var/backups/web-boris/<fichero>.dump`. Restaurar las imágenes: `docker compose --env-file .env.production -f docker-compose.prod.yml exec -T app tar -xzf - -C /app/media < /var/backups/web-boris/<fichero>.tar.gz` (añade lo que falte; no borra nada). Las copias viven en el mismo VPS: para sobrevivir a la pérdida del servidor, bájalas de vez en cuando (`scp root@82.25.95.39:'/var/backups/web-boris/*' .`).
 - **nginx:** el vhost del repo lleva `server_tokens off;` y `add_header Strict-Transport-Security "max-age=31536000" always;`. En un VPS instalado antes del 2026-11-01, añade esas dos líneas a mano en `/etc/nginx/sites-enabled/web-boris.conf` (dentro del bloque `server` del 443 que creó certbot) y ejecuta `nginx -t && systemctl reload nginx`.
 - **`VOTE_SECRET`:** rotarlo solo en lunes. Cambiarlo a mitad de semana deja volver a votar esa semana.
 - **Dominio definitivo:**
   1. Cambia `NEXT_PUBLIC_SITE_URL` y `AUTH_URL` en `.env.production` y ejecuta `deploy/deploy.sh`. `NEXT_PUBLIC_*` se incrusta en el build, por eso hay que reconstruir.
   2. Cambia `server_name` en el vhost y quita la línea `X-Robots-Tag`.
   3. Ejecuta `certbot --nginx -d <dominio>` y luego `nginx -t && systemctl reload nginx`.
+
+## Panel `/admin`
+
+No hay registro por la web: las cuentas del panel se crean en el servidor.
+
+```bash
+cd /srv/web-boris
+deploy/admin-create.sh correo@ejemplo.com "Nombre"   # crea la cuenta
+deploy/admin-create.sh correo@ejemplo.com --reset    # otra contraseña temporal, quita el 2FA y cierra sus sesiones
+```
+
+- El comando imprime **una vez** una contraseña temporal. Pásasela a su dueño por un canal privado.
+- En el primer acceso (`/admin/login`, con el código vacío) el panel obliga a elegir una contraseña propia y a
+  activar la verificación en dos pasos con una app de códigos; al terminar muestra 10 códigos de recuperación.
+- Si pierde el móvil **y** los códigos de recuperación: `--reset`.
+- Mejor que el correo de acceso de Boris **no** sea el público de contacto.
+- `AUTH_SECRET` cifra los secretos del 2FA: si se cambia, hay que hacer `--reset` de todas las cuentas.
+- Tras 8 intentos fallidos desde una misma red hay que esperar 15 minutos.
+- Las imágenes que se suben desde el panel viven en el volumen de Docker `media` (`/app/media` dentro de la app), no
+  en la imagen: sobreviven a los despliegues y entran en `deploy/backup.sh`.
+- Lo publicado en el panel vive en la base (`CmsDocument`, con su historial en `CmsVersion`): las copias de la base lo
+  incluyen. Los archivos de `src/content` siguen siendo la base: el panel publica por encima.
+
+### Puesta en marcha del panel (una vez)
+
+1. `deploy/deploy.sh` como siempre: aplica las migraciones del panel sobre los datos que ya hay (con copia previa).
+2. `deploy/admin-create.sh <correo de Boris> "Boris"` y, si quieres, otra para ti. Pasa cada contraseña temporal por
+   un canal privado.
+3. Comprueba: `https://<dominio>/admin` lleva al acceso; la guía de uso está dentro del panel, en «Ayuda»
+   (`src/content/panel/guia.md`).
+4. Nada más: el temporizador de copias que ya está instalado guarda también las imágenes.

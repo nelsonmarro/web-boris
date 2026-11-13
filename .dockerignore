@@ -13,3 +13,4 @@ coverage
 *.log
 tsconfig.tsbuildinfo
 *.sql
+.media
