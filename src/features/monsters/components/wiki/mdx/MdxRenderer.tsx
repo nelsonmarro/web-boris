@@ -145,7 +145,7 @@ const components = {
 };
 
 /** Componentes que una ficha puede usar (los registrados arriba con nombre en mayúscula). */
-const COMPONENT_NAMES: ReadonlySet<string> = new Set(Object.keys(components).filter((name) => /^[A-Z]/.test(name)));
+export const COMPONENT_NAMES: ReadonlySet<string> = new Set(Object.keys(components).filter((name) => /^[A-Z]/.test(name)));
 
 interface MdxRendererProps {
   content: string;
