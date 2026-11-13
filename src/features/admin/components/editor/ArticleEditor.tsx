@@ -86,6 +86,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
   const run = useCallback(
     (action: () => Promise<ArticleActionResult>, after?: (res: ArticleActionResult) => void) => {
       startTransition(async () => {
+        setResult(null);
         const res = await action();
         setResult(res);
         if (res.token) setToken(res.token);

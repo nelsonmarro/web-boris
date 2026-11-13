@@ -16,11 +16,13 @@ interface CmsSnapshot {
 
 // En `globalThis` y no en una variable del módulo: Next empaqueta las páginas y los route handlers por separado, cada
 // uno con su copia de este módulo, y `invalidateCmsCache` (desde una acción o una ruta) debe vaciar la de todos.
-const store = globalThis as unknown as { __wbCms?: { at: number; snapshot: CmsSnapshot } | null };
+// `__wbCmsGen` cuenta los vaciados: una lectura que empezó antes de publicar no puede guardar lo antiguo después.
+const store = globalThis as unknown as { __wbCms?: { at: number; snapshot: CmsSnapshot } | null; __wbCmsGen?: number };
 
 /** Olvida lo leído de la base: la siguiente lectura va a por lo recién publicado. */
 export function invalidateCmsCache(): void {
   store.__wbCms = null;
+  store.__wbCmsGen = (store.__wbCmsGen ?? 0) + 1;
 }
 
 const EMPTY: CmsSnapshot = { articles: [], lists: {} };
@@ -32,6 +34,7 @@ const EMPTY: CmsSnapshot = { articles: [], lists: {} };
 async function snapshot(): Promise<CmsSnapshot> {
   const memo = store.__wbCms;
   if (memo && Date.now() - memo.at < TTL_MS) return memo.snapshot;
+  const generation = store.__wbCmsGen ?? 0;
   let result = EMPTY;
   try {
     const docs = await prisma.cmsDocument.findMany({
@@ -44,7 +47,8 @@ async function snapshot(): Promise<CmsSnapshot> {
   } catch (error) {
     console.error('[content:cms] la base no responde; se sirven los archivos:', error instanceof Error ? error.message.split('\n')[0] : error);
   }
-  store.__wbCms = { at: Date.now(), snapshot: result };
+  // Si se publicó mientras se leía, lo leído puede ser anterior: se usa para esta petición, pero no se guarda.
+  if ((store.__wbCmsGen ?? 0) === generation) store.__wbCms = { at: Date.now(), snapshot: result };
   return result;
 }
 

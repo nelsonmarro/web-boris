@@ -35,6 +35,8 @@ export function ListShell({ listKey, path, token, initial, value, children }: Pr
 
   const publish = () =>
     startTransition(async () => {
+      // Fuera el aviso anterior: mientras se publica no debe verse un error que ya no vale.
+      setResult(null);
       const res = await publishList(listKey, JSON.stringify(value), token, note);
       setResult(res);
       if (res.ok) router.replace(`${path}?publicada=1` as Route, { scroll: false });
@@ -47,10 +49,6 @@ export function ListShell({ listKey, path, token, initial, value, children }: Pr
           <p className="min-w-0 basis-full text-sm text-white/80 @lg:basis-auto @lg:flex-1" aria-live="polite">
             {pending ? 'Publicando…' : dirty ? 'Hay cambios sin publicar.' : 'Sin cambios: es lo que ve la web.'}
           </p>
-          <label className="flex min-w-0 basis-full flex-col gap-1 text-sm text-white/80 @lg:basis-72 @lg:flex-row @lg:items-center @lg:gap-2">
-            <span className="shrink-0">Nota (opcional):</span>
-            <input className={`${FIELD} py-1.5`} value={note} maxLength={200} onChange={(event) => setNote(event.target.value)} />
-          </label>
           <Button type="button" size="sm" disabled={pending || !dirty} onClick={publish}>
             Publicar
           </Button>
@@ -75,6 +73,10 @@ export function ListShell({ listKey, path, token, initial, value, children }: Pr
           ) : null}
         </div>
       </div>
+      <label className="flex max-w-xl flex-col gap-1 text-sm text-white/80 @lg:flex-row @lg:items-center @lg:gap-2">
+        <span className="shrink-0">Nota del cambio (opcional):</span>
+        <input className={`${FIELD} py-1.5`} value={note} maxLength={200} placeholder="p. ej. Añado la votación de diciembre" onChange={(event) => setNote(event.target.value)} />
+      </label>
       {children}
     </div>
   );

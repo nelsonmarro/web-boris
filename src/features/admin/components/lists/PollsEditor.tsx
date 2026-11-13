@@ -56,7 +56,7 @@ export function PollsEditor({ path, token, initial, articles, currentWeek }: Lis
             <li key={`${row.semana}-${index}`} className="space-y-3 rounded-2xl border border-white/10 bg-[#061a2e]/60 p-5">
               {row.locked ? (
                 <p className="text-white">
-                  <strong>{row.semana}</strong> · {row.tipo === 'desclasificar' ? '¿Qué expediente se desclasifica?' : 'Duelo'}: {titleOf(row.a)} contra {titleOf(row.b)}
+                  <strong>{row.semana}</strong> · {row.tipo === 'desclasificar' ? `Desclasificar: ${titleOf(row.a)} o ${titleOf(row.b)}` : `Duelo: ${titleOf(row.a)} contra ${titleOf(row.b)}`}
                   {row.pregunta ? ` — «${row.pregunta}»` : ''}
                   <span className={`block ${HINT}`}>{row.semana === currentWeek ? 'En curso esta semana' : 'Terminada'}: no se puede cambiar.</span>
                 </p>
