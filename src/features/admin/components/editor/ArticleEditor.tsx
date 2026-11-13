@@ -1,18 +1,18 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState, useTransition } from 'react';
-import Link from 'next/link';
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Route } from 'next';
+import { Eye, PanelRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { ArticleData } from '@/core/content/overlay';
-import { discardArticleDraft, publishArticle, saveArticleDraft, type ArticleActionResult } from '../../actions/articles';
+import { discardArticleDraft, publishArticle, saveArticleDraft, stashArticlePreview, type ArticleActionResult } from '../../actions/articles';
 import { fromForm, toForm, type ArticleForm } from './form-model';
 import { FIELD, HINT, LABEL, SMALL_BUTTON } from './field-styles';
 import { InfoboxEditor } from './InfoboxEditor';
 import { FaqEditor } from './FaqEditor';
 import { RelatedEditor, type ArticleOption } from './RelatedEditor';
-import { BodyEditor } from './BodyEditor';
+import { GO_TO_TEXT, SectionsEditor } from './SectionsEditor';
 import { MediaPicker } from './MediaPicker';
 import { errorTarget, type ArticleField, type ErrorTarget } from '../../lib/error-target';
 
@@ -28,8 +28,12 @@ interface Props {
 
 const fieldId = (field: ArticleField) => `campo-${field}`;
 
-/** Lleva al campo de un error: lo centra, le da el foco y, en el texto, selecciona la línea que dice el error. */
+/** Lleva al campo de un error: lo centra y le da el foco. Los del texto los resuelve `SectionsEditor` (bloque o línea). */
 function goTo(target: ErrorTarget) {
+  if (target.field === 'content') {
+    window.dispatchEvent(new CustomEvent(GO_TO_TEXT, { detail: { line: target.line } }));
+    return;
+  }
   const element = document.getElementById(fieldId(target.field));
   if (!element) return;
   const controls = 'input, textarea, select, button';
@@ -37,19 +41,13 @@ function goTo(target: ErrorTarget) {
   const focusable = element.matches(controls) ? element : (element.querySelector<HTMLElement>(controls) ?? element.parentElement?.querySelector<HTMLElement>(controls));
   element.scrollIntoView({ block: 'center' });
   focusable?.focus({ preventScroll: true });
-  if (target.line && element instanceof HTMLTextAreaElement) {
-    const lines = element.value.split('\n');
-    const line = Math.min(target.line, lines.length);
-    const start = lines.slice(0, line - 1).reduce((total, text) => total + text.length + 1, 0);
-    element.setSelectionRange(start, start + lines[line - 1].length);
-    const lineHeight = parseFloat(getComputedStyle(element).lineHeight) || 24;
-    element.scrollTop = Math.max(0, (line - 3) * lineHeight);
-  }
 }
+
+const previewUrl = (slug: string, embed: boolean) => `/admin/vista-previa/${slug}?vivo=1${embed ? '&embed=1' : ''}`;
 
 function Section({ title, children, invalid }: { title: string; children: React.ReactNode; invalid?: boolean }) {
   return (
-    <section className={`space-y-4 rounded-2xl border bg-[#061a2e]/60 p-5 @2xl:p-6 ${invalid ? 'border-red-400/60' : 'border-white/10'}`}>
+    <section className={`space-y-4 rounded-2xl border bg-[#061a2e]/60 p-4 @2xl:p-6 ${invalid ? 'border-red-400/60' : 'border-white/10'}`}>
       <h2 className="text-xl font-bold text-white">{title}</h2>
       {children}
     </section>
@@ -91,6 +89,10 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
   const [note, setNote] = useState('');
   const [pending, startTransition] = useTransition();
   const [pickingCover, setPickingCover] = useState(false);
+  // Vista previa al lado (pantallas anchas): un iframe que se recarga al dejar de escribir.
+  const [split, setSplit] = useState(false);
+  const [previewProblem, setPreviewProblem] = useState('');
+  const frame = useRef<HTMLIFrameElement>(null);
 
   const payload = useMemo(() => JSON.stringify(fromForm(form)), [form]);
   // Errores de publicar con el campo al que se refieren, para llevar a él y marcarlo.
@@ -151,6 +153,51 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
     run(() => discardArticleDraft(slug, token));
   };
 
+  // Lo que se está editando, sin guardar, va a la vista previa 800 ms después del último cambio.
+  useEffect(() => {
+    if (!split) return;
+    const timer = window.setTimeout(async () => {
+      const res = await stashArticlePreview(slug, payload);
+      if (!res.ok) {
+        setPreviewProblem(res.message ?? 'No se pudo actualizar la vista previa.');
+        return;
+      }
+      setPreviewProblem('');
+      const iframe = frame.current;
+      if (!iframe) return;
+      // Recarga conservando por dónde iba (mismo origen: se puede leer y fijar su scroll). Si el iframe no es nuestro
+      // (página de error, sesión caducada…), el navegador no deja leerlo: se vuelve a cargar desde cero.
+      let y = 0;
+      let loaded = false;
+      try {
+        loaded = iframe.contentWindow?.location.pathname.startsWith('/admin/vista-previa') ?? false;
+        if (loaded) y = iframe.contentWindow!.scrollY;
+      } catch {
+        loaded = false;
+      }
+      iframe.onload = () => {
+        try {
+          iframe.contentWindow?.scrollTo(0, y);
+        } catch {
+          // Otra página dentro del iframe: no se toca.
+        }
+      };
+      if (loaded) iframe.contentWindow!.location.reload();
+      else iframe.src = previewUrl(slug, true);
+    }, 800);
+    return () => window.clearTimeout(timer);
+  }, [split, payload, slug]);
+
+  /** Vista previa en una pestaña nueva, con lo que hay ahora en el editor (aunque no esté guardado). */
+  const openPreview = async () => {
+    // Se abre ya (dentro del clic) para que el navegador no la bloquee; la dirección se pone al guardar la vista previa.
+    const tab = window.open('about:blank', '_blank');
+    const res = await stashArticlePreview(slug, payload);
+    if (!tab) return;
+    tab.opener = null;
+    tab.location.href = res.ok ? previewUrl(slug, false) : `/admin/vista-previa/${slug}`;
+  };
+
   // Ctrl/Cmd + S guarda el borrador.
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -175,7 +222,8 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
   const categoryOptions = categories.includes(form.category) || !form.category ? categories : [form.category, ...categories];
 
   return (
-    <div className="space-y-6">
+    <div data-split={split || undefined} className={split ? 'xl:grid xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:items-start xl:gap-6' : ''}>
+    <div className="min-w-0 space-y-6">
       {/* Barra fija y opaca: estado, guardar, publicar y el aviso, siempre a la vista al bajar por el formulario. */}
       <div className="sticky top-0 z-20 -mx-4 space-y-3 border-b border-white/10 bg-[#00122E] px-4 py-3">
         <div className="flex flex-wrap items-center gap-3">
@@ -225,13 +273,14 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
           <span className="shrink-0">Nota del cambio (opcional):</span>
           <input className={`${FIELD} py-1.5`} value={note} maxLength={200} placeholder="p. ej. Corrijo la longitud" onChange={(event) => setNote(event.target.value)} />
         </label>
-        {hasDraft && !dirty ? (
-          <Link href={`/admin/fichas/${slug}/vista-previa` as Route} target="_blank" rel="noopener noreferrer" className={SMALL_BUTTON}>
-            Vista previa del borrador<span className="sr-only"> (se abre en una pestaña nueva)</span>
-          </Link>
-        ) : (
-          <span className={HINT}>{dirty ? 'Guarda para ver la vista previa.' : ''}</span>
-        )}
+        <button type="button" className={SMALL_BUTTON} onClick={openPreview}>
+          <Eye aria-hidden="true" className="size-4" />
+          Vista previa<span className="sr-only"> (se abre en una pestaña nueva, con lo que hay ahora en el editor)</span>
+        </button>
+        <button type="button" className={`${SMALL_BUTTON} hidden xl:inline-flex ${split ? 'border-primary text-primary' : ''}`} aria-pressed={split} onClick={() => setSplit((value) => !value)}>
+          <PanelRight aria-hidden="true" className="size-4" />
+          Vista previa al lado
+        </button>
         {hasDraft ? (
           <button type="button" className={SMALL_BUTTON} disabled={pending} onClick={discard}>
             Descartar borrador
@@ -332,7 +381,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
       </Section>
 
       <Section title="Texto" invalid={invalid.has('content')}>
-        <BodyEditor {...field('content')} articles={articles} value={form.content} onChange={(value) => set('content', value)} />
+        <SectionsEditor invalid={invalid.has('content')} articles={articles} value={form.content} onChange={(value) => set('content', value)} />
       </Section>
 
       <Section title="Apodos y fichas relacionadas" invalid={invalid.has('aliases') || invalid.has('related')}>
@@ -367,6 +416,15 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
         </div>
         <TextField label="Habilidades especiales" value={form.stats.specialAbilities} multiline maxLength={2000} hint="Una por línea." onChange={(value) => setStat('specialAbilities', value)} />
       </Section>
+    </div>
+    {split ? (
+      <aside aria-label="Vista previa" className="sticky top-4 hidden h-[calc(100dvh-2rem)] flex-col overflow-hidden rounded-2xl border border-white/15 xl:flex">
+        <p className="border-b border-white/10 bg-[#061a2e] px-4 py-2 text-sm text-white/80" aria-live="polite">
+          {previewProblem || 'Vista previa: se actualiza sola mientras escribes. Aún no está en la web.'}
+        </p>
+        <iframe ref={frame} title="Vista previa de la ficha" className="min-h-0 w-full flex-1 bg-[#0a2339]" />
+      </aside>
+    ) : null}
     </div>
   );
 }

@@ -40,6 +40,15 @@ const nextConfig: NextConfig = {
           { key: 'Cache-Control', value: 'no-store' },
         ],
       },
+      // La vista previa del editor se muestra en un iframe junto al formulario: solo la propia web puede incrustarla
+      // (la cabecera posterior sustituye a la general).
+      {
+        source: '/admin/vista-previa/:path*',
+        headers: [
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Content-Security-Policy', value: "frame-ancestors 'self'" },
+        ],
+      },
     ];
   },
   async redirects() {

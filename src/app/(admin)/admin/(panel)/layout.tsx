@@ -42,7 +42,7 @@ export default async function AdminPanelLayout({ children }: { children: React.R
           </div>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-6xl px-4 py-10">
+      <main className="mx-auto w-full max-w-6xl px-4 py-10 has-[[data-split]]:max-w-[120rem]">
         <UndoProvider>{children}</UndoProvider>
       </main>
     </>

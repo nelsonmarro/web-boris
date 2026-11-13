@@ -59,3 +59,16 @@ test('los avisos del filtro del texto dicen su línea', async () => {
   assert.deepEqual(errors, ['Texto de la ficha (línea 5): En <div>, el atributo «onclick» no está permitido.']);
   assert.deepEqual(errorTarget(errors[0]), { field: 'content', line: 5 });
 });
+
+test('vista previa en vivo: por persona y ficha, caduca y tiene tope', async () => {
+  const { putStash, getStash, stashKey, STASH_MAX, STASH_TTL_MS } = await import('../../src/features/admin/lib/preview-stash.ts');
+  const store = new Map();
+  putStash(store, stashKey('u1', 'the-bloop'), 'A', 0);
+  assert.equal(getStash(store, stashKey('u1', 'the-bloop'), 1000), 'A');
+  assert.equal(getStash(store, stashKey('u2', 'the-bloop'), 1000), null);
+  assert.equal(getStash(store, stashKey('u1', 'the-bloop'), STASH_TTL_MS + 1), null);
+  for (let i = 0; i < STASH_MAX + 5; i += 1) putStash(store, stashKey('u1', `f${i}`), i, 10);
+  assert.equal(store.size, STASH_MAX);
+  assert.equal(getStash(store, stashKey('u1', 'f0'), 10), null);
+  assert.equal(getStash(store, stashKey('u1', `f${STASH_MAX + 4}`), 10), STASH_MAX + 4);
+});
