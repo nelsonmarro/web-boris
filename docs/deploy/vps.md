@@ -78,3 +78,6 @@ deploy/admin-create.sh correo@ejemplo.com --reset    # otra contraseña temporal
 - Mejor que el correo de acceso de Boris **no** sea el público de contacto.
 - `AUTH_SECRET` cifra los secretos del 2FA: si se cambia, hay que hacer `--reset` de todas las cuentas.
 - Tras 8 intentos fallidos desde una misma red hay que esperar 15 minutos.
+- Las imágenes que se suben desde el panel viven en el volumen de Docker `media` (`/app/media` dentro de la app), no
+  en la imagen: sobreviven a los despliegues. **Todavía no entran en `deploy/backup.sh`** (pendiente en la fase 6
+  del CMS).

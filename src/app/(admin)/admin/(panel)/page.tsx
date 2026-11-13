@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: 'Inicio' };
 /** Lo que el panel permitirá editar; cada bloque se activa en su fase (spec CMS §7). */
 const SECTIONS: readonly { title: string; text: string; href?: Route }[] = [
   { title: 'Fichas de la wiki', text: 'Crear y editar expedientes: texto, ficha lateral, imágenes y datos de la Arena.', href: '/admin/fichas' },
-  { title: 'Imágenes', text: 'Subir arte y elegir portadas.' },
+  { title: 'Imágenes', text: 'Subir arte y elegir portadas.', href: '/admin/imagenes' },
   { title: 'Novedades y votaciones', text: 'Lo que aparece en la página de Comunidad.' },
   { title: 'Vídeos y menú', text: 'Relacionar vídeos con fichas y ordenar el menú lateral.' },
 ];
@@ -28,6 +28,8 @@ const ACTIVITY: Record<string, string> = {
   'article.delete': 'Ficha retirada de la web',
   'article.undelete': 'Ficha mostrada de nuevo',
   'article.restore-version': 'Versión recuperada en el borrador',
+  'media.upload': 'Imagen subida',
+  'media.delete': 'Imagen borrada',
 };
 
 export default async function AdminHomePage() {

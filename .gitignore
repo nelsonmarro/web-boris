@@ -43,3 +43,6 @@ next-env.d.ts
 
 /src/generated/prisma
 .superpowers/
+
+# imágenes subidas desde el panel /admin en local (MEDIA_DIR)
+/.media/
