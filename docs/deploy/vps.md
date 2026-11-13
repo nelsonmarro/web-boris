@@ -60,21 +60,3 @@ cd /srv/web-boris && deploy/deploy.sh
   1. Cambia `NEXT_PUBLIC_SITE_URL` y `AUTH_URL` en `.env.production` y ejecuta `deploy/deploy.sh`. `NEXT_PUBLIC_*` se incrusta en el build, por eso hay que reconstruir.
   2. Cambia `server_name` en el vhost y quita la línea `X-Robots-Tag`.
   3. Ejecuta `certbot --nginx -d <dominio>` y luego `nginx -t && systemctl reload nginx`.
-
-## Panel `/admin`
-
-No hay registro por la web: las cuentas del panel se crean en el servidor.
-
-```bash
-cd /srv/web-boris
-deploy/admin-create.sh correo@ejemplo.com "Nombre"   # crea la cuenta
-deploy/admin-create.sh correo@ejemplo.com --reset    # otra contraseña temporal, quita el 2FA y cierra sus sesiones
-```
-
-- El comando imprime **una vez** una contraseña temporal. Pásasela a su dueño por un canal privado.
-- En el primer acceso (`/admin/login`, con el código vacío) el panel obliga a elegir una contraseña propia y a
-  activar la verificación en dos pasos con una app de códigos; al terminar muestra 10 códigos de recuperación.
-- Si pierde el móvil **y** los códigos de recuperación: `--reset`.
-- Mejor que el correo de acceso de Boris **no** sea el público de contacto.
-- `AUTH_SECRET` cifra los secretos del 2FA: si se cambia, hay que hacer `--reset` de todas las cuentas.
-- Tras 8 intentos fallidos desde una misma red hay que esperar 15 minutos.

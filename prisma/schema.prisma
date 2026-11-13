@@ -42,46 +42,6 @@ model User {
   accounts      Account[]
   sessions      Session[]
   pollVotes     PollVote[]
-
-  // Acceso al panel /admin (spec CMS §4). Una cuenta sin `role` no entra; se crean con `npm run admin:create`.
-  role           String?
-  passwordHash   String?
-  /// Secreto TOTP cifrado (AES-256-GCM, `secret-box`). Vale como segundo factor solo con `totpEnabledAt`.
-  totpSecret     String?
-  totpEnabledAt  DateTime?
-  /// Último paso TOTP aceptado: un código no sirve dos veces.
-  totpLastStep   Int       @default(0)
-  /// Sube al cambiar la contraseña o el 2FA: invalida las sesiones emitidas antes.
-  sessionVersion Int       @default(0)
-  recoveryCodes  AdminRecoveryCode[]
-  auditLogs      AdminAuditLog[]
-}
-
-/// Código de recuperación del 2FA: de un solo uso; solo se guarda su hash.
-model AdminRecoveryCode {
-  id        String    @id @default(cuid())
-  userId    String
-  codeHash  String
-  usedAt    DateTime?
-  createdAt DateTime  @default(now())
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, codeHash])
-}
-
-/// Rastro del panel: entradas, fallos, publicaciones… `ipHash` es un HMAC de la red, nunca la IP.
-model AdminAuditLog {
-  id        String   @id @default(cuid())
-  userId    String?
-  action    String
-  target    String?
-  ipHash    String?
-  createdAt DateTime @default(now())
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  @@index([createdAt])
-  @@index([action, ipHash, createdAt])
-  @@index([action, userId, createdAt])
 }
 
 model VerificationToken {

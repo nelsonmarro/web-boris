@@ -32,14 +32,6 @@ const nextConfig: NextConfig = {
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()' },
         ],
       },
-      // El panel no se indexa ni se guarda en cachés intermedias (spec CMS §4.7).
-      {
-        source: '/admin/:path*',
-        headers: [
-          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
-          { key: 'Cache-Control', value: 'no-store' },
-        ],
-      },
     ];
   },
   async redirects() {
