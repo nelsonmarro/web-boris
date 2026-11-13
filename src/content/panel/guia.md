@@ -17,17 +17,22 @@ Si fallas varias veces seguidas, hay que esperar 15 minutos. Si pierdes el móvi
 1. Entra en **Fichas** y busca la ficha por su nombre o un apodo (no hace falta escribirlo exacto).
 2. Cambia lo que quieras: los datos básicos, la portada, la ficha lateral, el texto, los apodos, las fichas relacionadas, las preguntas frecuentes o los datos de la Arena.
 3. Pulsa **Guardar borrador** (o Ctrl + S). Un borrador **no se ve en la web**: puedes dejarlo a medias y seguir otro día.
-4. Pulsa **Vista previa del borrador** para ver cómo quedará.
+4. Pulsa **Vista previa** para ver cómo quedará, aunque no hayas guardado. En una pantalla grande, **Vista previa al lado** la muestra junto al editor y se actualiza sola mientras escribes.
 5. Cuando esté listo, pulsa **Publicar**. En unos segundos sale en la web: el aviso verde trae el enlace para verla.
 
 Si algo impide publicar (falta la descripción, un apartado, una imagen que no existe…), el panel te lo dice en una lista y **guarda tu trabajo como borrador**. Pulsa cada aviso para ir al campo que hay que corregir (queda marcado en rojo) y vuelve a publicar.
 
 ### El texto de la ficha
 
-- Cada apartado empieza con `## ` y su título en una línea propia, por ejemplo `## Comportamiento`.
-- Deja una línea en blanco entre párrafos.
-- Los botones de encima del texto insertan cada bloque donde está el cursor: apartado, negrita, imagen, cita, aviso o **Próximamente** (para un apartado del que aún no quieres contar nada).
-- **Enlace a ficha**: selecciona las palabras que quieres enlazar, pulsa el botón y elige la ficha por su nombre.
+El texto se edita **por apartados**: cada apartado («Características», «Comportamiento»…) es una tarjeta con su título y sus bloques.
+
+- **Bloques**: texto, subapartado, imagen, galería, cita, aviso y **Próximamente** (para un apartado del que aún no quieres contar nada). Añádelos con **Añadir texto, imagen, cita…** al final de cada apartado.
+- Cada bloque se sube, se baja o se quita con sus botones. Al subir el primero de un apartado, pasa al apartado anterior.
+- **En el texto**: escribe con normalidad y deja una línea en blanco entre párrafos. Los botones **Negrita** y **Cursiva** marcan lo seleccionado (`**así**` y `_así_`). **Enlace a ficha**: selecciona las palabras, pulsa el botón y elige la ficha por su nombre.
+- **Imágenes**: elige la imagen, describe qué se ve, escribe el pie y di dónde va (a la derecha o a la izquierda del texto, centrada o a todo el ancho). **Dejar pendiente** la cambia por el recuadro «Imagen pendiente».
+- **Nuevo apartado** se añade antes de «Referencias». **Marcar como Próximamente** deja el apartado con el aviso y sin texto.
+- Algunos bloques especiales de la wiki salen como código («Bloque especial»): cámbialos con cuidado o pídele ayuda a Nelson.
+- **Texto completo (avanzado)** muestra el texto entero tal como se guarda, con sus etiquetas. Es para Nelson; si algo se rompe ahí, el panel no deja volver a los apartados hasta que se corrija.
 - Las llaves `{ }` y las etiquetas raras no se permiten: el panel avisa si aparecen.
 
 ### Expediente sellado

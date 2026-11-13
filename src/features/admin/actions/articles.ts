@@ -11,6 +11,7 @@ import { parseArticleData } from '../lib/article-check';
 import { newArticleData, ARTICLE_CATEGORIES } from '../lib/article-template';
 import { requireAdmin } from '../server/require-admin';
 import { audit } from '../server/audit';
+import { stashArticlePreview as stashPreview } from '../server/preview';
 import { ARTICLE_KIND, checkArticleForPublish, NEW_TOKEN, slugTaken } from '../server/articles';
 
 /** Tope del JSON que manda el editor (el cuerpo admite 200 000 caracteres; el resto, holgura). */
@@ -207,4 +208,17 @@ export async function createArticleAction(_previous: CreateArticleState, formDat
   }
   await audit('article.create', { userId: admin.id, target: slug });
   redirect(`/admin/fichas/${slug}` as Route);
+}
+
+/**
+ * Vista previa en vivo: guarda en memoria lo que se está editando (sin tocar el borrador) para que
+ * `/admin/vista-previa/<ficha>?vivo=1` lo pinte. Solo valida la forma; los problemas se ven en la propia vista previa.
+ */
+export async function stashArticlePreview(slug: string, payload: string): Promise<{ ok: boolean; message?: string }> {
+  const admin = await requireAdmin();
+  if (!isValidSlug(slug)) return { ok: false, message: 'Ficha no válida.' };
+  const parsed = readPayload(payload);
+  if ('errors' in parsed) return { ok: false, message: parsed.errors[0] };
+  stashPreview(admin.id, slug, parsed.data);
+  return { ok: true };
 }
