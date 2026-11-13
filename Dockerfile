@@ -40,4 +40,7 @@ CMD ["node", "server.js"]
 FROM deps AS migrate
 COPY prisma ./prisma
 COPY prisma.config.ts ./
+# `deploy/admin-create.sh`: alta de cuentas del panel /admin con esta misma imagen.
+COPY scripts/admin-create.mts ./scripts/
+COPY src/features/admin/lib ./src/features/admin/lib
 CMD ["npx", "prisma", "migrate", "deploy"]
