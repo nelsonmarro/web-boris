@@ -60,7 +60,7 @@ export function ListShell({ listKey, path, token, initial, value, children }: Pr
             <div className="max-h-[40vh] space-y-2 overflow-y-auto rounded-xl border border-red-400/40 bg-red-500/10 p-4">
               <div className="flex items-start gap-3">
                 <p className="min-w-0 flex-1 font-semibold text-white">{result.message}</p>
-                <button type="button" className="text-sm font-semibold text-white/80 underline underline-offset-4 hover:text-primary" onClick={() => setResult(null)}>
+                <button type="button" className="inline-flex min-h-10 items-center text-sm font-semibold text-white/80 underline underline-offset-4 hover:text-primary" onClick={() => setResult(null)}>
                   Cerrar<span className="sr-only"> el aviso</span>
                 </button>
               </div>

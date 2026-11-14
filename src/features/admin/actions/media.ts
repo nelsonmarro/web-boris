@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '../server/require-admin';
 import { audit } from '../server/audit';
-import { deleteUpload, listRepoAssets, listUploads, type LibraryImage } from '../server/media';
+import { deleteUpload, imageUsage, listRepoAssets, listUploads, type LibraryImage } from '../server/media';
 import { prisma } from '@/lib/prisma';
 import { MEDIA_PREFIX, isMediaPath } from '@/core/content/media-path';
 
@@ -15,7 +15,9 @@ export interface Library {
 /** Imágenes para el selector del editor: las subidas y las de la web. */
 export async function getLibrary(): Promise<Library> {
   await requireAdmin();
-  return { uploads: await listUploads(), assets: listRepoAssets() };
+  const [uploads, usage] = await Promise.all([listUploads(), imageUsage()]);
+  const withUsage = (image: LibraryImage): LibraryImage => ({ ...image, usedIn: usage.get(image.path) ?? [] });
+  return { uploads: uploads.map(withUsage), assets: listRepoAssets().map(withUsage) };
 }
 
 export async function deleteMediaAction(id: string): Promise<{ ok: boolean; message: string }> {
@@ -25,7 +27,7 @@ export async function deleteMediaAction(id: string): Promise<{ ok: boolean; mess
   if (!result.deleted) {
     return {
       ok: false,
-      message: result.usedBy.length ? `No se puede borrar: la usan ${result.usedBy.join(', ')}.` : 'Esa imagen ya no existe.',
+      message: result.usedBy.length ? `No se puede borrar: la usa${result.usedBy.length > 1 ? 'n las fichas' : ' la ficha'} ${result.usedBy.join(', ')}.` : 'Esa imagen ya no existe.',
     };
   }
   await audit('media.delete', { userId: admin.id, target: id });

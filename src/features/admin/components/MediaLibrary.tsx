@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { Copy, Trash2, Upload } from 'lucide-react';
+import { Trash2, Upload } from 'lucide-react';
 import { deleteMediaAction, updateMediaAltAction } from '../actions/media';
 import { uploadImage } from './upload-image';
 import { DANGER_BUTTON, FIELD, HINT, SMALL_BUTTON } from './editor/field-styles';
@@ -16,11 +16,13 @@ export interface MediaItem {
   height?: number;
   bytes: number;
   createdAt: string;
+  /** Fichas que la usan: mientras haya alguna no se puede borrar. */
+  usedIn: string[];
 }
 
 const kb = (bytes: number) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.round(bytes / 1024)} KB`);
 
-/** Biblioteca de imágenes subidas: subir varias a la vez, descripción, copiar la ruta y borrar las que no se usan. */
+/** Biblioteca de imágenes subidas: subir varias a la vez, su descripción, en qué fichas se usan y borrar las que no. */
 export function MediaLibrary({ items }: { items: MediaItem[] }) {
   const router = useRouter();
   const [status, setStatus] = useState('');
@@ -74,6 +76,15 @@ export function MediaLibrary({ items }: { items: MediaItem[] }) {
                 <p className={HINT}>
                   {item.width}×{item.height} px · {kb(item.bytes)}
                 </p>
+                <p className="text-sm text-white/80">
+                  {item.usedIn.length ? (
+                    <>
+                      <span className="font-semibold text-white">Se usa en:</span> {item.usedIn.join(', ')}
+                    </>
+                  ) : (
+                    'No la usa ninguna ficha.'
+                  )}
+                </p>
                 <label className="block space-y-1">
                   <span className="block text-sm font-bold text-white">Descripción de la imagen</span>
                   <input
@@ -81,20 +92,16 @@ export function MediaLibrary({ items }: { items: MediaItem[] }) {
                     defaultValue={item.alt}
                     maxLength={300}
                     placeholder="Qué se ve en ella"
+                    aria-describedby={`ayuda-${item.id}`}
                     onBlur={(event) => {
                       if (event.target.value !== item.alt) startTransition(() => void updateMediaAltAction(item.id, event.target.value));
                     }}
                   />
+                  <span id={`ayuda-${item.id}`} className={`block ${HINT}`}>
+                    La leen quienes no pueden verla y los buscadores. Se propone al elegirla en una ficha.
+                  </span>
                 </label>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    className={SMALL_BUTTON}
-                    onClick={() => navigator.clipboard?.writeText(item.path).then(() => setStatus(`Ruta copiada: ${item.path}`))}
-                  >
-                    <Copy aria-hidden="true" className="size-4" />
-                    Copiar ruta<span className="sr-only"> de {item.name}</span>
-                  </button>
+                {item.usedIn.length === 0 ? (
                   <button
                     type="button"
                     className={DANGER_BUTTON}
@@ -111,7 +118,7 @@ export function MediaLibrary({ items }: { items: MediaItem[] }) {
                     <Trash2 aria-hidden="true" className="size-4" />
                     Borrar<span className="sr-only"> {item.name}</span>
                   </button>
-                </div>
+                ) : null}
               </div>
             </li>
           ))}

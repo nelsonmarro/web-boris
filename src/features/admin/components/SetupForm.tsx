@@ -3,7 +3,7 @@
 import { startTransition, useActionState, useState } from 'react';
 import { Copy, Download, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { completeSetupAction, type SetupState } from '../actions/setup';
+import { completeSetupAction, finishSetupAction, type SetupState } from '../actions/setup';
 import { logoutAction } from '../actions/session';
 import { AdminField } from './AdminField';
 import { SMALL_BUTTON } from './editor/field-styles';
@@ -72,12 +72,23 @@ export function SetupForm({ secret, qrDataUrl }: { secret: string; qrDataUrl: st
           ))}
         </ul>
         <RecoveryCodeActions codes={state.recoveryCodes} />
-        <form action={logoutAction}>
-          <Button type="submit" className="w-full">
-            Ya los guardé: entrar al panel
-          </Button>
-        </form>
-        <p className="text-sm text-white/70">Te pediremos entrar de nuevo, ya con tu contraseña nueva y el código de la app.</p>
+        {state.handoff ? (
+          <form action={finishSetupAction}>
+            <input type="hidden" name="handoff" value={state.handoff} />
+            <Button type="submit" className="w-full">
+              Ya los guardé: entrar al panel
+            </Button>
+          </form>
+        ) : (
+          <>
+            <form action={logoutAction}>
+              <Button type="submit" className="w-full">
+                Ya los guardé: entrar al panel
+              </Button>
+            </form>
+            <p className="text-sm text-white/70">Te pediremos entrar de nuevo, ya con tu contraseña nueva y el código de la app.</p>
+          </>
+        )}
       </div>
     );
   }

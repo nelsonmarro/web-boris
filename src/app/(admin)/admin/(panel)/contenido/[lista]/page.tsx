@@ -55,7 +55,7 @@ export default async function AdminListPage({ params, searchParams }: Props) {
   return (
     <div className="space-y-8">
       <div className="space-y-3">
-        <Link href="/admin/contenido" className="text-sm font-semibold text-white/80 underline underline-offset-4 hover:text-primary">
+        <Link href="/admin/contenido" className="inline-flex min-h-10 items-center text-sm font-semibold text-white/80 underline underline-offset-4 hover:text-primary">
           ← Resto del contenido
         </Link>
         <h1 className="text-3xl font-bold text-white">{LIST_TITLES[key]}</h1>

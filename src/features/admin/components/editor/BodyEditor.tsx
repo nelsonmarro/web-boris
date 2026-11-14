@@ -69,7 +69,8 @@ export function BodyEditor({ value, onChange, articles, id, invalid }: Props) {
 
   return (
     <div className="space-y-3">
-      <div role="toolbar" aria-label="Insertar en el texto" className="flex flex-wrap gap-2">
+      {/* En el móvil, una sola fila que se desplaza de lado (auditoría #25); en pantallas anchas, en varias filas. */}
+      <div role="toolbar" aria-label="Insertar en el texto" className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 @2xl:flex-wrap @2xl:overflow-visible [&>button]:shrink-0">
         <button
           type="button"
           className={SMALL_BUTTON}

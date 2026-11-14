@@ -57,8 +57,8 @@ function focusBlock(id: string) {
 function AddBlock({ onAdd }: { onAdd: (kind: BlockKind) => void }) {
   const [open, setOpen] = useState(false);
   return open ? (
-    <div role="group" aria-label="Añadir un bloque" className="flex flex-wrap items-center gap-2 rounded-xl border border-dashed border-white/20 p-3">
-      <span className="text-sm font-semibold text-white/80">Añadir:</span>
+    <div role="group" aria-label="Añadir un bloque" className="grid grid-cols-2 items-center gap-2 rounded-xl border border-dashed border-white/20 p-3 @lg:flex @lg:flex-wrap">
+      <span className="col-span-2 text-sm font-semibold text-white/80">Añadir:</span>
       {ADDABLE.map((kind) => (
         <button
           key={kind}
@@ -72,7 +72,7 @@ function AddBlock({ onAdd }: { onAdd: (kind: BlockKind) => void }) {
           {KIND_LABELS[kind]}
         </button>
       ))}
-      <button type="button" className="text-sm font-semibold text-white/70 underline underline-offset-4 hover:text-primary" onClick={() => setOpen(false)}>
+      <button type="button" className="min-h-10 px-2 text-sm font-semibold text-white/70 underline underline-offset-4 hover:text-primary" onClick={() => setOpen(false)}>
         Cancelar
       </button>
     </div>

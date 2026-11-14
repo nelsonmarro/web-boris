@@ -14,6 +14,7 @@ import { FaqEditor } from './FaqEditor';
 import { RelatedEditor, type ArticleOption } from './RelatedEditor';
 import { GO_TO_TEXT, SectionsEditor } from './SectionsEditor';
 import { MediaPicker } from './MediaPicker';
+import { FocalPointPicker } from './FocalPointPicker';
 import { errorTarget, type ArticleField, type ErrorTarget } from '../../lib/error-target';
 
 interface Props {
@@ -65,14 +66,22 @@ function TextField(props: {
   maxLength?: number;
   placeholder?: string;
   inputMode?: 'decimal' | 'numeric' | 'text';
+  /** Campo numérico con su rango (`type="number"`): el navegador no deja salirse de él con las flechas. */
+  range?: { min: number; max?: number; step: number };
 }) {
-  const { id, invalid, label, value, onChange, hint, multiline, maxLength = 500, placeholder, inputMode } = props;
+  const { id, invalid, label, value, onChange, hint, multiline, maxLength = 500, placeholder, inputMode, range } = props;
   const common = { id, value, maxLength, placeholder, 'aria-invalid': invalid || undefined, onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange(event.target.value) };
   const border = invalid ? 'border-red-400' : '';
   return (
     <label className="block space-y-1">
       <span className={LABEL}>{label}</span>
-      {multiline ? <textarea className={`${FIELD} min-h-24 ${border}`} {...common} /> : <input className={`${FIELD} ${border}`} inputMode={inputMode} {...common} />}
+      {multiline ? (
+        <textarea className={`${FIELD} min-h-24 ${border}`} {...common} />
+      ) : range ? (
+        <input className={`${FIELD} ${border}`} type="number" inputMode={range.step < 1 ? 'decimal' : 'numeric'} min={range.min} max={range.max} step={range.step} {...common} maxLength={undefined} />
+      ) : (
+        <input className={`${FIELD} ${border}`} inputMode={inputMode} {...common} />
+      )}
       {hint ? <span className={`block ${HINT}`}>{hint}</span> : null}
     </label>
   );
@@ -242,7 +251,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
             <div className={`max-h-[40vh] space-y-2 overflow-y-auto rounded-xl border p-4 ${result.ok ? 'border-emerald-400/40 bg-emerald-500/10' : 'border-red-400/40 bg-red-500/10'}`}>
               <div className="flex items-start gap-3">
                 {result.message ? <p className="min-w-0 flex-1 font-semibold text-white">{result.message}</p> : <span className="flex-1" />}
-                <button type="button" className="text-sm font-semibold text-white/80 underline underline-offset-4 hover:text-primary" onClick={() => setResult(null)}>
+                <button type="button" className="inline-flex min-h-10 items-center text-sm font-semibold text-white/80 underline underline-offset-4 hover:text-primary" onClick={() => setResult(null)}>
                   Cerrar<span className="sr-only"> el aviso</span>
                 </button>
               </div>
@@ -364,15 +373,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
         />
         <p className={HINT}>Sin portada, la web muestra el dibujo de su categoría.</p>
         <TextField {...field('imageCaption')} label="Pie de la portada" value={form.imageCaption} maxLength={300} onChange={(value) => set('imageCaption', value)} />
-        <TextField
-          {...field('imagePosition')}
-          label="Encuadre (opcional)"
-          value={form.imagePosition}
-          maxLength={40}
-          placeholder="50% 20%"
-          hint="Qué parte de la imagen se ve al recortarla: horizontal y vertical en %. «50% 20%» centra y sube."
-          onChange={(value) => set('imagePosition', value)}
-        />
+        {form.image ? <FocalPointPicker id={fieldId('imagePosition')} src={form.image} value={form.imagePosition} onChange={(value) => set('imagePosition', value)} /> : null}
       </Section>
 
       <Section title="Ficha lateral" invalid={invalid.has('infobox')}>
@@ -406,12 +407,19 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
       <Section title="Datos de la Arena" invalid={invalid.has('stats')}>
         <p id={fieldId('stats')} className={HINT}>Opcionales. Con ellos la criatura puede combatir en la Arena.</p>
         <div className="grid gap-4 @2xl:grid-cols-2">
-          <TextField label="Longitud (metros)" value={form.stats.length} inputMode="decimal" maxLength={12} onChange={(value) => setStat('length', value)} />
-          <TextField label="Peso" value={form.stats.weight} maxLength={60} placeholder="20,000 toneladas" onChange={(value) => setStat('weight', value)} />
-          <TextField label="Inteligencia (1 a 10)" value={form.stats.intelligence} inputMode="numeric" maxLength={3} onChange={(value) => setStat('intelligence', value)} />
-          <TextField label="Hostilidad (1 a 10)" value={form.stats.hostility} inputMode="numeric" maxLength={3} onChange={(value) => setStat('hostility', value)} />
-          <TextField label="Poder (0 a 100)" value={form.stats.power} inputMode="numeric" maxLength={3} onChange={(value) => setStat('power', value)} />
-          <TextField label="Defensa (0 a 100)" value={form.stats.defense} inputMode="numeric" maxLength={3} onChange={(value) => setStat('defense', value)} />
+          <TextField label="Longitud (metros)" value={form.stats.length} range={{ min: 0, step: 0.1 }} onChange={(value) => setStat('length', value)} />
+          <TextField
+            label="Peso"
+            value={form.stats.weight}
+            maxLength={60}
+            placeholder="20,000 toneladas"
+            hint="El que muestra la Arena. El de la ficha lateral se escribe aparte."
+            onChange={(value) => setStat('weight', value)}
+          />
+          <TextField label="Inteligencia (1 a 10)" value={form.stats.intelligence} range={{ min: 1, max: 10, step: 1 }} onChange={(value) => setStat('intelligence', value)} />
+          <TextField label="Hostilidad (1 a 10)" value={form.stats.hostility} range={{ min: 1, max: 10, step: 1 }} onChange={(value) => setStat('hostility', value)} />
+          <TextField label="Poder (0 a 100)" value={form.stats.power} range={{ min: 0, max: 100, step: 1 }} onChange={(value) => setStat('power', value)} />
+          <TextField label="Defensa (0 a 100)" value={form.stats.defense} range={{ min: 0, max: 100, step: 1 }} onChange={(value) => setStat('defense', value)} />
           <TextField label="Tipo de mordida" value={form.stats.biteType} maxLength={80} onChange={(value) => setStat('biteType', value)} />
         </div>
         <TextField label="Habilidades especiales" value={form.stats.specialAbilities} multiline maxLength={2000} hint="Una por línea." onChange={(value) => setStat('specialAbilities', value)} />
