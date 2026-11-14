@@ -1,9 +1,9 @@
 import { FIELD, HINT, LABEL } from './field-styles';
 
 /** Bloque del editor con su título; en rojo si alguno de sus campos tiene un error de publicar. */
-export function Section({ title, children, invalid }: { title: string; children: React.ReactNode; invalid?: boolean }) {
+export function Section({ title, children, invalid, tour }: { title: string; children: React.ReactNode; invalid?: boolean; tour?: string }) {
   return (
-    <section className={`space-y-4 rounded-2xl border bg-[#061a2e]/60 p-4 @2xl:p-6 ${invalid ? 'border-red-400/60' : 'border-white/10'}`}>
+    <section data-tour={tour} className={`space-y-4 rounded-2xl border bg-[#061a2e]/60 p-4 @2xl:p-6 ${invalid ? 'border-red-400/60' : 'border-white/10'}`}>
       <h2 className="text-xl font-bold text-white">{title}</h2>
       {children}
     </section>

@@ -1,0 +1,123 @@
+/*
+ * Recorridos del panel (driver.js, `PanelTour`) con la paleta abisal: superficie sólida #061a2e bajo el texto,
+ * borde tenue, «Siguiente» en naranja y foco visible. Sobrescribe `driver.js/dist/driver.css`, que va antes.
+ */
+.driver-popover.wb-tour {
+  --driver-popover-font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  background-color: #061a2e;
+  color: #fff;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 0.55);
+  min-width: min(280px, calc(100vw - 32px));
+  max-width: min(380px, calc(100vw - 32px));
+  padding: 18px 18px 16px;
+}
+
+.driver-popover.wb-tour .driver-popover-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  padding-right: 32px;
+}
+
+.driver-popover.wb-tour .driver-popover-description {
+  color: rgb(255 255 255 / 0.85);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.driver-popover.wb-tour .driver-popover-title[style*='block'] + .driver-popover-description {
+  margin-top: 8px;
+}
+
+.driver-popover.wb-tour .driver-popover-footer {
+  margin-top: 16px;
+  gap: 8px;
+}
+
+.driver-popover.wb-tour .driver-popover-progress-text {
+  color: rgb(255 255 255 / 0.7);
+  font-size: 13px;
+}
+
+.driver-popover.wb-tour .driver-popover-footer-btn {
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid rgb(255 255 255 / 0.3);
+  background-color: transparent;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-shadow: none;
+}
+
+.driver-popover.wb-tour .driver-popover-footer-btn:hover {
+  border-color: #ff7300;
+  color: #ff7300;
+  background-color: transparent;
+}
+
+.driver-popover.wb-tour .driver-popover-next-btn {
+  border-color: #ff7300;
+  background-color: #ff7300;
+  color: #00122e;
+}
+
+.driver-popover.wb-tour .driver-popover-next-btn:hover {
+  background-color: #ff8a2b;
+  color: #00122e;
+}
+
+.driver-popover.wb-tour .driver-popover-footer-btn:focus-visible,
+.driver-popover.wb-tour .driver-popover-close-btn:focus-visible {
+  outline: 2px solid #ff7300;
+  outline-offset: 2px;
+}
+
+.driver-popover.wb-tour .driver-popover-btn-disabled {
+  opacity: 0.4;
+}
+
+.driver-popover.wb-tour .driver-popover-close-btn {
+  width: 40px;
+  height: 40px;
+  top: 4px;
+  right: 4px;
+  border-radius: 10px;
+  color: rgb(255 255 255 / 0.7);
+  font-size: 22px;
+}
+
+.driver-popover.wb-tour .driver-popover-close-btn:hover,
+.driver-popover.wb-tour .driver-popover-close-btn:focus-visible {
+  color: #ff7300;
+}
+
+/* Flecha del color de la superficie (driver.js la dibuja con bordes blancos). */
+.driver-popover.wb-tour .driver-popover-arrow {
+  border-color: #061a2e;
+}
+
+.driver-popover.wb-tour .driver-popover-arrow-side-left {
+  border-color: transparent transparent transparent #061a2e;
+}
+
+.driver-popover.wb-tour .driver-popover-arrow-side-right {
+  border-color: transparent #061a2e transparent transparent;
+}
+
+.driver-popover.wb-tour .driver-popover-arrow-side-top {
+  border-color: #061a2e transparent transparent transparent;
+}
+
+.driver-popover.wb-tour .driver-popover-arrow-side-bottom {
+  border-color: transparent transparent #061a2e transparent;
+}
+
+.driver-popover.wb-tour .driver-popover-arrow-side-center,
+.driver-popover.wb-tour .driver-popover-arrow-none {
+  display: none;
+}
