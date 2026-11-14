@@ -2,7 +2,7 @@ import 'server-only';
 import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 import { fileContentRepository } from './file-repository';
-import { overlayArticles, type ArticleDoc } from './overlay';
+import { ARTICLE_KIND, overlayArticles, type ArticleDoc } from './overlay';
 import { LIST_KIND, isListKey, overlayList, type ListKey, type ListValues } from './lists';
 import type { ContentRepository } from './types';
 
@@ -38,12 +38,12 @@ async function snapshot(): Promise<CmsSnapshot> {
   let result = EMPTY;
   try {
     const docs = await prisma.cmsDocument.findMany({
-      where: { kind: { in: ['article', LIST_KIND] }, OR: [{ deleted: true }, { publishedAt: { not: null } }] },
+      where: { kind: { in: [ARTICLE_KIND, LIST_KIND] }, OR: [{ deleted: true }, { publishedAt: { not: null } }] },
       select: { kind: true, key: true, published: true, deleted: true },
     });
     const lists: CmsSnapshot['lists'] = {};
     for (const doc of docs) if (doc.kind === LIST_KIND && isListKey(doc.key) && !doc.deleted) lists[doc.key] = doc.published;
-    result = { articles: docs.filter((doc) => doc.kind === 'article'), lists };
+    result = { articles: docs.filter((doc) => doc.kind === ARTICLE_KIND), lists };
   } catch (error) {
     console.error('[content:cms] la base no responde; se sirven los archivos:', error instanceof Error ? error.message.split('\n')[0] : error);
   }

@@ -4,15 +4,13 @@ import path from 'node:path';
 import { prisma } from '@/lib/prisma';
 import { fileContentRepository } from '@/core/content/file-repository';
 import { getContentRepository } from '@/core/content';
-import { ArticleDataSchema, type ArticleData } from '@/core/content/overlay';
+import { ARTICLE_KIND, ArticleDataSchema, type ArticleData } from '@/core/content/overlay';
 import { COMPONENT_NAMES } from '@/features/monsters/components/wiki/mdx/MdxRenderer';
 import { checkArticle, type ArticleCheck } from '../lib/article-check';
 import { isMediaPath, MEDIA_PREFIX } from '@/core/content/media-path';
 import { mediaExists } from './media';
+import { tokenOf, versionItems, VERSIONS_INCLUDE, type VersionItem } from './cms-store';
 
-export const ARTICLE_KIND = 'article';
-/** Marca de concurrencia de una ficha que aún no tiene documento en la base. */
-export const NEW_TOKEN = 'nuevo';
 
 const PUBLIC_DIR = path.join(process.cwd(), 'public');
 
@@ -93,14 +91,6 @@ export async function listArticles(): Promise<ArticleListItem[]> {
   return [...items.values()].sort((a, b) => a.title.localeCompare(b.title, 'es'));
 }
 
-export interface ArticleVersionItem {
-  id: string;
-  createdAt: string;
-  author: string | null;
-  note: string | null;
-  isDeletion: boolean;
-}
-
 export interface ArticleEditorState {
   slug: string;
   /** Lo que se edita: el borrador, o lo publicado, o el archivo. */
@@ -114,7 +104,7 @@ export interface ArticleEditorState {
   inFile: boolean;
   /** Marca de concurrencia: cambia con cada escritura. */
   token: string;
-  versions: ArticleVersionItem[];
+  versions: VersionItem[];
 }
 
 /** Estado completo de una ficha para el editor, o `null` si no existe ni en los archivos ni en el panel. */
@@ -123,7 +113,7 @@ export async function loadArticleEditor(slug: string): Promise<ArticleEditorStat
     fileContentRepository.getArticle(slug),
     prisma.cmsDocument.findUnique({
       where: { kind_key: { kind: ARTICLE_KIND, key: slug } },
-      include: { versions: { orderBy: { createdAt: 'desc' }, take: 30, include: { author: { select: { name: true, email: true } } } } },
+      include: VERSIONS_INCLUDE,
     }),
   ]);
   if (!file && !doc) return null;
@@ -140,14 +130,8 @@ export async function loadArticleEditor(slug: string): Promise<ArticleEditorStat
     draftUnreadable: !!doc?.draft && draft === null,
     deleted: doc?.deleted ?? false,
     inFile: !!file,
-    token: doc ? doc.updatedAt.toISOString() : NEW_TOKEN,
-    versions: (doc?.versions ?? []).map((version) => ({
-      id: version.id,
-      createdAt: version.createdAt.toISOString(),
-      author: version.author?.name ?? version.author?.email ?? null,
-      note: version.note,
-      isDeletion: version.data === null,
-    })),
+    token: tokenOf(doc),
+    versions: versionItems(doc?.versions ?? []),
   };
 }
 
