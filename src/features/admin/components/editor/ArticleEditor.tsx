@@ -16,6 +16,7 @@ import { GO_TO_TEXT, SectionsEditor } from './SectionsEditor';
 import { MediaPicker } from './MediaPicker';
 import { FocalPointPicker } from './FocalPointPicker';
 import { errorTarget, type ArticleField, type ErrorTarget } from '../../lib/error-target';
+import { useLeaveGuard } from '../use-leave-guard';
 
 interface Props {
   slug: string;
@@ -219,13 +220,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
     return () => window.removeEventListener('keydown', onKey);
   }, [pending, save]);
 
-  // Avisa antes de salir con cambios sin guardar.
-  useEffect(() => {
-    if (!dirty) return;
-    const onLeave = (event: BeforeUnloadEvent) => event.preventDefault();
-    window.addEventListener('beforeunload', onLeave);
-    return () => window.removeEventListener('beforeunload', onLeave);
-  }, [dirty]);
+  useLeaveGuard(dirty, '¿Salir sin guardar? Los cambios que no has guardado se perderán.');
 
   const universeOptions = universes.includes(form.universe) || !form.universe ? universes : [form.universe, ...universes];
   const categoryOptions = categories.includes(form.category) || !form.category ? categories : [form.category, ...categories];

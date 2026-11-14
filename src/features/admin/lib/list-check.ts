@@ -1,9 +1,9 @@
 /** Comprobaciones de las listas del panel antes de publicar, con mensajes para quien edita. Puro. */
-import { LIST_SCHEMAS, type ListKey } from '../../../core/content/lists.ts';
-import type { CuratedPoll, NewsEntry, StoryOrderEntry, VideoLink } from '../../../core/content/schemas.ts';
+import { parseList, type ListKey, type ListValues } from '../../../core/content/lists.ts';
+import type { CuratedPoll } from '../../../core/content/schemas.ts';
 import { crossCheckNews, crossCheckPolls, crossCheckStartHere, crossCheckStoryOrder, crossCheckVideoLinks } from '../../../core/content/validate.ts';
 import { isoWeekKey } from '../../../core/content/iso-week.ts';
-import { navigationProblems, type NavGroup } from '../../../core/content/navigation.ts';
+import { navigationProblems } from '../../../core/content/navigation.ts';
 
 export interface ListContext {
   slugs: ReadonlySet<string>;
@@ -55,9 +55,30 @@ export function lockedPollProblems(next: readonly CuratedPoll[], current: readon
   return problems;
 }
 
+/** Una lista ya comprobada con su clave: el `switch` sobre `key` sabe el tipo de `data`. */
+type ParsedList = { [K in ListKey]: { key: K; data: ListValues[K] } }[ListKey];
+
+/** Referencias de una lista ya comprobada (fichas, vídeos, universos y semanas que existan). */
+function crossCheck(list: ParsedList, ctx: ListContext): string[] {
+  switch (list.key) {
+    case 'news':
+      return crossCheckNews(list.data, ctx.slugs);
+    case 'polls':
+      return [...lockedPollProblems(list.data, ctx.currentPolls, ctx.now), ...crossCheckPolls(list.data, ctx.slugs, ctx.fighterSlugs, ctx.sealedSlugs, ctx.now)];
+    case 'videos':
+      return crossCheckVideoLinks(list.data, ctx.slugs, ctx.knownVideoIds);
+    case 'storyOrder':
+      return crossCheckStoryOrder(list.data, ctx.universeKeys, ctx.canalIds);
+    case 'startHere':
+      return crossCheckStartHere(list.data, ctx.slugs, ctx.sealedSlugs);
+    case 'navigation':
+      return navigationProblems(list.data, ctx.slugs);
+  }
+}
+
 /** Forma y referencias de una lista. Devuelve el valor normalizado (p. ej. con `tipo` por defecto) o los errores. */
-export function checkList(key: ListKey, value: unknown, ctx: ListContext): { value: unknown[] } | { errors: string[] } {
-  const parsed = LIST_SCHEMAS[key].safeParse(value);
+export function checkList<K extends ListKey>(key: K, value: unknown, ctx: ListContext): { value: ListValues[K] } | { errors: string[] } {
+  const parsed = parseList(key, value);
   if (!parsed.success) {
     // En el menú, el primer índice es el universo; en el resto de listas, la fila.
     const where = (path: PropertyKey[]) => {
@@ -68,27 +89,6 @@ export function checkList(key: ListKey, value: unknown, ctx: ListContext): { val
     };
     return { errors: [...new Set(parsed.error.issues.map((issue) => `${where(issue.path)}: ${issue.message}`))] };
   }
-  const data = parsed.data as unknown[];
-  let errors: string[] = [];
-  switch (key) {
-    case 'news':
-      errors = crossCheckNews(data as NewsEntry[], ctx.slugs);
-      break;
-    case 'polls':
-      errors = [...lockedPollProblems(data as CuratedPoll[], ctx.currentPolls, ctx.now), ...crossCheckPolls(data as CuratedPoll[], ctx.slugs, ctx.fighterSlugs, ctx.sealedSlugs, ctx.now)];
-      break;
-    case 'videos':
-      errors = crossCheckVideoLinks(data as VideoLink[], ctx.slugs, ctx.knownVideoIds);
-      break;
-    case 'storyOrder':
-      errors = crossCheckStoryOrder(data as StoryOrderEntry[], ctx.universeKeys, ctx.canalIds);
-      break;
-    case 'startHere':
-      errors = crossCheckStartHere(data as string[], ctx.slugs, ctx.sealedSlugs);
-      break;
-    case 'navigation':
-      errors = navigationProblems(data as NavGroup[], ctx.slugs);
-      break;
-  }
-  return errors.length ? { errors: [...new Set(errors.map(plain))] } : { value: data };
+  const errors = crossCheck({ key, data: parsed.data } as ParsedList, ctx);
+  return errors.length ? { errors: [...new Set(errors.map(plain))] } : { value: parsed.data };
 }

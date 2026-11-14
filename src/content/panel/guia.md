@@ -79,6 +79,7 @@ Estas listas se publican directamente (no tienen borrador).
 
 ## Si algo sale mal
 
+- **Ibas a salir con cambios sin guardar**: si pulsas otro apartado del panel, «Retirar de la web», «Recuperar en el borrador» o «Cerrar sesión» con cambios sin guardar (o, en una lista, sin publicar), el panel te pregunta antes. Cancela, guarda y sigue. La flecha «atrás» del navegador no pregunta: guarda antes de usarla.
 - **Quitaste algo sin querer**: al quitar una sección, una pregunta o una entrada de una lista o del menú, abajo aparece **Deshacer** durante unos segundos.
 - **Volver atrás**: cada ficha y cada lista tiene un **Historial**. En una ficha, «Recuperar en el borrador» trae una versión anterior para revisarla y volver a publicarla. En una lista, «Cargar esta versión».
 - **Quitar una ficha de la web**: al final del editor, **Retirar de la web**. No se borra nada y se puede volver a mostrar cuando quieras.

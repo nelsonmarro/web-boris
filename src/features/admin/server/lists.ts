@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { fileContentRepository } from '@/core/content/file-repository';
 import { getContentRepository } from '@/core/content';
-import { LIST_KIND, LIST_SCHEMAS, type ListKey } from '@/core/content/lists';
+import { LIST_KIND, parseList, type ListKey, type ListValues } from '@/core/content/lists';
 import { getCanal } from '@/features/community/data/channel-videos';
 import { FEATURED_VIDEOS } from '@/features/marketing/config/videos';
 import { hasStats } from '@/features/monsters/lib/stats';
@@ -22,7 +22,7 @@ export const LIST_TITLES: Record<ListKey, string> = {
   navigation: 'Menú lateral',
 };
 
-const fromFiles: Record<ListKey, () => Promise<unknown[]>> = {
+const fromFiles: { [K in ListKey]: () => Promise<ListValues[K]> } = {
   news: () => fileContentRepository.getNews(),
   polls: () => fileContentRepository.getCuratedPolls(),
   videos: () => fileContentRepository.getVideoLinks(),
@@ -38,10 +38,7 @@ export interface ListVersionItem {
   note: string | null;
 }
 
-export interface ListEditorState {
-  key: ListKey;
-  /** Lo que ve la web (o la versión elegida para recuperar). */
-  value: unknown[];
+interface ListStateBase {
   token: string;
   /** Se publicó alguna vez desde el panel (si no, es la lista de los archivos). */
   fromPanel: boolean;
@@ -50,23 +47,32 @@ export interface ListEditorState {
   restoring: string | null;
 }
 
-export async function loadList(key: ListKey, versionId?: string): Promise<ListEditorState> {
+/** Estado de una lista para su editor. Con `K` amplio es una unión por `key`: comprobar `key` da el tipo de `value`. */
+export type ListEditorState<K extends ListKey = ListKey> = {
+  [P in K]: ListStateBase & {
+    key: P;
+    /** Lo que ve la web (o la versión elegida para recuperar). */
+    value: ListValues[P];
+  };
+}[K];
+
+export async function loadList<K extends ListKey>(key: K, versionId?: string): Promise<ListEditorState<K>> {
   const doc = await prisma.cmsDocument.findUnique({
     where: { kind_key: { kind: LIST_KIND, key } },
     include: { versions: { orderBy: { createdAt: 'desc' }, take: 30, include: { author: { select: { name: true, email: true } } } } },
   });
-  const published = doc?.published ? LIST_SCHEMAS[key].safeParse(doc.published) : null;
-  let value = published?.success ? (published.data as unknown[]) : await fromFiles[key]();
+  const published = doc?.published ? parseList(key, doc.published) : null;
+  let value = published?.success ? published.data : await fromFiles[key]();
   let restoring: string | null = null;
   if (versionId && doc) {
     const version = await prisma.cmsVersion.findFirst({ where: { id: versionId, documentId: doc.id }, select: { id: true, data: true } });
-    const parsed = version?.data ? LIST_SCHEMAS[key].safeParse(version.data) : null;
+    const parsed = version?.data ? parseList(key, version.data) : null;
     if (parsed?.success) {
-      value = parsed.data as unknown[];
+      value = parsed.data;
       restoring = version!.id;
     }
   }
-  return {
+  const state: ListStateBase & { key: K; value: ListValues[K] } = {
     key,
     value,
     token: doc ? doc.updatedAt.toISOString() : NEW_LIST_TOKEN,
@@ -79,6 +85,8 @@ export async function loadList(key: ListKey, versionId?: string): Promise<ListEd
     })),
     restoring,
   };
+  // TypeScript no reparte `K` sobre la unión: para una clave concreta es exactamente esto.
+  return state as ListEditorState<K>;
 }
 
 /** Todo lo que necesitan las comprobaciones de las listas, con el contenido que ve la web ahora. */
@@ -121,7 +129,9 @@ export async function videoOptions(): Promise<VideoOption[]> {
  * marca de concurrencia que vio el editor: si la lista cambió desde entonces, no guarda nada y devuelve `null`. Si no,
  * la marca nueva.
  */
-export async function commitList(adminId: string, key: ListKey, value: Prisma.InputJsonValue, token: string, note: string | null): Promise<string | null> {
+export async function commitList<K extends ListKey>(adminId: string, key: K, list: ListValues[K], token: string, note: string | null): Promise<string | null> {
+  // Las listas son JSON puro (lo garantiza su esquema), pero sus tipos no llevan la firma de índice que pide Prisma.
+  const value = list as unknown as Prisma.InputJsonValue;
   return prisma.$transaction(async (tx) => {
     let id: string;
     if (token === NEW_LIST_TOKEN) {

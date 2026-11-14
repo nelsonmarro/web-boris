@@ -5,12 +5,23 @@
  */
 import { z } from 'zod';
 import { CuratedPollsSchema, NewsEntrySchema, StoryOrderSchema, VideoLinksSchema } from './schemas.ts';
-import { NavigationSchema } from './navigation.ts';
+import { NavigationSchema, type NavGroup } from './navigation.ts';
+import type { CuratedPoll, NewsEntry, StoryOrderEntry, VideoLink } from './schemas.ts';
 
 export const LIST_KIND = 'list';
 export const LIST_KEYS = ['news', 'polls', 'videos', 'storyOrder', 'startHere', 'navigation'] as const;
 export type ListKey = (typeof LIST_KEYS)[number];
 export const isListKey = (value: unknown): value is ListKey => typeof value === 'string' && (LIST_KEYS as readonly string[]).includes(value);
+
+/** Lo que contiene cada lista una vez comprobada con su `LIST_SCHEMAS`. */
+export interface ListValues {
+  news: NewsEntry[];
+  polls: CuratedPoll[];
+  videos: VideoLink[];
+  storyOrder: StoryOrderEntry[];
+  startHere: string[];
+  navigation: NavGroup[];
+}
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 /** Id de una novedad: `<yyyy-mm-dd>-<slug>` (como el nombre de su archivo). */
@@ -48,18 +59,24 @@ export const LIST_SCHEMAS = {
   navigation: NavigationSchema,
 } satisfies Record<ListKey, z.ZodType>;
 
+/** Comprueba `value` con el esquema de la lista `key`. El único sitio donde lo validado pasa a su tipo. */
+export function parseList<K extends ListKey>(key: K, value: unknown): { success: true; data: ListValues[K] } | { success: false; error: z.ZodError } {
+  const parsed = LIST_SCHEMAS[key].safeParse(value);
+  return parsed.success ? { success: true, data: parsed.data as ListValues[K] } : { success: false, error: parsed.error };
+}
+
 /**
  * La lista que ve la web: lo publicado en el panel si lo hay y es válido; si no, la de los archivos. Un documento
  * roto se ignora y se avisa por `onError`.
  */
-export function overlayList<T>(key: ListKey, fileValue: T[], published: unknown, onError: (message: string) => void = () => {}): T[] {
+export function overlayList<K extends ListKey>(key: K, fileValue: ListValues[K], published: unknown, onError: (message: string) => void = () => {}): ListValues[K] {
   if (published === null || published === undefined) return fileValue;
-  const parsed = LIST_SCHEMAS[key].safeParse(published);
+  const parsed = parseList(key, published);
   if (!parsed.success) {
     onError(`${key}: ${parsed.error.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`).join('; ')}`);
     return fileValue;
   }
-  return parsed.data as T[];
+  return parsed.data;
 }
 
 /** Id para una novedad nueva: su fecha y el título en minúsculas sin tildes. */

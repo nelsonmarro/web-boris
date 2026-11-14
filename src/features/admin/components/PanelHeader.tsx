@@ -6,6 +6,7 @@ import type { Route } from 'next';
 import { usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { discardsEdits } from '../lib/leave-guard';
 
 const SECTIONS: readonly { href: Route; label: string }[] = [
   { href: '/admin/fichas', label: 'Fichas' },
@@ -45,7 +46,7 @@ export function PanelHeader({ account, logout }: { account: string; logout: (for
           Ver la web<span className="sr-only"> (se abre en una pestaña nueva)</span>
         </Link>
       </Button>
-      <form action={logout}>
+      <form {...discardsEdits} action={logout}>
         <Button type="submit" variant="ghost" size="sm">
           Cerrar sesión
         </Button>

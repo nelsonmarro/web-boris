@@ -3,7 +3,7 @@ import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 import { fileContentRepository } from './file-repository';
 import { overlayArticles, type ArticleDoc } from './overlay';
-import { LIST_KIND, isListKey, overlayList, type ListKey } from './lists';
+import { LIST_KIND, isListKey, overlayList, type ListKey, type ListValues } from './lists';
 import type { ContentRepository } from './types';
 
 /** Lo publicado en el panel se relee como mucho cada `TTL_MS`; publicar lo vacía al momento (`invalidateCmsCache`). */
@@ -61,7 +61,7 @@ const getArticles = cache(async () => {
 });
 
 /** Una lista con lo publicado en el panel por encima de la de los archivos. */
-async function list<T>(key: ListKey, fromFiles: () => Promise<T[]>): Promise<T[]> {
+async function list<K extends ListKey>(key: K, fromFiles: () => Promise<ListValues[K]>): Promise<ListValues[K]> {
   const [files, { lists }] = await Promise.all([fromFiles(), snapshot()]);
   return overlayList(key, files, lists[key], logError);
 }
