@@ -18,6 +18,8 @@ export interface MediaItem {
   createdAt: string;
   /** Fichas que la usan: mientras haya alguna no se puede borrar. */
   usedIn: string[];
+  /** Fichas que solo la tienen en una versión anterior: tampoco se puede borrar (recuperarla la necesitaría). */
+  inHistory: string[];
 }
 
 const kb = (bytes: number) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.round(bytes / 1024)} KB`);
@@ -81,6 +83,10 @@ export function MediaLibrary({ items }: { items: MediaItem[] }) {
                     <>
                       <span className="font-semibold text-white">Se usa en:</span> {item.usedIn.join(', ')}
                     </>
+                  ) : item.inHistory.length ? (
+                    <>
+                      <span className="font-semibold text-white">Solo en versiones anteriores de:</span> {item.inHistory.join(', ')}
+                    </>
                   ) : (
                     'No la usa ninguna ficha.'
                   )}
@@ -101,7 +107,7 @@ export function MediaLibrary({ items }: { items: MediaItem[] }) {
                     La leen quienes no pueden verla y los buscadores. Se propone al elegirla en una ficha.
                   </span>
                 </label>
-                {item.usedIn.length === 0 ? (
+                {item.usedIn.length === 0 && item.inHistory.length === 0 ? (
                   <button
                     type="button"
                     className={DANGER_BUTTON}

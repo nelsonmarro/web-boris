@@ -39,3 +39,29 @@ export function usageByImage(articles: readonly { title: string; texts: readonly
   }
   return new Map([...usage].map(([ref, titles]) => [ref, [...titles].sort((a, b) => a.localeCompare(b, 'es'))]));
 }
+
+/** Dónde se usa una imagen: fichas que la usan ahora (borrador, publicada o archivo) y otras que solo la tienen en su historial. */
+export interface ImageUse {
+  usedIn: string[];
+  /** Fichas que ya no la usan, pero alguna versión anterior suya sí: recuperarla la necesitaría. */
+  inHistory: string[];
+}
+
+/** Junta el uso actual y el del historial (sin repetir en el historial una ficha que ya la usa ahora). */
+export function combineUsage(current: ReadonlyMap<string, string[]>, history: ReadonlyMap<string, string[]>): Map<string, ImageUse> {
+  const combined = new Map<string, ImageUse>();
+  for (const path of new Set([...current.keys(), ...history.keys()])) {
+    const usedIn = current.get(path) ?? [];
+    combined.set(path, { usedIn, inHistory: (history.get(path) ?? []).filter((title) => !usedIn.includes(title)) });
+  }
+  return combined;
+}
+
+const titles = (list: readonly string[]) => list.map((title) => `«${title}»`).join(', ');
+
+/** Por qué no se puede borrar una imagen, o `null` si nada la usa (ni ahora ni en el historial). */
+export function deleteBlockedReason(use: ImageUse | undefined): string | null {
+  if (!use || (use.usedIn.length === 0 && use.inHistory.length === 0)) return null;
+  if (use.usedIn.length) return `No se puede borrar: la usa${use.usedIn.length > 1 ? 'n las fichas' : ' la ficha'} ${titles(use.usedIn)}.`;
+  return `No se puede borrar: la usa${use.inHistory.length > 1 ? 'n versiones anteriores de' : ' una versión anterior de'} ${titles(use.inHistory)}, y recuperarla la necesitaría.`;
+}

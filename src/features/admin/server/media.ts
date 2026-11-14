@@ -7,7 +7,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { MEDIA_FILE, MEDIA_PREFIX } from '@/core/content/media-path';
 import { processImage } from '../lib/image-processing';
-import { assetLabel, usageByImage } from '../lib/media-labels';
+import { assetLabel, combineUsage, deleteBlockedReason, usageByImage, type ImageUse } from '../lib/media-labels';
 import { fileContentRepository } from '@/core/content/file-repository';
 import { ARTICLE_KIND } from '@/core/content/overlay';
 
@@ -108,35 +108,28 @@ export function listRepoAssets(): LibraryImage[] {
   return repoAssets;
 }
 
-/** Fichas (por su dirección) cuyo borrador o versión publicada usan `filename`. */
-export async function mediaUsage(filename: string): Promise<string[]> {
-  if (!MEDIA_FILE.test(filename)) return [];
-  const needle = `%${MEDIA_PREFIX}${filename}%`;
-  const rows = await prisma.$queryRaw<{ key: string }[]>(Prisma.sql`
-    SELECT key FROM "CmsDocument" WHERE draft::text LIKE ${needle} OR published::text LIKE ${needle} ORDER BY key`);
-  return rows.map((row) => row.key);
-}
-
-/** Borra una imagen que ninguna ficha usa. Devuelve las fichas que la usan si no se pudo borrar. */
-export async function deleteUpload(id: string): Promise<{ deleted: boolean; usedBy: string[] }> {
+/** Borra una imagen subida que no usa nada (ni ahora ni el historial). Si no se pudo, dice por qué. */
+export async function deleteUpload(id: string): Promise<{ deleted: true } | { deleted: false; reason: string }> {
   const asset = await prisma.mediaAsset.findUnique({ where: { id } });
-  if (!asset) return { deleted: false, usedBy: [] };
-  const usedBy = await mediaUsage(asset.filename);
-  if (usedBy.length > 0) return { deleted: false, usedBy };
+  if (!asset) return { deleted: false, reason: 'Esa imagen ya no existe.' };
+  const reason = deleteBlockedReason((await imageUsage()).get(`${MEDIA_PREFIX}${asset.filename}`));
+  if (reason) return { deleted: false, reason };
   await prisma.mediaAsset.delete({ where: { id } });
   const file = mediaFilePath(asset.filename);
   if (file) await fs.rm(file, { force: true });
-  return { deleted: true, usedBy: [] };
+  return { deleted: true };
 }
 
 /**
- * Qué fichas usan cada imagen (por su ruta): las de los archivos y, para las que tienen documento en el panel, su
- * borrador y lo publicado (que sustituye al archivo). Para mostrarlo en el selector y en la biblioteca.
+ * Qué fichas usan cada imagen (por su ruta), la única fuente para mostrarlo y para dejar borrar. Ahora: las de los
+ * archivos y, para las que tienen documento en el panel, su borrador y lo publicado (que sustituye al archivo; una
+ * ficha retirada cuenta, porque se puede volver a mostrar). Historial: sus versiones anteriores, que se pueden recuperar.
  */
-export async function imageUsage(): Promise<Map<string, string[]>> {
-  const [files, docs] = await Promise.all([
+export async function imageUsage(): Promise<Map<string, ImageUse>> {
+  const [files, docs, versions] = await Promise.all([
     fileContentRepository.getArticles(),
     prisma.cmsDocument.findMany({ where: { kind: ARTICLE_KIND }, select: { key: true, draft: true, published: true } }),
+    prisma.cmsVersion.findMany({ where: { document: { kind: ARTICLE_KIND }, data: { not: Prisma.DbNull } }, select: { data: true, document: { select: { key: true } } } }),
   ]);
   const articles = new Map(files.map((file) => [file.slug, { title: file.frontmatter.title, texts: [JSON.stringify(file.frontmatter), file.content] }]));
   const titleOf = (value: unknown) => {
@@ -147,5 +140,6 @@ export async function imageUsage(): Promise<Map<string, string[]>> {
     const title = titleOf(doc.draft) ?? titleOf(doc.published) ?? articles.get(doc.key)?.title ?? doc.key;
     articles.set(doc.key, { title, texts: [JSON.stringify(doc.draft ?? null), JSON.stringify(doc.published ?? null)] });
   }
-  return usageByImage([...articles.values()]);
+  const history = versions.map((version) => ({ title: articles.get(version.document.key)?.title ?? version.document.key, texts: [JSON.stringify(version.data)] }));
+  return combineUsage(usageByImage([...articles.values()]), usageByImage(history));
 }

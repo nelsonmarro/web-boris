@@ -61,7 +61,7 @@ Una ficha **sellada** muestra en la web el sello «Boris aún no ha desclasifica
 - Valen JPG, PNG, WebP, AVIF, GIF y HEIC, de hasta 20 MB. Se guardan optimizadas y **sin datos del archivo** (como la ubicación de una foto del móvil).
 - Al elegir una imagen, el panel te pide **describir qué se ve en ella**. Esa descripción la leen quienes no pueden ver la imagen y los buscadores. No es el pie de foto, que se escribe aparte. La de una imagen subida se recuerda para la próxima vez.
 - En el selector también salen las imágenes que ya tenía la web, agrupadas por universo y personaje («Colosos › The Bloop»). Cada imagen dice en qué fichas se usa, y puedes buscarlas por su nombre, su ficha o su universo.
-- Solo se puede borrar una imagen que no use ninguna ficha: en **Imágenes**, el botón **Borrar** solo aparece en esas.
+- Solo se puede borrar una imagen que no use ninguna ficha, ni ahora ni en una versión anterior de su historial (si la recuperaras, le faltaría la imagen). En **Imágenes**, el botón **Borrar** solo aparece en esas; las que solo están en el historial dicen «Solo en versiones anteriores de…».
 - **Encuadre de la portada**: las tarjetas y la cabecera de la ficha recortan la portada. Pulsa sobre la imagen la parte que debe verse siempre (o usa los deslizadores) y mira al lado cómo queda cada recorte. **Centrar** lo deja como estaba.
 
 ## Resto del contenido
