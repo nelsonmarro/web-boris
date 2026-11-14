@@ -1,0 +1,147 @@
+/*
+ * Manual del panel (`GuideContent`). Los pasos de una lista numerada van en círculos naranjas con el número oscuro,
+ * igual que las marcas de las capturas, para que se vea qué paso es cada número.
+ */
+.wb-guide {
+  color: rgb(255 255 255 / 0.85);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.wb-guide > * + * {
+  margin-top: 1rem;
+}
+
+.wb-guide h2 {
+  scroll-margin-top: 1.5rem;
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #fff;
+}
+
+.wb-guide h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* La frase que sigue al título resume la sección (la misma de su tarjeta). */
+.wb-guide h2 + p {
+  margin-top: 0.5rem;
+  font-size: 1.15rem;
+  color: rgb(255 255 255 / 0.7);
+}
+
+.wb-guide h3 {
+  scroll-margin-top: 1.5rem;
+  margin-top: 2.5rem;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.wb-guide strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.wb-guide a:not(.block) {
+  color: #fff;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.wb-guide code {
+  border-radius: 6px;
+  background: rgb(255 255 255 / 0.08);
+  padding: 0.1em 0.4em;
+  font-size: 0.9em;
+  color: #fff;
+}
+
+.wb-guide ul {
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.wb-guide ul > li::marker {
+  color: #ff7300;
+}
+
+.wb-guide ul > li + li {
+  margin-top: 0.5rem;
+}
+
+.wb-guide ol {
+  counter-reset: paso;
+  list-style: none;
+  padding: 0;
+}
+
+.wb-guide ol > li {
+  counter-increment: paso;
+  position: relative;
+  min-height: 2rem;
+  padding-left: 2.75rem;
+}
+
+.wb-guide ol > li + li {
+  margin-top: 0.75rem;
+}
+
+.wb-guide ol > li::before {
+  content: counter(paso);
+  position: absolute;
+  left: 0;
+  top: 0.05rem;
+  display: flex;
+  width: 1.85rem;
+  height: 1.85rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: #ff7300;
+  color: #00122e;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Avisos (`> …`): consejo destacado sobre superficie sólida. */
+.wb-guide blockquote {
+  border: 1px solid rgb(56 189 248 / 0.3);
+  border-left: 4px solid #0064a0;
+  border-radius: 14px;
+  background: rgb(14 165 233 / 0.08);
+  padding: 0.9rem 1.1rem;
+  color: rgb(255 255 255 / 0.9);
+}
+
+.wb-guide-shot {
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem;
+}
+
+.wb-guide-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgb(255 255 255 / 0.15);
+  border-radius: 14px;
+  background: #00122e;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 0.45);
+}
+
+.wb-guide-shot figcaption {
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+  color: rgb(255 255 255 / 0.65);
+  text-align: center;
+}
