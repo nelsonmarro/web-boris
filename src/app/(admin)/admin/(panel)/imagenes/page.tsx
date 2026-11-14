@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: 'Imágenes' };
 export default async function AdminImagesPage() {
   await requireAdmin();
   const [uploads, usage] = await Promise.all([listUploads(), imageUsage()]);
-  const items = uploads.map((item) => ({ ...item, usedIn: usage.get(item.path) ?? [] }));
+  const items = uploads.map((item) => ({ ...item, usedIn: usage.get(item.path)?.usedIn ?? [], inHistory: usage.get(item.path)?.inHistory ?? [] }));
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-white">Imágenes</h1>

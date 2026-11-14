@@ -16,7 +16,7 @@ export interface Library {
 export async function getLibrary(): Promise<Library> {
   await requireAdmin();
   const [uploads, usage] = await Promise.all([listUploads(), imageUsage()]);
-  const withUsage = (image: LibraryImage): LibraryImage => ({ ...image, usedIn: usage.get(image.path) ?? [] });
+  const withUsage = (image: LibraryImage): LibraryImage => ({ ...image, usedIn: usage.get(image.path)?.usedIn ?? [] });
   return { uploads: uploads.map(withUsage), assets: listRepoAssets().map(withUsage) };
 }
 
@@ -24,12 +24,7 @@ export async function deleteMediaAction(id: string): Promise<{ ok: boolean; mess
   const admin = await requireAdmin();
   if (typeof id !== 'string') return { ok: false, message: 'Imagen no válida.' };
   const result = await deleteUpload(id);
-  if (!result.deleted) {
-    return {
-      ok: false,
-      message: result.usedBy.length ? `No se puede borrar: la usa${result.usedBy.length > 1 ? 'n las fichas' : ' la ficha'} ${result.usedBy.join(', ')}.` : 'Esa imagen ya no existe.',
-    };
-  }
+  if (!result.deleted) return { ok: false, message: result.reason };
   await audit('media.delete', { userId: admin.id, target: id });
   revalidatePath('/admin/imagenes');
   return { ok: true, message: 'Imagen borrada.' };

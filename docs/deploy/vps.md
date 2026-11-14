@@ -82,6 +82,14 @@ deploy/admin-create.sh correo@ejemplo.com --reset    # otra contraseña temporal
   en la imagen: sobreviven a los despliegues y entran en `deploy/backup.sh`.
 - Lo publicado en el panel vive en la base (`CmsDocument`, con su historial en `CmsVersion`): las copias de la base lo
   incluyen. Los archivos de `src/content` siguen siendo la base: el panel publica por encima.
+- **Un solo contenedor `app`.** No lo escales a varias réplicas (`docker compose up --scale app=2`, otro servidor
+  detrás de un balanceador) sin cambiar antes lo que vive en la memoria del proceso:
+  - la caché de lo publicado: 30 s, y publicar solo vacía la del contenedor que atendió;
+  - la vista previa en vivo del editor: la escribe un contenedor y la lee otro;
+  - el límite de cálculos de contraseña simultáneos del inicio de sesión;
+  - la caché ISR de Next en disco.
+
+  Con dos réplicas, una serviría lo antiguo y la vista previa fallaría a ratos.
 
 ### Puesta en marcha del panel (una vez)
 
