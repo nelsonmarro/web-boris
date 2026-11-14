@@ -9,7 +9,9 @@ import { checkList } from '../lib/list-check';
 import { addItem, destinations, pathKey } from '../lib/nav-tree';
 import { requireAdmin } from '../server/require-admin';
 import { audit } from '../server/audit';
-import { commitList, listContext, loadList } from '../server/lists';
+import { listContext, loadList } from '../server/lists';
+import { commitList } from '../server/cms-store';
+import { prisma } from '@/lib/prisma';
 
 const PAYLOAD_MAX = 400_000;
 
@@ -46,7 +48,7 @@ export async function publishList(key: string, payload: string, token: string, n
   if ('errors' in checked) return { ok: false, message: 'No se puede publicar todavía:', errors: checked.errors };
 
   const cleanNote = typeof note === 'string' ? note.trim().slice(0, 200) || null : null;
-  const done = await commitList(admin.id, key, checked.value, token, cleanNote);
+  const done = await commitList(prisma, admin.id, key, checked.value, token, cleanNote);
   if (!done) return CONFLICT;
   await audit('list.publish', { userId: admin.id, target: key });
   revalidateContent();
@@ -71,7 +73,7 @@ export async function addArticleToMenu(slug: string, destination: string, token:
   const title = article.frontmatter.title;
   const checked = checkList('navigation', addItem(nav, target.path, { title, url: `/wiki/${slug}` }), await listContext());
   if ('errors' in checked) return { ok: false, message: 'No se puede publicar el menú todavía:', errors: checked.errors };
-  const done = await commitList(admin.id, 'navigation', checked.value, token, `Añade «${title}» desde su ficha`.slice(0, 200));
+  const done = await commitList(prisma, admin.id, 'navigation', checked.value, token, `Añade «${title}» desde su ficha`.slice(0, 200));
   if (!done) return CONFLICT;
   await audit('list.publish', { userId: admin.id, target: 'navigation' });
   revalidateContent();

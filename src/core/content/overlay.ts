@@ -6,6 +6,9 @@ import { z } from 'zod';
 import { WikiFrontmatterSchema, type WikiArticle } from '../types/wiki.ts';
 import { RESERVED_SLUGS } from '../search/wiki-routes.ts';
 
+/** `kind` de los `CmsDocument` que son fichas (las listas son `LIST_KIND`, en `lists.ts`). */
+export const ARTICLE_KIND = 'article';
+
 /** Tamaño máximo del cuerpo de una ficha (la más larga del repositorio ronda los 20 000 caracteres). */
 export const ARTICLE_CONTENT_MAX = 200_000;
 export const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;

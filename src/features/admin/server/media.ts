@@ -9,6 +9,7 @@ import { MEDIA_FILE, MEDIA_PREFIX } from '@/core/content/media-path';
 import { processImage } from '../lib/image-processing';
 import { assetLabel, usageByImage } from '../lib/media-labels';
 import { fileContentRepository } from '@/core/content/file-repository';
+import { ARTICLE_KIND } from '@/core/content/overlay';
 
 /**
  * Carpeta de las imágenes subidas: `MEDIA_DIR` (en producción, un volumen de Docker) o `.media/` en local.
@@ -135,7 +136,7 @@ export async function deleteUpload(id: string): Promise<{ deleted: boolean; used
 export async function imageUsage(): Promise<Map<string, string[]>> {
   const [files, docs] = await Promise.all([
     fileContentRepository.getArticles(),
-    prisma.cmsDocument.findMany({ where: { kind: 'article' }, select: { key: true, draft: true, published: true } }),
+    prisma.cmsDocument.findMany({ where: { kind: ARTICLE_KIND }, select: { key: true, draft: true, published: true } }),
   ]);
   const articles = new Map(files.map((file) => [file.slug, { title: file.frontmatter.title, texts: [JSON.stringify(file.frontmatter), file.content] }]));
   const titleOf = (value: unknown) => {
