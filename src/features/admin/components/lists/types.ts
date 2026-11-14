@@ -5,6 +5,8 @@ export interface ArticleChoice {
   /** Tiene datos de la Arena (puede ir a un duelo). */
   fighter: boolean;
   sealed: boolean;
+  universe: string;
+  category?: string;
 }
 
 export interface VideoChoice {

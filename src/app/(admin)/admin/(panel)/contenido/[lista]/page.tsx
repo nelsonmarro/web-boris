@@ -41,7 +41,10 @@ export default async function AdminListPage({ params, searchParams }: Props) {
   const common = {
     path,
     token: state.token,
-    articles: articles.map((a) => ({ slug: a.slug, title: a.frontmatter.title, fighter: hasStats(a.frontmatter), sealed: a.frontmatter.status === 'proximamente' })),
+    articles: articles.map((a) => ({ slug: a.slug, title: a.frontmatter.title, fighter: hasStats(a.frontmatter), sealed: a.frontmatter.status === 'proximamente',
+      universe: a.frontmatter.universe,
+      category: a.frontmatter.category,
+    })),
     videos,
     universes: UNIVERSE_OPTIONS,
     currentWeek: isoWeekKey(new Date()),

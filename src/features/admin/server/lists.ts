@@ -1,4 +1,5 @@
 import 'server-only';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { fileContentRepository } from '@/core/content/file-repository';
 import { getContentRepository } from '@/core/content';
@@ -113,4 +114,31 @@ export async function videoOptions(): Promise<VideoOption[]> {
     options.push(video);
   }
   return options;
+}
+
+/**
+ * Guarda `value` (ya comprobado) como lo publicado de la lista `key`, con su versión en el historial. `token` es la
+ * marca de concurrencia que vio el editor: si la lista cambió desde entonces, no guarda nada y devuelve `null`. Si no,
+ * la marca nueva.
+ */
+export async function commitList(adminId: string, key: ListKey, value: Prisma.InputJsonValue, token: string, note: string | null): Promise<string | null> {
+  return prisma.$transaction(async (tx) => {
+    let id: string;
+    if (token === NEW_LIST_TOKEN) {
+      try {
+        id = (await tx.cmsDocument.create({ data: { kind: LIST_KIND, key, published: value, publishedAt: new Date(), updatedById: adminId }, select: { id: true } })).id;
+      } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') return null;
+        throw error;
+      }
+    } else {
+      const updatedAt = new Date(token);
+      if (Number.isNaN(updatedAt.getTime())) return null;
+      const { count } = await tx.cmsDocument.updateMany({ where: { kind: LIST_KIND, key, updatedAt }, data: { published: value, publishedAt: new Date(), updatedById: adminId } });
+      if (count !== 1) return null;
+      id = (await tx.cmsDocument.findUniqueOrThrow({ where: { kind_key: { kind: LIST_KIND, key } }, select: { id: true } })).id;
+    }
+    await tx.cmsVersion.create({ data: { documentId: id, data: value, authorId: adminId, note } });
+    return (await tx.cmsDocument.findUniqueOrThrow({ where: { id }, select: { updatedAt: true } })).updatedAt.toISOString();
+  });
 }
