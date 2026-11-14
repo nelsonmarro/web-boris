@@ -20,6 +20,8 @@ Al entrar ves lo que tienes **pendiente**: los borradores sin publicar, las fich
 
 ## Editar una ficha
 
+La primera vez que abras una ficha, el panel te enseña cada parte del editor en un recorrido corto. Pasa con **Siguiente** (o las flechas del teclado) y sal cuando quieras con **Esc**. Para verlo otra vez, pulsa **Ver el recorrido**, arriba a la derecha de cualquier ficha.
+
 1. Entra en **Fichas** y busca la ficha por su nombre o un apodo (no hace falta escribirlo exacto). Los botones de arriba filtran por estado (**Borrador pendiente**, **Nuevas**, **Editadas**, **Selladas**, **Retiradas**) y por universo.
 2. Cambia lo que quieras: los datos básicos, la portada, la ficha lateral, el texto, los apodos, las fichas relacionadas, las preguntas frecuentes o los datos de la Arena.
 3. Pulsa **Guardar borrador** (o Ctrl + S). Un borrador **no se ve en la web**: puedes dejarlo a medias y seguir otro día.

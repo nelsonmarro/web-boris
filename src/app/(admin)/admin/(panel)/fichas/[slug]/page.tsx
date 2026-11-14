@@ -15,6 +15,7 @@ import { loadList } from '@/features/admin/server/lists';
 import { destinations, pathKey, suggestDestination } from '@/features/admin/lib/nav-tree';
 import { navSlugs } from '@/core/content/navigation';
 import { discardsEdits } from '@/features/admin/lib/leave-guard';
+import { PanelTour } from '@/features/admin/components/PanelTour';
 
 export const metadata: Metadata = { title: 'Editar ficha' };
 
@@ -35,9 +36,12 @@ export default async function EditArticlePage({ params, searchParams }: { params
   return (
     <div className="space-y-8">
       <div className="space-y-3">
-        <Link href="/admin/fichas" className="inline-flex min-h-10 items-center text-sm font-semibold text-white/80 underline underline-offset-4 hover:text-primary">
-          ← Todas las fichas
-        </Link>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <Link href="/admin/fichas" className="inline-flex min-h-10 items-center text-sm font-semibold text-white/80 underline underline-offset-4 hover:text-primary">
+            ← Todas las fichas
+          </Link>
+          <PanelTour tourId="editor-ficha" />
+        </div>
         <h1 className="text-3xl font-bold text-white">{state.data.frontmatter.title}</h1>
         <p className="text-white/80">
           {state.deleted ? (
@@ -104,7 +108,7 @@ export default async function EditArticlePage({ params, searchParams }: { params
         articles={options}
       />
 
-      <section aria-labelledby="historial" className="space-y-4 rounded-2xl border border-white/10 bg-[#061a2e]/60 p-5 @2xl:p-6">
+      <section aria-labelledby="historial" data-tour="historial" className="space-y-4 rounded-2xl border border-white/10 bg-[#061a2e]/60 p-5 @2xl:p-6">
         <h2 id="historial" className="text-xl font-bold text-white">
           Historial
         </h2>
@@ -139,7 +143,7 @@ export default async function EditArticlePage({ params, searchParams }: { params
         )}
       </section>
 
-      <section aria-labelledby="retirar" className="space-y-3 rounded-2xl border border-red-400/30 p-5 @2xl:p-6">
+      <section aria-labelledby="retirar" data-tour="retirar" className="space-y-3 rounded-2xl border border-red-400/30 p-5 @2xl:p-6">
         <h2 id="retirar" className="text-xl font-bold text-white">
           {state.deleted ? 'Volver a mostrar' : 'Retirar de la web'}
         </h2>

@@ -189,7 +189,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
     <div data-split={split || undefined} className={split ? 'xl:grid xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:items-start xl:gap-6' : ''}>
     <div className="min-w-0 space-y-6">
       {/* Barra fija y opaca: estado, guardar, publicar y el aviso, siempre a la vista al bajar por el formulario. */}
-      <div className="sticky top-0 z-20 -mx-4 space-y-3 border-b border-white/10 bg-[#00122E] px-4 py-3">
+      <div data-tour="barra" className="sticky top-0 z-20 -mx-4 space-y-3 border-b border-white/10 bg-[#00122E] px-4 py-3">
         <div className="flex flex-wrap items-center gap-3">
           <p className="min-w-0 basis-full text-sm text-white/80 @lg:basis-auto @lg:flex-1" aria-live="polite">
             {pending ? 'Guardando…' : dirty ? 'Hay cambios sin guardar.' : hasDraft ? 'Borrador guardado, sin publicar.' : 'Sin cambios: es lo que ve la web.'}
@@ -232,7 +232,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div data-tour="acciones" className="flex flex-wrap items-center gap-3">
         <label className="flex min-w-0 basis-full flex-col gap-1 text-sm text-white/80 @lg:basis-auto @lg:flex-1 @lg:flex-row @lg:items-center @lg:gap-2">
           <span className="shrink-0">Nota del cambio (opcional):</span>
           <input className={`${FIELD} py-1.5`} value={note} maxLength={200} placeholder="p. ej. Corrijo la longitud" onChange={(event) => setNote(event.target.value)} />
@@ -252,7 +252,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
         ) : null}
       </div>
 
-      <Section title="Datos básicos">
+      <Section title="Datos básicos" tour="datos">
         <TextField {...field('title')} label="Título" value={form.title} maxLength={200} onChange={(value) => set('title', value)} />
         <div className="grid gap-4 @2xl:grid-cols-2">
           <label className="block space-y-1">
@@ -297,7 +297,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
         </label>
       </Section>
 
-      <Section title="Portada" invalid={invalid.has('image')}>
+      <Section title="Portada" tour="portada" invalid={invalid.has('image')}>
         <div id={fieldId('image')} className="flex flex-wrap items-start gap-4">
           {form.image ? (
             // eslint-disable-next-line @next/next/no-img-element -- miniatura del panel
@@ -331,16 +331,16 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
         {form.image ? <FocalPointPicker id={fieldId('imagePosition')} src={form.image} value={form.imagePosition} onChange={(value) => set('imagePosition', value)} /> : null}
       </Section>
 
-      <Section title="Ficha lateral" invalid={invalid.has('infobox')}>
+      <Section title="Ficha lateral" tour="ficha-lateral" invalid={invalid.has('infobox')}>
         <div id={fieldId('infobox')} />
         <InfoboxEditor value={form.infobox} onChange={(value) => set('infobox', value)} />
       </Section>
 
-      <Section title="Texto" invalid={invalid.has('content')}>
+      <Section title="Texto" tour="texto" invalid={invalid.has('content')}>
         <SectionsEditor invalid={invalid.has('content')} articles={articles} value={form.content} onChange={(value) => set('content', value)} />
       </Section>
 
-      <Section title="Apodos y fichas relacionadas" invalid={invalid.has('aliases') || invalid.has('related')}>
+      <Section title="Apodos y fichas relacionadas" tour="relacionadas" invalid={invalid.has('aliases') || invalid.has('related')}>
         <TextField
           {...field('aliases')}
           label="Apodos"
@@ -359,7 +359,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
         <FaqEditor value={form.faq} onChange={(value) => set('faq', value)} />
       </Section>
 
-      <Section title="Datos de la Arena" invalid={invalid.has('stats')}>
+      <Section title="Datos de la Arena" tour="arena" invalid={invalid.has('stats')}>
         <p id={fieldId('stats')} className={HINT}>Opcionales. Con ellos la criatura puede combatir en la Arena.</p>
         <div className="grid gap-4 @2xl:grid-cols-2">
           <TextField label="Longitud (metros)" value={form.stats.length} range={{ min: 0, step: 0.1 }} onChange={(value) => setStat('length', value)} />
