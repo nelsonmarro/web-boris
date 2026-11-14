@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Route } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { requireAdmin } from '@/features/admin/server/require-admin';
@@ -10,15 +10,24 @@ import { ARTICLE_CATEGORIES } from '@/features/admin/lib/article-template';
 import { UNIVERSE_OPTIONS } from '@/features/admin/lib/universe-options';
 import { isValidSlug } from '@/core/content/overlay';
 import { LocalTime } from '@/features/admin/components/LocalTime';
+import { AddToMenu } from '@/features/admin/components/editor/AddToMenu';
+import { loadList } from '@/features/admin/server/lists';
+import { destinations, pathKey, suggestDestination } from '@/features/admin/lib/nav-tree';
+import { navSlugs, type NavGroup } from '@/core/content/navigation';
 
 export const metadata: Metadata = { title: 'Editar ficha' };
 
-export default async function EditArticlePage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ restaurada?: string; publicada?: string }> }) {
+export default async function EditArticlePage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ restaurada?: string; publicada?: string; menu?: string }> }) {
   await requireAdmin();
   const { slug } = await params;
   if (!isValidSlug(slug)) notFound();
-  const [state, all, { restaurada, publicada }] = await Promise.all([loadArticleEditor(slug), listArticles(), searchParams]);
+  const [state, all, menu, { restaurada, publicada, menu: addedToMenu }] = await Promise.all([loadArticleEditor(slug), listArticles(), loadList('navigation'), searchParams]);
   if (!state) notFound();
+
+  // Una ficha que se ve en la web y no sale en el menú: «¿Dónde va?», con el sitio sugerido por su categoría.
+  const nav = menu.value as NavGroup[];
+  const live = state.live && !state.deleted ? state.live : null;
+  const suggestion = live && !navSlugs(nav).has(slug) ? suggestDestination(nav, { universe: live.frontmatter.universe, category: live.frontmatter.category }, all) : undefined;
 
   const options = all.filter((article) => article.status !== 'borrada' && article.status !== 'nueva').map(({ slug: s, title }) => ({ slug: s, title }));
 
@@ -58,12 +67,30 @@ export default async function EditArticlePage({ params, searchParams }: { params
             .
           </p>
         ) : null}
+        {addedToMenu ? (
+          <p role="status" className="rounded-xl border border-emerald-400/40 bg-emerald-500/10 p-3 text-white">
+            Añadida al menú lateral. Para cambiarla de sitio, ve a{' '}
+            <Link href={'/admin/contenido/menu' as Route} className="font-semibold underline underline-offset-4 hover:text-primary">
+              Menú lateral
+            </Link>
+            .
+          </p>
+        ) : null}
         {restaurada ? (
           <p role="status" className="rounded-xl border border-emerald-400/40 bg-emerald-500/10 p-3 text-white">
             Versión copiada al borrador. Revísala y pulsa «Publicar» para que salga en la web.
           </p>
         ) : null}
       </div>
+
+      {suggestion !== undefined ? (
+        <AddToMenu
+          slug={slug}
+          token={menu.token}
+          destinations={destinations(nav).map((destination) => ({ key: pathKey(destination.path), label: destination.label }))}
+          suggested={suggestion ? pathKey(suggestion) : null}
+        />
+      ) : null}
 
       <ArticleEditor
         key={state.token}

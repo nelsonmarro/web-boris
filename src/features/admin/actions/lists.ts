@@ -1,13 +1,16 @@
 'use server';
 
-import { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
-import { isListKey, LIST_KIND } from '@/core/content/lists';
+import type { Prisma } from '@prisma/client';
+import { isListKey } from '@/core/content/lists';
+import { navSlugs, type NavGroup } from '@/core/content/navigation';
+import { isValidSlug } from '@/core/content/overlay';
+import { getContentRepository } from '@/core/content';
 import { revalidateContent } from '@/core/content/revalidate';
 import { checkList } from '../lib/list-check';
+import { addItem, destinations, pathKey } from '../lib/nav-tree';
 import { requireAdmin } from '../server/require-admin';
 import { audit } from '../server/audit';
-import { listContext, NEW_LIST_TOKEN } from '../server/lists';
+import { commitList, listContext, loadList } from '../server/lists';
 
 const PAYLOAD_MAX = 400_000;
 
@@ -18,6 +21,12 @@ export interface ListActionResult {
   errors?: string[];
   conflict?: boolean;
 }
+
+const CONFLICT: ListActionResult = {
+  ok: false,
+  conflict: true,
+  message: 'La lista ha cambiado desde que la abriste (en otra pestaña o por otra persona). Recarga la página y vuelve a aplicar tus cambios.',
+};
 
 /**
  * Publica una lista entera (novedades, votaciones…). Se comprueba como `check:content` y contra lo que ve la web
@@ -37,31 +46,35 @@ export async function publishList(key: string, payload: string, token: string, n
   const checked = checkList(key, value, await listContext());
   if ('errors' in checked) return { ok: false, message: 'No se puede publicar todavía:', errors: checked.errors };
 
-  const data = checked.value as Prisma.InputJsonValue;
   const cleanNote = typeof note === 'string' ? note.trim().slice(0, 200) || null : null;
-  const done = await prisma.$transaction(async (tx) => {
-    let id: string;
-    if (token === NEW_LIST_TOKEN) {
-      try {
-        id = (await tx.cmsDocument.create({ data: { kind: LIST_KIND, key, published: data, publishedAt: new Date(), updatedById: admin.id }, select: { id: true } })).id;
-      } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') return null;
-        throw error;
-      }
-    } else {
-      const updatedAt = new Date(token);
-      if (Number.isNaN(updatedAt.getTime())) return null;
-      const { count } = await tx.cmsDocument.updateMany({ where: { kind: LIST_KIND, key, updatedAt }, data: { published: data, publishedAt: new Date(), updatedById: admin.id } });
-      if (count !== 1) return null;
-      id = (await tx.cmsDocument.findUniqueOrThrow({ where: { kind_key: { kind: LIST_KIND, key } }, select: { id: true } })).id;
-    }
-    await tx.cmsVersion.create({ data: { documentId: id, data, authorId: admin.id, note: cleanNote } });
-    return (await tx.cmsDocument.findUniqueOrThrow({ where: { id }, select: { updatedAt: true } })).updatedAt.toISOString();
-  });
-  if (!done) {
-    return { ok: false, conflict: true, message: 'La lista ha cambiado desde que la abriste (en otra pestaña o por otra persona). Recarga la página y vuelve a aplicar tus cambios.' };
-  }
+  const done = await commitList(admin.id, key, checked.value as Prisma.InputJsonValue, token, cleanNote);
+  if (!done) return CONFLICT;
   await audit('list.publish', { userId: admin.id, target: key });
   revalidateContent();
   return { ok: true, token: done, message: 'Publicado. Ya se ve en la web.' };
+}
+
+/**
+ * «Añadir al menú» desde el editor de una ficha: la pone al final de `destination` (la clave de uno de los
+ * `destinations` del menú) y publica el menú. `token` es la marca del menú que vio el editor.
+ */
+export async function addArticleToMenu(slug: string, destination: string, token: string): Promise<ListActionResult> {
+  const admin = await requireAdmin();
+  if (typeof slug !== 'string' || !isValidSlug(slug) || typeof destination !== 'string' || typeof token !== 'string') return { ok: false, message: 'Datos no válidos.' };
+  const [state, article] = await Promise.all([loadList('navigation'), getContentRepository().getArticle(slug)]);
+  if (!article) return { ok: false, message: 'La ficha todavía no se ve en la web: publícala antes de añadirla al menú.' };
+  if (state.token !== token) return CONFLICT;
+  const nav = state.value as NavGroup[];
+  if (navSlugs(nav).has(slug)) return { ok: true, token: state.token, message: 'Ya estaba en el menú.' };
+  const target = destinations(nav).find((item) => pathKey(item.path) === destination);
+  if (!target) return { ok: false, message: 'Elige dónde va la ficha en el menú.' };
+
+  const title = article.frontmatter.title;
+  const checked = checkList('navigation', addItem(nav, target.path, { title, url: `/wiki/${slug}` }), await listContext());
+  if ('errors' in checked) return { ok: false, message: 'No se puede publicar el menú todavía:', errors: checked.errors };
+  const done = await commitList(admin.id, 'navigation', checked.value as Prisma.InputJsonValue, token, `Añade «${title}» desde su ficha`.slice(0, 200));
+  if (!done) return CONFLICT;
+  await audit('list.publish', { userId: admin.id, target: 'navigation' });
+  revalidateContent();
+  return { ok: true, token: done, message: `Añadida al menú en «${target.label}».` };
 }

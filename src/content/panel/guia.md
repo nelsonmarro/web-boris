@@ -12,13 +12,19 @@ La dirección es la de la web seguida de **/admin** (por ejemplo, `…/admin`).
 
 Si fallas varias veces seguidas, hay que esperar 15 minutos. Si pierdes el móvil **y** los códigos de recuperación, pídele a Nelson que restablezca tu cuenta.
 
+## La pantalla de inicio
+
+Al entrar ves lo que tienes **pendiente**: los borradores sin publicar, las fichas que no salen en el menú lateral y si la votación de la semana que viene está elegida (si no, será un duelo automático). Debajo, las últimas fichas editadas.
+
 ## Editar una ficha
 
-1. Entra en **Fichas** y busca la ficha por su nombre o un apodo (no hace falta escribirlo exacto).
+1. Entra en **Fichas** y busca la ficha por su nombre o un apodo (no hace falta escribirlo exacto). Los botones de arriba filtran por estado (**Borrador pendiente**, **Nuevas**, **Editadas**, **Selladas**, **Retiradas**) y por universo.
 2. Cambia lo que quieras: los datos básicos, la portada, la ficha lateral, el texto, los apodos, las fichas relacionadas, las preguntas frecuentes o los datos de la Arena.
 3. Pulsa **Guardar borrador** (o Ctrl + S). Un borrador **no se ve en la web**: puedes dejarlo a medias y seguir otro día.
 4. Pulsa **Vista previa** para ver cómo quedará, aunque no hayas guardado. En una pantalla grande, **Vista previa al lado** la muestra junto al editor y se actualiza sola mientras escribes.
 5. Cuando esté listo, pulsa **Publicar**. En unos segundos sale en la web: el aviso verde trae el enlace para verla.
+
+Cada ficha del listado lleva su estado: **Sin cambios** (la web muestra la versión original), **Editada** (se publicó desde el panel), **Borrador pendiente** (hay cambios guardados que la web aún no muestra), **Nueva, sin publicar**, **Retirada** y **Sellada**.
 
 Si algo impide publicar (falta la descripción, un apartado, una imagen que no existe…), el panel te lo dice en una lista y **guarda tu trabajo como borrador**. Pulsa cada aviso para ir al campo que hay que corregir (queda marcado en rojo) y vuelve a publicar.
 
@@ -45,7 +51,7 @@ Una ficha **sellada** muestra en la web el sello «Boris aún no ha desclasifica
 2. Escribe el nombre. La dirección (`/wiki/…`) se rellena sola; **no se puede cambiar después**.
 3. Elige el universo y la categoría. La ficha empieza **sellada** y con los apartados de su tipo.
 4. Complétala y publícala.
-5. Para que salga en el menú lateral, entra en **Contenido → Menú lateral**: arriba verás «Fichas que no están en el menú». Elige dónde va y pulsa **Añadir**, y luego **Publicar**.
+5. Al publicarla, el propio editor te avisa de que **no sale en el menú lateral** y te pregunta **¿Dónde va?**, con un sitio ya sugerido según su categoría. Pulsa **Añadir al menú** y queda publicado. También puedes hacerlo desde **Contenido → Menú lateral**, en «Fichas que no están en el menú».
 
 ## Imágenes
 
@@ -64,7 +70,7 @@ En **Contenido**:
 - **Vídeos de cada ficha**: qué fichas salen en cada vídeo («Aparece en»). Las que el título del vídeo ya nombra se detectan solas.
 - **Orden de la historia**: en qué orden ver los vídeos de cada universo.
 - **Empieza por aquí**: las fichas que ve primero quien llega nuevo.
-- **Menú lateral**: el orden del menú de la wiki, sus grupos e iconos. El orden de cada grupo es también el de «Anterior / Siguiente» en las fichas.
+- **Menú lateral**: el orden del menú de la wiki, sus grupos e iconos. Cada universo y cada grupo se despliegan con la flecha. Pulsa una entrada para cambiar su nombre, su enlace o su icono, o para **moverla a otro grupo** de una vez («Mover a»). Las flechas arriba y abajo la mueven un puesto, y **Buscar en el menú** encuentra una entrada por su nombre. El orden de cada grupo es también el de «Anterior / Siguiente» en las fichas.
 
 Estas listas se publican directamente (no tienen borrador).
 

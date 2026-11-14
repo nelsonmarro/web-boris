@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { addItem, canHaveChildren, destinations, itemAt, moveItem, removeItem, updateItem } from '../../src/features/admin/lib/nav-tree.ts';
+import { addItem, canHaveChildren, destinations, itemAt, keysAlong, moveItem, moveItemTo, moveTargets, removeItem, suggestDestination, updateItem, withKeys, withoutKeys } from '../../src/features/admin/lib/nav-tree.ts';
 import type { NavGroup } from '../../src/core/content/navigation.ts';
 
 const nav: NavGroup[] = [
@@ -38,4 +38,47 @@ test('destinations: universos y grupos con hueco para más fichas, con su camino
   assert.deepEqual(destinations(nav).map((d) => d.label), ['COLOSOS', 'COLOSOS › Personajes', 'COLOSOS › Personajes › Animales', 'GALEÓN']);
   assert.equal(canHaveChildren([0, 1, 0]), true);
   assert.equal(canHaveChildren([0, 1, 0, 0]), false);
+});
+
+test('moveTargets: ni dentro de sí misma, ni su sitio actual, ni más hondo que NAV_MAX_DEPTH', () => {
+  // «Personajes» lleva dos niveles dentro: solo cabe directamente bajo un universo (que no sea el suyo).
+  assert.deepEqual(moveTargets(nav, [0, 1]).map((d) => d.label), ['GALEÓN']);
+  // Una ficha suelta cabe en cualquier grupo salvo el suyo.
+  assert.deepEqual(moveTargets(nav, [0, 1, 0, 0]).map((d) => d.label), ['COLOSOS', 'COLOSOS › Personajes', 'GALEÓN']);
+});
+
+test('moveItemTo: lleva la entrada con lo que tiene dentro al final del destino', () => {
+  const moved = moveItemTo(nav, [0, 1, 0, 1], [1]);
+  assert.deepEqual(moved[1].items.map((i) => i.title), ['Historia', 'B']);
+  assert.deepEqual(itemAt(moved, [0, 1, 0]).items?.map((i) => i.title), ['A']);
+  const group = moveItemTo(nav, [0, 1], [1]);
+  assert.deepEqual(group[1].items.at(-1)?.items?.[0].items?.map((i) => i.title), ['A', 'B']);
+  assert.equal(moveItemTo(nav, [0, 1], [0, 1, 0]), nav); // dentro de sí misma: no
+  assert.equal(JSON.stringify(nav), frozen);
+});
+
+test('moveItemTo: corrige el destino cuando cuelga de un hermano posterior', () => {
+  const flat: NavGroup[] = [{ title: 'U', items: [{ title: 'Suelta', url: '/wiki/s' }, { title: 'Grupo', url: '#', items: [{ title: 'X', url: '/wiki/x' }] }] }];
+  const moved = moveItemTo(flat, [0, 0], [0, 1]);
+  assert.deepEqual(moved[0].items.map((i) => i.title), ['Grupo']);
+  assert.deepEqual(moved[0].items[0].items?.map((i) => i.title), ['X', 'Suelta']);
+});
+
+test('suggestDestination: el grupo con fichas de su categoría y universo; si no, su universo', () => {
+  const places = [
+    { slug: 'a', universe: 'Colosos', category: 'Coloso' },
+    { slug: 'b', universe: 'Colosos', category: 'Coloso' },
+    { slug: 'galeon', universe: 'Capitán de Galeón', category: 'Historia' },
+  ];
+  assert.deepEqual(suggestDestination(nav, { universe: 'Colosos', category: 'Coloso' }, places), [0, 1, 0]);
+  assert.deepEqual(suggestDestination(nav, { universe: 'Capitán de Galeón', category: 'Vehículo' }, places), [1]);
+  assert.equal(suggestDestination(nav, { universe: 'Otro', category: 'Coloso' }, places), null);
+});
+
+test('withKeys / withoutKeys: las claves no llegan a lo que se publica', () => {
+  let n = 0;
+  const keyed = withKeys(nav, () => `k${n++}`);
+  assert.equal(keyed[0].items[1].items?.[0].items?.[1].key, 'k5');
+  assert.deepEqual(withoutKeys(keyed), nav);
+  assert.deepEqual(keysAlong(keyed, [0, 1, 0, 1]), ['k0', 'k2', 'k3', 'k5']);
 });

@@ -35,7 +35,9 @@ const parse = (value: unknown): ArticleData | null => {
   return parsed.success ? parsed.data : null;
 };
 
-export type ArticleStatus = 'archivo' | 'publicada' | 'borrador' | 'nueva' | 'borrada';
+import type { ArticleStatus } from '../lib/article-filters';
+
+export type { ArticleStatus };
 
 export interface ArticleListItem {
   slug: string;
@@ -43,6 +45,8 @@ export interface ArticleListItem {
   universe: string;
   category?: string;
   sealed: boolean;
+  /** Portada (la `image` de lo que se edita). */
+  image?: string;
   status: ArticleStatus;
   /** Tiene cambios guardados sin publicar (además de su estado). */
   hasDraft: boolean;
@@ -63,6 +67,7 @@ export async function listArticles(): Promise<ArticleListItem[]> {
       universe: file.frontmatter.universe,
       category: file.frontmatter.category,
       sealed: file.frontmatter.status === 'proximamente',
+      image: file.frontmatter.image,
       status: 'archivo',
       hasDraft: false,
       updatedAt: null,
@@ -79,6 +84,7 @@ export async function listArticles(): Promise<ArticleListItem[]> {
       universe: data?.frontmatter.universe ?? base!.universe,
       category: data ? data.frontmatter.category : base!.category,
       sealed: data ? data.frontmatter.status === 'proximamente' : base!.sealed,
+      image: data ? data.frontmatter.image : base!.image,
       status,
       hasDraft: doc.draft !== null,
       updatedAt: doc.updatedAt.toISOString(),
