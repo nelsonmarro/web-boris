@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation';
 import { requireAdmin } from '@/features/admin/server/require-admin';
 import { getContentRepository } from '@/core/content';
 import { isoWeekKey } from '@/core/content/iso-week';
-import type { CuratedPoll, NewsEntry, StoryOrderEntry, VideoLink } from '@/core/content/schemas';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { LIST_TITLES, loadList, videoOptions } from '@/features/admin/server/lists';
 import { LIST_DESCRIPTIONS, LIST_PUBLIC_PATHS, LIST_ROUTES } from '@/features/admin/lib/list-routes';
@@ -17,7 +16,6 @@ import { VideosEditor } from '@/features/admin/components/lists/VideosEditor';
 import { StoryOrderEditor } from '@/features/admin/components/lists/StoryOrderEditor';
 import { StartHereEditor } from '@/features/admin/components/lists/StartHereEditor';
 import { NavigationEditor } from '@/features/admin/components/lists/NavigationEditor';
-import type { NavGroup } from '@/core/content/navigation';
 
 export const metadata: Metadata = { title: 'Contenido' };
 
@@ -80,12 +78,12 @@ export default async function AdminListPage({ params, searchParams }: Props) {
         ) : null}
       </div>
 
-      {key === 'news' ? <NewsEditor key={editorKey} {...common} initial={state.value as NewsEntry[]} /> : null}
-      {key === 'polls' ? <PollsEditor key={editorKey} {...common} initial={state.value as CuratedPoll[]} /> : null}
-      {key === 'videos' ? <VideosEditor key={editorKey} {...common} initial={state.value as VideoLink[]} /> : null}
-      {key === 'storyOrder' ? <StoryOrderEditor key={editorKey} {...common} initial={state.value as StoryOrderEntry[]} /> : null}
-      {key === 'startHere' ? <StartHereEditor key={editorKey} {...common} initial={state.value as string[]} /> : null}
-      {key === 'navigation' ? <NavigationEditor key={editorKey} {...common} initial={state.value as NavGroup[]} /> : null}
+      {state.key === 'news' ? <NewsEditor key={editorKey} {...common} initial={state.value} /> : null}
+      {state.key === 'polls' ? <PollsEditor key={editorKey} {...common} initial={state.value} /> : null}
+      {state.key === 'videos' ? <VideosEditor key={editorKey} {...common} initial={state.value} /> : null}
+      {state.key === 'storyOrder' ? <StoryOrderEditor key={editorKey} {...common} initial={state.value} /> : null}
+      {state.key === 'startHere' ? <StartHereEditor key={editorKey} {...common} initial={state.value} /> : null}
+      {state.key === 'navigation' ? <NavigationEditor key={editorKey} {...common} initial={state.value} /> : null}
 
       <section aria-labelledby="historial" className="space-y-4 rounded-2xl border border-white/10 bg-[#061a2e]/60 p-5 @2xl:p-6">
         <h2 id="historial" className="text-xl font-bold text-white">

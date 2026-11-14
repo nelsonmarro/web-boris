@@ -13,7 +13,8 @@ import { LocalTime } from '@/features/admin/components/LocalTime';
 import { AddToMenu } from '@/features/admin/components/editor/AddToMenu';
 import { loadList } from '@/features/admin/server/lists';
 import { destinations, pathKey, suggestDestination } from '@/features/admin/lib/nav-tree';
-import { navSlugs, type NavGroup } from '@/core/content/navigation';
+import { navSlugs } from '@/core/content/navigation';
+import { discardsEdits } from '@/features/admin/lib/leave-guard';
 
 export const metadata: Metadata = { title: 'Editar ficha' };
 
@@ -25,7 +26,7 @@ export default async function EditArticlePage({ params, searchParams }: { params
   if (!state) notFound();
 
   // Una ficha que se ve en la web y no sale en el menú: «¿Dónde va?», con el sitio sugerido por su categoría.
-  const nav = menu.value as NavGroup[];
+  const nav = menu.value;
   const live = state.live && !state.deleted ? state.live : null;
   const suggestion = live && !navSlugs(nav).has(slug) ? suggestDestination(nav, { universe: live.frontmatter.universe, category: live.frontmatter.category }, all) : undefined;
 
@@ -126,7 +127,7 @@ export default async function EditArticlePage({ params, searchParams }: { params
                   </p>
                 </div>
                 {!version.isDeletion ? (
-                  <form action={restoreArticleVersion.bind(null, slug, version.id)}>
+                  <form {...discardsEdits} action={restoreArticleVersion.bind(null, slug, version.id)}>
                     <button type="submit" className={SMALL_BUTTON}>
                       Recuperar en el borrador<span className="sr-only"> la versión del <LocalTime iso={version.createdAt} /></span>
                     </button>
@@ -143,14 +144,14 @@ export default async function EditArticlePage({ params, searchParams }: { params
           {state.deleted ? 'Volver a mostrar' : 'Retirar de la web'}
         </h2>
         {state.deleted ? (
-          <form action={undeleteArticle.bind(null, slug)} className="space-y-3">
+          <form {...discardsEdits} action={undeleteArticle.bind(null, slug)} className="space-y-3">
             <p className="text-white/80">La ficha vuelve a verse en la web tal como estaba antes de retirarla.</p>
             <button type="submit" className={SMALL_BUTTON}>
               Volver a mostrar en la web
             </button>
           </form>
         ) : (
-          <form action={deleteArticle.bind(null, slug)} className="space-y-3">
+          <form {...discardsEdits} action={deleteArticle.bind(null, slug)} className="space-y-3">
             <p className="text-white/80">
               Deja de verse en la web, en los listados y en la búsqueda. No se borra nada: puedes volver a mostrarla cuando quieras.
             </p>

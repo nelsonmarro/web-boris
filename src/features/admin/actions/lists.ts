@@ -1,8 +1,7 @@
 'use server';
 
-import type { Prisma } from '@prisma/client';
 import { isListKey } from '@/core/content/lists';
-import { navSlugs, type NavGroup } from '@/core/content/navigation';
+import { navSlugs } from '@/core/content/navigation';
 import { isValidSlug } from '@/core/content/overlay';
 import { getContentRepository } from '@/core/content';
 import { revalidateContent } from '@/core/content/revalidate';
@@ -47,7 +46,7 @@ export async function publishList(key: string, payload: string, token: string, n
   if ('errors' in checked) return { ok: false, message: 'No se puede publicar todavía:', errors: checked.errors };
 
   const cleanNote = typeof note === 'string' ? note.trim().slice(0, 200) || null : null;
-  const done = await commitList(admin.id, key, checked.value as Prisma.InputJsonValue, token, cleanNote);
+  const done = await commitList(admin.id, key, checked.value, token, cleanNote);
   if (!done) return CONFLICT;
   await audit('list.publish', { userId: admin.id, target: key });
   revalidateContent();
@@ -64,7 +63,7 @@ export async function addArticleToMenu(slug: string, destination: string, token:
   const [state, article] = await Promise.all([loadList('navigation'), getContentRepository().getArticle(slug)]);
   if (!article) return { ok: false, message: 'La ficha todavía no se ve en la web: publícala antes de añadirla al menú.' };
   if (state.token !== token) return CONFLICT;
-  const nav = state.value as NavGroup[];
+  const nav = state.value;
   if (navSlugs(nav).has(slug)) return { ok: true, token: state.token, message: 'Ya estaba en el menú.' };
   const target = destinations(nav).find((item) => pathKey(item.path) === destination);
   if (!target) return { ok: false, message: 'Elige dónde va la ficha en el menú.' };
@@ -72,7 +71,7 @@ export async function addArticleToMenu(slug: string, destination: string, token:
   const title = article.frontmatter.title;
   const checked = checkList('navigation', addItem(nav, target.path, { title, url: `/wiki/${slug}` }), await listContext());
   if ('errors' in checked) return { ok: false, message: 'No se puede publicar el menú todavía:', errors: checked.errors };
-  const done = await commitList(admin.id, 'navigation', checked.value as Prisma.InputJsonValue, token, `Añade «${title}» desde su ficha`.slice(0, 200));
+  const done = await commitList(admin.id, 'navigation', checked.value, token, `Añade «${title}» desde su ficha`.slice(0, 200));
   if (!done) return CONFLICT;
   await audit('list.publish', { userId: admin.id, target: 'navigation' });
   revalidateContent();

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Route } from 'next';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import type { ListKey } from '@/core/content/lists';
 import { publishList, type ListActionResult } from '../../actions/lists';
 import { FIELD } from '../editor/field-styles';
 import { canonicalJson } from '../../lib/canonical-json';
+import { useLeaveGuard } from '../use-leave-guard';
 
 interface Props {
   listKey: ListKey;
@@ -19,7 +20,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-/** Marco de los editores de listas: barra fija con «Publicar», nota del cambio, avisos y aviso al salir sin publicar. */
+/** Marco de los editores de listas: barra fija con «Publicar», nota del cambio, avisos y aviso al salir sin publicar (`useLeaveGuard`). */
 export function ListShell({ listKey, path, token, initial, value, children }: Props) {
   const router = useRouter();
   const [note, setNote] = useState('');
@@ -28,12 +29,7 @@ export function ListShell({ listKey, path, token, initial, value, children }: Pr
   // Canónico: las claves de lo publicado llegan de la base en otro orden (jsonb) y no son cambios.
   const dirty = canonicalJson(value) !== canonicalJson(initial);
 
-  useEffect(() => {
-    if (!dirty) return;
-    const onLeave = (event: BeforeUnloadEvent) => event.preventDefault();
-    window.addEventListener('beforeunload', onLeave);
-    return () => window.removeEventListener('beforeunload', onLeave);
-  }, [dirty]);
+  useLeaveGuard(dirty, '¿Salir sin publicar? Los cambios que no has publicado se perderán.');
 
   const publish = () =>
     startTransition(async () => {
