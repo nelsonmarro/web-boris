@@ -11,7 +11,7 @@ export default async function NewArticlePage() {
   await requireAdmin();
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <Link href="/admin/fichas" className="text-sm font-semibold text-white/80 underline underline-offset-4 hover:text-primary">
+      <Link href="/admin/fichas" className="inline-flex min-h-10 items-center text-sm font-semibold text-white/80 underline underline-offset-4 hover:text-primary">
         ← Todas las fichas
       </Link>
       <h1 className="text-3xl font-bold text-white">Nueva ficha</h1>

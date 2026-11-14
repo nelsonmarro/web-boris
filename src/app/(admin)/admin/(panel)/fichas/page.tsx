@@ -115,7 +115,7 @@ export default async function AdminArticlesPage({ searchParams }: { searchParams
       <p className="flex flex-wrap items-center gap-3 text-sm text-white/70" aria-live="polite">
         {articles.length} de {all.length} fichas
         {filtered ? (
-          <Link href="/admin/fichas" className="font-semibold text-white/80 underline underline-offset-4 hover:text-primary">
+          <Link href="/admin/fichas" className="inline-flex min-h-10 items-center font-semibold text-white/80 underline underline-offset-4 hover:text-primary">
             Quitar filtros
           </Link>
         ) : null}

@@ -8,6 +8,8 @@ La dirección es la de la web seguida de **/admin** (por ejemplo, `…/admin`).
 2. **Activar la verificación en dos pasos.** Instala en el móvil una app de códigos (Google Authenticator, Microsoft Authenticator o Authy), escanea el código QR y escribe los 6 dígitos que te muestre.
 3. **Guardar los 10 códigos de recuperación.** Cada uno te deja entrar una vez si pierdes el móvil. No se vuelven a mostrar: cópialos, descárgalos o imprímelos con los botones de esa pantalla y guárdalos en un lugar seguro.
 
+Al pulsar **Ya los guardé: entrar al panel** entras directamente, sin volver a escribir nada.
+
 **Las demás veces**: correo, contraseña y los 6 dígitos que muestre la app en ese momento (cambian cada 30 segundos).
 
 Si fallas varias veces seguidas, hay que esperar 15 minutos. Si pierdes el móvil **y** los códigos de recuperación, pídele a Nelson que restablezca tu cuenta.
@@ -58,8 +60,9 @@ Una ficha **sellada** muestra en la web el sello «Boris aún no ha desclasifica
 - Sube imágenes en **Imágenes**, o desde el editor de una ficha con **Elegir portada** o el botón **Imagen** del texto.
 - Valen JPG, PNG, WebP, AVIF, GIF y HEIC, de hasta 20 MB. Se guardan optimizadas y **sin datos del archivo** (como la ubicación de una foto del móvil).
 - Al elegir una imagen, el panel te pide **describir qué se ve en ella**. Esa descripción la leen quienes no pueden ver la imagen y los buscadores. No es el pie de foto, que se escribe aparte. La de una imagen subida se recuerda para la próxima vez.
-- En el selector también salen las imágenes que ya tenía la web.
-- Solo se puede borrar una imagen que no use ninguna ficha.
+- En el selector también salen las imágenes que ya tenía la web, agrupadas por universo y personaje («Colosos › The Bloop»). Cada imagen dice en qué fichas se usa, y puedes buscarlas por su nombre, su ficha o su universo.
+- Solo se puede borrar una imagen que no use ninguna ficha: en **Imágenes**, el botón **Borrar** solo aparece en esas.
+- **Encuadre de la portada**: las tarjetas y la cabecera de la ficha recortan la portada. Pulsa sobre la imagen la parte que debe verse siempre (o usa los deslizadores) y mira al lado cómo queda cada recorte. **Centrar** lo deja como estaba.
 
 ## Resto del contenido
 

@@ -32,7 +32,7 @@ const ACTIVITY: Record<string, string> = {
   'list.publish': 'Lista publicada',
 };
 
-const LINK = 'font-semibold text-white underline underline-offset-4 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
+const LINK = 'inline-flex min-h-10 items-center font-semibold text-white underline underline-offset-4 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
 const CARD = 'space-y-3 rounded-2xl border p-5';
 
 export default async function AdminHomePage() {
@@ -115,7 +115,7 @@ export default async function AdminHomePage() {
                 </li>
               ))}
             </ul>
-            <Link href={'/admin/contenido/menu' as Route} className={`${LINK} inline-block text-primary`}>
+            <Link href={'/admin/contenido/menu' as Route} className={`${LINK} text-primary`}>
               Añadirlas en el menú lateral
             </Link>
           </div>
@@ -130,7 +130,7 @@ export default async function AdminHomePage() {
                 ? `Sin elegir: será el duelo automático ${pair}.`
                 : 'Sin elegir, y no hay fichas suficientes con datos de la Arena para un duelo automático.'}
           </p>
-          <Link href={'/admin/contenido/votaciones' as Route} className={`${LINK} inline-block text-primary`}>
+          <Link href={'/admin/contenido/votaciones' as Route} className={`${LINK} text-primary`}>
             {chosen ? 'Ver las votaciones' : 'Elegir la votación'}
           </Link>
         </div>

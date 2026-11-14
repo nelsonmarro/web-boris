@@ -78,7 +78,15 @@ export function MediaPicker({ open, onClose, onSelect }: Props) {
   };
 
   const images = (tab === 'uploads' ? library?.uploads : library?.assets) ?? [];
-  const shown = query ? images.filter((image) => normalize(`${image.name} ${image.alt}`).includes(normalize(query))) : images;
+  const shown = query ? images.filter((image) => normalize(`${image.group ?? ''} ${image.name} ${image.alt} ${(image.usedIn ?? []).join(' ')}`).includes(normalize(query))) : images;
+  // Las de la web, agrupadas por universo y entidad («Colosos › The Bloop»); las subidas, en una sola lista.
+  const groups: [string, LibraryImage[]][] = [];
+  for (const image of shown) {
+    const name = tab === 'assets' ? (image.group ?? 'Otras') : '';
+    const last = groups.at(-1);
+    if (last && last[0] === name) last[1].push(image);
+    else groups.push([name, [image]]);
+  }
 
   return (
     <dialog
@@ -166,27 +174,37 @@ export function MediaPicker({ open, onClose, onSelect }: Props) {
               </div>
               <label className="block space-y-1">
                 <span className="sr-only">Buscar imagen</span>
-                <input className={FIELD} value={query} placeholder="Buscar por nombre" onChange={(event) => setQuery(event.target.value)} />
+                <input className={FIELD} value={query} placeholder="Buscar por nombre, ficha o universo" onChange={(event) => setQuery(event.target.value)} />
               </label>
               <p role="status" className={HINT}>
                 {status || (library ? `${shown.length} ${shown.length === 1 ? 'imagen' : 'imágenes'}` : 'Cargando…')}
               </p>
             </div>
-            <ul className="grid grid-cols-2 gap-3 overflow-y-auto p-4 @md:grid-cols-3 @3xl:grid-cols-4" role="list">
-              {shown.map((image) => (
-                <li key={image.path}>
-                  <button
-                    type="button"
-                    className="group block w-full overflow-hidden rounded-xl border border-white/15 bg-[#061a2e] text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:border-primary"
-                    onClick={() => choose(image)}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element -- miniaturas del panel: sin optimizar, cargan al verse */}
-                    <img src={image.path} alt="" loading="lazy" className="aspect-video w-full object-cover" />
-                    <span className="block truncate px-2 py-1.5 text-sm text-white/90">{image.name}</span>
-                  </button>
-                </li>
+            <div className="space-y-5 overflow-y-auto p-4">
+              {groups.map(([group, items]) => (
+                <section key={group || 'subidas'} aria-label={group || undefined} className="space-y-2">
+                  {group ? <h3 className="text-sm font-bold text-white/90">{group}</h3> : null}
+                  <ul className="grid grid-cols-2 gap-3 @md:grid-cols-3 @3xl:grid-cols-4" role="list">
+                    {items.map((image) => (
+                      <li key={image.path}>
+                        <button
+                          type="button"
+                          className="group block w-full overflow-hidden rounded-xl border border-white/15 bg-[#061a2e] text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:border-primary"
+                          onClick={() => choose(image)}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element -- miniaturas del panel: sin optimizar, cargan al verse */}
+                          <img src={image.path} alt="" loading="lazy" className="aspect-video w-full object-cover" />
+                          <span className="block px-2 pt-1.5 text-sm text-white/90 line-clamp-2">{image.name}</span>
+                          <span className="block truncate px-2 pb-1.5 text-xs text-white/60">
+                            {image.usedIn?.length ? `En ${image.usedIn.join(', ')}` : 'Sin usar'}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
               ))}
-            </ul>
+            </div>
           </>
         )}
       </div>

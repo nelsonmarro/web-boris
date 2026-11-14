@@ -7,6 +7,7 @@ import { open } from '../lib/secret-box';
 import { hashRecoveryCode, looksLikeRecoveryCode } from '../lib/recovery-codes';
 import { isThrottled, WINDOW_MINUTES } from '../lib/lockout';
 import { createSlots } from '../lib/slots';
+import { readHandoff } from '../lib/setup-handoff';
 import { adminSecret } from './app-secret';
 import { audit } from './audit';
 
@@ -97,4 +98,23 @@ export async function authenticateAdmin(input: { email: string; password: string
 
   await audit('login.ok', { userId: account.id, ipHash, target: mfa ? undefined : 'sin 2FA: pendiente de configurar' });
   return { id: account.id, email, name: account.name, sessionVersion: account.sessionVersion, mfa };
+}
+
+/**
+ * Entrada justo después de configurar la cuenta (auditoría #17): vale el pase que crea la acción de configuración
+ * (`createHandoff`), si la cuenta sigue siendo administradora, ya tiene el 2FA activo y no ha cambiado su
+ * `sessionVersion` desde entonces. La configuración acaba de comprobar la contraseña nueva y un código TOTP.
+ */
+export async function completeSetupLogin(token: string): Promise<AdminLogin | null> {
+  const secret = adminSecret();
+  if (!secret) return null;
+  const handoff = readHandoff(secret, token, Date.now());
+  if (!handoff) return null;
+  const user = await prisma.user.findUnique({ where: { id: handoff.userId } });
+  if (!user?.email || user.role !== ADMIN_ROLE || !user.totpEnabledAt || user.sessionVersion !== handoff.sessionVersion) return null;
+  // Un solo uso: gastarlo sube la versión (el pase deja de coincidir). De dos peticiones a la vez, solo gana una.
+  const claimed = await prisma.user.updateMany({ where: { id: user.id, sessionVersion: handoff.sessionVersion }, data: { sessionVersion: { increment: 1 } } });
+  if (claimed.count !== 1) return null;
+  await audit('login.ok', { userId: user.id, target: 'tras configurar la cuenta' });
+  return { id: user.id, email: user.email, name: user.name, sessionVersion: handoff.sessionVersion + 1, mfa: true };
 }

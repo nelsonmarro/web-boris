@@ -34,7 +34,7 @@ export default async function EditArticlePage({ params, searchParams }: { params
   return (
     <div className="space-y-8">
       <div className="space-y-3">
-        <Link href="/admin/fichas" className="text-sm font-semibold text-white/80 underline underline-offset-4 hover:text-primary">
+        <Link href="/admin/fichas" className="inline-flex min-h-10 items-center text-sm font-semibold text-white/80 underline underline-offset-4 hover:text-primary">
           ← Todas las fichas
         </Link>
         <h1 className="text-3xl font-bold text-white">{state.data.frontmatter.title}</h1>

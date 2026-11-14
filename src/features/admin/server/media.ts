@@ -7,6 +7,8 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { MEDIA_FILE, MEDIA_PREFIX } from '@/core/content/media-path';
 import { processImage } from '../lib/image-processing';
+import { assetLabel, usageByImage } from '../lib/media-labels';
+import { fileContentRepository } from '@/core/content/file-repository';
 
 /**
  * Carpeta de las imágenes subidas: `MEDIA_DIR` (en producción, un volumen de Docker) o `.media/` en local.
@@ -33,6 +35,10 @@ export interface LibraryImage {
   width?: number;
   height?: number;
   name: string;
+  /** Grupo legible de las imágenes de la web («Colosos › The Bloop»). */
+  group?: string;
+  /** Títulos de las fichas que la usan (borrador, publicada o archivo). */
+  usedIn?: string[];
 }
 
 /** Recodifica y guarda una imagen subida. Si ya existía (mismo contenido), devuelve la que hay. */
@@ -92,12 +98,12 @@ export function listRepoAssets(): LibraryImage[] {
         const rel = `/${path.relative(root, full).split(path.sep).join('/')}`;
         // Ni el logo ni los esquemas del sitio sirven como imagen de una ficha (regla de check:content).
         if (/\/(Branding|Esquemas)\//.test(rel)) continue;
-        found.push({ path: rel, alt: '', name: rel.replace('/assets/', '') });
+        found.push({ path: rel, alt: '', ...assetLabel(rel) });
       }
     }
   };
   if (existsSync(path.join(root, 'assets'))) walk(path.join(root, 'assets'));
-  repoAssets = found.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+  repoAssets = found.sort((a, b) => a.group!.localeCompare(b.group!, 'es') || a.name.localeCompare(b.name, 'es'));
   return repoAssets;
 }
 
@@ -120,4 +126,25 @@ export async function deleteUpload(id: string): Promise<{ deleted: boolean; used
   const file = mediaFilePath(asset.filename);
   if (file) await fs.rm(file, { force: true });
   return { deleted: true, usedBy: [] };
+}
+
+/**
+ * Qué fichas usan cada imagen (por su ruta): las de los archivos y, para las que tienen documento en el panel, su
+ * borrador y lo publicado (que sustituye al archivo). Para mostrarlo en el selector y en la biblioteca.
+ */
+export async function imageUsage(): Promise<Map<string, string[]>> {
+  const [files, docs] = await Promise.all([
+    fileContentRepository.getArticles(),
+    prisma.cmsDocument.findMany({ where: { kind: 'article' }, select: { key: true, draft: true, published: true } }),
+  ]);
+  const articles = new Map(files.map((file) => [file.slug, { title: file.frontmatter.title, texts: [JSON.stringify(file.frontmatter), file.content] }]));
+  const titleOf = (value: unknown) => {
+    const title = (value as { frontmatter?: { title?: unknown } } | null)?.frontmatter?.title;
+    return typeof title === 'string' ? title : null;
+  };
+  for (const doc of docs) {
+    const title = titleOf(doc.draft) ?? titleOf(doc.published) ?? articles.get(doc.key)?.title ?? doc.key;
+    articles.set(doc.key, { title, texts: [JSON.stringify(doc.draft ?? null), JSON.stringify(doc.published ?? null)] });
+  }
+  return usageByImage([...articles.values()]);
 }
