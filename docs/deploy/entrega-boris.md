@@ -36,8 +36,12 @@ Recomendado: subir Next.js al parche **16.4.6** (aviso moderado de 16.4.3, no ex
 ssh root@82.25.95.39
 cd /srv/web-boris
 git log --oneline -1                       # apunta este commit: es al que volverías
+git checkout main                          # si el VPS quedó en la rama hotfix/inteligencia-maja-vlad
 deploy/deploy.sh
 ```
+
+Si el VPS está en una rama de corrección (como `hotfix/inteligencia-maja-vlad`, del 16/11), `deploy.sh` actualizaría esa
+rama y **no** traería el panel: por eso el `git checkout main`. Esas correcciones ya están también en `main`.
 
 `deploy.sh` trae `main`, construye, **hace una copia de la base** (`/var/backups/web-boris`), aplica las tres
 migraciones del panel (`admin_acceso`, `cms_contenido`, `cms_imagenes`), reinicia la app y regenera las páginas. Debe
