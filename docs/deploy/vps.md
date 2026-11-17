@@ -71,10 +71,10 @@ deploy/admin-create.sh correo@ejemplo.com "Nombre"   # crea la cuenta
 deploy/admin-create.sh correo@ejemplo.com --reset    # otra contraseña temporal, quita el 2FA y cierra sus sesiones
 ```
 
-- El comando imprime **una vez** una contraseña temporal. Pásasela a su dueño por un canal privado.
+- El comando imprime **una vez** una contraseña temporal, que **caduca a las 72 horas**. Pásasela a su dueño por un canal privado.
 - En el primer acceso (`/admin/login`, con el código vacío) el panel obliga a elegir una contraseña propia y a
   activar la verificación en dos pasos con una app de códigos; al terminar muestra 10 códigos de recuperación.
-- Si pierde el móvil **y** los códigos de recuperación: `--reset`.
+- La contraseña y los códigos de recuperación los gestiona cada uno en **Mi cuenta** (`/admin/cuenta`). Si pierde el móvil **y** los códigos de recuperación: `--reset`.
 - Mejor que el correo de acceso de Boris **no** sea el público de contacto.
 - `AUTH_SECRET` cifra los secretos del 2FA: si se cambia, hay que hacer `--reset` de todas las cuentas.
 - Tras 8 intentos fallidos desde una misma red hay que esperar 15 minutos.

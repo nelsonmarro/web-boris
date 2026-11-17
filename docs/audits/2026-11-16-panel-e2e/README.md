@@ -144,8 +144,11 @@ shadcn, typography). Next 16.4.3 corta `next build` solo cuando detecta un agent
   retiradas, listas que no se bloquean, editores que las marcan, aviso antes de retirar, nombres en el inicio);
   `rel`/`target`/`ping` prohibidos; «Cerrar sesión» sube `sessionVersion`; mensaje propio del freno (y hash de
   relleno también en la rama frenada); «Vista previa al lado» oculta en el móvil.
-- **Pendiente:** «Mi cuenta», tope global del bloqueo, caducidad de la temporal, mensajes en inglés, confirmación al
-  quitar un universo, objetivos táctiles, endurecimiento del contenedor y Next 16.4.6.
+- **Hecho** (rama `feat/panel-mi-cuenta`): «Mi cuenta» (contraseña, códigos de recuperación), aviso al entrar con un
+  código de recuperación, temporal que caduca a las 72 h, tope global del bloqueo que no frena a las redes habituales
+  de la cuenta, mensajes en español (Zod y MDX), confirmación al quitar un universo o grupo con entradas, objetivos
+  táctiles, aviso de configurar que se oculta al volver a escribir, Next 16.4.6 y contenedor endurecido.
+- **Pendiente:** nada de esta auditoría.
 
 ## Orden propuesto
 
