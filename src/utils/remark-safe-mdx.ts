@@ -17,7 +17,10 @@ export const SAFE_HTML_TAGS: ReadonlySet<string> = new Set([
 
 /** Atributos que nunca pasan: manejadores de eventos, estilos y clases (podrían tapar la página) y HTML crudo. */
 const isForbiddenAttribute = (name: string): boolean =>
-  /^on/i.test(name) || ['style', 'class', 'classname', 'id', 'dangerouslysetinnerhtml', 'srcdoc', 'formaction', 'ref', 'key'].includes(name.toLowerCase());
+  /^on/i.test(name) ||
+  // `rel`/`target`: un `rel="opener"` daría a la página enlazada acceso a la pestaña de la wiki (tabnabbing); los enlaces
+  // externos ya abren en otra pestaña con `noopener`. `ping`: avisaría a otro servidor de cada clic.
+  ['style', 'class', 'classname', 'id', 'dangerouslysetinnerhtml', 'srcdoc', 'formaction', 'ref', 'key', 'rel', 'target', 'ping'].includes(name.toLowerCase());
 
 const URL_ATTRIBUTES = new Set(['href', 'src', 'poster', 'cite']);
 

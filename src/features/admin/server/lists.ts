@@ -8,6 +8,7 @@ import { FEATURED_VIDEOS } from '@/features/marketing/config/videos';
 import { hasStats } from '@/features/monsters/lib/stats';
 import { UNIVERSE_OPTIONS } from '../lib/universe-options';
 import type { ListContext } from '../lib/list-check';
+import { listArticles, type ArticleListItem } from './articles';
 import { tokenOf, versionItems, VERSIONS_INCLUDE, type VersionItem } from './cms-store';
 
 export const LIST_TITLES: Record<ListKey, string> = {
@@ -74,10 +75,14 @@ export async function loadList<K extends ListKey>(key: K, versionId?: string): P
   return state as ListEditorState<K>;
 }
 
+/** Fichas retiradas de la web, por su dirección, con su nombre (para avisos y editores). */
+export const retiredArticles = (all: readonly ArticleListItem[]): Map<string, string> =>
+  new Map(all.filter((article) => article.status === 'borrada').map((article) => [article.slug, article.title]));
+
 /** Todo lo que necesitan las comprobaciones de las listas, con el contenido que ve la web ahora. */
 export async function listContext(): Promise<ListContext> {
   const repo = getContentRepository();
-  const [articles, canal, currentPolls] = await Promise.all([repo.getArticles(), getCanal(), repo.getCuratedPolls()]);
+  const [articles, canal, currentPolls, all] = await Promise.all([repo.getArticles(), getCanal(), repo.getCuratedPolls(), listArticles()]);
   const canalIds = new Set(canal.map((video) => video.id));
   return {
     slugs: new Set(articles.map((a) => a.slug)),
@@ -87,6 +92,7 @@ export async function listContext(): Promise<ListContext> {
     canalIds,
     knownVideoIds: new Set([...FEATURED_VIDEOS.map((video) => video.id), ...canalIds]),
     currentPolls,
+    retired: retiredArticles(all),
     now: new Date(),
   };
 }

@@ -5,7 +5,8 @@ import { requireAdmin } from '@/features/admin/server/require-admin';
 import { getContentRepository } from '@/core/content';
 import { isoWeekKey } from '@/core/content/iso-week';
 import { hasStats } from '@/features/monsters/lib/stats';
-import { LIST_TITLES, loadList, videoOptions } from '@/features/admin/server/lists';
+import { LIST_TITLES, loadList, retiredArticles, videoOptions } from '@/features/admin/server/lists';
+import { listArticles } from '@/features/admin/server/articles';
 import { LIST_DESCRIPTIONS, LIST_PUBLIC_PATHS, LIST_ROUTES } from '@/features/admin/lib/list-routes';
 import { LocalTime } from '@/features/admin/components/LocalTime';
 import { UNIVERSE_OPTIONS } from '@/features/admin/lib/universe-options';
@@ -30,10 +31,11 @@ export default async function AdminListPage({ params, searchParams }: Props) {
   const key = Object.hasOwn(LIST_ROUTES, lista) ? LIST_ROUTES[lista] : undefined;
   if (!key) notFound();
   const { version, publicada } = await searchParams;
-  const [state, articles, videos] = await Promise.all([
+  const [state, articles, videos, all] = await Promise.all([
     loadList(key, typeof version === 'string' ? version : undefined),
     getContentRepository().getArticles(),
     videoOptions(),
+    listArticles(),
   ]);
   const path = `/admin/contenido/${lista}`;
   const common = {
@@ -46,6 +48,7 @@ export default async function AdminListPage({ params, searchParams }: Props) {
     videos,
     universes: UNIVERSE_OPTIONS,
     currentWeek: isoWeekKey(new Date()),
+    retired: [...retiredArticles(all)].map(([slug, title]) => ({ slug, title })),
   };
   // `key` del editor: se monta de nuevo al publicar o al cargar otra versión.
   const editorKey = `${state.token}-${state.restoring ?? ''}`;

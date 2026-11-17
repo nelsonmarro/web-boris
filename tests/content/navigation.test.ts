@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { flattenNav, NavigationSchema, navigationProblems, navSlugs, unlistedSlugs, type NavGroup } from '../../src/core/content/navigation.ts';
+import { flattenNav, NavigationSchema, navigationProblems, navSlugs, unlistedSlugs, visibleNavigation, type NavGroup } from '../../src/core/content/navigation.ts';
 import { WIKI_NAVIGATION } from '../../src/features/monsters/config/wiki-navigation.ts';
 
 const nav: NavGroup[] = [
@@ -48,4 +48,31 @@ test('navigationProblems: ficha inexistente, repetida y grupo vacío', () => {
 
 test('unlistedSlugs: las fichas que faltan en el menú', () => {
   assert.deepEqual(unlistedSlugs(nav, ['the-bloop', 'animales', 'nueva']), ['nueva']);
+});
+
+test('visibleNavigation: quita las fichas retiradas, conserva sus subentradas y elimina lo que queda vacío', () => {
+  const menu: NavGroup[] = [
+    {
+      title: 'UNIVERSO COLOSOS',
+      items: [
+        { title: 'Wiki', url: '/wiki' },
+        { title: 'Personajes', url: '#', items: [{ title: 'Animales', url: '/wiki/animales', items: [{ title: 'The Bloop', url: '/wiki/the-bloop' }, { title: 'Retirada', url: '/wiki/retirada' }] }] },
+        { title: 'Solo retiradas', url: '#', items: [{ title: 'Retirada 2', url: '/wiki/retirada-2' }] },
+      ],
+    },
+    { title: 'OTRO', items: [{ title: 'Retirada 3', url: '/wiki/retirada-3' }] },
+  ];
+  const live = new Set(['the-bloop']);
+  assert.deepEqual(visibleNavigation(menu, live), [
+    {
+      title: 'UNIVERSO COLOSOS',
+      items: [
+        { title: 'Wiki', url: '/wiki' },
+        // «Animales» (/wiki/animales) no se ve: queda como grupo con lo que sí se ve.
+        { title: 'Personajes', url: '#', items: [{ title: 'Animales', url: '#', items: [{ title: 'The Bloop', url: '/wiki/the-bloop' }] }] },
+      ],
+    },
+  ]);
+  // Con todo visible no cambia nada, y el menú de los archivos queda igual.
+  assert.deepEqual(visibleNavigation(menu, new Set(['animales', 'the-bloop', 'retirada', 'retirada-2', 'retirada-3'])), menu);
 });

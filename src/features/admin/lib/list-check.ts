@@ -17,6 +17,12 @@ export interface ListContext {
   knownVideoIds: ReadonlySet<string>;
   /** Votaciones que ve la web ahora: las de semanas pasadas y la actual no se pueden cambiar. */
   currentPolls: readonly CuratedPoll[];
+  /**
+   * Fichas retiradas de la web (por su dirección, con su nombre). En el menú y en «Empieza por aquí» no impiden publicar:
+   * la web no las muestra y vuelven a salir donde estaban si se muestran otra vez. Una votación futura con una ficha
+   * retirada sí hay que cambiarla, con un aviso que la nombra.
+   */
+  retired: ReadonlyMap<string, string>;
   now: Date;
 }
 
@@ -63,16 +69,24 @@ function crossCheck(list: ParsedList, ctx: ListContext): string[] {
   switch (list.key) {
     case 'news':
       return crossCheckNews(list.data, ctx.slugs);
-    case 'polls':
-      return [...lockedPollProblems(list.data, ctx.currentPolls, ctx.now), ...crossCheckPolls(list.data, ctx.slugs, ctx.fighterSlugs, ctx.sealedSlugs, ctx.now)];
+    case 'polls': {
+      const generic = crossCheckPolls(list.data, ctx.slugs, ctx.fighterSlugs, ctx.sealedSlugs, ctx.now).filter(
+        (message) => ![...ctx.retired.keys()].some((slug) => message.includes(`"${slug}" no existe`)),
+      );
+      const week = isoWeekKey(ctx.now);
+      const retired = list.data.filter((poll) => poll.semana > week).flatMap((poll) =>
+        [poll.a, poll.b].filter((slug) => ctx.retired.has(slug)).map((slug) => `La votación de la semana ${poll.semana} usa «${ctx.retired.get(slug)}», que está retirada de la web: vuelve a mostrarla o elige otra ficha.`),
+      );
+      return [...lockedPollProblems(list.data, ctx.currentPolls, ctx.now), ...retired, ...generic];
+    }
     case 'videos':
       return crossCheckVideoLinks(list.data, ctx.slugs, ctx.knownVideoIds);
     case 'storyOrder':
       return crossCheckStoryOrder(list.data, ctx.universeKeys, ctx.canalIds);
     case 'startHere':
-      return crossCheckStartHere(list.data, ctx.slugs, ctx.sealedSlugs);
+      return crossCheckStartHere(list.data.filter((slug) => !ctx.retired.has(slug)), ctx.slugs, ctx.sealedSlugs);
     case 'navigation':
-      return navigationProblems(list.data, ctx.slugs);
+      return navigationProblems(list.data, new Set([...ctx.slugs, ...ctx.retired.keys()]));
   }
 }
 

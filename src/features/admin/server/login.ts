@@ -50,7 +50,10 @@ async function consumeSecondFactor(user: { id: string; totpSecret: string | null
  * Comprueba correo + contraseña + segundo factor. Devuelve la cuenta o `null`, sin decir nunca qué falló: por fuera,
  * una cuenta que no existe, una frenada y una contraseña mala son indistinguibles (también en el tiempo de respuesta).
  */
-export async function authenticateAdmin(input: { email: string; password: string; code: string }, ip: string): Promise<AdminLogin | null> {
+/** Resultado del intento frenado por exceso de fallos: el formulario lo dice en vez de «Datos incorrectos». */
+export const THROTTLED = 'throttled' as const;
+
+export async function authenticateAdmin(input: { email: string; password: string; code: string }, ip: string): Promise<AdminLogin | typeof THROTTLED | null> {
   const secret = adminSecret();
   if (!secret) {
     console.error('[admin:login] AUTH_SECRET ausente o corto: el acceso al panel está cerrado.');
@@ -78,7 +81,9 @@ export async function authenticateAdmin(input: { email: string; password: string
   if (isThrottled({ network, accountAndNetwork, account: accountTotal })) {
     // No se apunta como fallo: si contara, el freno no caducaría nunca mientras alguien siguiera insistiendo.
     await audit('login.throttled', { userId: account?.id, ipHash, target: email });
-    return null;
+    // El mismo trabajo de hash que un intento normal: sin él, la rapidez de la respuesta delataría que la cuenta existe.
+    await hashSlot(() => burnPasswordTime(password));
+    return THROTTLED;
   }
 
   // Siempre se hace el trabajo del hash, exista o no la cuenta: el tiempo de respuesta no la delata.

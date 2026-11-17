@@ -14,6 +14,8 @@ import { AddToMenu } from '@/features/admin/components/editor/AddToMenu';
 import { loadList } from '@/features/admin/server/lists';
 import { destinations, pathKey, suggestDestination } from '@/features/admin/lib/nav-tree';
 import { navSlugs } from '@/core/content/navigation';
+import { getContentRepository } from '@/core/content';
+import { isoWeekKey } from '@/core/content/iso-week';
 import { discardsEdits } from '@/features/admin/lib/leave-guard';
 import { PanelTour } from '@/features/admin/components/PanelTour';
 
@@ -23,8 +25,27 @@ export default async function EditArticlePage({ params, searchParams }: { params
   await requireAdmin();
   const { slug } = await params;
   if (!isValidSlug(slug)) notFound();
-  const [state, all, menu, { restaurada, publicada, menu: addedToMenu }] = await Promise.all([loadArticleEditor(slug), listArticles(), loadList('navigation'), searchParams]);
+  const repo = getContentRepository();
+  const [state, all, menu, { restaurada, publicada, menu: addedToMenu }, startHere, polls, liveArticles] = await Promise.all([
+    loadArticleEditor(slug),
+    listArticles(),
+    loadList('navigation'),
+    searchParams,
+    repo.getStartHere(),
+    repo.getCuratedPolls(),
+    repo.getArticles(),
+  ]);
   if (!state) notFound();
+
+  // Dónde aparece la ficha, para avisar antes de retirarla: la web la oculta en todos esos sitios.
+  const week = isoWeekKey(new Date());
+  const usedIn = [
+    ...(navSlugs(menu.value).has(slug) ? ['el menú lateral'] : []),
+    ...(startHere.includes(slug) ? ['«Empieza por aquí»'] : []),
+    ...polls.filter((poll) => poll.semana > week && (poll.a === slug || poll.b === slug)).map((poll) => `la votación de la semana ${poll.semana}`),
+    ...liveArticles.filter((article) => article.slug !== slug && article.frontmatter.related?.includes(slug)).map((article) => `las relacionadas de «${article.frontmatter.title}»`),
+  ];
+  const futurePoll = usedIn.some((place) => place.startsWith('la votación'));
 
   // Una ficha que se ve en la web y no sale en el menú: «¿Dónde va?», con el sitio sugerido por su categoría.
   const nav = menu.value;
@@ -159,6 +180,15 @@ export default async function EditArticlePage({ params, searchParams }: { params
             <p className="text-white/80">
               Deja de verse en la web, en los listados y en la búsqueda. No se borra nada: puedes volver a mostrarla cuando quieras.
             </p>
+            {usedIn.length ? (
+              <div className="rounded-xl border border-amber-400/40 bg-amber-500/10 p-4 text-white">
+                <p className="font-semibold">Ahora aparece en {usedIn.length === 1 ? usedIn[0] : `${usedIn.slice(0, -1).join(', ')} y ${usedIn.at(-1)}`}.</p>
+                <p className="mt-1 text-sm text-white/85">
+                  Al retirarla, la web la oculta también ahí. Si vuelves a mostrarla, reaparece donde estaba.
+                  {futurePoll ? ' La votación que la usa habrá que cambiarla por otra ficha antes de publicar las votaciones.' : ''}
+                </p>
+              </div>
+            ) : null}
             <button type="submit" className={DANGER_BUTTON}>
               Retirar «{state.data.frontmatter.title}» de la web
             </button>

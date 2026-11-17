@@ -65,3 +65,10 @@ test('isSafeUrl: rutas, anclas y esquemas permitidos; el resto no (ni disfrazado
     assert.equal(isSafeUrl(url), false, url);
   }
 });
+
+test('en los enlaces quita rel, target y ping (tabnabbing y avisos a otros servidores)', async () => {
+  const { code, issues } = await run('<a href="https://example.com" rel="opener" target="_blank" ping="https://tracker.example">fuera</a>\n');
+  assert.doesNotMatch(code, /opener|tracker\.example|"_blank"/);
+  assert.match(code, /https:\/\/example\.com/);
+  assert.equal(issues.length, 3);
+});

@@ -3,7 +3,13 @@ import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import { clientIp } from "@/features/community/lib/voter";
-import { ADMIN_ROLE, authenticateAdmin, completeSetupLogin } from "@/features/admin/server/login";
+import { CredentialsSignin } from "next-auth";
+import { ADMIN_ROLE, authenticateAdmin, completeSetupLogin, THROTTLED } from "@/features/admin/server/login";
+
+/** Intento rechazado por exceso de fallos recientes: `loginAction` muestra «espera 15 minutos» (`code`). */
+export class ThrottledSignin extends CredentialsSignin {
+  code = THROTTLED;
+}
 import { authConfig } from "./auth.config";
 
 const { handlers: authHandlers, auth: authSession, signIn: authSignIn, signOut: authSignOut } = NextAuth({
@@ -20,12 +26,13 @@ const { handlers: authHandlers, auth: authSession, signIn: authSignIn, signOut: 
           { email: text(credentials.email), password: text(credentials.password), code: text(credentials.code) },
           clientIp((name) => request.headers.get(name)),
         );
+        if (login === THROTTLED) throw new ThrottledSignin();
         if (!login) return null;
         return { id: login.id, email: login.email, name: login.name, role: ADMIN_ROLE, mfa: login.mfa, sessionVersion: login.sessionVersion };
       },
     }),
     // Entrada al terminar `/admin/configurar`: solo con el pase de un solo uso que crea esa acción en el servidor
-    // (`createHandoff`, firmado con AUTH_SECRET y caducado al minuto). Sin él no hay forma de usar este proveedor.
+    // (`createHandoff`, firmado con AUTH_SECRET, de un solo uso y caducado a los 15 minutos). Sin él no hay forma de usar este proveedor.
     Credentials({
       id: "admin-setup",
       credentials: { token: {} },

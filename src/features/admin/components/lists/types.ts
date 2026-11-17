@@ -23,4 +23,6 @@ export interface ListEditorProps<T> {
   universes: string[];
   /** Semana ISO actual (`YYYY-Www`). */
   currentWeek: string;
+  /** Fichas retiradas de la web (dirección y nombre): las listas pueden seguir nombrándolas, pero la web no las muestra. */
+  retired: { slug: string; title: string }[];
 }

@@ -26,7 +26,7 @@ Al terminar verás **10 códigos de recuperación**: cada uno te deja entrar una
 
 Correo, contraseña y los 6 dígitos que muestre la app en ese momento (cambian cada 30 segundos).
 
-> Si fallas varias veces seguidas, hay que esperar 15 minutos. Si pierdes el móvil **y** los códigos de recuperación, pídele a Nelson que restablezca tu cuenta.
+> Si fallas varias veces seguidas, el panel te avisa de que esperes 15 minutos: mientras tanto no deja entrar, aunque escribas bien los datos. Si pierdes el móvil **y** los códigos de recuperación, pídele a Nelson que restablezca tu cuenta.
 
 ## La pantalla de inicio
 
@@ -185,7 +185,7 @@ Deshacer, recuperar una versión anterior o quitar una ficha de la web.
 <Captura nombre="historial" alt="Historial de una ficha con sus versiones publicadas y los botones Recuperar en el borrador, y debajo la sección Retirar de la web" pie="El historial y Retirar de la web, al final del editor de cada ficha." />
 
 1. **Historial**: cada vez que publicas queda una versión. **Recuperar en el borrador** trae una anterior para revisarla y volver a publicarla; no se publica sola. En una lista, **Cargar esta versión**.
-2. **Retirar de la web**: la ficha deja de verse, pero no se borra nada. Puedes **volver a mostrarla** cuando quieras.
+2. **Retirar de la web**: la ficha deja de verse, pero no se borra nada. Antes de retirarla, el panel te dice dónde aparece (menú lateral, «Empieza por aquí», votaciones, relacionadas): la web la oculta también ahí, y si **vuelves a mostrarla** reaparece donde estaba. Una votación futura que la use tendrás que cambiarla por otra ficha.
 
 Más ayudas:
 

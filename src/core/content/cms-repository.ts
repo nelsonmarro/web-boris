@@ -5,6 +5,7 @@ import { fileContentRepository } from './file-repository';
 import { ARTICLE_KIND, overlayArticles, type ArticleDoc } from './overlay';
 import { LIST_KIND, isListKey, overlayList, type ListKey, type ListValues } from './lists';
 import type { ContentRepository } from './types';
+import { visibleNavigation } from './navigation';
 
 /** Lo publicado en el panel se relee como mucho cada `TTL_MS`; publicar lo vacía al momento (`invalidateCmsCache`). */
 const TTL_MS = 30_000;
@@ -80,5 +81,9 @@ export const cmsContentRepository: ContentRepository = {
   getVideoLinks: () => list('videos', () => fileContentRepository.getVideoLinks()),
   getStoryOrder: () => list('storyOrder', () => fileContentRepository.getStoryOrder()),
   getStartHere: () => list('startHere', () => fileContentRepository.getStartHere()),
-  getNavigation: () => list('navigation', () => fileContentRepository.getNavigation()),
+  // Sin entradas a fichas retiradas: el menú lateral nunca enlaza a un 404.
+  async getNavigation() {
+    const [nav, articles] = await Promise.all([list('navigation', () => fileContentRepository.getNavigation()), getArticles()]);
+    return visibleNavigation(nav, new Set(articles.map((article) => article.slug)));
+  },
 };

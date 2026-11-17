@@ -14,13 +14,18 @@ interface Props {
   value: string[];
   options: ArticleOption[];
   onChange: (next: string[]) => void;
+  /** Fichas retiradas que puede tener la lista: salen con su nombre y la marca «retirada». */
+  retired?: ArticleOption[];
 }
 
 /** Fichas relacionadas, en el orden en que deben salir. Se eligen por su nombre. */
-export function RelatedEditor({ slug, value, options, onChange, hint = 'Si no eliges ninguna, la web las calcula sola (por menciones, menú y categoría).', addLabel = 'Añadir ficha relacionada' }: Props & { hint?: string; addLabel?: string }) {
+export function RelatedEditor({ slug, value, options, onChange, retired = [], hint = 'Si no eliges ninguna, la web las calcula sola (por menciones, menú y categoría).', addLabel = 'Añadir ficha relacionada' }: Props & { hint?: string; addLabel?: string }) {
   const listId = useId();
   const [query, setQuery] = useState('');
-  const titleOf = (target: string) => options.find((option) => option.slug === target)?.title ?? target;
+  const titleOf = (target: string) => {
+    const gone = retired.find((option) => option.slug === target);
+    return options.find((option) => option.slug === target)?.title ?? (gone ? `${gone.title} (retirada: no se ve en la web)` : target);
+  };
   const available = options.filter((option) => option.slug !== slug && !value.includes(option.slug));
 
   const add = () => {

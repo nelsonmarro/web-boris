@@ -53,7 +53,8 @@ export default async function AdminHomePage() {
 
   const byRecent = (a: { updatedAt: string | null }, b: { updatedAt: string | null }) => (b.updatedAt ?? '').localeCompare(a.updatedAt ?? '');
   const drafts = all.filter((article) => article.hasDraft && article.status !== 'borrada').sort(byRecent);
-  const titles = new Map(live.map((article) => [article.slug, article.frontmatter.title]));
+  // Nombres también de las retiradas: una votación futura puede seguir nombrando una.
+  const titles = new Map([...all.map((article) => [article.slug, article.title] as const), ...live.map((article) => [article.slug, article.frontmatter.title] as const)]);
   const unlisted = unlistedSlugs(nav, live.map((article) => article.slug));
   const recent = all.filter((article) => article.updatedAt).sort(byRecent).slice(0, 5);
 
