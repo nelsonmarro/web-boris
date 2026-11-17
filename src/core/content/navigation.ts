@@ -80,6 +80,25 @@ export function navigationProblems(nav: readonly NavGroup[], articleSlugs: Reado
   return problems;
 }
 
+/**
+ * El menú que ve la web: sin entradas a fichas que no se ven (retiradas desde el panel) ni grupos que se quedan vacíos.
+ * Una entrada de ficha retirada que tiene subentradas visibles se queda como grupo. Los datos guardados no cambian: al
+ * volver a mostrar la ficha, reaparece donde estaba.
+ */
+export function visibleNavigation(nav: readonly NavGroup[], liveSlugs: ReadonlySet<string>): NavGroup[] {
+  const keep = (items: readonly NavItem[]): NavItem[] =>
+    items.flatMap((item) => {
+      const children = item.items ? keep(item.items) : undefined;
+      const isArticle = item.url.startsWith('/wiki/') && !STATIC_ROUTES.has(item.url);
+      if (isArticle && !liveSlugs.has(item.url.slice('/wiki/'.length))) {
+        return children?.length ? [{ ...item, url: '#', items: children }] : [];
+      }
+      if (item.url === '#' && !children?.length) return [];
+      return [children ? { ...item, items: children } : item];
+    });
+  return nav.map((group) => ({ ...group, items: keep(group.items) })).filter((group) => group.items.length > 0);
+}
+
 /** Fichas publicadas que todavía no salen en el menú. */
 export const unlistedSlugs = (nav: readonly NavGroup[], articleSlugs: Iterable<string>): string[] => {
   const listed = navSlugs(nav);

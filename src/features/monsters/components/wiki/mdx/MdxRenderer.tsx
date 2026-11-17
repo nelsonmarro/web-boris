@@ -130,7 +130,7 @@ const components = {
     }
     if (/^(https?:)?\/\//i.test(href)) {
       return (
-        <a href={href} target="_blank" rel="noopener noreferrer" {...props} className={LINK_CLASS}>
+        <a {...props} href={href} target="_blank" rel="noopener noreferrer" className={LINK_CLASS}>
           {children}
         </a>
       );

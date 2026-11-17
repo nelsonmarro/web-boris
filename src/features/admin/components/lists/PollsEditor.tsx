@@ -28,7 +28,7 @@ const toValue = (rows: Row[]): CuratedPoll[] =>
 
 const nextWeek = (week: string) => addWeeks(week, 1);
 
-export function PollsEditor({ path, token, initial, articles, currentWeek }: ListEditorProps<CuratedPoll>) {
+export function PollsEditor({ path, token, initial, articles, currentWeek, retired }: ListEditorProps<CuratedPoll>) {
   const [rows, setRows] = useState<Row[]>(() =>
     initial.map((poll) => ({ semana: poll.semana, tipo: poll.tipo, a: poll.a, b: poll.b, pregunta: poll.pregunta ?? '', locked: poll.semana <= currentWeek })),
   );
@@ -83,6 +83,11 @@ export function PollsEditor({ path, token, initial, articles, currentWeek }: Lis
                         <span className={LABEL}>{side === 'a' ? 'Primera opción' : 'Segunda opción'}</span>
                         <select className={FIELD} value={row[side]} onChange={(event) => update(index, { [side]: event.target.value })}>
                           <option value="">Elige una ficha</option>
+                          {retired.some((gone) => gone.slug === row[side]) ? (
+                            <option value={row[side]} disabled>
+                              {retired.find((gone) => gone.slug === row[side])!.title} (retirada: elige otra)
+                            </option>
+                          ) : null}
                           {options.map((article) => (
                             <option key={article.slug} value={article.slug}>
                               {article.title}

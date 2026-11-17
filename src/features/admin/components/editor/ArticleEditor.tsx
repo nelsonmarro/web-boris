@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Route } from 'next';
+import { cn } from '@/utils/cn';
 import { Eye, PanelRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { ArticleData } from '@/core/content/overlay';
@@ -241,7 +242,7 @@ export function ArticleEditor({ slug, initial, token: initialToken, hasDraft: in
           <Eye aria-hidden="true" className="size-4" />
           Vista previa<span className="sr-only"> (se abre en una pestaña nueva, con lo que hay ahora en el editor)</span>
         </button>
-        <button type="button" className={`${SMALL_BUTTON} hidden xl:inline-flex ${split ? 'border-primary text-primary' : ''}`} aria-pressed={split} onClick={() => setSplit((value) => !value)}>
+        <button type="button" className={cn(SMALL_BUTTON, 'hidden xl:inline-flex', split && 'border-primary text-primary')} aria-pressed={split} onClick={() => setSplit((value) => !value)}>
           <PanelRight aria-hidden="true" className="size-4" />
           Vista previa al lado
         </button>

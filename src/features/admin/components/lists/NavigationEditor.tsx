@@ -38,7 +38,7 @@ const nextKey = () => `n${++sequence}`;
 const normalize = (text: string) => text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 
 /** Editor del menú lateral: un árbol compacto, una línea por entrada, con los grupos plegados. */
-export function NavigationEditor({ path, token, initial, articles }: ListEditorProps<NavGroup>) {
+export function NavigationEditor({ path, token, initial, articles, retired }: ListEditorProps<NavGroup>) {
   const listId = useId();
   const [nav, setNav] = useState<KeyedGroup[]>(() => withKeys(initial, nextKey));
   const value = useMemo(() => withoutKeys(nav), [nav]);
@@ -50,6 +50,8 @@ export function NavigationEditor({ path, token, initial, articles }: ListEditorP
   const offerUndo = useUndo();
 
   const titleOf = (slug: string) => articles.find((a) => a.slug === slug)?.title ?? slug;
+  // Entradas a fichas retiradas: se quedan (vuelven a verse si se muestra la ficha), pero la web no las pinta.
+  const retiredSlugs = new Set(retired.map((gone) => gone.slug));
   const missing = unlistedSlugs(value, articles.map((a) => a.slug));
   const targets = destinations(nav);
 
@@ -118,6 +120,9 @@ export function NavigationEditor({ path, token, initial, articles }: ListEditorP
           >
             {Icon ? <Icon aria-hidden="true" className="size-4 shrink-0 text-primary" /> : null}
             <span className={`truncate font-semibold ${item.title ? 'text-white' : 'text-white/60 italic'}`}>{label}</span>
+            {retiredSlugs.has(item.url.slice('/wiki/'.length)) ? (
+              <span className="shrink-0 rounded-full border border-amber-400/50 px-2 py-0.5 text-xs font-semibold text-amber-200">Retirada: no se ve en la web</span>
+            ) : null}
             <span className="hidden truncate text-sm text-white/60 @lg:inline">{item.url === '#' ? `Grupo · ${item.items?.length ?? 0}` : item.url}</span>
             <span className="sr-only">(editar)</span>
           </button>

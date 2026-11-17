@@ -14,9 +14,8 @@ anterior al panel: hoy `/admin` lleva a la pantalla antigua de Auth.js. `main` t
 - [ ] **Quedar con Boris** para el primer acceso, a ser posible en una videollamada **el mismo día** en que creas su
       cuenta: la contraseña temporal no caduca y, si se filtrara, quien la use primero se quedaría la cuenta.
 - [ ] Que Boris tenga en el móvil una **app de códigos**: Google Authenticator, Microsoft Authenticator o Authy.
-- [ ] Recomendado antes de entregar (auditoría, «Orden propuesto»): la tanda que arregla la retirada de fichas,
-      `rel="opener"`, el cierre de sesión, el mensaje de bloqueo y «Vista previa al lado» en el móvil. Se puede
-      desplegar sin ella, pero Boris no debería **retirar** fichas que estén en el menú hasta que esté.
+- [x] La tanda «antes de entregar» de la auditoría (retirada de fichas, `rel="opener"`, cierre de sesión, mensaje de
+      bloqueo y «Vista previa al lado» en el móvil) ya está en `main`.
 
 ## 1. En tu máquina
 
@@ -153,8 +152,8 @@ Envíale **dos mensajes por canales distintos**:
 - **Si Boris pierde el móvil:** entra con un código de recuperación. Si tampoco los tiene:
   `deploy/admin-create.sh correo-de-boris@ejemplo.com --reset` (nueva temporal, quita el 2FA y cierra sus sesiones) y
   repetir el paso 7.
-- **Si se bloquea por intentos fallidos:** esperar 15 minutos. Hoy el aviso dice «Datos incorrectos» aunque escriba
-  bien los datos (pendiente de la auditoría).
+- **Si se bloquea por intentos fallidos:** el panel le dice «Demasiados intentos fallidos seguidos… espera 15
+  minutos». Basta con esperar.
 - **Si quiere cambiar su contraseña:** de momento no hay pantalla para ello; `--reset` y configurar de nuevo.
 - **Copias:** diarias en `/var/backups/web-boris` (base e imágenes). Bájalas de vez en cuando:
   `scp root@82.25.95.39:'/var/backups/web-boris/*' .`

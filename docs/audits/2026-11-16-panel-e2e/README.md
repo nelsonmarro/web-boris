@@ -138,6 +138,15 @@ información con `'use cache'` dentro de `unstable_cache()`) **no es explotable 
 dos), pero conviene subir `next` a **16.4.6** antes de desplegar. El resto son herramientas de desarrollo (eslint,
 shadcn, typography). Next 16.4.3 corta `next build` solo cuando detecta un agente de IA (`AI_AGENT`); en Docker no.
 
+## Estado
+
+- **Hecho** (rama `fix/panel-antes-de-entregar`): nginx en el repo; retirada de fichas (menú público sin fichas
+  retiradas, listas que no se bloquean, editores que las marcan, aviso antes de retirar, nombres en el inicio);
+  `rel`/`target`/`ping` prohibidos; «Cerrar sesión» sube `sessionVersion`; mensaje propio del freno (y hash de
+  relleno también en la rama frenada); «Vista previa al lado» oculta en el móvil.
+- **Pendiente:** «Mi cuenta», tope global del bloqueo, caducidad de la temporal, mensajes en inglés, confirmación al
+  quitar un universo, objetivos táctiles, endurecimiento del contenedor y Next 16.4.6.
+
 ## Orden propuesto
 
 1. **Antes de desplegar:** nginx (hecho en el repo; copiar al VPS) y Next 16.4.6.

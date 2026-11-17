@@ -16,6 +16,7 @@ const ctx: ListContext = {
     { semana: '2026-W46', tipo: 'duelo', a: 'luque', b: 'vlad-julia' },
     { semana: '2026-W48', tipo: 'duelo', a: 'the-bloop', b: 'vlad-julia' },
   ],
+  retired: new Map(),
   now: NOW,
 };
 
@@ -83,4 +84,17 @@ test('menú: esquema y fichas que existan, sin repetir', () => {
   assert.ok('errors' in bad && bad.errors.length === 2, JSON.stringify(bad));
   const outside = checkList('navigation', [{ title: 'X', items: [{ title: 'Fuera', url: 'https://evil.example' }] }], ctx);
   assert.ok('errors' in outside && outside.errors[0].startsWith('Universo «X»:'), JSON.stringify(outside));
+});
+
+test('fichas retiradas: no bloquean el menú ni «Empieza por aquí»; en una votación futura, aviso con su nombre', () => {
+  const retiredCtx: ListContext = { ...ctx, retired: new Map([['ficha-e2e', 'Ficha E2E']]) };
+  const menu = [{ title: 'COLOSOS', items: [{ title: 'TB', url: '/wiki/the-bloop' }, { title: 'Ficha E2E', url: '/wiki/ficha-e2e' }] }];
+  assert.ok('value' in checkList('navigation', menu, retiredCtx));
+  // Sin la ficha en `retired` (de verdad no existe), sigue siendo un error.
+  assert.ok('errors' in checkList('navigation', menu, ctx));
+  assert.ok('value' in checkList('startHere', ['the-bloop', 'ficha-e2e'], retiredCtx));
+  const polls = [...ctx.currentPolls, { semana: '2026-W49', tipo: 'duelo' as const, a: 'ficha-e2e', b: 'luque' }];
+  const result = checkList('polls', polls, retiredCtx);
+  assert.ok('errors' in result);
+  assert.deepEqual(result.errors, ['La votación de la semana 2026-W49 usa «Ficha E2E», que está retirada de la web: vuelve a mostrarla o elige otra ficha.']);
 });
