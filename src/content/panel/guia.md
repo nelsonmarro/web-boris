@@ -4,7 +4,7 @@ Tu correo, tu contraseña y un código del móvil.
 
 ### La primera vez
 
-Nelson te da una contraseña temporal. Ve a la dirección de la web seguida de **/admin** (por ejemplo, `…/admin`).
+Nelson te da una contraseña temporal, que **vale 72 horas**: si caduca, el panel te lo dice y Nelson te da otra. Ve a la dirección de la web seguida de **/admin** (por ejemplo, `…/admin`).
 
 <Captura nombre="entrar" alt="Pantalla de entrada del panel con los campos Correo, Contraseña y Código, y el botón Entrar" pie="La pantalla de entrada. La primera vez, el código va vacío." />
 
@@ -26,7 +26,7 @@ Al terminar verás **10 códigos de recuperación**: cada uno te deja entrar una
 
 Correo, contraseña y los 6 dígitos que muestre la app en ese momento (cambian cada 30 segundos).
 
-> Si fallas varias veces seguidas, el panel te avisa de que esperes 15 minutos: mientras tanto no deja entrar, aunque escribas bien los datos. Si pierdes el móvil **y** los códigos de recuperación, pídele a Nelson que restablezca tu cuenta.
+> Si fallas varias veces seguidas, el panel te avisa de que esperes 15 minutos: mientras tanto no deja entrar, aunque escribas bien los datos. Si entras con un código de recuperación, el inicio te avisa de cuántos te quedan. Si pierdes el móvil **y** los códigos de recuperación, pídele a Nelson que restablezca tu cuenta.
 
 ## La pantalla de inicio
 
@@ -177,6 +177,16 @@ En **Contenido**:
 1. **Las votaciones que ya empezaron o terminaron no se pueden cambiar**, porque sus votos dependen de ellas. Cada semana empieza el lunes a las 00:00 en hora universal (el panel te dice qué hora es en la tuya).
 2. Las de **semanas futuras** se eligen y se cambian libremente.
 3. **Publicar** las guarda y salen en la web. Estas listas no tienen borrador.
+
+## Tu cuenta
+
+Cambiar la contraseña, los códigos de recuperación y cerrar sesión en todas partes.
+
+Pulsa **Mi cuenta**, arriba a la derecha (en el móvil, dentro de **Menú**).
+
+- **Cambiar la contraseña:** escribe la actual, la nueva dos veces y el código de 6 dígitos de la app. Al cambiarla se cierra la sesión en todos tus dispositivos y vuelves a entrar con la nueva.
+- **Códigos de recuperación:** ves cuántos te quedan sin usar. **Crear 10 códigos nuevos** (con el código de la app) invalida los anteriores; guárdalos fuera del móvil, porque no se vuelven a mostrar.
+- **Cerrar sesión** cierra la sesión en todos los dispositivos donde hayas entrado, no solo en el que usas: úsalo si entraste desde un ordenador que no es tuyo.
 
 ## Si algo sale mal
 

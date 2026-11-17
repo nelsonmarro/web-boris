@@ -62,8 +62,8 @@ const NewsLink = z
 
 export const NewsEntrySchema = z.object({
   fecha: IsoDate,
-  titulo: z.string().min(3).max(90),
-  resumen: z.string().min(3).max(160),
+  titulo: z.string().min(3, { message: 'el título necesita al menos 3 letras' }).max(90, { message: 'el título no puede pasar de 90 caracteres' }),
+  resumen: z.string().min(3, { message: 'el resumen necesita al menos 3 letras' }).max(160, { message: 'el resumen no puede pasar de 160 caracteres' }),
   enlace: NewsLink,
 });
 

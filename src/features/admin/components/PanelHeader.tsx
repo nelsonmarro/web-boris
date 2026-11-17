@@ -40,8 +40,10 @@ export function PanelHeader({ account, logout }: { account: string; logout: (for
   );
   const accountActions = (
     <>
-      <span className="text-sm text-white/70">{account}</span>
-      <Button asChild variant="outline" size="sm">
+      <Link href={"/admin/cuenta" as Route} aria-current={current('/admin/cuenta')} className={`${LINK} text-sm`}>
+        Mi cuenta<span className="sr-only"> ({account})</span>
+      </Link>
+      <Button asChild variant="outline" size="sm" className="min-h-10">
         <Link href="/" target="_blank" rel="noopener noreferrer">
           Ver la web<span className="sr-only"> (se abre en una pestaña nueva)</span>
         </Link>

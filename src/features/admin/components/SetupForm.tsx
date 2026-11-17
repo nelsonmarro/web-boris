@@ -1,60 +1,19 @@
 'use client';
 
 import { startTransition, useActionState, useState } from 'react';
-import { Copy, Download, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { completeSetupAction, finishSetupAction, type SetupState } from '../actions/setup';
 import { logoutAction } from '../actions/session';
 import { AdminField } from './AdminField';
-import { SMALL_BUTTON } from './editor/field-styles';
+import { RecoveryCodes } from './RecoveryCodes';
 
 const INITIAL: SetupState = {};
 
-/** Copiar, descargar o imprimir los códigos de recuperación: se muestran una sola vez. */
-function RecoveryCodeActions({ codes }: { codes: string[] }) {
-  const [status, setStatus] = useState('');
-  const text = `Códigos de recuperación del panel de la wiki de BorisaoBlois\nCada uno sirve una sola vez en lugar del código de 6 dígitos.\n\n${codes.join('\n')}\n`;
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setStatus('Copiados. Pégalos en un lugar seguro.');
-    } catch {
-      setStatus('No se pudieron copiar: descárgalos o apúntalos a mano.');
-    }
-  };
-  const download = () => {
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
-    link.download = 'codigos-recuperacion-wiki-borisaoblois.txt';
-    link.click();
-    URL.revokeObjectURL(link.href);
-    setStatus('Descargados. Guarda el archivo en un lugar seguro.');
-  };
-  return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap gap-2">
-        <button type="button" className={SMALL_BUTTON} onClick={copy}>
-          <Copy aria-hidden="true" className="size-4" />
-          Copiar
-        </button>
-        <button type="button" className={SMALL_BUTTON} onClick={download}>
-          <Download aria-hidden="true" className="size-4" />
-          Descargar
-        </button>
-        <button type="button" className={SMALL_BUTTON} onClick={() => window.print()}>
-          <Printer aria-hidden="true" className="size-4" />
-          Imprimir
-        </button>
-      </div>
-      <p role="status" className="min-h-5 text-sm text-white/80">
-        {status}
-      </p>
-    </div>
-  );
-}
-
 export function SetupForm({ secret, qrDataUrl }: { secret: string; qrDataUrl: string }) {
   const [state, action, pending] = useActionState(completeSetupAction, INITIAL);
+  // El aviso del último intento se oculta en cuanto se vuelve a escribir: si no, convive con la validación del
+  // navegador («al menos 12 caracteres») y parece que el error es otro.
+  const [errorHidden, setErrorHidden] = useState(false);
 
   if (state.recoveryCodes) {
     return (
@@ -66,12 +25,7 @@ export function SetupForm({ secret, qrDataUrl }: { secret: string; qrDataUrl: st
             dígitos. Apúntalos o guárdalos en un lugar seguro: <strong>no se volverán a mostrar</strong>.
           </p>
         </div>
-        <ul className="grid grid-cols-2 gap-3 rounded-xl border border-white/15 bg-[#061a2e] p-4 font-mono text-base text-white">
-          {state.recoveryCodes.map((code) => (
-            <li key={code}>{code}</li>
-          ))}
-        </ul>
-        <RecoveryCodeActions codes={state.recoveryCodes} />
+        <RecoveryCodes codes={state.recoveryCodes} />
         {state.handoff ? (
           <form action={finishSetupAction}>
             <input type="hidden" name="handoff" value={state.handoff} />
@@ -97,12 +51,13 @@ export function SetupForm({ secret, qrDataUrl }: { secret: string; qrDataUrl: st
   // contraseñas siguen escritas.
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setErrorHidden(false);
     const data = new FormData(event.currentTarget);
     startTransition(() => action(data));
   };
 
   return (
-    <form onSubmit={submit} className="space-y-8">
+    <form onSubmit={submit} onInput={() => setErrorHidden(true)} className="space-y-8">
       <section className="space-y-4">
         <h2 className="text-xl font-bold text-white">1. Elige tu contraseña</h2>
         <AdminField
@@ -147,7 +102,7 @@ export function SetupForm({ secret, qrDataUrl }: { secret: string; qrDataUrl: st
       </section>
 
       <p role="alert" aria-live="assertive" className="min-h-5 text-sm font-semibold text-red-300">
-        {state.error}
+        {errorHidden ? null : state.error}
       </p>
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? 'Guardando…' : 'Guardar y activar'}

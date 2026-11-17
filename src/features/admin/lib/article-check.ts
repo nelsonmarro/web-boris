@@ -9,6 +9,8 @@ import { checkArticleStandard, crossCheckEntities } from '../../../core/content/
 import { isIndexCategory } from '../../../core/search/catalog.ts';
 import { remarkSafeMdx, type MdxIssue } from '../../../utils/remark-safe-mdx.ts';
 import { isMediaPath } from '../../../core/content/media-path.ts';
+import { mdxErrorInSpanish } from './mdx-errors.ts';
+import '../../../core/zod-es.ts';
 
 export interface ArticleCheck {
   /** Impiden publicar. */
@@ -53,7 +55,7 @@ export async function checkMdxBody(content: string, components: ReadonlySet<stri
   } catch (error) {
     const place = (error as { line?: number }).line;
     const reason = (error as { reason?: string }).reason ?? (error instanceof Error ? error.message : String(error));
-    return [`Texto de la ficha${place ? ` (línea ${place})` : ''}: ${reason}. Revisa que cada etiqueta < > esté bien cerrada.`];
+    return [`Texto de la ficha${place ? ` (línea ${place})` : ''}: ${mdxErrorInSpanish(reason)}.`];
   }
   return issues.map((issue) => `Texto de la ficha${issue.line ? ` (línea ${issue.line})` : ''}: ${issue.message}`);
 }

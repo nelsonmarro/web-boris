@@ -5,7 +5,8 @@ import { burnPasswordTime, verifyPassword, PASSWORD_MAX_LENGTH } from '../lib/pa
 import { verifyTotp } from '../lib/totp';
 import { open } from '../lib/secret-box';
 import { hashRecoveryCode, looksLikeRecoveryCode } from '../lib/recovery-codes';
-import { isThrottled, WINDOW_MINUTES } from '../lib/lockout';
+import { isThrottled, TRUSTED_NETWORK_DAYS, WINDOW_MINUTES } from '../lib/lockout';
+import { temporaryPasswordExpired } from '../lib/temporary-password';
 import { createSlots } from '../lib/slots';
 import { readHandoff } from '../lib/setup-handoff';
 import { adminSecret } from './app-secret';
@@ -29,7 +30,7 @@ export const loginNetworkHash = (secret: string, ip: string): string => hmac(sec
 const hashSlot = createSlots(2, 20);
 
 /** ¿Vale `code` como segundo factor? Consume el código (paso TOTP o código de recuperación) para que no sirva otra vez. */
-async function consumeSecondFactor(user: { id: string; totpSecret: string | null; totpLastStep: number }, code: string, secret: string): Promise<boolean> {
+export async function consumeSecondFactor(user: { id: string; totpSecret: string | null; totpLastStep: number }, code: string, secret: string): Promise<boolean> {
   if (looksLikeRecoveryCode(code)) {
     const used = await prisma.adminRecoveryCode.updateMany({
       where: { userId: user.id, codeHash: hashRecoveryCode(code, secret), usedAt: null },
@@ -46,14 +47,18 @@ async function consumeSecondFactor(user: { id: string; totpSecret: string | null
   return claimed.count === 1;
 }
 
-/**
- * Comprueba correo + contraseña + segundo factor. Devuelve la cuenta o `null`, sin decir nunca qué falló: por fuera,
- * una cuenta que no existe, una frenada y una contraseña mala son indistinguibles (también en el tiempo de respuesta).
- */
 /** Resultado del intento frenado por exceso de fallos: el formulario lo dice en vez de «Datos incorrectos». */
 export const THROTTLED = 'throttled' as const;
+/** Contraseña temporal correcta pero caducada (solo se sabe tras acertarla): hay que pedir otra. */
+export const TEMPORARY_EXPIRED = 'temporary-expired' as const;
+/** Marca en `AdminAuditLog` de una entrada con código de recuperación (el inicio avisa de cuántos quedan). */
+export const RECOVERY_LOGIN = 'código de recuperación';
 
-export async function authenticateAdmin(input: { email: string; password: string; code: string }, ip: string): Promise<AdminLogin | typeof THROTTLED | null> {
+/**
+ * Comprueba correo + contraseña + segundo factor. Devuelve la cuenta, `THROTTLED` si hay que esperar o `null`, sin decir
+ * nunca qué falló: una cuenta que no existe y una contraseña mala son indistinguibles (también en el tiempo de respuesta).
+ */
+export async function authenticateAdmin(input: { email: string; password: string; code: string }, ip: string): Promise<AdminLogin | typeof THROTTLED | typeof TEMPORARY_EXPIRED | null> {
   const secret = adminSecret();
   if (!secret) {
     console.error('[admin:login] AUTH_SECRET ausente o corto: el acceso al panel está cerrado.');
@@ -73,12 +78,14 @@ export async function authenticateAdmin(input: { email: string; password: string
   };
 
   const failures = { action: 'login.fail', createdAt: { gte: new Date(Date.now() - WINDOW_MINUTES * 60_000) } };
-  const [network, accountAndNetwork, accountTotal] = await Promise.all([
+  const trustedSince = new Date(Date.now() - TRUSTED_NETWORK_DAYS * 86_400_000);
+  const [network, accountAndNetwork, accountTotal, trusted] = await Promise.all([
     prisma.adminAuditLog.count({ where: { ...failures, ipHash } }),
     account ? prisma.adminAuditLog.count({ where: { ...failures, ipHash, userId: account.id } }) : 0,
     account ? prisma.adminAuditLog.count({ where: { ...failures, userId: account.id } }) : 0,
+    account ? prisma.adminAuditLog.count({ where: { action: 'login.ok', ipHash, userId: account.id, createdAt: { gte: trustedSince } } }) : 0,
   ]);
-  if (isThrottled({ network, accountAndNetwork, account: accountTotal })) {
+  if (isThrottled({ network, accountAndNetwork, account: accountTotal, trustedNetwork: trusted > 0 })) {
     // No se apunta como fallo: si contara, el freno no caducaría nunca mientras alguien siguiera insistiendo.
     await audit('login.throttled', { userId: account?.id, ipHash, target: email });
     // El mismo trabajo de hash que un intento normal: sin él, la rapidez de la respuesta delataría que la cuenta existe.
@@ -97,11 +104,16 @@ export async function authenticateAdmin(input: { email: string; password: string
   if (passwordOk === null) return fail('saturado');
   if (!account) return fail('cuenta');
   if (!passwordOk) return fail('contraseña');
+  if (temporaryPasswordExpired(account, new Date())) {
+    await fail('temporal caducada');
+    return TEMPORARY_EXPIRED;
+  }
 
   const mfa = !!account.totpEnabledAt;
   if (mfa && !(await consumeSecondFactor(account, code, secret))) return fail('código');
 
-  await audit('login.ok', { userId: account.id, ipHash, target: mfa ? undefined : 'sin 2FA: pendiente de configurar' });
+  const target = !mfa ? 'sin 2FA: pendiente de configurar' : looksLikeRecoveryCode(code) ? RECOVERY_LOGIN : undefined;
+  await audit('login.ok', { userId: account.id, ipHash, target });
   return { id: account.id, email, name: account.name, sessionVersion: account.sessionVersion, mfa };
 }
 

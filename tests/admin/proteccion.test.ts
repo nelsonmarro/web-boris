@@ -65,3 +65,13 @@ test('turnos: respeta la concurrencia y rechaza con la cola llena', async () => 
   assert.deepEqual(results.filter((r) => r === null).length, 1); // el cuarto no cabe
   assert.equal(await run(job), 'ok'); // y los turnos quedan libres
 });
+
+test('isThrottled: el tope global por cuenta no frena a una red desde la que esa cuenta ya entró', () => {
+  // 40 fallos repartidos entre otras redes: desde una red nueva se frena…
+  assert.equal(isThrottled({ network: 0, accountAndNetwork: 0, account: 40 }), true);
+  // …pero no desde la red habitual de Boris, que puede seguir entrando.
+  assert.equal(isThrottled({ network: 0, accountAndNetwork: 0, account: 400, trustedNetwork: true }), false);
+  // Los topes de su propia red siguen valiendo.
+  assert.equal(isThrottled({ network: 0, accountAndNetwork: 8, account: 0, trustedNetwork: true }), true);
+  assert.equal(isThrottled({ network: 20, accountAndNetwork: 0, account: 0, trustedNetwork: true }), true);
+});

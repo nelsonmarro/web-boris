@@ -39,6 +39,9 @@ services:
       - media:/app/media
     ports:
       - '127.0.0.1:3131:3000'
+    # Sin capacidades de Linux (escucha en el 3000, no le hace falta ninguna) y sin poder ganar privilegios.
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
     depends_on:
       db:
         condition: service_healthy

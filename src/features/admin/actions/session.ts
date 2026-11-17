@@ -2,7 +2,7 @@
 
 import { AuthError, CredentialsSignin } from 'next-auth';
 import { prisma } from '@/lib/prisma';
-import { THROTTLED } from '../server/login';
+import { TEMPORARY_EXPIRED, THROTTLED } from '../server/login';
 import { signIn, signOut } from '@/core/auth/auth';
 import { currentAdmin } from '../server/require-admin';
 import { audit } from '../server/audit';
@@ -27,6 +27,9 @@ export async function loginAction(_previous: LoginState, formData: FormData): Pr
   } catch (error) {
     if (error instanceof CredentialsSignin && error.code === THROTTLED) {
       return { email: text('email').slice(0, 254), error: 'Demasiados intentos fallidos seguidos. Por seguridad, espera 15 minutos y vuelve a intentarlo.' };
+    }
+    if (error instanceof CredentialsSignin && error.code === TEMPORARY_EXPIRED) {
+      return { email: text('email').slice(0, 254), error: 'Tu contraseña temporal ha caducado (vale 72 horas). Pídele a Nelson una nueva.' };
     }
     if (error instanceof AuthError) {
       return { email: text('email').slice(0, 254), error: 'Datos incorrectos. Revisa el correo, la contraseña y el código. Tras varios intentos fallidos hay que esperar 15 minutos.' };
