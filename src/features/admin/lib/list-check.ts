@@ -4,6 +4,7 @@ import type { CuratedPoll } from '../../../core/content/schemas.ts';
 import { crossCheckNews, crossCheckPolls, crossCheckStartHere, crossCheckStoryOrder, crossCheckVideoLinks } from '../../../core/content/validate.ts';
 import { isoWeekKey } from '../../../core/content/iso-week.ts';
 import { navigationProblems } from '../../../core/content/navigation.ts';
+import '../../../core/zod-es.ts';
 
 export interface ListContext {
   slugs: ReadonlySet<string>;

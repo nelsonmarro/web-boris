@@ -69,7 +69,7 @@ export default async function AdminArticlesPage({ searchParams }: { searchParams
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-white">Fichas de la wiki</h1>
-        <Button asChild size="sm">
+        <Button asChild size="sm" className="min-h-10">
           <Link href="/admin/fichas/nueva">Nueva ficha</Link>
         </Button>
       </div>

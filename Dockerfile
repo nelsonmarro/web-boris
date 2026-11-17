@@ -27,13 +27,15 @@ ENV NODE_ENV=production \
     PORT=3000 \
     HOSTNAME=0.0.0.0 \
     TZ=UTC
-COPY --from=builder --chown=node:node /app/.next/standalone ./
-COPY --from=builder --chown=node:node /app/.next/static ./.next/static
-COPY --from=builder --chown=node:node /app/public ./public
+# El código, las dependencias y el contenido son de root (la app solo los lee): una ejecución remota no podría
+# reescribir server.js ni las fichas. La app solo escribe en .next (caché ISR) y en /app/media (subidas del panel).
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 # Las fichas y el contenido del hub se leen del disco al revalidar (ISR): el trazado de standalone no los copia.
-COPY --from=builder --chown=node:node /app/src/content ./src/content
+COPY --from=builder /app/src/content ./src/content
 # Imágenes subidas desde el panel /admin: el compose monta aquí un volumen (MEDIA_DIR).
-RUN mkdir -p /app/media && chown node:node /app/media
+RUN mkdir -p /app/media && chown -R node:node /app/.next /app/media
 USER node
 EXPOSE 3000
 CMD ["node", "server.js"]

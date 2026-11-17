@@ -5,8 +5,8 @@ import { currentAdmin } from '@/features/admin/server/require-admin';
 
 export const metadata: Metadata = { title: 'Entrar' };
 
-export default async function AdminLoginPage() {
-  const admin = await currentAdmin();
+export default async function AdminLoginPage({ searchParams }: { searchParams: Promise<{ aviso?: string }> }) {
+  const [admin, { aviso }] = await Promise.all([currentAdmin(), searchParams]);
   if (admin) redirect(admin.ready ? '/admin' : '/admin/configurar');
 
   return (
@@ -14,6 +14,11 @@ export default async function AdminLoginPage() {
       <div className="crystal-surface rounded-2xl p-6 @md:p-8">
         <h1 className="text-2xl font-bold text-white">Panel de la wiki</h1>
         <p className="mt-2 mb-8 text-white/80">Acceso reservado al equipo de BorisaoBlois.</p>
+        {aviso === 'contrasena' ? (
+          <p role="status" className="mb-6 rounded-xl border border-emerald-400/40 bg-emerald-500/10 p-3 text-white">
+            Contraseña cambiada. Entra con la nueva y el código de la app.
+          </p>
+        ) : null}
         <LoginForm />
       </div>
     </main>

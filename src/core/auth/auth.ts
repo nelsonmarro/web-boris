@@ -4,11 +4,16 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import { clientIp } from "@/features/community/lib/voter";
 import { CredentialsSignin } from "next-auth";
-import { ADMIN_ROLE, authenticateAdmin, completeSetupLogin, THROTTLED } from "@/features/admin/server/login";
+import { ADMIN_ROLE, authenticateAdmin, completeSetupLogin, TEMPORARY_EXPIRED, THROTTLED } from "@/features/admin/server/login";
 
 /** Intento rechazado por exceso de fallos recientes: `loginAction` muestra «espera 15 minutos» (`code`). */
 export class ThrottledSignin extends CredentialsSignin {
   code = THROTTLED;
+}
+
+/** Contraseña temporal correcta pero caducada: `loginAction` pide una nueva (`code`). */
+export class TemporaryExpiredSignin extends CredentialsSignin {
+  code = TEMPORARY_EXPIRED;
 }
 import { authConfig } from "./auth.config";
 
@@ -27,6 +32,7 @@ const { handlers: authHandlers, auth: authSession, signIn: authSignIn, signOut: 
           clientIp((name) => request.headers.get(name)),
         );
         if (login === THROTTLED) throw new ThrottledSignin();
+        if (login === TEMPORARY_EXPIRED) throw new TemporaryExpiredSignin();
         if (!login) return null;
         return { id: login.id, email: login.email, name: login.name, role: ADMIN_ROLE, mfa: login.mfa, sessionVersion: login.sessionVersion };
       },

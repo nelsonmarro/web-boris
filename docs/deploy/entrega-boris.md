@@ -12,7 +12,8 @@ anterior al panel: hoy `/admin` lleva a la pantalla antigua de Auth.js. `main` t
 
 - [ ] **Decidir el correo de acceso de Boris.** Mejor uno que **no** sea el de contacto público.
 - [ ] **Quedar con Boris** para el primer acceso, a ser posible en una videollamada **el mismo día** en que creas su
-      cuenta: la contraseña temporal no caduca y, si se filtrara, quien la use primero se quedaría la cuenta.
+      cuenta: la contraseña temporal caduca a las **72 horas** (si pasa, `--reset` y otra), y mientras tanto, si se
+      filtrara, quien la use primero se quedaría la cuenta.
 - [ ] Que Boris tenga en el móvil una **app de códigos**: Google Authenticator, Microsoft Authenticator o Authy.
 - [x] La tanda «antes de entregar» de la auditoría (retirada de fichas, `rel="opener"`, cierre de sesión, mensaje de
       bloqueo y «Vista previa al lado» en el móvil) ya está en `main`.
@@ -92,7 +93,7 @@ Crea **tu** cuenta y recorre el panel tú antes de dársela a Boris:
 deploy/admin-create.sh tu-correo@ejemplo.com "Nelson"
 ```
 
-Imprime una contraseña temporal **una sola vez**. Entra en `…/admin`, configura tu 2FA y comprueba:
+Imprime una contraseña temporal **una sola vez**, que caduca a las 72 horas. Entra en `…/admin`, configura tu 2FA y comprueba:
 
 - [ ] Inicio, Fichas, Imágenes, Contenido y Ayuda abren (la Ayuda con sus capturas).
 - [ ] **Subir una foto de más de 1 MB** en Imágenes (comprueba el paso 3) y borrarla después.
@@ -154,7 +155,8 @@ Envíale **dos mensajes por canales distintos**:
   repetir el paso 7.
 - **Si se bloquea por intentos fallidos:** el panel le dice «Demasiados intentos fallidos seguidos… espera 15
   minutos». Basta con esperar.
-- **Si quiere cambiar su contraseña:** de momento no hay pantalla para ello; `--reset` y configurar de nuevo.
+- **Contraseña y códigos de recuperación:** Boris los gestiona solo en **Mi cuenta** (cambiar la contraseña, ver
+  cuántos códigos le quedan y crear 10 nuevos). Si entra con un código de recuperación, el inicio le avisa.
 - **Copias:** diarias en `/var/backups/web-boris` (base e imágenes). Bájalas de vez en cuando:
   `scp root@82.25.95.39:'/var/backups/web-boris/*' .`
 

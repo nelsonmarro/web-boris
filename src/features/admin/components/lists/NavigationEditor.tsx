@@ -205,6 +205,8 @@ export function NavigationEditor({ path, token, initial, articles, retired }: Li
                 type="button"
                 className={DANGER_BUTTON}
                 onClick={() => {
+                  const inside = flattenNav([{ title: '', items: item.items ?? [] }]).length;
+                  if (inside > 0 && !window.confirm(`¿Quitar «${label}» y las ${inside} entradas que tiene dentro? Puedes deshacerlo unos segundos, y no llega a la web hasta que pulses «Publicar».`)) return;
                   const before = nav;
                   apply((current) => removeItem(current, itemPath));
                   setEditing(null);
@@ -359,6 +361,8 @@ export function NavigationEditor({ path, token, initial, articles, retired }: Li
                       type="button"
                       className={DANGER_BUTTON}
                       onClick={() => {
+                        const inside = flattenNav([group]).length;
+                        if (inside > 0 && !window.confirm(`¿Quitar el universo «${name}» con sus ${inside} entradas? Puedes deshacerlo unos segundos, y no llega a la web hasta que pulses «Publicar».`)) return;
                         const before = nav;
                         setNav((n) => n.filter((_, i) => i !== g));
                         setEditing(null);

@@ -56,7 +56,7 @@ export async function completeSetupAction(_previous: SetupState, formData: FormD
   await prisma.$transaction([
     prisma.user.update({
       where: { id: user.id },
-      data: { passwordHash, totpEnabledAt: new Date(), totpLastStep: step, sessionVersion: { increment: 1 } },
+      data: { passwordHash, temporaryPasswordUntil: null, totpEnabledAt: new Date(), totpLastStep: step, sessionVersion: { increment: 1 } },
     }),
     prisma.adminRecoveryCode.deleteMany({ where: { userId: user.id } }),
     prisma.adminRecoveryCode.createMany({ data: recoveryCodes.map((item) => ({ userId: user.id, codeHash: hashRecoveryCode(item, appSecret) })) }),

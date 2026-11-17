@@ -37,7 +37,7 @@ export function VideosEditor({ path, token, initial, articles, videos }: ListEdi
           <li key={row.id} className="space-y-3 rounded-2xl border border-white/10 bg-[#061a2e]/60 p-5">
             <p className="font-semibold text-white">
               {known.get(row.id) ?? row.titulo ?? row.id}
-              <a href={`https://www.youtube.com/watch?v=${row.id}`} target="_blank" rel="noopener noreferrer" className="ml-2 text-sm font-normal text-white/70 underline underline-offset-4 hover:text-primary">
+              <a href={`https://www.youtube.com/watch?v=${row.id}`} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex min-h-10 items-center text-sm font-normal text-white/70 underline underline-offset-4 hover:text-primary">
                 Ver en YouTube<span className="sr-only"> (se abre en una pestaña nueva)</span>
               </a>
             </p>

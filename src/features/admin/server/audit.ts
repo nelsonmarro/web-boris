@@ -17,7 +17,10 @@ export type AuditAction =
   | 'article.restore-version'
   | 'media.upload'
   | 'media.delete'
-  | 'list.publish';
+  | 'list.publish'
+  | 'account.password'
+  | 'account.recovery'
+  | 'account.fail';
 
 /** Apunta una acción del panel. Nunca lanza: un fallo del registro no debe tumbar la acción que lo provoca. */
 export async function audit(action: AuditAction, data: { userId?: string | null; target?: string; ipHash?: string | null } = {}): Promise<void> {

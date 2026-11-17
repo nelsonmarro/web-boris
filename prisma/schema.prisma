@@ -46,6 +46,8 @@ model User {
   // Acceso al panel /admin (spec CMS §4). Una cuenta sin `role` no entra; se crean con `npm run admin:create`.
   role           String?
   passwordHash   String?
+  /// Caducidad de la contraseña temporal de `admin:create` (72 h). `null` cuando la cuenta ya tiene contraseña propia.
+  temporaryPasswordUntil DateTime?
   /// Secreto TOTP cifrado (AES-256-GCM, `secret-box`). Vale como segundo factor solo con `totpEnabledAt`.
   totpSecret     String?
   totpEnabledAt  DateTime?

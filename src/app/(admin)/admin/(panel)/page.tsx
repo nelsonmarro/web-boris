@@ -10,6 +10,7 @@ import { LocalTime } from '@/features/admin/components/LocalTime';
 import { ArticleBadges } from '@/features/admin/components/StatusBadge';
 import { listArticles } from '@/features/admin/server/articles';
 import { requireAdmin } from '@/features/admin/server/require-admin';
+import { RECOVERY_LOGIN } from '@/features/admin/server/login';
 
 export const metadata: Metadata = { title: 'Inicio' };
 
@@ -30,6 +31,9 @@ const ACTIVITY: Record<string, string> = {
   'media.upload': 'Imagen subida',
   'media.delete': 'Imagen borrada',
   'list.publish': 'Lista publicada',
+  'account.password': 'Contraseña cambiada',
+  'account.recovery': 'Códigos de recuperación nuevos',
+  'account.fail': 'Intento fallido en «Mi cuenta»',
 };
 
 const LINK = 'inline-flex min-h-10 items-center font-semibold text-white underline underline-offset-4 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
@@ -38,7 +42,7 @@ const CARD = 'space-y-3 rounded-2xl border p-5';
 export default async function AdminHomePage() {
   const admin = await requireAdmin();
   const repo = getContentRepository();
-  const [activity, all, live, nav, curated] = await Promise.all([
+  const [activity, all, live, nav, curated, lastLogin, codesLeft] = await Promise.all([
     prisma.adminAuditLog.findMany({
       where: { userId: admin.id },
       orderBy: { createdAt: 'desc' },
@@ -49,7 +53,10 @@ export default async function AdminHomePage() {
     repo.getArticles(),
     repo.getNavigation(),
     repo.getCuratedPolls(),
+    prisma.adminAuditLog.findFirst({ where: { userId: admin.id, action: 'login.ok' }, orderBy: { createdAt: 'desc' }, select: { target: true } }),
+    prisma.adminRecoveryCode.count({ where: { userId: admin.id, usedAt: null } }),
   ]);
+  const usedRecovery = lastLogin?.target === RECOVERY_LOGIN;
 
   const byRecent = (a: { updatedAt: string | null }, b: { updatedAt: string | null }) => (b.updatedAt ?? '').localeCompare(a.updatedAt ?? '');
   const drafts = all.filter((article) => article.hasDraft && article.status !== 'borrada').sort(byRecent);
@@ -71,6 +78,22 @@ export default async function AdminHomePage() {
         <h1 className="text-3xl font-bold text-white">Hola{admin.name ? `, ${admin.name}` : ''}</h1>
         <p className="mt-2 text-white/80">Esto es lo que tienes a medias y lo último que se ha editado.</p>
       </div>
+
+      {usedRecovery || codesLeft <= 3 ? (
+        <div role="status" className={`${CARD} border-amber-400/40 bg-amber-500/10 text-white`}>
+          <p className="font-bold">
+            {usedRecovery ? 'Has entrado con un código de recuperación.' : 'Te quedan pocos códigos de recuperación.'}{' '}
+            {codesLeft === 0 ? 'Ya no te queda ninguno.' : `Te ${codesLeft === 1 ? 'queda 1' : `quedan ${codesLeft}`}.`}
+          </p>
+          <p className="text-sm text-white/85">
+            {usedRecovery ? 'Ese código ya no sirve. Si has perdido el móvil o cambiado de app, pídele a Nelson que te restablezca el 2FA. ' : ''}
+            En «Mi cuenta» puedes crear 10 códigos nuevos.
+          </p>
+          <Link href={'/admin/cuenta' as Route} className={`${LINK} text-primary`}>
+            Ir a «Mi cuenta»
+          </Link>
+        </div>
+      ) : null}
 
       <section aria-labelledby="pendiente" className="space-y-4">
         <h2 id="pendiente" className="text-xl font-bold text-white">
