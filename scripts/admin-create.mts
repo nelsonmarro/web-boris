@@ -62,7 +62,8 @@ try {
     console.log(`Cuenta ${email} creada.`);
   }
   if (process.exitCode !== 1) {
-    console.log(`\nContraseña temporal (no se volverá a mostrar):\n\n  ${temporary}\n`);
+    // Sin sangría: al copiar la línea entera de la terminal, los espacios de delante acababan en el campo de contraseña.
+    console.log(`\nContraseña temporal (no se volverá a mostrar; cópiala sin espacios):\n\n${temporary}\n`);
     console.log(`Caduca en ${TEMPORARY_PASSWORD_HOURS} horas (${until.toISOString().replace('T', ' ').slice(0, 16)} UTC): después hace falta --reset.`);
     console.log('Pásasela a su dueño por un canal privado. Al entrar en /admin/login tendrá que cambiarla y activar el 2FA.');
   }

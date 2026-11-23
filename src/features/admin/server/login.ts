@@ -99,7 +99,9 @@ export async function authenticateAdmin(input: { email: string; password: string
       await burnPasswordTime(password);
       return false;
     }
-    return verifyPassword(password, account.passwordHash);
+    // La contraseña temporal (cuenta sin 2FA) se copia de la terminal: los espacios de los extremos no cuentan. Las
+    // contraseñas propias se comparan tal cual.
+    return verifyPassword(account.totpEnabledAt ? password : password.trim(), account.passwordHash);
   });
   if (passwordOk === null) return fail('saturado');
   if (!account) return fail('cuenta');
